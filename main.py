@@ -28,6 +28,7 @@ class App:
         backgroundComboBoxString = tk.StringVar()
         resWidth = tk.StringVar()
         resHeight = tk.StringVar()
+        coordinateInfoOption = tk.IntVar()
 
         #functions
         def sendParameters():
@@ -50,7 +51,7 @@ class App:
             topcolor = vector(0.8, 0.8, 0.8)
             dotcolor = color.black
             lampvisible = False
-            coordinateInfoVisible = False
+            coordinateInfoVisible = coordinateInfoOption.get()
             wallVisible = displayWallOption.get()
             topVisible = displayTopOption.get()
             obstacleVisible = displayObstacleOption.get()
@@ -101,6 +102,28 @@ class App:
                 backgroundColor = color.black
             return backgroundColor
 
+        def calcDotCall():
+            calcCurrentDots()
+            root.after(100, calcDotCall)
+
+        def calcCurrentDots():
+            wallThickness = 15  # fixed value
+            topAndWallxSize = float(topAndWallxSizeString.get())
+            wallHeight = float(wallHeightString.get())
+            topHeight = float(topHeightString.get())
+            dot_distance = 10.5
+            dot_distFromwall_x = 2.25
+            dot_distFromWallBottom_y = 37.5
+            dot_distToTopTop_y = 10.1
+            x_dots = int(math.ceil((topAndWallxSize-2*dot_distFromwall_x)/dot_distance))
+            y_dots = int(math.ceil((wallHeight+topHeight-dot_distFromWallBottom_y-dot_distToTopTop_y-wallThickness)/dot_distance))
+            wallToTopShiftDots = int(math.ceil((wallHeight - dot_distFromWallBottom_y)/dot_distance))
+            xDotShowLabel.configure(text="xDots: " + str(x_dots))
+            yDotShowLabel.configure(text="yDots: " + str(y_dots))
+            shiftAtShowLabel.configure(text= "shift at: " + str(wallToTopShiftDots))
+            root.update()
+
+
 
 
         #setting title
@@ -122,6 +145,7 @@ class App:
         style.configure("Res.TLabel", font=("Calibri", 12), justify="left", width=10)
         style.configure("TEntry", font = ("Calibri", 12), justify="center")
         style.configure("Res.TEntry", font = ("Calibri", 12), justify="center", width =10)
+        style.configure("TFrame" , font = ("Calibri", 12), justify="center")
 
 
         #create button
@@ -198,6 +222,36 @@ class App:
         resolutionEntryH = ttk.Entry(root, textvariable = resHeight)
         resolutionEntryH.grid(row=5, column=2)
 
+        #info field
+
+        infoLabel= ttk.Label(root, text = "Info Parameters:")
+        infoLabel.grid(row=0,column=3)
+
+        CoordinateInfoCheckButton=ttk.Checkbutton(root, text= "Show coordinate info", variable = coordinateInfoOption)
+        CoordinateInfoCheckButton.grid(row=1,column=3)
+
+        #goal parameter field
+        #todo: set start and goal parameters based on dots
+
+        #parameterOutputField
+        parameterOutputFrame = ttk.Frame(root)
+        parameterOutputFrame.place(x=350,y=340)
+
+        parameterOutputLabel = ttk.Label(parameterOutputFrame, text="Parameter Output:")
+        parameterOutputLabel.grid(row=0,column=0)
+
+        xDotShowLabel = ttk.Label(parameterOutputFrame,text="xDots: ")
+        xDotShowLabel.grid(row=1, column=0)
+
+        yDotShowLabel = ttk.Label(parameterOutputFrame,text="yDots: ")
+        yDotShowLabel.grid(row=2, column=0)
+
+        shiftAtShowLabel = ttk.Label(parameterOutputFrame,text="shift at: ")
+        shiftAtShowLabel.grid(row=3, column=0)
+
+        #fixme: round by multiple of 10.5
+
+
         #insert default values
         topAndWallxSizeEntry.insert(0, "100.0")
         topHeightEntry.insert(0, "115.0")
@@ -210,6 +264,9 @@ class App:
         displayTopCheckButton.invoke()
         displayWallCheckButton.invoke()
         displayObstacleCheckButton.invoke()
+
+        #call functions that check after some time
+        calcDotCall()
 
 
         root.mainloop()
@@ -382,7 +439,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     goalDirection = goalAxis + vector(6.5, 0, 0)
     start = (6, 1)  # this will be a random vector along the wall or a manual input
     goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
-    Objects.StartEndInt(start, goal, startDirection, goalDirection)
+    Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
     #lvf.up: vector(0,4.5,0)
     #lvf.right: vector(6.5,0,0)
     # create objects

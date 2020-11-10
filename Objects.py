@@ -63,19 +63,23 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
         dividerPos = vector(0.5*wallWidth, wallHeight,0.5*wall_thickness)
         divider = box(pos=dividerPos, size = vector(wallWidth,2,20), color=color.red)
 
+    if background_color == color.black:
+        text_color = color.white
+    else: text_color = color.black
+
     # initialise labeled Coordinate points; helps with orientation
     if coordinate_info_visible == True:
         vector_0x0_point = points(pos=vector(0.0, 0.0, wall_thickness), color=color.green)
         vector_100x200 = points(pos=wall_shape, color=color.green)
         vector_maxwidthheight = points(pos=vector(wallWidth,wallHeight+topHeight,wall_thickness), color=color.green)
         vector_0x0_point_label = label(pos=vector(0.0, 0.0, wall_thickness), text="0cm x 0cm", xoffset=-20, yoffset=-50,
-                                       space=30, height=16, border=4, font="sans", color=color.black)
+                                       space=30, height=16, border=4, font="sans", color=text_color)
         vector_100x200_point_label = label(pos=wall_shape, text=str(wallWidth) + "cm" + " x " +str(wallHeight)+"cm", xoffset=20, yoffset=50, space=30,
-                                           height=16, border=4, font="sans", color=color.black)
+                                           height=16, border=4, font="sans", color=text_color)
         vector_0x0_point_label = label(pos=vector(0.0, 0.0, wall_thickness), text="0cm x 0cm", xoffset=-20, yoffset=-50,
-                                       space=30, height=16, border=4, font="sans", color=color.black)
+                                       space=30, height=16, border=4, font="sans", color=text_color)
         vector_maxwidthheight_label = label(pos=vector(wallWidth,wallHeight+topHeight,wall_thickness), text=str(wallWidth) + "cm" + " x " +str(wallHeight+topHeight)+"cm", xoffset=20, yoffset=50, space=30,
-                                           height=16, border=4, font="sans", color=color.black)
+                                           height=16, border=4, font="sans", color=text_color)
 
 
 
@@ -86,7 +90,10 @@ def closeScene():
 
 
 
-def StartEndInt(start_position, end_position, start_direction, end_direction):
+def StartEndInt(start_position, end_position, start_direction, end_direction, background_color):
+    if background_color == color.black:
+        text_color = color.white
+    else: text_color = color.black
     # initialise Start and End position Cylinders
     startPos = lvf.cMatrix[start_position]
     endPos = lvf.cMatrix[end_position]
@@ -96,13 +103,13 @@ def StartEndInt(start_position, end_position, start_direction, end_direction):
                              color=color.green)
     start_label = label(pos=lvf.transformToVvector(startPos), xoffset = -50, text="Start", space=30,
                         height=16, border=4,
-                        font="sans", color=color.black)
+                        font="sans", color=text_color)
 
     endcylinder = cylinder(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=end_direction, size=vector(1, 5, 5),
                            color=color.orange)
     end_label = label(pos=lvf.transformToVvector(endPos), xoffset = 50, text="Goal", space=30,
                       height=16, border=4,
-                      font="sans", color=color.black)
+                      font="sans", color=text_color)
 
     pass
 
