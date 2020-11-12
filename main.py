@@ -29,6 +29,8 @@ class App:
         resWidth = tk.StringVar()
         resHeight = tk.StringVar()
         coordinateInfoOption = tk.IntVar()
+        showTestingPathsOption = tk.IntVar()
+        showTestedPathsOption = tk.IntVar()
 
         #functions
         def sendParameters():
@@ -59,13 +61,15 @@ class App:
             obstacleVisible = displayObstacleOption.get()
             pipeVisible= displayPipesOption.get()
             backgroundColor = setBackgroundColor(backgroundCombobox.get())
+            testingPath = showTestingPathsOption.get()
+            testedPath = showTestedPathsOption.get()
             level = levelCombobox.get()
             xRes = resWidth.get()
             yRes = resHeight.get()
             createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
                         topVisible, obstacleVisible, pipeVisible,
                         coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
-                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,level,xRes,yRes)
+                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes)
 
 
 
@@ -132,7 +136,7 @@ class App:
         #setting title
         root.title("Pipe Lab")
         #setting window size
-        width=900
+        width=1000
         height=600
         screenwidth = root.winfo_screenwidth()
         screenheight = root.winfo_screenheight()
@@ -144,6 +148,7 @@ class App:
         style.configure("TButton", font = ("Calibri", 10), justify = "center")
         style.configure("TRadiobutton", font = ("Calibri", 10),justify="left", anchor = "w", width = 20)
         style.configure("TCheckbutton", font = ("Calibri", 10), justify="left", anchor = "w", width = 20)
+        style.configure("Nowidth.TCheckbutton", font = ("Calibri", 10), justify="left", anchor = "w")
         style.configure("TLabel", font = ("Calibri", 12), justify="left")
         style.configure("Res.TLabel", font=("Calibri", 12), justify="left", width=10)
         style.configure("TEntry", font = ("Calibri", 12), justify="center")
@@ -256,11 +261,22 @@ class App:
 
         #LevelSelect
 
-        levelSelectLabel= ttk.Label(root, text = "Scene Parameters:")
+        levelSelectLabel= ttk.Label(root, text = "Level Select:")
         levelSelectLabel.grid(row=0,column=4)
 
         levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)"])
         levelCombobox.grid(row=1, column=4)
+
+        # debugField
+        debugOptionsLabel= ttk.Label(root, text = "Debug options:")
+        debugOptionsLabel.grid(row=0,column=5)
+
+        showTestingPathsCheckButton=ttk.Checkbutton(root, text= "Show debug objects", variable = showTestingPathsOption, style = "Nowidth.TCheckbutton")
+        showTestingPathsCheckButton.grid(row=1,column=5)
+
+        showTestedPathsCheckButton=ttk.Checkbutton(root, text= "Show tested positions", variable = showTestedPathsOption, style = "Nowidth.TCheckbutton")
+        showTestedPathsCheckButton.grid(row=2,column=5)
+
 
 
         #insert default values
@@ -299,8 +315,8 @@ class App:
 
     #functions
 
-def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis):
-    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis)
+def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath):
+    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath)
     if isinstance(route, list):
         for idx,(x,y) in enumerate(route):
              route[idx] = (x+1,y+1)
@@ -445,7 +461,7 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
-            dotDist, wallToTopShiftDots,level,xRes, yRes):
+            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes):
     #create wall
 
     Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
@@ -455,7 +471,16 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                   dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
     #"Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)"
     #obstacle chronology go from bottom to top, left to right
+    if wallVisible == True and obstacleVisible == True:
+        obsVisWall = True
+    else: obsVisWall = False
+
+    if topVisible == True and obstacleVisible == True:
+        obsVisTop = True
+    else: obsVisTop = False
+
     if level == "Level 1 (Easy)":
+        # fixme: unfinished
         startAxis = lvf.up
         goalAxis = lvf.down
         startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
@@ -478,30 +503,46 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         start = (6, 1)  # this will be a random vector along the wall or a manual input
         goal = (1, 23)  # this will be either a random vector along wall the top or a manual input
         Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
-        obs1 = Objects.obstacle((1, 17), (1, 5), obstacleVisible)
-        obs1 = Objects.obstacle((3, 7), (1, 1), obstacleVisible)
+        obs1 = Objects.obstacle((1, 17), (1, 5), obsVisWall)
+        obs1 = Objects.obstacle((3, 7), (1, 1), obsVisWall)
         #obs2 = Objects.obstacle(2, 5, (9, 1), obstacleVisible)
         #obs3 = Objects.obstacle(1, 13, (5, 5), obstacleVisible)
 
-        obsx = Objects.obstacle((1, 2), (6, 7), obstacleVisible)
-        obsa = Objects.obstacle((1, 4), (8, 7), obstacleVisible)
-        obsb = Objects.obstacle((1, 2), (10, 7), obstacleVisible)
+        obsx = Objects.obstacle((1, 2), (6, 7), obsVisWall)
+        obsa = Objects.obstacle((1, 4), (8, 7), obsVisWall)
+        obsb = Objects.obstacle((1, 2), (10, 7), obsVisWall)
 
-        obs4 = Objects.obstacle((3, 2), (6, 11), obstacleVisible)
+        obs4 = Objects.obstacle((3, 2), (6, 11), obsVisWall)
 
-        obsd = Objects.obstacle((2, 1), (9, 15), obstacleVisible)
+        obsd = Objects.obstacle((2, 1), (9, 15), obsVisWall)
 
-        obse = Objects.obstacle((3, 3), (2, 14), obstacleVisible)
+        obse = Objects.obstacle((3, 3), (2, 14), obsVisWall)
 
         # top:
-        obs6 = Objects.obstacle((4, 1), (2, 17), obstacleVisible)
-        obs7 = Objects.obstacle((7, 1), (1, 20), obstacleVisible)
+        obs6 = Objects.obstacle((4, 1), (2, 17), obsVisTop)
+        obs7 = Objects.obstacle((7, 1), (1, 20), obsVisTop)
     elif level == "Level 3 (Hard)":
-        obs1 = Objects.obstacle((1, 2), (9, 1), obstacleVisible)
-        obs2 = Objects.obstacle((7, 1), (3, 4), obstacleVisible)
-        obs3 = Objects.obstacle((4, 3), (3, 6), obstacleVisible)
-        obs4 = Objects.obstacle((1, 7), (6, 10), obstacleVisible)
-        obs5 = Objects.obstacle((3, 7), (8, 10), obstacleVisible)
+        startAxis = lvf.up
+        goalAxis = lvf.right
+        startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+        goalDirection = goalAxis + vector(6.5, 0, 0)
+        start = (10, 1)  # this will be a random vector along the wall or a manual input
+        goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
+        Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
+
+        #wall
+        obs1 = Objects.obstacle((1, 2), (9, 1), obsVisWall)
+        obs2 = Objects.obstacle((7, 1), (3, 4), obsVisWall)
+        obs3 = Objects.obstacle((4, 3), (3, 6), obsVisWall)
+        obs4 = Objects.obstacle((1, 7), (6, 10), obsVisWall)
+        obs5 = Objects.obstacle((3, 7), (8, 10), obsVisWall)
+        obs6 = Objects.obstacle((2, 4), (3, 13), obsVisWall)
+
+        #top
+        obs7 = Objects.obstacle((2, 4), (3, 17), obsVisTop)
+        obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
+        obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
+        obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
 
 
     # create start and end
@@ -599,7 +640,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
     # calculate a* route
     if pipeVisible == True:
-        cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis)
+        cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath)
         if isinstance(cMatrix_route, list):
             print(cMatrix_route)
             pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots)

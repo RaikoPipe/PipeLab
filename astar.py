@@ -4,19 +4,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
 import LogicalVfunctions as lvf
+from vpython import *
+import Objects
+import time
 
 
-def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis):
-    route_call = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis)
+def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis,testingPath,testedPath):
+    route_call = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath)
     return route_call
 
+global showtime
 
-
-def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis):
+def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath):
 
 
     grid = lvf.glG_Call(x, y)  # 0s are positions we can travel on, 1s are walls(obstacles or already placed pipes)
-    route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis)
+    route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath)
     if isinstance(route, str):
         print(route)
     else:
@@ -103,11 +106,15 @@ def startRestricted(current_neighbor, startAxis):
     else: return True
 
 # fixme: this function is a god damn clusterfuck. clean it up.
-def determineNeighbors(current, goal, goalAxis, shiftpos):
+def determineNeighbors(current, start, goal, goalAxis, shiftpos):
     currToGoalDifference = (goal[0] - current[0], goal[1] - current[1])
-    if current ==(5,15):
-        print("here")
 
+    if current == start:
+        neighbors = [(0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0), (-6, 0), (0, 5), (0, -5), (5, 0),
+                     (-5, 0),
+                     (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0), (-2, 0), (0, 1), (0, -1), (1, 0),
+                     (-1, 0)]
+        return neighbors
     if current == (current[0],shiftpos-1) or current == (current[0], shiftpos+1): # current is in shiftpos or shiftpos top
         if current[0] != goal[0] and current == (current[0],shiftpos-1): # we are not on same horizontal axis as goal
             neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
@@ -155,17 +162,6 @@ def determineNeighbors(current, goal, goalAxis, shiftpos):
     (-2, 0)]
 
     return neighbors
-    # currToGoalDifference = (goal[0]-current[0],goal[1]-current[1])
-    # if current[1] == goal[1] and currToGoalDifference[0] > 0 and currToGoalDifference[0] <=7 and goalAxis == lvf.left:
-    #     neighbors = [(7,0),(6,0),(5,0),(3,0),(2,0),(1,0)]
-    # elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >=-7 and goalAxis == lvf.right:
-    #     neighbors = [(-7,0),(-6,0),(-5,0),(-3,0),(-2,0),(-1,0)]
-
-    # elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >=-7 and goalAxis == lvf.up:
-    #     neighbors = [(-7,0),(-6,0),(-5,0),(-3,0),(-2,0),(-1,0)]
-    # else: neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0),(0, 7), (0, -7), (7, 0), (-7, 0),(0, 6), (0, -6), (6, 0), (-6, 0),
-    # (0, 4), (0, -4), (4, 0), (-4, 0),(0, 3), (0, -3), (3, 0), (-3, 0),(0, 2), (0, -2), (2, 0),
-    # (-2, 0)]
 
 
 def heuristic(a,b): #fixme: how do i change it to base the score on cost effectiveness AND shortest path? skew the score a certain way?
@@ -187,7 +183,7 @@ def goal_heuristic(a,b):
 
 #fixme: pipe placement needs to result in that place beeing occupied
 # some error on start? places pipe that is 4 long
-def astar(array, start, goal, shiftpos, startAxis, goalAxis):
+def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath):
     if array[start] == 1:
         return "Start point is blocked and therefore goal cant be reached"
     elif array[goal] == 1:
@@ -208,11 +204,19 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis):
 
     heapq.heappush(oheap, (fscore[start], start))
     count = 0
+    neiCount = 0
 
     while oheap:
-
         current = heapq.heappop(oheap)[1]
 
+        if testingPath == True:
+            if count > 0:
+                currentBox.obj.visible=False
+                currentBox.obj.delete()
+                currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
+            else:
+                currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
+                count +=1
 
 
         if current == goal:
@@ -227,13 +231,20 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis):
 
         close_set.add(current) #add the from oheap popped coordinate to the closed list
 
-        nextNeighbors = determineNeighbors(current, goal, goalAxis, shiftpos)
+        nextNeighbors = determineNeighbors(current,start, goal, goalAxis, shiftpos)
+        if testingPath == True:
+            if neiCount > 0:
+                neighBox.obj.visible = False
+                neighBox.obj.delete()
+                neiCount = 0
+
 
 
         for i, j in nextNeighbors:
 
-            current_neighbor = i,j
+            current_neighbor = i, j
             neighbor = current[0] + i, current[1] + j
+
 
             tentative_g_score = gscore[current] + heuristic(current, neighbor)
             # if isRestricted(prevCurrdifference, current_neighbor):
@@ -285,6 +296,19 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis):
                 # array bound x walls
 
                 continue
+            if testingPath == True:
+                if neiCount > 0:
+                    neighBox.obj.visible = False
+                    neighBox.obj.delete()
+                    neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                    time.sleep(0.1)
+                else:
+                    neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                    neiCount += 1
+                    time.sleep(0.1)
+
+            if testedPath == True:
+                testedBox = Objects.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
 
             #if the neighbour is in the closed set and the G score is greater than the G score's for that position
             # then ignore and continue the loop

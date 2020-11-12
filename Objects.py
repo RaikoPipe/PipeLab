@@ -3,8 +3,9 @@ import numpy as np
 from win32api import GetSystemMetrics
 import LogicalVfunctions as lvf
 import main
+
 'All Wall Objects are relative to Vector(0,0,0)'
-'All other objects are relative to dotCoordMatrix(0,0,0)'
+'All other objects are relative to dotCoordMatrix(0,0)'
 
 
 # this function creates the canvas, wall and top and dots
@@ -15,7 +16,7 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
 
     # creating the scene
 
-    main.scene = canvas(width=x_res, height=y_res, center=camera_pos, background=background_color, fov=pi/4.0)
+    main.scene = canvas(width=x_res, height=y_res, center=camera_pos, background=background_color, fov=pi/5)
     print("Detected resolution: " + str(x_res) + "x" + str(y_res))
 
     # calculating some vectors needed for Projection, in case wall changes size
@@ -294,4 +295,23 @@ class cursor:
         self.cursorarrow.pos = lvf.transformToVvector(new_position) + vector(0,0,5)
         self.cursorarrow.axis = new_direction
 
+class currentDebugBox:
+    def __init__(self, coord):
+        self.pos = lvf.cMatrix[coord]
+        sizeVector = vector(1 * 10.5, 1 * 10.5, 5)
+        self.obj = box(size=sizeVector, pos=lvf.transformToVvector(self.pos),
+                       color=color.green, visible=True)
 
+class neighborDebugBox:
+    def __init__(self, coord):
+        self.pos = lvf.cMatrix[coord]
+        sizeVector = vector(1 * 10.5, 1 * 10.5, 5)
+        self.obj = box(size=sizeVector, pos=lvf.transformToVvector(self.pos),
+                       color=color.yellow, visible=True)
+
+class possiblePositionDebugBox:
+    def __init__(self, coord):
+        self.pos = lvf.cMatrix[coord]
+        sizeVector = vector(1 * 10.5, 1 * 10.5, 5)
+        self.obj = box(size=sizeVector, pos=lvf.transformToVvector(self.pos),
+                       color=color.cyan, visible=True, opacity=0.5)
