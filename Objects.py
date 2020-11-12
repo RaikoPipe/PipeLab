@@ -139,9 +139,9 @@ class pipe:
             self.pipe_length = 33.5
             self.pipe_width = 5
             self.overhang = 4.5
-            self.overhang2 = 6.5
+            self.overhang2 = -4.5
             self.dotlength= 7
-            self.secondDotDistance = 7
+            self.secondDotDistance = 6
             self.socketDotDistance = 3
             self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
             self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
@@ -163,9 +163,9 @@ class pipe:
             self.pipe_length2 = 23
             self.pipe_width = 5
             self.overhang = 4.5
-            self.overhang2= 6.5
+            self.overhang2= -4.5
             self.dotlength= 6
-            self.secondDotDistance = 6
+            self.secondDotDistance = 5
             self.socketDotDistance = 3
             self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
             self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
@@ -187,9 +187,9 @@ class pipe:
             self.pipe_length2 = 23
             self.pipe_width = 5
             self.overhang = 4.5
-            self.overhang2 = 6.5
+            self.overhang2 = -4.5
             self.dotlength= 5
-            self.secondDotDistance = 5
+            self.secondDotDistance = 4
             self.socketDotDistance = 2
             self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
             self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
@@ -271,7 +271,9 @@ class pipe:
 
 # create obstacles
 class obstacle:
-    def __init__(self, size_x, size_y, position, obstacle_visible):
+    def __init__(self, size, position, obstacle_visible):
+        size_x = size[0]
+        size_y = size[1]
         pos = lvf.cMatrix[position]
         sizeVector= vector(size_x*10.5, size_y*10.5, 5)
         box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
@@ -293,5 +295,3 @@ class cursor:
         self.cursorarrow.axis = new_direction
 
 
-#TODO: create green, yellow, magenta pipe
-#

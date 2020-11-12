@@ -32,6 +32,7 @@ class App:
 
         #functions
         def sendParameters():
+            #parameters
             wallThickness = 15  # fixed value
             topAndWallxSize = float(topAndWallxSizeString.get())
             wallHeight = float(wallHeightString.get())
@@ -42,7 +43,6 @@ class App:
             dot_distToTopTop_y = 10.1
             wallShape = vector(topAndWallxSize, wallHeight, wallThickness)
             topShape = vector(topAndWallxSize, topHeight, wallThickness)
-            camera = setCamera(CameraOption.get(), wallShape)
             x_dots = int(math.ceil((topAndWallxSize-2*dot_distFromwall_x)/dot_distance))
             y_dots = int(math.ceil((wallHeight+topHeight-dot_distFromWallBottom_y-dot_distToTopTop_y-wallThickness)/dot_distance))
             #wallToTopShiftDistance = wallHeight +wallThickness
@@ -51,18 +51,21 @@ class App:
             topcolor = vector(0.8, 0.8, 0.8)
             dotcolor = color.black
             lampvisible = False
+            #Options
+            camera = setCamera(CameraOption.get(), wallShape)
             coordinateInfoVisible = coordinateInfoOption.get()
             wallVisible = displayWallOption.get()
             topVisible = displayTopOption.get()
             obstacleVisible = displayObstacleOption.get()
             pipeVisible= displayPipesOption.get()
             backgroundColor = setBackgroundColor(backgroundCombobox.get())
+            level = levelCombobox.get()
             xRes = resWidth.get()
             yRes = resHeight.get()
             createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
                         topVisible, obstacleVisible, pipeVisible,
                         coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
-                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,xRes,yRes)
+                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,level,xRes,yRes)
 
 
 
@@ -251,12 +254,21 @@ class App:
 
         #fixme: round by multiple of 10.5
 
+        #LevelSelect
+
+        levelSelectLabel= ttk.Label(root, text = "Scene Parameters:")
+        levelSelectLabel.grid(row=0,column=4)
+
+        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)"])
+        levelCombobox.grid(row=1, column=4)
+
 
         #insert default values
         topAndWallxSizeEntry.insert(0, "100.0")
         topHeightEntry.insert(0, "115.0")
         wallHeightEntry.insert(0, "200.0")
         backgroundCombobox.set("white")
+        levelCombobox.set("Level 1 (Easy)")
         TwoDFrontCamOption.invoke()
         resolutionEntryW.insert(0, GetSystemMetrics(0))
         resolutionEntryH.insert(0, GetSystemMetrics(1))
@@ -287,8 +299,8 @@ class App:
 
     #functions
 
-def create_Route(xDots, yDots, start, end, wallToTopShiftDots):
-    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots)
+def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis):
+    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis)
     if isinstance(route, list):
         for idx,(x,y) in enumerate(route):
              route[idx] = (x+1,y+1)
@@ -358,10 +370,6 @@ def determineCorner(previousAxis, axis):
         print("Error: CornerType cant be determined")
     return cAxis
 
-
-
-
-
 def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots):
     for idx, (x,y) in enumerate(cRoute):
 
@@ -382,17 +390,16 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
         else:
             add, axis = determineAxis((differenceX, differenceY))
 
-
         #determine type of pipe that is needed to close the distance between point a and b if horizontal
         if differenceX !=0 and pointA == start:
             type = determineType(abs(differenceX), abs(differenceY))
-        elif differenceX !=0 and pointB == goal and axis == goalAxis:
+        elif differenceX !=0 and pointB == goal and axis == -goalAxis:
             type = determineType(abs(differenceX), abs(differenceY))
         elif differenceX !=0:
             type = determineType(abs(differenceX)-1, abs(differenceY))
 
         # determine type of pipe that is needed to close the distance between point a and b if vertical
-        if differenceY !=0 and pointB == goal and axis == goalAxis:
+        if differenceY !=0 and pointB == goal and axis == -goalAxis:
             type = determineType(abs(differenceX), abs(differenceY))
         elif differenceY !=0 and pointA == (x, wallToTopShiftDots) and \
                 axis == lvf.up or differenceY !=0 and pointB == (x, wallToTopShiftDots) and axis == lvf.down:
@@ -402,8 +409,13 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
         elif differenceY !=0:
             type = determineType(abs(differenceX), abs(differenceY))
 
-        #todo: implement more exceptions
-        #     - (if goal is directly after dimension shift)
+        if pointB == goal and pointA[0] == goal[0]:
+            nearGoalHor = True
+        elif pointB == goal and pointA[1] == goal[1]:
+            nearGoalVert = True
+        else:
+            nearGoalHor = False
+            nearGoalVert = False
 
         if pointA == start:
             Objects.pipe(type, (x,y), axis, pipeVisible)
@@ -411,9 +423,19 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
             Objects.pipe(type, (x + add[0], y + add[1]+1), axis, pipeVisible)
             cornerAxis= determineCorner(previousAxis, axis)
             corner = Objects.pipe("corner", (x,y), cornerAxis, pipeVisible)
+
             if cornerAxis == lvf.totop:
                 corner.corner.rotate(angle=-0.5 * pi)  # rotate object
-
+        # fixme: Doesnt work right
+        elif nearGoalHor == True and goalAxis==lvf.right or nearGoalHor == True and goalAxis==lvf.left or \
+                nearGoalVert == True and goalAxis == lvf.up or nearGoalVert == True and goalAxis == lvf.down:
+            Objects.pipe(type, (x+add[0],y+add[1]), axis, pipeVisible)
+            cornerAxis= determineCorner(previousAxis, axis)
+            corner = Objects.pipe("corner", (x,y), cornerAxis, pipeVisible)
+            cornerAxisEnd = determineCorner(axis, -goalAxis)
+            cornerEnd = Objects.pipe("corner", (x+differenceX,y+differenceY), cornerAxisEnd, pipeVisible)
+            if cornerAxis == lvf.totop:
+                corner.corner.rotate(angle=-0.5 * pi)  # rotate object
         else:
             Objects.pipe(type, (x+add[0],y+add[1]), axis, pipeVisible)
             cornerAxis= determineCorner(previousAxis, axis)
@@ -423,7 +445,7 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
-            dotDist, wallToTopShiftDots,xRes, yRes):
+            dotDist, wallToTopShiftDots,level,xRes, yRes):
     #create wall
 
     Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
@@ -431,35 +453,112 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     #create logic matrix
     lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
                   dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
+    #"Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)"
+    #obstacle chronology go from bottom to top, left to right
+    if level == "Level 1 (Easy)":
+        startAxis = lvf.up
+        goalAxis = lvf.down
+        startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+        goalDirection = goalAxis + vector(0, -4.5, 0)
+        start = (6, 1)  # this will be a random vector along the wall or a manual input
+        goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
+        Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
+        obs1 = Objects.obstacle((4,9),(7,1), obstacleVisible)
+        obs2 = Objects.obstacle((5,3),(1,1), obstacleVisible)
+        obs3 = Objects.obstacle((3,3),(3,5), obstacleVisible)
+        obs3 = Objects.obstacle((4,4),(3,13), obstacleVisible)
+        obs4 = Objects.obstacle((7,3),(3,17), obstacleVisible)
+        obs5 = Objects.obstacle((2,2),(5,22), obstacleVisible)
+    elif level == "Level 2 (Medium)":
+        #fixme: unfinished
+        startAxis = lvf.up
+        goalAxis = lvf.right
+        startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+        goalDirection = goalAxis + vector(6.5, 0, 0)
+        start = (6, 1)  # this will be a random vector along the wall or a manual input
+        goal = (1, 23)  # this will be either a random vector along wall the top or a manual input
+        Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
+        obs1 = Objects.obstacle((1, 17), (1, 5), obstacleVisible)
+        obs1 = Objects.obstacle((3, 7), (1, 1), obstacleVisible)
+        #obs2 = Objects.obstacle(2, 5, (9, 1), obstacleVisible)
+        #obs3 = Objects.obstacle(1, 13, (5, 5), obstacleVisible)
+
+        obsx = Objects.obstacle((1, 2), (6, 7), obstacleVisible)
+        obsa = Objects.obstacle((1, 4), (8, 7), obstacleVisible)
+        obsb = Objects.obstacle((1, 2), (10, 7), obstacleVisible)
+
+        obs4 = Objects.obstacle((3, 2), (6, 11), obstacleVisible)
+
+        obsd = Objects.obstacle((2, 1), (9, 15), obstacleVisible)
+
+        obse = Objects.obstacle((3, 3), (2, 14), obstacleVisible)
+
+        # top:
+        obs6 = Objects.obstacle((4, 1), (2, 17), obstacleVisible)
+        obs7 = Objects.obstacle((7, 1), (1, 20), obstacleVisible)
+    elif level == "Level 3 (Hard)":
+        obs1 = Objects.obstacle((1, 2), (9, 1), obstacleVisible)
+        obs2 = Objects.obstacle((7, 1), (3, 4), obstacleVisible)
+        obs3 = Objects.obstacle((4, 3), (3, 6), obstacleVisible)
+        obs4 = Objects.obstacle((1, 7), (6, 10), obstacleVisible)
+        obs5 = Objects.obstacle((3, 7), (8, 10), obstacleVisible)
+
 
     # create start and end
-    startAxis = lvf.left
-    goalAxis = lvf.right
-    startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-    goalDirection = goalAxis + vector(6.5, 0, 0)
-    start = (6, 1)  # this will be a random vector along the wall or a manual input
-    goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
-    Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
+    # startAxis = lvf.up
+    # goalAxis = lvf.right
+    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+    # goalDirection = goalAxis + vector(6.5, 0, 0)
+    # start = (6, 1)  # this will be a random vector along the wall or a manual input
+    # goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
+    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
     #lvf.up: vector(0,4.5,0)
     #lvf.right: vector(6.5,0,0)
     # create objects
     # create obstacles
 
-    # Level 2
-    obs1 = Objects.obstacle(4,9,(7,1), obstacleVisible)
-    obs2 = Objects.obstacle(5,3,(1,1), obstacleVisible)
-    obs3 = Objects.obstacle(3,3,(3,5), obstacleVisible)
-    obs3 = Objects.obstacle(4,4,(3,13), obstacleVisible)
-    obs4 = Objects.obstacle(7,3,(3,17), obstacleVisible)
-    obs5 = Objects.obstacle(2,2,(5,22), obstacleVisible)
+    #emptyLevel
+    # startAxis = lvf.up
+    # goalAxis = lvf.right
+    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+    # goalDirection = goalAxis + vector(6.5, 0, 0)
+    # start = (6, 1)  # this will be a random vector along the wall or a manual input
+    # goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
+    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
+
 
     #debug level1
+    # startAxis = lvf.up
+    # goalAxis = lvf.down
+    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+    # goalDirection = goalAxis + vector(0, -4.5, 0)
+    # start = (1, 1)  # this will be a random vector along the wall or a manual input
+    # goal = (10, 25)  # this will be either a random vector along wall the top or a manual input
+    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
     # obs1 = Objects.obstacle(1, 16, (5, 1), obstacleVisible)
     # obs1 = Objects.obstacle(1, 7, (5, 17), obstacleVisible)
 
     #debug level2
+    # startAxis = lvf.up
+    # goalAxis = lvf.left
+    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+    # goalDirection = goalAxis + vector(0, -4.5, 0)
+    # start = (1, 1)  # this will be a random vector along the wall or a manual input
+    # goal = (10, 1)  # this will be either a random vector along wall the top or a manual input
+    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
     # obs1 = Objects.obstacle(1, 17, (5, 1), obstacleVisible)
-    #obs1 = Objects.obstacle(1, 7, (5, 17), obstacleVisible)
+
+    #debug level 3
+    # startAxis = lvf.up
+    # goalAxis = lvf.left
+    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+    # goalDirection = goalAxis + vector(6.5, 0, 0)
+    # start = (1, 1)  # this will be a random vector along the wall or a manual input
+    # goal = (10, 25)  # this will be either a random vector along wall the top or a manual input
+    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
+    # obs1 = Objects.obstacle(9, 1, (1, 13), obstacleVisible)
+    # obs2 = Objects.obstacle(8, 1, (2, 18), obstacleVisible)
+
 
     # Level 3 (doesnt look right... pls fix)
     # obs1 = Objects.obstacle(1,2,(9,1), obstacleVisible)
@@ -474,23 +573,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     # obs9 = Objects.obstacle(4,1,(6,20), obstacleVisible)
 
     # Level 4
-    # obs1 = Objects.obstacle(3, 7, (1, 1), obstacleVisible)
-    # obs2 = Objects.obstacle(2, 5, (9, 1), obstacleVisible)
-    # obs3 = Objects.obstacle(1, 13, (5, 5), obstacleVisible)
-    #
-    # obsx = Objects.obstacle(1, 2, (6, 7), obstacleVisible)
-    # obsa = Objects.obstacle(1, 4, (8, 7), obstacleVisible)
-    # obsb = Objects.obstacle(1, 2, (10, 7), obstacleVisible)
-    #
-    # obs4 = Objects.obstacle(3, 2, (6, 11), obstacleVisible)
-    #
-    # obsd = Objects.obstacle(2, 1, (9, 15), obstacleVisible)
-    #
-    # obse = Objects.obstacle(3, 3, (2, 14), obstacleVisible)
-    #
-    # # top:
-    # obs6 = Objects.obstacle(4, 1, (2, 17), obstacleVisible)
-    # obs7 = Objects.obstacle(7, 1, (1, 20), obstacleVisible)
+
     #
     # # 2.5
     # red1 = Objects.pipe("red", (6, 1), lvf.up, pipeVisible)
@@ -515,10 +598,11 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
 
     # calculate a* route
-    cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots)
-    if isinstance(cMatrix_route, list):
-        print(cMatrix_route)
-        pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots)
+    if pipeVisible == True:
+        cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis)
+        if isinstance(cMatrix_route, list):
+            print(cMatrix_route)
+            pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots)
 
 
 
@@ -547,7 +631,8 @@ if __name__ == "__main__":
 # obstacle = Objects.obstacle(5,2,dotCoordMatrix(3,10), dotCoordMatrix)
 
 
-#TODO: - optional: make compound objects' \
+#TODO: \
 #      - create tkinter menu /'
+#      - optional: make compound objects in top and flip top by 90°
 
 
