@@ -271,7 +271,7 @@ class App:
         debugOptionsLabel= ttk.Label(root, text = "Debug options:")
         debugOptionsLabel.grid(row=0,column=5)
 
-        showTestingPathsCheckButton=ttk.Checkbutton(root, text= "Show debug objects", variable = showTestingPathsOption, style = "Nowidth.TCheckbutton")
+        showTestingPathsCheckButton=ttk.Checkbutton(root, text= "Show path finding", variable = showTestingPathsOption, style = "Nowidth.TCheckbutton")
         showTestingPathsCheckButton.grid(row=1,column=5)
 
         showTestedPathsCheckButton=ttk.Checkbutton(root, text= "Show tested positions", variable = showTestedPathsOption, style = "Nowidth.TCheckbutton")
@@ -386,7 +386,7 @@ def determineCorner(previousAxis, axis):
         print("Error: CornerType cant be determined")
     return cAxis
 
-def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots):
+def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible):
     for idx, (x,y) in enumerate(cRoute):
 
         #dont check next point if last point has been reached
@@ -398,6 +398,16 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
         pointB=cRoute[idx+1]
         differenceX = list(pointB)[0] - list(pointA)[0]
         differenceY = list(pointB)[1] - list(pointA)[1]
+
+        if pointB[1] > wallToTopShiftDots and topVisible:
+            pipeVisible = True
+        elif pointB[1] <= wallToTopShiftDots and wallVisible:
+            pipeVisible = True
+        else:
+            pipeVisible = False
+
+
+
 
         # if we process the first point, there cant be a previous one where an axis could be checked
         if idx >0:
@@ -435,6 +445,7 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
 
         if pointA == start:
             Objects.pipe(type, (x,y), axis, pipeVisible)
+            #fixme: add corner to wall instead of top
         elif pointA == (x, wallToTopShiftDots) and axis==lvf.up:
             Objects.pipe(type, (x + add[0], y + add[1]+1), axis, pipeVisible)
             cornerAxis= determineCorner(previousAxis, axis)
@@ -488,12 +499,14 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         start = (6, 1)  # this will be a random vector along the wall or a manual input
         goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
         Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
-        obs1 = Objects.obstacle((4,9),(7,1), obstacleVisible)
-        obs2 = Objects.obstacle((5,3),(1,1), obstacleVisible)
-        obs3 = Objects.obstacle((3,3),(3,5), obstacleVisible)
-        obs3 = Objects.obstacle((4,4),(3,13), obstacleVisible)
-        obs4 = Objects.obstacle((7,3),(3,17), obstacleVisible)
-        obs5 = Objects.obstacle((2,2),(5,22), obstacleVisible)
+        #wall
+        obs1 = Objects.obstacle((4,9),(7,1), obsVisWall)
+        obs2 = Objects.obstacle((5,3),(1,1), obsVisWall)
+        obs3 = Objects.obstacle((3,3),(3,5), obsVisWall)
+        obs3 = Objects.obstacle((4,4),(3,13), obsVisWall)
+        #top
+        obs4 = Objects.obstacle((7,3),(3,17), obsVisTop)
+        obs5 = Objects.obstacle((2,2),(5,22), obsVisTop)
     elif level == "Level 2 (Medium)":
         #fixme: unfinished
         startAxis = lvf.up
@@ -643,7 +656,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath)
         if isinstance(cMatrix_route, list):
             print(cMatrix_route)
-            pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots)
+            pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible)
 
 
 
