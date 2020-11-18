@@ -298,7 +298,7 @@ class cursor:
 class currentDebugBox:
     def __init__(self, coord):
         self.pos = lvf.cMatrix[coord]
-        sizeVector = vector(1 * 10.5, 1 * 10.5, 5)
+        sizeVector = vector(1 * 10.5, 1 * 10.5, 5.1)
         self.obj = box(size=sizeVector, pos=lvf.transformToVvector(self.pos),
                        color=color.green, visible=True)
 
@@ -307,7 +307,7 @@ class neighborDebugBox:
         self.pos = lvf.cMatrix[coord]
         sizeVector = vector(1 * 10.5, 1 * 10.5, 5)
         self.obj = box(size=sizeVector, pos=lvf.transformToVvector(self.pos),
-                       color=color.yellow, visible=True)
+                       color=color.blue, visible=True)
 
 class possiblePositionDebugBox:
     def __init__(self, coord):

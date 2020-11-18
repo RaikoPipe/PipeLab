@@ -53,7 +53,7 @@ def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testin
         return route
 
 
-
+'Custom Restriction Set:'
 #check through the whole x-space the neighbor wants to occupy and check if it crosses an obstacle
 def previousXoccupied(neighbor, current, array):
 
@@ -105,7 +105,12 @@ def startRestricted(current_neighbor, startAxis):
         return False
     else: return True
 
+def dimensionShiftViolated(j, shiftpos, current):
+    if j > (shiftpos - 1) - current[1] and current[1] < (shiftpos - 1):
+        return True
+
 # fixme: this function is a god damn clusterfuck. clean it up.
+'Custom Neighbor Set'
 def determineNeighbors(current, start, goal, goalAxis, shiftpos):
     currToGoalDifference = (goal[0] - current[0], goal[1] - current[1])
 
@@ -164,6 +169,7 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
     return neighbors
 
 
+
 def heuristic(a,b): #fixme: how do i change it to base the score on cost effectiveness AND shortest path? skew the score a certain way?
     #manhattan distance
     distance = np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
@@ -211,8 +217,9 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
         if testingPath == True:
             if count > 0:
-                currentBox.obj.visible=False
-                currentBox.obj.delete()
+                currentBox.obj.color = vector(0,0.5,0)
+                currentBox.obj.opacity = 0.5
+                #currentBox.obj.delete()
                 currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
             else:
                 currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
@@ -220,6 +227,17 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
 
         if current == goal:
+
+            if testingPath == True:
+                if neiCount > 0:
+                    neighBox.obj.visible = False
+                    neighBox.obj.delete()
+                    neiCount = 0
+
+            if testingPath == True:
+                if count > 0:
+                    currentBox.obj.color = vector(0, 0.5, 0)
+                    currentBox.obj.opacity = 0.5
 
             data = []
 
@@ -238,8 +256,6 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
                 neighBox.obj.delete()
                 neiCount = 0
 
-
-
         for i, j in nextNeighbors:
 
             current_neighbor = i, j
@@ -251,10 +267,11 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
             #     continue
 
             #if current neighbor is above shiftpos and current position is smaller than shiftpos, skip
-            if j > (shiftpos-1) - current[1] and current[1] < (shiftpos-1): #or j < current[1] - (shiftpos+1)  and current[1] > (shiftpos+1):
+            if dimensionShiftViolated(j, shiftpos, current):
                 continue
 
             #if current has reached shiftpos, then allow going vertical again
+            #fixme: add to custom restriction set
             if current != (current[0], shiftpos-1) or current == (current[0], shiftpos-1) and current_neighbor[0] != 0:
                 if current != start:
 
@@ -301,11 +318,11 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
                     neighBox.obj.visible = False
                     neighBox.obj.delete()
                     neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                    time.sleep(0.1)
+                    time.sleep(0.01)
                 else:
                     neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                     neiCount += 1
-                    time.sleep(0.1)
+                    time.sleep(0.01)
 
             if testedPath == True:
                 testedBox = Objects.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))

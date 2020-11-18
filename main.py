@@ -264,7 +264,7 @@ class App:
         levelSelectLabel= ttk.Label(root, text = "Level Select:")
         levelSelectLabel.grid(row=0,column=4)
 
-        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)"])
+        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)", "Debug Long"])
         levelCombobox.grid(row=1, column=4)
 
         # debugField
@@ -556,6 +556,29 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
         obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
         obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
+    elif level == "Debug Long":
+        startAxis = lvf.up
+        goalAxis = lvf.right
+        startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+        goalDirection = goalAxis + vector(6.5, 0, 0)
+        start = (1, 1)  # this will be a random vector along the wall or a manual input
+        goal = (100, 25)  # this will be either a random vector along wall the top or a manual input
+        Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
+
+        #wall
+        obs1 = Objects.obstacle((1, 2), (9, 1), obsVisWall)
+        obs2 = Objects.obstacle((7, 1), (3, 4), obsVisWall)
+        obs3 = Objects.obstacle((4, 3), (3, 6), obsVisWall)
+        obs4 = Objects.obstacle((1, 7), (6, 10), obsVisWall)
+        obs5 = Objects.obstacle((3, 7), (8, 10), obsVisWall)
+        obs6 = Objects.obstacle((2, 4), (3, 13), obsVisWall)
+
+        #top
+        obs7 = Objects.obstacle((2, 4), (3, 17), obsVisTop)
+        obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
+        obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
+        obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
+
 
 
     # create start and end
