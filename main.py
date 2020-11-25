@@ -469,7 +469,7 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
 
         if pointA == start:
             Objects.pipe(type, (x,y), axis, pipeVisible)
-            #fixme: add corner to wall instead of top
+            #fixme: add corner to top instead of wall
         elif pointA == (x, wallToTopShiftDots) and axis==lvf.up:
             Objects.pipe(type, (x + add[0], y + add[1]+1), axis, pipeVisible)
             cornerAxis= determineCorner(previousAxis, axis)
@@ -799,9 +799,5 @@ if __name__ == "__main__":
 # cursor.Change(dotCoordMatrix(4,4), lvf.left)
 # obstacle = Objects.obstacle(5,2,dotCoordMatrix(3,10), dotCoordMatrix)
 
-
-#TODO: \
-#      - create tkinter menu /'
-#      - optional: make compound objects in top and flip top by 90°
 
 

@@ -152,7 +152,7 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
                         (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
                         (-2, 0)]
             return neighbors
-        #fixme: The following might be useless and wrong, since if the goal is in reach but still blocked it will be stuck
+        #The following might be useless and wrong, since if the goal is in reach but still blocked it will be stuck
         # elif abs(currToGoalDifference[1]) <= 8 and current[0] == goal[0]: # we are on the same axis as goal and its reachable
         #     #goal is on same horizontal axis, goal is above current
         #     if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 8 and goalAxis == lvf.down:
@@ -200,9 +200,8 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
 
 
 def heuristic(a,b): #fixme: how do i change it to base the score on cost effectiveness AND shortest path? skew the score a certain way?
-    #fixme: manhattan distance doesnt work because we always move more than one step at a time
     #manhattan distance
-    distance = np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
+    distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
     return distance
     # manhattan distance: np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
     # np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
@@ -213,8 +212,6 @@ def heuristic(a,b): #fixme: how do i change it to base the score on cost effecti
 
 
 
-#fixme: pipe placement needs to result in that place beeing occupied
-# some error on start? places pipe that is 4 long
 def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath):
     if array[start] == 1:
         return "Start point is blocked and therefore goal cant be reached"
@@ -303,7 +300,6 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
                 continue
 
             #if current has reached shiftpos, then allow going vertical again
-            #fixme: add to custom restriction set
             if directionalRulesApply(current, current_neighbor, shiftpos):
                 if current != start:
                     #restrict the way pipes can be placed according to rules
@@ -376,4 +372,3 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
     return "Creating route is not possible"
 
 
-#TODO: understand astar method
