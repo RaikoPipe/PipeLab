@@ -199,7 +199,7 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
 
 
 
-def heuristic(a,b): #fixme: how do i change it to base the score on cost effectiveness AND shortest path? skew the score a certain way?
+def heuristic(a,b): #fixme: Artificially change the score to favor long pipes
     #manhattan distance
     distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
     return distance
