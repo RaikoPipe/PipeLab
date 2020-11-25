@@ -86,8 +86,23 @@ def previousYoccupied(neighbor, current, array):
 
     return False
 
+def directionalRulesApply(current, current_neighbor, shiftpos):
+    if current[1] == shiftpos-1:
+        print("here")
+
+    if current == (current[0], shiftpos - 1) and current_neighbor[1] > 0:
+        #we are at shiftpos-1 and want to go up
+        return False
+
+    elif current == (current[0], shiftpos +1) and current_neighbor[1] < 0:
+        #we are at shiftpos+1 and want to go down
+        return False
+
+    else:
+        return True
+
 #check if restriction that it needs to change direction by 90° after laying a pipe or pipe combo isn't violated.
-def isRestricted(cameFromDifference, currentNeighbor):
+def isDirectionRestricted(cameFromDifference, currentNeighbor):
     if cameFromDifference[0] > 0 and currentNeighbor[0] != 0: #if true, then neighbor that wants to go horizontally is disallowed
         return True
     elif cameFromDifference[1] > 0 and currentNeighbor[1] != 0: #if true, then neighbor that wants to go vertically is disallowed
@@ -109,59 +124,73 @@ def dimensionShiftViolated(j, shiftpos, current):
     if j > (shiftpos - 1) - current[1] and current[1] < (shiftpos - 1):
         return True
 
-# fixme: this function is a god damn clusterfuck. clean it up.
+# fixme: There is a neighbor somewhere that shouldnt work with length 5
 'Custom Neighbor Set'
 def determineNeighbors(current, start, goal, goalAxis, shiftpos):
     currToGoalDifference = (goal[0] - current[0], goal[1] - current[1])
 
+    #current is at start
     if current == start:
+        # neighbor needs to be shortened by 1 for some reason if current = start
         neighbors = [(0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0), (-6, 0), (0, 5), (0, -5), (5, 0),
                      (-5, 0),
                      (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0), (-2, 0), (0, 1), (0, -1), (1, 0),
                      (-1, 0)]
         return neighbors
-    if current == (current[0],shiftpos-1) or current == (current[0], shiftpos+1): # current is in shiftpos or shiftpos top
-        if current[0] != goal[0] and current == (current[0],shiftpos-1): # we are not on same horizontal axis as goal
+
+    # current is in shiftpos-1 or shiftpos+1
+    if current == (current[0],shiftpos-1) or current == (current[0], shiftpos+1):
+        # we are not on same horizontal axis as goal and at shiftpos-1
+        if current[0] != goal[0] and current == (current[0],shiftpos-1):
             neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
                         (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
                         (-2, 0)]
             return neighbors
-        #ixme: correct neighbors
+        # we are not on same horizontal axis as goal and at shiftpos+1
         elif current[0] != goal[0] and current == (current[0],shiftpos+1): # we are not on same horizontal axis as goal
             neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
                         (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
                         (-2, 0)]
-        elif abs(currToGoalDifference[1]) <= 8 and current[0] == goal[0]: # goal is in reach and we are on the same axis
-            #goal is on same horizontal axis
-            if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 8 and goalAxis == lvf.down:
-                neighbors = [(0, 8), (0, 7), (0, 6), (0, 4), (0, 3), (0, 2)]
-                return neighbors
-            elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -8 and goalAxis == lvf.up:
-                neighbors = [(0, -8), (0, -7), (0, -6), (0, -4), (0, -3), (0, -2)]
-                return neighbors
-        elif current[0] == goal [0] and abs(currToGoalDifference[1]) > 8: #we are on the same axis as goal, but its not reachable
-            neighbors = [(8, 0), (-8, 0), (0, 8), (0, -8), (7, 0), (-7, 0), (0, 7), (0, -7), (6, 0),
-                         (-6, 0),
-                         (0, 5), (0, -5), (4, 0), (-4, 0), (0, 4), (0, -4), (3, 0), (-3, 0), (0, 3), (0, -3), (2, 0),
-                         (-2, 0)]
             return neighbors
-
-
-
+        #fixme: The following might be useless and wrong, since if the goal is in reach but still blocked it will be stuck
+        # elif abs(currToGoalDifference[1]) <= 8 and current[0] == goal[0]: # we are on the same axis as goal and its reachable
+        #     #goal is on same horizontal axis, goal is above current
+        #     if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 8 and goalAxis == lvf.down:
+        #         neighbors = [(0, 8), (0, 7), (0, 6), (0, 4), (0, 3), (0, 2)]
+        #         return neighbors
+        #     #goal is on same horizontal axis, goal is below current
+        #     elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -8 and goalAxis == lvf.up:
+        #         neighbors = [(0, -8), (0, -7), (0, -6), (0, -4), (0, -3), (0, -2)]
+        #         return neighbors
+        # elif current[0] == goal[0] and abs(currToGoalDifference[1]) > 8: #we are on the same axis as goal, but its not reachable
+        #     neighbors = [(8, 0), (-8, 0), (0, 8), (0, -8), (7, 0), (-7, 0), (0, 7), (0, -7), (6, 0),
+        #                  (-6, 0),
+        #                  (0, 5), (0, -5), (4, 0), (-4, 0), (0, 4), (0, -4), (3, 0), (-3, 0), (0, 3), (0, -3), (2, 0),
+        #                  (-2, 0)]
+        #     return neighbors
 
 
     #current is not in shiftpos but goal is in reach
+    # ->check if we can close the distance by using a pipe without a corner first
     #goal is one same horizontal axis
     if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 7 and goalAxis == lvf.down:
-        neighbors = [(0, 7), (0, 6), (0, 5), (0, 3), (0, 2), (0, 1)]
+        neighbors = [(0, 7), (0, 6), (0, 5), (0, 3), (0, 2), (0, 1), (0, -8), (8, 0), (-8, 0), (0, -7), (7, 0),
+                     (-7, 0), (0, -6), (6, 0), (-6, 0), (0, -4), (4, 0), (-4, 0), (0, -3), (3, 0), (-3, 0), (0, -2),
+                     (2, 0),(-2, 0)]
     elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -7 and goalAxis == lvf.up:
-        neighbors = [(0, -7), (0, -6), (0, -5), (0, -3), (0, -2), (0, -1)]
+        neighbors = [(0, -7), (0, -6), (0, -5), (0, -3), (0, -2), (0, -1),(0, 8),  (8, 0), (-8, 0),(0, 7),  (7, 0),
+                     (-7, 0),(0, 6), (6, 0), (-6, 0),(0, 4), (4, 0), (-4, 0),(0, 3), (0, -3), (3, 0), (0, 2),
+                     (2, 0),(-2, 0)]
     #goal is on same vertical axis
     elif current[1] == goal[1] and currToGoalDifference[0] > 0 and currToGoalDifference[0] <= 7 and goalAxis == lvf.left:
-        neighbors = [(7, 0), (6, 0), (5, 0), (3, 0), (2, 0), (1, 0)]
+        neighbors = [(7, 0), (6, 0), (5, 0), (3, 0), (2, 0), (1, 0), (0, 8), (0, -8), (-8, 0),(0, 7), (0, -7), (-7, 0),
+                     (0, 6), (0, -6), (-6, 0), (0, 4), (0, -4),  (-4, 0),(0, 3), (0, -3),  (-3, 0),(0, 2), (0, -2),
+                     (-2, 0)]
     elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >= 7 and goalAxis == lvf.right:
-        neighbors = [(-7, 0), (-6, 0), (-5, 0), (-3, 0), (-2, 0), (-1, 0)]
-    #goal is not in reach
+        neighbors = [(-7, 0), (-6, 0), (-5, 0), (-3, 0), (-2, 0), (-1, 0), (0, 8), (0, -8), (8, 0), (0, 7), (0, -7),
+                     (7, 0), (0, 6), (0, -6), (6, 0), (0, 4), (0, -4), (4, 0),(0, 3), (0, -3), (3, 0),(0, 2), (0, -2),
+                     (2, 0)]
+    #goal is not in reach (Standard neighbors=
     else: neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0),(0, 7), (0, -7), (7, 0), (-7, 0),(0, 6), (0, -6), (6, 0), (-6, 0),
     (0, 4), (0, -4), (4, 0), (-4, 0),(0, 3), (0, -3), (3, 0), (-3, 0),(0, 2), (0, -2), (2, 0),
     (-2, 0)]
@@ -171,6 +200,7 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
 
 
 def heuristic(a,b): #fixme: how do i change it to base the score on cost effectiveness AND shortest path? skew the score a certain way?
+    #fixme: manhattan distance doesnt work because we always move more than one step at a time
     #manhattan distance
     distance = np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
     return distance
@@ -178,13 +208,9 @@ def heuristic(a,b): #fixme: how do i change it to base the score on cost effecti
     # np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
     #return distance
 
-def goal_heuristic(a,b):
-    #manhattan distance
-    distance = np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
-    return distance
-    # manhattan distance: np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
-    # np.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
-    #return distance
+
+
+
 
 
 #fixme: pipe placement needs to result in that place beeing occupied
@@ -204,7 +230,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
     gscore = {start: 0}
 
-    fscore = {start: goal_heuristic(start, goal)}
+    fscore = {start: heuristic(start, goal)}
 
     oheap = []
 
@@ -262,9 +288,15 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
             neighbor = current[0] + i, current[1] + j
 
 
+
             tentative_g_score = gscore[current] + heuristic(current, neighbor)
             # if isRestricted(prevCurrdifference, current_neighbor):
             #     continue
+
+            #if the neighbour is in the closed set and the G score is greater than the G score's for that position
+            # then ignore and continue the loop
+            if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
+                continue
 
             #if current neighbor is above shiftpos and current position is smaller than shiftpos, skip
             if dimensionShiftViolated(j, shiftpos, current):
@@ -272,15 +304,15 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
             #if current has reached shiftpos, then allow going vertical again
             #fixme: add to custom restriction set
-            if current != (current[0], shiftpos-1) or current == (current[0], shiftpos-1) and current_neighbor[0] != 0:
+            if directionalRulesApply(current, current_neighbor, shiftpos):
                 if current != start:
-
                     #restrict the way pipes can be placed according to rules
                     came_fromDifference = [abs(current[0] - came_from[current][0]), abs(current[1] - came_from[current][1])]
-                    if isRestricted(came_fromDifference, current_neighbor):
+                    if isDirectionRestricted(came_fromDifference, current_neighbor):
                         continue
                 elif startRestricted(current_neighbor, startAxis):
                      continue
+
 
 
             if 0 <= neighbor[0] < array.shape[0]:
@@ -313,28 +345,26 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
                 # array bound x walls
 
                 continue
-            if testingPath == True:
-                if neiCount > 0:
-                    neighBox.obj.visible = False
-                    neighBox.obj.delete()
-                    neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                    time.sleep(0.01)
-                else:
-                    neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                    neiCount += 1
-                    time.sleep(0.01)
 
-            if testedPath == True:
-                testedBox = Objects.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
 
-            #if the neighbour is in the closed set and the G score is greater than the G score's for that position
-            # then ignore and continue the loop
-            if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
-                continue
+
 
             #If the G score for the neighbour is less than the other G score's for that position OR if this neighbour
             # is not in the open list (i.e. a new, untested position) then update our lists and add to the open list
             if tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap]:
+                if testingPath == True:
+                    if neiCount > 0:
+                        neighBox.obj.visible = False
+                        neighBox.obj.delete()
+                        neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        time.sleep(0.1)
+                    else:
+                        neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neiCount += 1
+                        time.sleep(0.1)
+
+                if testedPath == True:
+                    testedBox = Objects.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
 
                 came_from[neighbor] = current
 

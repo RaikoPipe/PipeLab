@@ -12,6 +12,11 @@ righttoup = vector(-1,0,0)
 totop = vector(0,0.9999,0)
 fromwall = vector(0,-0.9999,0)
 
+upSG=vector(0, -4.5, 0)
+rightSG=vector(4.5, 0, 0)
+leftSG=vector(-4.5, 0, 0)
+downSG=vector(0, 4.5, 0)
+
 
 # trasform numpy array into Vpython vector (why is there no function in vpython for this!?)
 def transformToVvector(npVector):

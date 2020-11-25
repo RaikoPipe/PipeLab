@@ -8,6 +8,7 @@ import astar as agt
 import tkinter as tk
 from tkinter import ttk
 import math
+import random
 
 
 
@@ -31,6 +32,7 @@ class App:
         coordinateInfoOption = tk.IntVar()
         showTestingPathsOption = tk.IntVar()
         showTestedPathsOption = tk.IntVar()
+        randomizeOption = tk.IntVar()
 
         #functions
         def sendParameters():
@@ -63,7 +65,9 @@ class App:
             backgroundColor = setBackgroundColor(backgroundCombobox.get())
             testingPath = showTestingPathsOption.get()
             testedPath = showTestedPathsOption.get()
-            level = levelCombobox.get()
+            if randomizeOption.get() == 0:
+                level = levelCombobox.get()
+            else: level = obstacleProbabilityCombobox.get()
             xRes = resWidth.get()
             yRes = resHeight.get()
             createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
@@ -89,6 +93,14 @@ class App:
                 topAndWallxSizeEntry.config(state="enabled")
                 topHeightEntry.config(state="enabled")
                 wallHeightEntry.config(state="enabled")
+
+        def setRandomizeLevel():
+            if randomizeOption.get() == 1:
+                levelCombobox.config(state="disabled")
+                obstacleProbabilityCombobox.config(state="enabled")
+            else:
+                levelCombobox.config(state="enabled")
+                obstacleProbabilityCombobox.config(state="disabled")
 
 
         def setCamera(Option, wallShape):
@@ -267,6 +279,15 @@ class App:
         levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)", "Debug Long"])
         levelCombobox.grid(row=1, column=4)
 
+        randomizeCheckButton=ttk.Checkbutton(root, text= "Create random Level", variable =randomizeOption, command = setRandomizeLevel, style = "Nowidth.TCheckbutton")
+        randomizeCheckButton.grid(row=2,column=4)
+
+        obstacleProbabilityLabel= ttk.Label(root, text = "Obstacle frequency: ")
+        obstacleProbabilityLabel.grid(row=3,column=4)
+
+        obstacleProbabilityCombobox = ttk.Combobox(root, values=["Low", "Medium", "High"])
+        obstacleProbabilityCombobox.grid(row=4, column=4)
+
         # debugField
         debugOptionsLabel= ttk.Label(root, text = "Debug options:")
         debugOptionsLabel.grid(row=0,column=5)
@@ -276,6 +297,8 @@ class App:
 
         showTestedPathsCheckButton=ttk.Checkbutton(root, text= "Show tested positions", variable = showTestedPathsOption, style = "Nowidth.TCheckbutton")
         showTestedPathsCheckButton.grid(row=2,column=5)
+
+
 
 
 
@@ -292,6 +315,7 @@ class App:
         displayTopCheckButton.invoke()
         displayWallCheckButton.invoke()
         displayObstacleCheckButton.invoke()
+        obstacleProbabilityCombobox.config(state="disabled")
 
         #call functions that check after some time
         calcDotCall()
@@ -470,6 +494,38 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
             if cornerAxis == lvf.totop:
                 corner.corner.rotate(angle=-0.5 * pi)  # rotate object
 
+def randomPrepInit(xDots,yDots, backgroundColor):
+    #Initialise Start and Endpositions for random position
+    possible_start_positions = [((1,1),lvf.up, lvf.upSG), ((6,1),lvf.up, lvf.upSG), ((xDots,1),lvf.up, lvf.upSG), ((1,3),lvf.right, lvf.rightSG), ((xDots,3),lvf.left, lvf.leftSG)]
+    #possible_start_axis = {lvf.upTup, lvf.upTup, lvf.upTup, lvf.rightTup, lvf.leftTup}
+    possible_goal_positions = [((1,yDots),lvf.down, lvf.downSG), ((6,yDots),lvf.down, lvf.downSG), ((10,yDots),lvf.down, lvf.downSG), ((1,yDots-3), lvf.right, lvf.rightSG), ((10,yDots-3),lvf.left, lvf.leftSG)]
+    #possible_goal_axis = {lvf.downTup, lvf.downTup, lvf.downTup, lvf.rightTup, lvf.leftTup}
+
+    randomSelectStart = random.randint(0, 4)
+    randomSelectGoal = random.randint(0, 4)
+
+    start = possible_start_positions[randomSelectStart][0]
+    goal = possible_goal_positions[randomSelectGoal][0]
+    startAxis = possible_start_positions[randomSelectStart][1]
+    goalAxis = possible_goal_positions[randomSelectGoal][1]
+    #axis + displacementVector
+    startDirection = possible_start_positions[randomSelectStart][1] + possible_start_positions[randomSelectStart][2]
+    goalDirection = possible_goal_positions[randomSelectGoal][1] + possible_goal_positions[randomSelectGoal][2]
+    Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
+    PrepInitData = [start, goal, startAxis, goalAxis]
+    return PrepInitData
+
+def RandomLevelCreator(probability, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop):
+    #create random Object on wall
+    for i in range(3):
+        #if random.random() <= probability:
+        randPosX = random.randint(1, xDots-5)
+        randPosY = random.randint(1, wallToTopShiftDots-5)
+        randSizeX = random.randint(1, 5)
+        randSizeY = random.randint(1, 5)
+        Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
+        #else: continue
+
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
             dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes):
@@ -490,6 +546,10 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         obsVisTop = True
     else: obsVisTop = False
 
+    random = False
+
+
+
     if level == "Level 1 (Easy)":
         # fixme: unfinished
         startAxis = lvf.up
@@ -507,6 +567,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         #top
         obs4 = Objects.obstacle((7,3),(3,17), obsVisTop)
         obs5 = Objects.obstacle((2,2),(5,22), obsVisTop)
+        random = False
     elif level == "Level 2 (Medium)":
         #fixme: unfinished
         startAxis = lvf.up
@@ -534,6 +595,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         # top:
         obs6 = Objects.obstacle((4, 1), (2, 17), obsVisTop)
         obs7 = Objects.obstacle((7, 1), (1, 20), obsVisTop)
+        random = False
     elif level == "Level 3 (Hard)":
         startAxis = lvf.up
         goalAxis = lvf.right
@@ -556,6 +618,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
         obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
         obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
+        random = False
     elif level == "Debug Long":
         startAxis = lvf.up
         goalAxis = lvf.right
@@ -578,6 +641,14 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
         obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
         obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
+        random = False
+
+    elif level == "Low":
+        frequency = 3
+        random = True
+        PrepInitData = randomPrepInit(xDots,yDots, backgroundColor)
+
+
 
 
 
@@ -675,11 +746,32 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
 
     # calculate a* route
-    if pipeVisible == True:
-        cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath)
-        if isinstance(cMatrix_route, list):
-            print(cMatrix_route)
-            pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible)
+    cMatrix_route = ""
+    if random == False:
+        if pipeVisible == True:
+            cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath)
+            if isinstance(cMatrix_route, list):
+                print(cMatrix_route)
+                pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible)
+    elif random == True:
+        start = PrepInitData[0]
+        goal = PrepInitData[1]
+        startAxis = PrepInitData[2]
+        goalAxis = PrepInitData[3]
+
+        while isinstance(cMatrix_route, list) == False:
+            #fixme: remove old obstacles with every new instance
+            lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist,
+                          wall_thickness=wallThickness,
+                          dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible,
+                          wall_visible=wallVisible)
+            RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop)
+            cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
+                                         testingPath,
+                                         testedPath)
+        pipeBuilder(cMatrix_route, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
+                    topVisible)
+
 
 
 
