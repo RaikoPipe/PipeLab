@@ -3,10 +3,13 @@ import numpy as np
 from win32api import GetSystemMetrics
 import LogicalVfunctions as lvf
 import main
+import weakref
 
 'All Wall Objects are relative to Vector(0,0,0)'
 'All other objects are relative to dotCoordMatrix(0,0)'
 
+global obstacleDict
+obstacleDict = weakref.WeakValueDictionary()
 
 # this function creates the canvas, wall and top and dots
 
@@ -82,6 +85,8 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
         vector_maxwidthheight_label = label(pos=vector(wallWidth,wallHeight+topHeight,wall_thickness), text=str(wallWidth) + "cm" + " x " +str(wallHeight+topHeight)+"cm", xoffset=20, yoffset=50, space=30,
                                            height=16, border=4, font="sans", color=text_color)
 
+    obstacleList = [] #will be used to identify obstacles later
+
 
 
 def closeScene():
@@ -91,7 +96,7 @@ def closeScene():
 
 
 
-def StartEndInt(start_position, end_position, start_direction, end_direction, background_color):
+def StartEndInt(start_position, end_position, start_direction, end_direction, background_color, wallvisible, topvisible):
     if background_color == color.black:
         text_color = color.white
     else: text_color = color.black
@@ -101,16 +106,16 @@ def StartEndInt(start_position, end_position, start_direction, end_direction, ba
 
 
     startcylinder = cylinder(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - start_direction,axis=start_direction, size=vector(1, 5, 5),
-                             color=color.green)
-    start_label = label(pos=lvf.transformToVvector(startPos), xoffset = -50, text="Start", space=30,
+                             color=color.green, visible = wallvisible)
+    start_label = label(pos=lvf.transformToVvector(startPos), xoffset = 30, text="Start", space=30,
                         height=16, border=4,
-                        font="sans", color=text_color)
+                        font="sans", color=text_color, visible = wallvisible)
 
     endcylinder = cylinder(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=end_direction, size=vector(1, 5, 5),
-                           color=color.orange)
-    end_label = label(pos=lvf.transformToVvector(endPos), xoffset = 50, text="Goal", space=30,
+                           color=color.orange, visible = topvisible)
+    end_label = label(pos=lvf.transformToVvector(endPos), xoffset = 30, text="Goal", space=30,
                       height=16, border=4,
-                      font="sans", color=text_color)
+                      font="sans", color=text_color, visible= topvisible)
 
     pass
 
@@ -129,7 +134,7 @@ def createSocket(pipe_coord, pipe_axis,socketDotDistance, pipe_visible):
              size=vector(pipe_length, pipe_width, pipe_width),
              color=color.black, visible=pipe_visible)
     lvf.setOccP_Call(pipe_coord, dotlength, pipe_axis)
-    print("socket created at position: " + str(pipe_coord))
+    #print("socket created at position: " + str(pipe_coord))
 
 # this class creates all objects except wall, top and obstacles and checks if they can be placed
 class pipe:
@@ -262,7 +267,7 @@ class pipe:
             lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
         else:
             sizeVector= vector(1*10.5, 1*10.5, 5)
-            box(size=sizeVector, pos = lvf.transformToVvector(self.pipe_pos), color=color.orange, visible=True)
+            box(size=sizeVector, pos = lvf.transformToVvector(self.pipe_pos), color=color.red, visible=True, opacity = 0.9)
             #lvf.setOccO_Call(1,1, self.pipe_pos)
             print("Error" +" at position: " + str(pipe_coord))
 
@@ -277,13 +282,19 @@ class obstacle:
         size_y = size[1]
         pos = lvf.cMatrix[position]
         sizeVector= vector(size_x*10.5, size_y*10.5, 5)
-        box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
+        self.obstacle = box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
         lvf.setOccO_Call(size_x,size_y, position)
         print("Obstacle with size: " + str([size_x, size_y]) +" at position: " + str(position) + " created ")
+        remember(self.obstacle)
+
         pass
 
     pass
 
+def remember(obj):
+    oid = id(obj)
+    obstacleDict[oid] = obj
+    return oid
 
 class cursor:
     def __init__(self, start_direction, start_position):

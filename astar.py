@@ -25,7 +25,7 @@ def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testin
     else:
         route = route + [start_point]
         route = route[::-1]
-        print(route)
+        print("astar path creation successful")
 
         # plot map and path
         x_coords = []
@@ -87,9 +87,6 @@ def previousYoccupied(neighbor, current, array):
     return False
 
 def directionalRulesApply(current, current_neighbor, shiftpos):
-    if current[1] == shiftpos-1:
-        print("here")
-
     if current == (current[0], shiftpos - 1) and current_neighbor[1] > 0:
         #we are at shiftpos-1 and want to go up
         return False
@@ -139,19 +136,38 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
         return neighbors
 
     # current is in shiftpos-1 or shiftpos+1
-    if current == (current[0],shiftpos-1) or current == (current[0], shiftpos+1):
-        # we are not on same horizontal axis as goal and at shiftpos-1
-        if current[0] != goal[0] and current == (current[0],shiftpos-1):
-            neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
-                        (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
-                        (-2, 0)]
+    #fixme: differentiate between close to goal or not
+    #goal is not in reach
+    if current == (current[0], shiftpos - 1) or current == (current[0], shiftpos + 1):
+        if abs(currToGoalDifference[0]) > 8 or abs(currToGoalDifference[1]) > 8:
+
+            # we are not on same horizontal axis as goal and at shiftpos-1
+
+            if current[0] != goal[0] and current == (current[0],shiftpos-1):
+                neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
+                            (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
+                            (-2, 0)]
+                return neighbors
+            # we are not on same horizontal axis as goal and at shiftpos+1
+            elif current[0] != goal[0] and current == (current[0],shiftpos+1): # we are not on same horizontal axis as goal
+                neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
+                            (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
+                            (-2, 0)]
+                return neighbors
+            else:
+                neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0), (0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0),
+                             (-6, 0),
+                             (0, 4), (0, -4), (4, 0), (-4, 0), (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0),
+                             (-2, 0)]
+                return neighbors
+        else:
+            neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0), (0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0),
+                         (-6, 0),
+                         (0, 4), (0, -4), (4, 0), (-4, 0), (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0),
+                         (-2, 0)]
             return neighbors
-        # we are not on same horizontal axis as goal and at shiftpos+1
-        elif current[0] != goal[0] and current == (current[0],shiftpos+1): # we are not on same horizontal axis as goal
-            neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
-                        (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
-                        (-2, 0)]
-            return neighbors
+
+
         #The following might be useless and wrong, since if the goal is in reach but still blocked it will be stuck
         # elif abs(currToGoalDifference[1]) <= 8 and current[0] == goal[0]: # we are on the same axis as goal and its reachable
         #     #goal is on same horizontal axis, goal is above current
@@ -186,7 +202,7 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
         neighbors = [(7, 0), (6, 0), (5, 0), (3, 0), (2, 0), (1, 0), (0, 8), (0, -8), (-8, 0),(0, 7), (0, -7), (-7, 0),
                      (0, 6), (0, -6), (-6, 0), (0, 4), (0, -4),  (-4, 0),(0, 3), (0, -3),  (-3, 0),(0, 2), (0, -2),
                      (-2, 0)]
-    elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >= 7 and goalAxis == lvf.right:
+    elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >= -7 and goalAxis == lvf.right:
         neighbors = [(-7, 0), (-6, 0), (-5, 0), (-3, 0), (-2, 0), (-1, 0), (0, 8), (0, -8), (8, 0), (0, 7), (0, -7),
                      (7, 0), (0, 6), (0, -6), (6, 0), (0, 4), (0, -4), (4, 0),(0, 3), (0, -3), (3, 0),(0, 2), (0, -2),
                      (2, 0)]

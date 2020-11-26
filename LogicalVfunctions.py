@@ -9,13 +9,13 @@ downtoleft = vector(1,0,0)
 downtoright = vector(0,1,0)
 lefttoup = vector(0,-1,0)
 righttoup = vector(-1,0,0)
-totop = vector(0,0.9999,0)
-fromwall = vector(0,-0.9999,0)
+totop = vector(0,-0.9999,0)
+#fromwall = vector(0,-0.9999,0)
 
-upSG=vector(0, -4.5, 0)
+upSG=vector(0, 4.5, 0)
 rightSG=vector(4.5, 0, 0)
 leftSG=vector(-4.5, 0, 0)
-downSG=vector(0, 4.5, 0)
+downSG=vector(0, -4.5, 0)
 
 
 # trasform numpy array into Vpython vector (why is there no function in vpython for this!?)
@@ -52,10 +52,10 @@ def determineDirectionalOverhang(type, pipe_axis, overhang, width):
             direction = vector(-2.9, 2.9,5)
         elif pipe_axis == righttoup:
             direction = vector(2.9,2.9,5)# from right to up
-        elif pipe_axis == fromwall:
-            direction = vector(0, 0.5, 7.85)
+        # elif pipe_axis == fromwall:
+        #     direction = vector(0, 0.5, 7.85)
         elif pipe_axis == totop:
-            direction = vector(0, -0.5, 7.85)
+            direction = vector(0, 0.5, 7.85)
         else:
             print("pipe axis not recognized")
     else:
