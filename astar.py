@@ -135,37 +135,67 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
                      (-1, 0)]
         return neighbors
 
+    #current is not in shiftpos but goal is in reach
+    # ->check if we can close the distance by using a pipe without a corner first
+    #goal is one same horizontal axis
+    if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 8 and goalAxis == lvf.down:
+        neighbors = [(0, 7), (0, 6), (0, 5), (0, 3), (0, 2), (0, 1), (0, -8), (8, 0), (-8, 0), (0, -7), (7, 0),
+                     (-7, 0), (0, -6), (6, 0), (-6, 0), (0, -4), (4, 0), (-4, 0), (0, -3), (3, 0), (-3, 0), (0, -2),
+                     (2, 0),(-2, 0)]
+    elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -8 and goalAxis == lvf.up:
+        neighbors = [(0, -7), (0, -6), (0, -5), (0, -3), (0, -2), (0, -1),(0, 8),  (8, 0), (-8, 0),(0, 7),  (7, 0),
+                     (-7, 0),(0, 6), (6, 0), (-6, 0),(0, 4), (4, 0), (-4, 0),(0, 3), (0, -3), (3, 0), (0, 2),
+                     (2, 0),(-2, 0)]
+    #goal is on same vertical axis
+    elif current[1] == goal[1] and currToGoalDifference[0] > 0 and currToGoalDifference[0] <= 8 and goalAxis == lvf.left:
+        neighbors = [(7, 0), (6, 0), (5, 0), (3, 0), (2, 0), (1, 0), (0, 8), (0, -8), (-8, 0),(0, 7), (0, -7), (-7, 0),
+                     (0, 6), (0, -6), (-6, 0), (0, 4), (0, -4),  (-4, 0),(0, 3), (0, -3),  (-3, 0),(0, 2), (0, -2),
+                     (-2, 0)]
+    elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >= -8 and goalAxis == lvf.right:
+        neighbors = [(-7, 0), (-6, 0), (-5, 0), (-3, 0), (-2, 0), (-1, 0), (0, 8), (0, -8), (8, 0), (0, 7), (0, -7),
+                     (7, 0), (0, 6), (0, -6), (6, 0), (0, 4), (0, -4), (4, 0),(0, 3), (0, -3), (3, 0),(0, 2), (0, -2),
+                     (2, 0)]
+
+    if current == (current[0], shiftpos - 1) or current == (current[0], shiftpos + 1):
+        #we are not on same horizontal axis as goal and at shiftpos-1
+        if current == (current[0], shiftpos - 1) and current[0] == goal[0] and goalAxis == lvf.down:
+            neighbors = [(0, -8), (8, 0), (-8, 0), (0, 8), (0, -7), (7, 0), (-7, 0), (0, 7), (0, -6), (6, 0),
+                         (-6, 0),
+                         (0, 5), (0, -4), (4, 0), (-4, 0), (0, 4), (0, -3), (3, 0), (-3, 0), (0, 3), (0, -2), (2, 0),
+                         (-2, 0)]
+            return neighbors
+        elif current == (current[0],shiftpos-1):
+            neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
+                        (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
+                        (-2, 0)]
+            return neighbors
+        # we are not on same horizontal axis as goal and at shiftpos+1
+        elif current == (current[0],shiftpos+1): # we are not on same horizontal axis as goal
+            neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
+                        (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
+                        (-2, 0)]
+            return neighbors
+        # elif current == (current[0],shiftpos-1):
+        #     neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
+        #                 (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
+        #                 (-2, 0)]
+        #     return neighbors
+        # elif current == (current[0],shiftpos+1):
+        #     neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
+        #                 (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
+        #                 (-2, 0)]
+    else:
+        neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0), (0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0),
+                     (-6, 0),
+                     (0, 4), (0, -4), (4, 0), (-4, 0), (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0),
+                     (-2, 0)]
+        return neighbors
+
+
     # current is in shiftpos-1 or shiftpos+1
     #fixme: differentiate between close to goal or not
     #goal is not in reach
-    if current == (current[0], shiftpos - 1) or current == (current[0], shiftpos + 1):
-        if abs(currToGoalDifference[0]) > 8 or abs(currToGoalDifference[1]) > 8:
 
-            # we are not on same horizontal axis as goal and at shiftpos-1
-
-            if current[0] != goal[0] and current == (current[0],shiftpos-1):
-                neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
-                            (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
-                            (-2, 0)]
-                return neighbors
-            # we are not on same horizontal axis as goal and at shiftpos+1
-            elif current[0] != goal[0] and current == (current[0],shiftpos+1): # we are not on same horizontal axis as goal
-                neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
-                            (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
-                            (-2, 0)]
-                return neighbors
-            else:
-                neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0), (0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0),
-                             (-6, 0),
-                             (0, 4), (0, -4), (4, 0), (-4, 0), (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0),
-                             (-2, 0)]
-                return neighbors
-        else:
-            neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0), (0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0),
-                         (-6, 0),
-                         (0, 4), (0, -4), (4, 0), (-4, 0), (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0),
-                         (-2, 0)]
-            return neighbors
 
 
         #The following might be useless and wrong, since if the goal is in reach but still blocked it will be stuck
@@ -186,32 +216,7 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
         #     return neighbors
 
 
-    #current is not in shiftpos but goal is in reach
-    # ->check if we can close the distance by using a pipe without a corner first
-    #goal is one same horizontal axis
-    if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 7 and goalAxis == lvf.down:
-        neighbors = [(0, 7), (0, 6), (0, 5), (0, 3), (0, 2), (0, 1), (0, -8), (8, 0), (-8, 0), (0, -7), (7, 0),
-                     (-7, 0), (0, -6), (6, 0), (-6, 0), (0, -4), (4, 0), (-4, 0), (0, -3), (3, 0), (-3, 0), (0, -2),
-                     (2, 0),(-2, 0)]
-    elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -7 and goalAxis == lvf.up:
-        neighbors = [(0, -7), (0, -6), (0, -5), (0, -3), (0, -2), (0, -1),(0, 8),  (8, 0), (-8, 0),(0, 7),  (7, 0),
-                     (-7, 0),(0, 6), (6, 0), (-6, 0),(0, 4), (4, 0), (-4, 0),(0, 3), (0, -3), (3, 0), (0, 2),
-                     (2, 0),(-2, 0)]
-    #goal is on same vertical axis
-    elif current[1] == goal[1] and currToGoalDifference[0] > 0 and currToGoalDifference[0] <= 7 and goalAxis == lvf.left:
-        neighbors = [(7, 0), (6, 0), (5, 0), (3, 0), (2, 0), (1, 0), (0, 8), (0, -8), (-8, 0),(0, 7), (0, -7), (-7, 0),
-                     (0, 6), (0, -6), (-6, 0), (0, 4), (0, -4),  (-4, 0),(0, 3), (0, -3),  (-3, 0),(0, 2), (0, -2),
-                     (-2, 0)]
-    elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >= -7 and goalAxis == lvf.right:
-        neighbors = [(-7, 0), (-6, 0), (-5, 0), (-3, 0), (-2, 0), (-1, 0), (0, 8), (0, -8), (8, 0), (0, 7), (0, -7),
-                     (7, 0), (0, 6), (0, -6), (6, 0), (0, 4), (0, -4), (4, 0),(0, 3), (0, -3), (3, 0),(0, 2), (0, -2),
-                     (2, 0)]
-    #goal is not in reach (Standard neighbors=
-    else: neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0),(0, 7), (0, -7), (7, 0), (-7, 0),(0, 6), (0, -6), (6, 0), (-6, 0),
-    (0, 4), (0, -4), (4, 0), (-4, 0),(0, 3), (0, -3), (3, 0), (-3, 0),(0, 2), (0, -2), (2, 0),
-    (-2, 0)]
 
-    return neighbors
 
 
 

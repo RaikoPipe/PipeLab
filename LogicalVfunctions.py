@@ -1,5 +1,13 @@
 import numpy as np
 from vpython import *
+import weakref
+
+
+global topDotDict
+topDotDict = weakref.WeakValueDictionary()
+global wallDotDict
+wallDotDict = weakref.WeakValueDictionary()
+
 
 up = vector(0,1,0)
 right =vector(1,0,0)
@@ -27,9 +35,7 @@ def transformToVvector(npVector):
     return Vvector
     pass
 
-def validPlacement(position, pipelength):
-    'check if object can be placed at desired position'
-    pass
+
 
 def cdCm_Call(x_dots, y_dots, x_gap, y_gap ,dot_dist, wall_thickness, dot_color,wall_to_top_shift_dots, wall_visible, top_visible):
     global cMatrix
@@ -39,6 +45,12 @@ def glG_Call(x_dots, y_dots):
     global boolGrid
     boolGrid = getlogicalGrid(x_dots, y_dots, cMatrix)
     return boolGrid
+
+def remember(obj, dict):
+    oid = id(obj)
+    dict[oid] = obj
+    return oid
+
 
 
 def determineDirectionalOverhang(type, pipe_axis, overhang, width):
@@ -83,8 +95,9 @@ def create_dotCoord_Matrix(x_dots, y_dots, x_gap, y_gap ,dot_dist, wall_thicknes
     for i in range(1, x_dots+1):
         add_y = y_gap  # variable for increasing y coordinate; 5cm is distance from top of wall
         y_point = 1
-        sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
+        wallDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
                opacity=1, visible=wall_visible)
+        remember(wallDot, wallDotDict)
         coordinates_matrix[x_point, y_point] = (add_x, add_y, 0)
 
         # create dots along y axis
@@ -92,11 +105,13 @@ def create_dotCoord_Matrix(x_dots, y_dots, x_gap, y_gap ,dot_dist, wall_thicknes
             y_point += 1
             add_y += dot_dist  # 10.5cm is y-distance between all dots
             if j < wall_to_top_shift_dots:
-                sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
+                wallDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
                        opacity=1, visible=wall_visible)
+                remember(wallDot, wallDotDict)
             else:
-                sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
+                topDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
                        opacity=1, visible=top_visible)
+                remember(topDot, topDotDict)
 
             coordinates_matrix[x_point, y_point] = (add_x, add_y, 0)
 

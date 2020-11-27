@@ -8,7 +8,8 @@ from tkinter import ttk
 import math
 import random
 
-
+global sceneCreated
+sceneCreated = False
 
 class App:
     def __init__(self):
@@ -31,6 +32,8 @@ class App:
         showTestingPathsOption = tk.IntVar()
         showTestedPathsOption = tk.IntVar()
         randomizeOption = tk.IntVar()
+        displayWallDotsOption= tk.IntVar()
+        displayTopDotsOption = tk.IntVar()
 
         #functions
         def sendParameters():
@@ -53,24 +56,46 @@ class App:
             dotcolor = color.black
             lampvisible = False
             #Options
-            camera = setCamera(CameraOption.get(), wallShape)
+            camera = setCamera(CameraOption.get(), wallShape, topShape)
             coordinateInfoVisible = coordinateInfoOption.get()
             wallVisible = displayWallOption.get()
             topVisible = displayTopOption.get()
             obstacleVisible = displayObstacleOption.get()
             pipeVisible= displayPipesOption.get()
+            topDotVisible=displayTopDotsOption.get()
+            wallDotVisible=displayWallDotsOption.get()
             backgroundColor = setBackgroundColor(backgroundCombobox.get())
             testingPath = showTestingPathsOption.get()
             testedPath = showTestedPathsOption.get()
+            refreshObjectsButton.config(state="enabled")
+            refreshObjectsButton.config(state="enabled")
+            displayPipesCheckButton.config(state="enabled")
+            displayTopCheckButton.config(state="enabled")
+            displayWallCheckButton.config(state="enabled")
+            displayObstacleCheckButton.config(state="enabled")
+            displayWallDotsCheckButton.config(state="enabled")
+            displayTopDotsCheckButton.config(state="enabled")
             if randomizeOption.get() == 0:
                 level = levelCombobox.get()
             else: level = obstacleProbabilityCombobox.get()
             xRes = resWidth.get()
             yRes = resHeight.get()
             createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
-                        topVisible, obstacleVisible, pipeVisible,
+                        topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
                         coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
                         dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes)
+
+        def refreshDisplayObjectsPrep():
+            wallVisible = displayWallOption.get()
+            topVisible = displayTopOption.get()
+            obstacleVisible = displayObstacleOption.get()
+            pipeVisible= displayPipesOption.get()
+            wallDotVisible = displayWallDotsOption.get()
+            topDotVisible = displayTopDotsOption.get()
+            refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible)
+
+
+
 
 
 
@@ -100,16 +125,16 @@ class App:
                 obstacleProbabilityCombobox.config(state="disabled")
 
 
-        def setCamera(Option, wallShape):
+        def setCamera(Option, wallShape, topShape):
             if Option == "2DFront":
                 camera = 0.5 * wallShape
                 return camera
-            elif Option == "2DUP":
-                tk.Message.showinfo("Info", "Feature not implemented yet")
-                return
-            elif Option == "3D":
-                tk.Message.showinfo("Info", "Feature not implemented yet")
-                return
+            elif Option == "2DUp":
+                wallHeight = comp(wallShape, vector(0, 1, 0))
+                wallWidth = comp(wallShape, vector(1, 0, 0))
+                topHeight = comp(topShape, vector(0, 1, 0))
+                camera = vector(0.5*wallWidth,wallHeight+0.5*topHeight,0)
+                return camera
 
         def setBackgroundColor(Option):
             if Option=="white":
@@ -185,40 +210,46 @@ class App:
         displayPipesCheckButton=ttk.Checkbutton(root, text= "Display Pipes", variable = displayPipesOption)
         displayPipesCheckButton.grid(row=4,column=0)
 
+        displayWallDotsCheckButton=ttk.Checkbutton(root, text= "Display wallDots", variable = displayWallDotsOption)
+        displayWallDotsCheckButton.grid(row=5, column=0)
+
+        displayTopDotsCheckButton=ttk.Checkbutton(root, text= "Display TopDots", variable = displayTopDotsOption)
+        displayTopDotsCheckButton.grid(row=6, column=0)
+
+        refreshObjectsButton=ttk.Button(root, text="Refresh Objects", command=refreshDisplayObjectsPrep)
+        refreshObjectsButton.grid(row=7, column=0)
+
         topAndWallxSizeLabel=ttk.Label(root, text = "Width:")
-        topAndWallxSizeLabel.grid(row=5,column=0)
+        topAndWallxSizeLabel.grid(row=8,column=0)
 
         topAndWallxSizeEntry = ttk.Entry(root, textvariable = topAndWallxSizeString)
-        topAndWallxSizeEntry.grid(row =6, column = 0)
+        topAndWallxSizeEntry.grid(row =9, column = 0)
 
         topHeightLabel=ttk.Label(root, text = "TopHeight:")
-        topHeightLabel.grid(row=7,column=0)
+        topHeightLabel.grid(row=10,column=0)
 
         topHeightEntry = ttk.Entry(root, textvariable = topHeightString)
-        topHeightEntry.grid(row=8, column = 0)
+        topHeightEntry.grid(row=11, column = 0)
 
         wallHeightLabel=ttk.Label(root, text = "wallHeight:")
-        wallHeightLabel.grid(row=9,column=0)
+        wallHeightLabel.grid(row=12,column=0)
 
         wallHeightEntry = ttk.Entry(root, textvariable = wallHeightString)
-        wallHeightEntry.grid(row=10, column = 0)
+        wallHeightEntry.grid(row=13, column = 0)
 
         defaultParametersButton = ttk.Checkbutton(root, text="Set default Values", command=setDefaultObjectParameters, variable = defaultOption)
-        defaultParametersButton.grid(row=11, column=0)
+        defaultParametersButton.grid(row=14, column=0)
 
 
         #camera field
         CameraLabel=ttk.Label(root, text = "Camera Parameters:")
         CameraLabel.grid(row=0,column=1)
 
-        TwoDUpViewOption=ttk.Radiobutton(root, text ="2D Up View", variable = CameraOption, value= "2DUp")
-        TwoDUpViewOption.grid(row=2,column=1)
-
         TwoDFrontCamOption=ttk.Radiobutton(root, text ="2D Front View", variable = CameraOption, value= "2DFront")
         TwoDFrontCamOption.grid(row=1,column=1)
 
-        ThreeDViewOption=ttk.Radiobutton(root, text ="3D View", variable = CameraOption, value= "3D")
-        ThreeDViewOption.grid(row=3,column=1)
+        TwoDUpViewOption=ttk.Radiobutton(root, text ="2D Up View", variable = CameraOption, value= "2DUp")
+        TwoDUpViewOption.grid(row=2,column=1)
 
         #scene field
         sceneLabel= ttk.Label(root, text = "Scene Parameters:")
@@ -273,7 +304,7 @@ class App:
         levelSelectLabel= ttk.Label(root, text = "Level Select:")
         levelSelectLabel.grid(row=0,column=4)
 
-        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)", "Debug Long"])
+        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)"])
         levelCombobox.grid(row=1, column=4)
 
         randomlevelSelectLabel= ttk.Label(root, text = "Random Level Creator: ")
@@ -285,11 +316,12 @@ class App:
         obstacleProbabilityLabel= ttk.Label(root, text = "Obstacle frequency: ")
         obstacleProbabilityLabel.grid(row=4,column=4)
 
-        obstacleProbabilityCombobox = ttk.Combobox(root, values=["Low", "Medium", "High"])
+        obstacleProbabilityCombobox = ttk.Combobox(root, values=["Low", "Medium", "High", "Very High", "Extreme", "Very Extreme"])
         obstacleProbabilityCombobox.grid(row=5, column=4)
 
+
         # debugField
-        debugOptionsLabel= ttk.Label(root, text = "Debug options:")
+        debugOptionsLabel= ttk.Label(root, text = "Showcase options:")
         debugOptionsLabel.grid(row=0,column=5)
 
         showTestingPathsCheckButton=ttk.Checkbutton(root, text= "Show path finding", variable = showTestingPathsOption, style = "Nowidth.TCheckbutton")
@@ -315,8 +347,17 @@ class App:
         displayTopCheckButton.invoke()
         displayWallCheckButton.invoke()
         displayObstacleCheckButton.invoke()
+        displayWallDotsCheckButton.invoke()
+        displayTopDotsCheckButton.invoke()
         obstacleProbabilityCombobox.config(state="disabled")
         obstacleProbabilityCombobox.set("Low")
+        refreshObjectsButton.config(state="disabled")
+        displayPipesCheckButton.config(state="disabled")
+        displayTopCheckButton.config(state="disabled")
+        displayWallCheckButton.config(state="disabled")
+        displayObstacleCheckButton.config(state="disabled")
+        displayWallDotsCheckButton.config(state="disabled")
+        displayTopDotsCheckButton.config(state="disabled")
 
         #call functions that check after some time
         calcDotCall()
@@ -578,7 +619,7 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
         Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
-            obstacleVisible, pipeVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
+            obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
             dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes):
     #create wall
 
@@ -587,7 +628,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     #create logic matrix
     lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
                   dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
-    #"Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Random (Very hard)"
+
     #obstacle chronology go from bottom to top, left to right
     if wallVisible == True and obstacleVisible == True:
         obsVisWall = True
@@ -709,101 +750,23 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         random = True
         PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
+    elif level == "Very High":
+        frequency = 10
+        random = True
+        PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
+
+    elif level == "Extreme":
+        frequency = 20
+        random = True
+        PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
+
+    elif level == "Very Extreme":
+        frequency = 40
+        random = True
+        PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
 
-
-
-    # create start and end
-    # startAxis = lvf.up
-    # goalAxis = lvf.right
-    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-    # goalDirection = goalAxis + vector(6.5, 0, 0)
-    # start = (6, 1)  # this will be a random vector along the wall or a manual input
-    # goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
-    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
-    #lvf.up: vector(0,4.5,0)
-    #lvf.right: vector(6.5,0,0)
-    # create objects
-    # create obstacles
-
-    #emptyLevel
-    # startAxis = lvf.up
-    # goalAxis = lvf.right
-    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-    # goalDirection = goalAxis + vector(6.5, 0, 0)
-    # start = (6, 1)  # this will be a random vector along the wall or a manual input
-    # goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
-    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
-
-
-    #debug level1
-    # startAxis = lvf.up
-    # goalAxis = lvf.down
-    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-    # goalDirection = goalAxis + vector(0, -4.5, 0)
-    # start = (1, 1)  # this will be a random vector along the wall or a manual input
-    # goal = (10, 25)  # this will be either a random vector along wall the top or a manual input
-    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
-    # obs1 = Objects.obstacle(1, 16, (5, 1), obstacleVisible)
-    # obs1 = Objects.obstacle(1, 7, (5, 17), obstacleVisible)
-
-    #debug level2
-    # startAxis = lvf.up
-    # goalAxis = lvf.left
-    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-    # goalDirection = goalAxis + vector(0, -4.5, 0)
-    # start = (1, 1)  # this will be a random vector along the wall or a manual input
-    # goal = (10, 1)  # this will be either a random vector along wall the top or a manual input
-    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
-    # obs1 = Objects.obstacle(1, 17, (5, 1), obstacleVisible)
-
-    #debug level 3
-    # startAxis = lvf.up
-    # goalAxis = lvf.left
-    # startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-    # goalDirection = goalAxis + vector(6.5, 0, 0)
-    # start = (1, 1)  # this will be a random vector along the wall or a manual input
-    # goal = (10, 25)  # this will be either a random vector along wall the top or a manual input
-    # Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor)
-    # obs1 = Objects.obstacle(9, 1, (1, 13), obstacleVisible)
-    # obs2 = Objects.obstacle(8, 1, (2, 18), obstacleVisible)
-
-
-    # Level 3 (doesnt look right... pls fix)
-    # obs1 = Objects.obstacle(1,2,(9,1), obstacleVisible)
-    # obs2 = Objects.obstacle(7,1,(3,3), obstacleVisible)
-    # obs3 = Objects.obstacle(1,2,(9,4), obstacleVisible)
-    # obs3 = Objects.obstacle(3,5,(3,6), obstacleVisible)
-    # obs4 = Objects.obstacle(2,2,(3,13), obstacleVisible)
-    # obs5 = Objects.obstacle(1,7,(3,9), obstacleVisible)
-    # obs6 = Objects.obstacle(3,8,(7,9), obstacleVisible)
-    # obs7 = Objects.obstacle(2,4,(3,17), obstacleVisible)
-    # obs8 = Objects.obstacle(1,3,(6,17), obstacleVisible)
-    # obs9 = Objects.obstacle(4,1,(6,20), obstacleVisible)
-
-    # Level 4
-
-    #
-    # # 2.5
-    # red1 = Objects.pipe("red", (6, 1), lvf.up, pipeVisible)
-    # sock1 = Objects.pipe("socket", (6, 4), lvf.up, pipeVisible)
-    # red2 = Objects.pipe("red", (6, 7), lvf.down, pipeVisible)
-    # corn1 = Objects.pipe("corner", (6, 8), lvf.downtoleft, pipeVisible)
-    # blue1 = Objects.pipe("blue", (5, 8), lvf.left, pipeVisible)
-    # corn2 = Objects.pipe("corner", (2, 8), lvf.righttoup, pipeVisible)
-    # red3 = Objects.pipe("red", (2, 9), lvf.up, pipeVisible)
-    # sock2 = Objects.pipe("socket", (2, 12), lvf.up, pipeVisible)
-    # red4 = Objects.pipe("red", (2, 15), lvf.down, pipeVisible)
-    # corn4 = Objects.pipe("corner", (2, 17), lvf.fromwall, pipeVisible)
-    # corn4.corner.rotate(angle=-0.5 * pi)  # rotate object
-    # corn5 = Objects.pipe("corner", (2, 16), lvf.totop, pipeVisible)
-    # corn5.corner.rotate(angle=-0.5 * pi)  # rotate object
-    # yellow1 = Objects.pipe("yellow", (2, 18), lvf.up, pipeVisible)
-    # sock3 = Objects.pipe("socket", (2, 20), lvf.up, pipeVisible)
-    # red5 = Objects.pipe("red", (2, 23), lvf.down, pipeVisible)
-    # corn6 = Objects.pipe("corner", (2, 24), lvf.downtoleft, pipeVisible)
-    # purple1 = Objects.pipe("purple", (1, 24), lvf.right, pipeVisible)
-    # # blue2 =Objects.pipe("blue", (3,24), lvf.left, pipeVisible)
+    refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible)
 
 
     # calculate a* route
@@ -825,7 +788,14 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             for key in Objects.obstacleDict.keys():
                 oldObs = Objects.obstacleDict[key]
                 oldObs.visible = False
+                del oldObs
+            for key in Objects.showcaseDict.keys():
+                sBox = Objects.showcaseDict[key]
+                sBox.visible = False
 
+            # Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible,
+            #                         topVisible,
+            #                         coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
             lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist,
                           wall_thickness=wallThickness,
                           dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible,
@@ -835,44 +805,35 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                                          testingPath,
                                          testedPath)
             print(cMatrix_route)
-        pipeBuilder(cMatrix_route, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
+        if pipeVisible == True:
+            pipeBuilder(cMatrix_route, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
                     topVisible)
 
+def refreshObjects(visible, dict):
+    if visible == True:
+        for key in dict.keys():
+            object = dict[key]
+            object.visible = True
+    else:
+        for key in dict.keys():
+            object = dict[key]
+            object.visible = False
 
+def refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible):
+    refreshObjects(wallVisible, Objects.wallDict)
+    refreshObjects(topVisible, Objects.topDict)
+    refreshObjects(pipeVisible, Objects.pipeDict)
+    refreshObjects(obstacleVisible, Objects.obstacleDict)
+    refreshObjects(wallDotVisible, lvf.wallDotDict)
+    refreshObjects(topDotVisible, lvf.topDotDict)
 
-
-
-
-# global dotCoordMatrix
-# dotCoordMatrix = lvf.create_dotCoord_Matrix(x_dots=10, y_dots=25, z_dots=1, x_gap = 2.25, y_gap =37.5, dot_dist = 10.5, wall_thickness=wallThickness, dot_color=dotcolor)
 
 #start the app
 if __name__ == "__main__":
     scene = canvas()
     app = App()
 
-
-
-
-
-
-
-# Objects.pipe("red", dotCoordMatrix(10, 4), lvf.left, dotCoordMatrix)
-# #dotCoordMatrix = lvf.setOccupancy(redpipe, dotCoordMatrix)
-# Objects.pipe("red", dotCoordMatrix(4, 4), lvf.right, dotCoordMatrix)
-# Objects.pipe("blue", dotCoordMatrix(3,4), lvf.left, dotCoordMatrix)
-# cursor = Objects.cursor(startDirection, start)
-# cursor.Change(dotCoordMatrix(4,4), lvf.left)
-# obstacle = Objects.obstacle(5,2,dotCoordMatrix(3,10), dotCoordMatrix)
-
-
-
-
 # todo:
-#  fix determineNeighbors function, fix camera options, fix pipe being displayed in random mode ( need A Button for refresh scene)
 #  known bugs:
 #  - ouroboros bug, pipe sometimes rotates in a circle to force a solution and "bites" itself
 #  (rotates into itself)-> disallow such solutions
-#  - sometimes after shiftpos a pipe gets placed that doesnt exist (wrong neighbor?)
-#
-#
