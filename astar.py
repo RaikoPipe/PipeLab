@@ -9,17 +9,17 @@ import Objects
 import time
 
 
-def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis,testingPath,testedPath):
-    route_call = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath)
+def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType):
+    route_call = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType)
     return route_call
 
 global showtime
 
-def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath):
+def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType):
 
 
     grid = lvf.glG_Call(x, y)  # 0s are positions we can travel on, 1s are walls(obstacles or already placed pipes)
-    route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath)
+    route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType)
     if isinstance(route, str):
         print(route)
     else:
@@ -29,27 +29,27 @@ def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testin
 
         # plot map and path
         x_coords = []
-        y_coords = []
-        for i in (range(0,len(route))):
-
-            x = route[i][0]
-
-            y = route[i][1]
-
-            x_coords.append(x)
-            y_coords.append(y)
-
-        fig, ax = plt.subplots(figsize=(x, y))
-
-        ax.imshow(grid, cmap=plt.cm.Dark2)
-
-        ax.scatter(start_point[1], start_point[0], marker="*", color="green", s=200)
-
-        ax.scatter(goal_point[1], goal_point[0], marker="*", color="orange", s=200)
-
-        ax.plot(y_coords, x_coords, color="black")
-
-        #plt.show()
+        # y_coords = []
+        # for i in (range(0,len(route))):
+        #
+        #     x = route[i][0]
+        #
+        #     y = route[i][1]
+        #
+        #     x_coords.append(x)
+        #     y_coords.append(y)
+        #
+        # fig, ax = plt.subplots(figsize=(x, y))
+        #
+        # ax.imshow(grid, cmap=plt.cm.Dark2)
+        #
+        # ax.scatter(start_point[1], start_point[0], marker="*", color="green", s=200)
+        #
+        # ax.scatter(goal_point[1], goal_point[0], marker="*", color="orange", s=200)
+        #
+        # ax.plot(y_coords, x_coords, color="black")
+        #
+        # #plt.show()
         return route
 
 
@@ -142,21 +142,25 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
         neighbors = [(0, 7), (0, 6), (0, 5), (0, 3), (0, 2), (0, 1), (0, -8), (8, 0), (-8, 0), (0, -7), (7, 0),
                      (-7, 0), (0, -6), (6, 0), (-6, 0), (0, -4), (4, 0), (-4, 0), (0, -3), (3, 0), (-3, 0), (0, -2),
                      (2, 0),(-2, 0)]
+        return neighbors
     elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -8 and goalAxis == lvf.up:
         neighbors = [(0, -7), (0, -6), (0, -5), (0, -3), (0, -2), (0, -1),(0, 8),  (8, 0), (-8, 0),(0, 7),  (7, 0),
                      (-7, 0),(0, 6), (6, 0), (-6, 0),(0, 4), (4, 0), (-4, 0),(0, 3), (0, -3), (3, 0), (0, 2),
                      (2, 0),(-2, 0)]
+        return neighbors
     #goal is on same vertical axis
     elif current[1] == goal[1] and currToGoalDifference[0] > 0 and currToGoalDifference[0] <= 8 and goalAxis == lvf.left:
         neighbors = [(7, 0), (6, 0), (5, 0), (3, 0), (2, 0), (1, 0), (0, 8), (0, -8), (-8, 0),(0, 7), (0, -7), (-7, 0),
                      (0, 6), (0, -6), (-6, 0), (0, 4), (0, -4),  (-4, 0),(0, 3), (0, -3),  (-3, 0),(0, 2), (0, -2),
                      (-2, 0)]
+        return neighbors
     elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >= -8 and goalAxis == lvf.right:
         neighbors = [(-7, 0), (-6, 0), (-5, 0), (-3, 0), (-2, 0), (-1, 0), (0, 8), (0, -8), (8, 0), (0, 7), (0, -7),
                      (7, 0), (0, 6), (0, -6), (6, 0), (0, 4), (0, -4), (4, 0),(0, 3), (0, -3), (3, 0),(0, 2), (0, -2),
                      (2, 0)]
+        return neighbors
 
-    if current == (current[0], shiftpos - 1) or current == (current[0], shiftpos + 1):
+    if current == (current[0], shiftpos - 1):
         #we are not on same horizontal axis as goal and at shiftpos-1
         if current == (current[0], shiftpos - 1) and current[0] == goal[0] and goalAxis == lvf.down:
             neighbors = [(0, -8), (8, 0), (-8, 0), (0, 8), (0, -7), (7, 0), (-7, 0), (0, 7), (0, -6), (6, 0),
@@ -170,11 +174,11 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
                         (-2, 0)]
             return neighbors
         # we are not on same horizontal axis as goal and at shiftpos+1
-        elif current == (current[0],shiftpos+1): # we are not on same horizontal axis as goal
-            neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
-                        (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
-                        (-2, 0)]
-            return neighbors
+        # elif current == (current[0],shiftpos+1): # we are not on same horizontal axis as goal
+        #     neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
+        #                 (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
+        #                 (-2, 0)]
+        #     return neighbors
         # elif current == (current[0],shiftpos-1):
         #     neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
         #                 (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
@@ -228,12 +232,29 @@ def heuristic(a,b): #fixme: Artificially change the score to favor long pipes
     # np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
     #return distance
 
+def artificialHeuristic(a,b, goal, currentNeighbor, heuristicType):
+    neighToGoalDistance = np.abs(goal[0] - b[0]) + np.abs(goal[1] - b[1]) # manhattan distance from neigh to goal
+    currToGoalDistance = np.abs(goal[0] - a[0]) + np.abs(goal[1] - a[1]) # manhattan distance from a to goal
+    #if the neighbor decreases the distance to goal, reward algo
+    distance = np.abs(goal[0] - b[0]) + np.abs(goal[1] - b[1])
+
+    if heuristicType == "add":
+        add = abs(currentNeighbor[0]/2+currentNeighbor[1]/2)
+    elif heuristicType == "subtract":
+        add = -abs(currentNeighbor[0]/2+currentNeighbor[1]/2)
+    else:
+        add = 0
+
+    if neighToGoalDistance < currToGoalDistance:
+        artificialDistance = distance + add
+    else:
+        artificialDistance = distance
+
+    return artificialDistance
 
 
 
-
-
-def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath):
+def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType):
     if array[start] == 1:
         return "Start point is blocked and therefore goal cant be reached"
     elif array[goal] == 1:
@@ -387,7 +408,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
                 gscore[neighbor] = tentative_g_score
 
-                fscore[neighbor] = tentative_g_score + heuristic(neighbor, goal)
+                fscore[neighbor] = tentative_g_score + artificialHeuristic(current, neighbor, goal, current_neighbor, heuristicType)
 
                 heapq.heappush(oheap, (fscore[neighbor], neighbor))
     return "Creating route is not possible"

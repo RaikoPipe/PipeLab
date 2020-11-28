@@ -8,8 +8,8 @@ from tkinter import ttk
 import math
 import random
 
-global sceneCreated
-sceneCreated = False
+
+
 
 class App:
     def __init__(self):
@@ -35,8 +35,22 @@ class App:
         displayWallDotsOption= tk.IntVar()
         displayTopDotsOption = tk.IntVar()
 
+        def refreshPath():
+            refresh = True
+            sendParameters(refresh)
+
+        def createNewScene():
+            refresh = False
+            sendParameters(refresh)
+
+        def disableRefreshPathButton(event):
+            refreshPathButton.config(state="disabled")
+
+
+
+
         #functions
-        def sendParameters():
+        def sendParameters(refresh):
             #parameters
             wallThickness = 15  # fixed value
             topAndWallxSize = float(topAndWallxSizeString.get())
@@ -75,15 +89,19 @@ class App:
             displayObstacleCheckButton.config(state="enabled")
             displayWallDotsCheckButton.config(state="enabled")
             displayTopDotsCheckButton.config(state="enabled")
+            refreshPathButton.config(state="enabled")
+            heuristicType = heuristicCombobox.get()
             if randomizeOption.get() == 0:
                 level = levelCombobox.get()
             else: level = obstacleProbabilityCombobox.get()
             xRes = resWidth.get()
             yRes = resHeight.get()
+            refreshing = refresh
             createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
                         topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
                         coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
-                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes)
+                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
+                        , heuristicType, refreshing)
 
         def refreshDisplayObjectsPrep():
             wallVisible = displayWallOption.get()
@@ -93,14 +111,6 @@ class App:
             wallDotVisible = displayWallDotsOption.get()
             topDotVisible = displayTopDotsOption.get()
             refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible)
-
-
-
-
-
-
-
-
 
 
         def setDefaultObjectParameters():
@@ -162,6 +172,25 @@ class App:
             xDotShowLabel.configure(text="xDots: " + str(x_dots))
             yDotShowLabel.configure(text="yDots: " + str(y_dots))
             shiftAtShowLabel.configure(text= "shift at: " + str(wallToTopShiftDots))
+            costCounter = 0
+            dotCounter = 0
+            lengthCounter = 0
+            for count, cost in enumerate(Objects.costDict):
+                costCounter += cost
+
+            costCurrentPipes.config(text="current cost: " +str(round(costCounter,2)) + " €")
+
+            for count, dots in enumerate(Objects.dotLengthDict):
+                dotCounter += dots
+
+            currentDotLength.config(text="current dotLength: " +str(dotCounter) + " dots")
+
+            for count, realLength in enumerate(Objects.lengthDict):
+                lengthCounter += realLength-0.020
+
+
+            currentRealLength.config(text="current realLength: " +str(round(lengthCounter,3)) + " meter")
+
             root.update()
 
 
@@ -184,14 +213,14 @@ class App:
         style.configure("TCheckbutton", font = ("Calibri", 10), justify="left", anchor = "w", width = 20)
         style.configure("Nowidth.TCheckbutton", font = ("Calibri", 10), justify="left", anchor = "w")
         style.configure("TLabel", font = ("Calibri", 12), justify="left")
-        style.configure("Res.TLabel", font=("Calibri", 12), justify="left", width=10)
+        style.configure("Res.TLabel", font=("Calibri", 12), justify="left", width=30)
         style.configure("TEntry", font = ("Calibri", 12), justify="center")
         style.configure("Res.TEntry", font = ("Calibri", 12), justify="center", width =10)
         style.configure("TFrame" , font = ("Calibri", 12), justify="center")
 
 
         #create button
-        CreateSceneButton=ttk.Button(root, text="Create Scene", command=sendParameters)
+        CreateSceneButton=ttk.Button(root, text="Create Scene", command=createNewScene)
         CreateSceneButton.place(x=320,y=440,width=170,height=43)
 
         # create Object Parameters
@@ -241,6 +270,8 @@ class App:
         defaultParametersButton.grid(row=14, column=0)
 
 
+
+
         #camera field
         CameraLabel=ttk.Label(root, text = "Camera Parameters:")
         CameraLabel.grid(row=0,column=1)
@@ -255,7 +286,7 @@ class App:
         sceneLabel= ttk.Label(root, text = "Scene Parameters:")
         sceneLabel.grid(row=0,column=2)
 
-        backgroundCombobox = ttk.Combobox(root, values=["black", "white"])
+        backgroundCombobox = ttk.Combobox(root, values=["black", "white"], state="readonly")
         backgroundCombobox.grid(row=1, column=2)
 
         resolutionLabelW= ttk.Label(root, text = "Width:")
@@ -283,19 +314,39 @@ class App:
 
         #parameterOutputField
         parameterOutputFrame = ttk.Frame(root)
-        parameterOutputFrame.place(x=350,y=340)
+        parameterOutputFrame.place(x=320,y=250)
 
-        parameterOutputLabel = ttk.Label(parameterOutputFrame, text="Parameter Output:")
+        parameterOutputLabel = ttk.Label(parameterOutputFrame, text="Parameter Output:", style = "Res.TLabel")
         parameterOutputLabel.grid(row=0,column=0)
 
-        xDotShowLabel = ttk.Label(parameterOutputFrame,text="xDots: ")
+        xDotShowLabel = ttk.Label(parameterOutputFrame,text="xDots: ", style = "Res.TLabel")
         xDotShowLabel.grid(row=1, column=0)
 
-        yDotShowLabel = ttk.Label(parameterOutputFrame,text="yDots: ")
+        yDotShowLabel = ttk.Label(parameterOutputFrame,text="yDots: ", style = "Res.TLabel")
         yDotShowLabel.grid(row=2, column=0)
 
-        shiftAtShowLabel = ttk.Label(parameterOutputFrame,text="shift at: ")
+        shiftAtShowLabel = ttk.Label(parameterOutputFrame,text="shift at: ", style = "Res.TLabel")
         shiftAtShowLabel.grid(row=3, column=0)
+
+        costCurrentPipes = ttk.Label(parameterOutputFrame,text="current cost: ", style = "Res.TLabel")
+        costCurrentPipes.grid(row=4, column=0)
+
+        currentDotLength = ttk.Label(parameterOutputFrame,text="current dotLength: ", style = "Res.TLabel")
+        currentDotLength.grid(row=5, column=0)
+
+        currentRealLength = ttk.Label(parameterOutputFrame,text="current Length: ", style = "Res.TLabel")
+        currentRealLength.grid(row=6, column=0)
+
+        heuristicLabel = ttk.Label(parameterOutputFrame, text="heuristic: ")
+        heuristicLabel.grid(row=0, column=1)
+
+        heuristicCombobox = ttk.Combobox(parameterOutputFrame, values=["normal", "add", "subtract"], state="readonly")
+        heuristicCombobox.grid(row=1, column=1)
+
+        refreshPathButton=ttk.Button(parameterOutputFrame, text="Refresh Path", command=refreshPath)
+        refreshPathButton.grid(row=2, column=1)
+
+
 
         #fixme: round by multiple of 10.5
 
@@ -304,8 +355,10 @@ class App:
         levelSelectLabel= ttk.Label(root, text = "Level Select:")
         levelSelectLabel.grid(row=0,column=4)
 
-        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)"])
+        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)"], state="readonly")
         levelCombobox.grid(row=1, column=4)
+
+        levelCombobox.bind("<<ComboboxSelected>>", disableRefreshPathButton)
 
         randomlevelSelectLabel= ttk.Label(root, text = "Random Level Creator: ")
         randomlevelSelectLabel.grid(row=2,column=4)
@@ -316,7 +369,7 @@ class App:
         obstacleProbabilityLabel= ttk.Label(root, text = "Obstacle frequency: ")
         obstacleProbabilityLabel.grid(row=4,column=4)
 
-        obstacleProbabilityCombobox = ttk.Combobox(root, values=["Low", "Medium", "High", "Very High", "Extreme", "Very Extreme"])
+        obstacleProbabilityCombobox = ttk.Combobox(root, values=["Low", "Medium", "High", "Very High", "Extreme", "Very Extreme"], state="readonly")
         obstacleProbabilityCombobox.grid(row=5, column=4)
 
 
@@ -339,6 +392,7 @@ class App:
         topHeightEntry.insert(0, "115.0")
         wallHeightEntry.insert(0, "200.0")
         backgroundCombobox.set("white")
+        heuristicCombobox.set("normal")
         levelCombobox.set("Level 1 (Easy)")
         TwoDFrontCamOption.invoke()
         resolutionEntryW.insert(0, GetSystemMetrics(0))
@@ -358,6 +412,7 @@ class App:
         displayObstacleCheckButton.config(state="disabled")
         displayWallDotsCheckButton.config(state="disabled")
         displayTopDotsCheckButton.config(state="disabled")
+        refreshPathButton.config(state="disabled")
 
         #call functions that check after some time
         calcDotCall()
@@ -369,20 +424,10 @@ class App:
 
 
 
-
-
-
-
-
-
-    #objectcommands
-    def CreateSceneButton_command(self):
-        print("command")
-
     #functions
 
-def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath):
-    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath)
+def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType):
+    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType)
     if isinstance(route, list):
         for idx,(x,y) in enumerate(route):
              route[idx] = (x+1,y+1)
@@ -606,8 +651,8 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
         #if random.random() <= probability:
         randPosX = random.randint(1, xDots-4)
         randPosY = random.randint(1, wallToTopShiftDots-4)
-        randSizeX = random.randint(1, 5)
-        randSizeY = random.randint(1, 5)
+        randSizeX = random.randint(1, 3)
+        randSizeY = random.randint(1, 3)
         Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
         #else: continue
     #create random Objects on Top
@@ -620,14 +665,14 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
-            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes):
+            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh):
     #create wall
-
-    Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
-            coordinateInfoVisible, camera, backgroundColor,xRes,yRes)
-    #create logic matrix
-    lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
-                  dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
+    if refresh == False:
+        Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
+                coordinateInfoVisible, camera, backgroundColor,xRes,yRes)
+        #create logic matrix
+        lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
+                      dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
 
     #obstacle chronology go from bottom to top, left to right
     if wallVisible == True and obstacleVisible == True:
@@ -639,6 +684,9 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     else: obsVisTop = False
 
     random = False
+    Objects.costDict.clear()
+    Objects.lengthDict.clear()
+    Objects.dotLengthDict.clear()
 
 
 
@@ -736,32 +784,32 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         random = False
 
     elif level == "Low":
-        frequency = 3
+        frequency = 5
         random = True
         PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
 
     elif level == "Medium":
-        frequency = 5
+        frequency = 8
         random = True
         PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
     elif level == "High":
-        frequency = 7
+        frequency = 12
         random = True
         PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
     elif level == "Very High":
-        frequency = 10
-        random = True
-        PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
-
-    elif level == "Extreme":
         frequency = 20
         random = True
         PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
+    elif level == "Extreme":
+        frequency = 30
+        random = True
+        PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
+
     elif level == "Very Extreme":
-        frequency = 40
+        frequency = 50
         random = True
         PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
@@ -771,13 +819,33 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
     # calculate a* route
     cMatrix_route = ""
+    if refresh == True:
+        for key in Objects.pipeDict.keys():
+            oldPipe = Objects.pipeDict[key]
+            oldPipe.visible = False
+        for key in Objects.showcaseDict.keys():
+            sBox = Objects.showcaseDict[key]
+            sBox.visible = False
+
+        cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
+                                     testingPath,
+                                     testedPath, heuristicType)
+        print(cMatrix_route)
+        if pipeVisible == True:
+            pipeBuilder(cMatrix_route, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots,
+                        wallVisible,
+                        topVisible)
+        refresh = False
+        return
+
     if random == False:
         if pipeVisible == True:
-            cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath)
+            cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType)
             print(cMatrix_route)
             if isinstance(cMatrix_route, list):
                 pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible)
     elif random == True:
+
         start = PrepInitData[0]
         goal = PrepInitData[1]
         startAxis = PrepInitData[2]
@@ -803,11 +871,13 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop)
             cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
                                          testingPath,
-                                         testedPath)
+                                         testedPath, heuristicType)
             print(cMatrix_route)
         if pipeVisible == True:
             pipeBuilder(cMatrix_route, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
                     topVisible)
+
+
 
 def refreshObjects(visible, dict):
     if visible == True:
