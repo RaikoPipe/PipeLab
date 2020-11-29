@@ -25,16 +25,19 @@ global dotLengthDict
 dotLengthDict = []
 global lengthDict
 lengthDict = []
+global savedState
+savedState = []
 
 # this function creates the canvas, wall and top and dots
 
 
+
 def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color, lamp_visible,
              wall_visible, top_visible, coordinate_info_visible, camera_pos, background_color,x_res,y_res):
+
     main.scene.delete()
 
     # creating the scene
-
     main.scene = canvas(width=x_res, height=y_res, center=camera_pos, background=background_color, fov=pi/5)
     print("Detected resolution: " + str(x_res) + "x" + str(y_res))
 
@@ -110,10 +113,7 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
 
 
 
-def closeScene():
-    try:
-        scene.delete()
-    except: Exception
+
 
 
 

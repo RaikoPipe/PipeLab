@@ -19,7 +19,11 @@ def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testin
 
 
     grid = lvf.glG_Call(x, y)  # 0s are positions we can travel on, 1s are walls(obstacles or already placed pipes)
-    route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType)
+    if heuristicType == "intelligent":
+        route = optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType)
+    else:
+        weight = 0
+        route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, weight)
     if isinstance(route, str):
         print(route)
     else:
@@ -221,6 +225,32 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
 
 
 
+def determineTypeCost(currentNeighbor):
+    x = abs(currentNeighbor[0])
+    y = abs(currentNeighbor[1])
+    if x == 9 or y == 9:
+        costPerDot = 1.16
+    elif x == 8 or y == 8:
+        costPerDot = 1.28
+    elif x == 7 or y == 7:
+        costPerDot = 1.43
+    elif x == 6 or y == 6:
+        costPerDot = 1.55
+    elif x == 5 or y == 5:
+        costPerDot = 1.64
+    elif x == 4 or y == 4:
+        costPerDot = 1.73
+    elif x == 3 or y == 3:
+        costPerDot = 2.23
+    elif x == 2 or y == 2:
+        costPerDot = 3.24
+    elif x == 1 or y == 1:
+        costPerDot = 3.24
+    else:
+        type = "error"
+        print("type doesnt exist")
+
+    return costPerDot
 
 
 
@@ -232,7 +262,7 @@ def heuristic(a,b): #fixme: Artificially change the score to favor long pipes
     # np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
     #return distance
 
-def artificialHeuristic(a,b, goal, currentNeighbor, heuristicType):
+def artificialHeuristic(a,b, goal, currentNeighbor, heuristicType, weight):
     neighToGoalDistance = np.abs(goal[0] - b[0]) + np.abs(goal[1] - b[1]) # manhattan distance from neigh to goal
     currToGoalDistance = np.abs(goal[0] - a[0]) + np.abs(goal[1] - a[1]) # manhattan distance from a to goal
     #if the neighbor decreases the distance to goal, reward algo
@@ -242,25 +272,95 @@ def artificialHeuristic(a,b, goal, currentNeighbor, heuristicType):
         add = abs(currentNeighbor[0]/2+currentNeighbor[1]/2)
     elif heuristicType == "subtract":
         add = -abs(currentNeighbor[0]/2+currentNeighbor[1]/2)
+    elif heuristicType == "intelligent":
+        add = determineTypeCost(currentNeighbor)
     else:
         add = 0
 
-    if neighToGoalDistance < currToGoalDistance:
-        artificialDistance = distance + add
+    if heuristicType != "intelligent":
+        if neighToGoalDistance < currToGoalDistance:
+            artificialDistance = distance + add
+        else:
+            artificialDistance = distance
+
+        return artificialDistance
     else:
-        artificialDistance = distance
+        artificialDistance = distance + weight * add
+        return artificialDistance
 
-    return artificialDistance
+def determineCostAndDots(x,y):
+    x = abs(x)
+    y = abs(y)
+    if x == 9 or y == 9:
+        cost = 10.44
+    elif x == 8 or y == 8:
+        cost = 10.22
+    elif x == 7 or y == 7:
+        cost = 10.00
+    elif x == 6 or y == 6:
+        cost = 9.27
+    elif x == 5 or y == 5:
+        cost = 8.09
+    elif x == 4 or y == 4:
+        cost = 6.92
+    elif x == 3 or y == 3:
+        cost = 6.70
+    elif x == 2 or y == 2:
+        cost = 6.47
+    elif x == 1 or y == 1:
+        cost = 1.15
+    else:
+        type = "error"
+        print("type doesnt exist")
+
+    if x !=0:
+        dots = x
+    elif y != 0:
+        dots = y
+
+    return cost, dots
 
 
 
-def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType):
+def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType):
+    routeList = []
+
+    for i in range(10):
+        currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, i)
+        if isinstance(currentRoute, str):
+            return "Creating route is not possible"
+
+        #dotList = []
+        sumCost = 0
+        for idx, (x,y) in enumerate(currentRoute):
+
+            #dont check next point if last point has been reached
+            if idx == len(currentRoute)-1:
+                break
+
+            #set pointA and pointB, calculate difference
+            pointA=currentRoute[idx]
+            pointB=currentRoute[idx+1]
+            differenceX = list(pointB)[0] - list(pointA)[0]
+            differenceY = list(pointB)[1] - list(pointA)[1]
+
+            cost, dots = determineCostAndDots(differenceX, differenceY)
+            sumCost += cost
+            #dotList.append(dots)
+        heapq.heappush(routeList, (sumCost, currentRoute))
+    bestRoute = heapq.heappop(routeList)[1]
+    print("hello")
+    return bestRoute
+
+
+
+
+
+def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, weight):
     if array[start] == 1:
         return "Start point is blocked and therefore goal cant be reached"
     elif array[goal] == 1:
         return "Goal point is blocked and therefore cant be reached"
-
-    #(that way, we can reach goal without having to place a corner)
 
 
     close_set = set()
@@ -309,6 +409,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
             while current in came_from:
                 data.append(current)
                 current = came_from[current]
+
 
             return data
 
@@ -408,7 +509,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
                 gscore[neighbor] = tentative_g_score
 
-                fscore[neighbor] = tentative_g_score + artificialHeuristic(current, neighbor, goal, current_neighbor, heuristicType)
+                fscore[neighbor] = tentative_g_score + artificialHeuristic(current, neighbor, goal, current_neighbor, heuristicType,weight)
 
                 heapq.heappush(oheap, (fscore[neighbor], neighbor))
     return "Creating route is not possible"

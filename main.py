@@ -9,7 +9,7 @@ import math
 import random
 
 
-
+savedState = []
 
 class App:
     def __init__(self):
@@ -340,11 +340,11 @@ class App:
         heuristicLabel = ttk.Label(parameterOutputFrame, text="heuristic: ")
         heuristicLabel.grid(row=0, column=1)
 
-        heuristicCombobox = ttk.Combobox(parameterOutputFrame, values=["normal", "add", "subtract"], state="readonly")
+        heuristicCombobox = ttk.Combobox(parameterOutputFrame, values=["normal", "add", "subtract", "intelligent"], state="readonly")
         heuristicCombobox.grid(row=1, column=1)
 
         refreshPathButton=ttk.Button(parameterOutputFrame, text="Refresh Path", command=refreshPath)
-        refreshPathButton.grid(row=2, column=1)
+        refreshPathButton.grid(row=3, column=1)
 
 
 
@@ -426,8 +426,8 @@ class App:
 
     #functions
 
-def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType):
-    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType)
+def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType ):
+    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, )
     if isinstance(route, list):
         for idx,(x,y) in enumerate(route):
              route[idx] = (x+1,y+1)
@@ -643,29 +643,30 @@ def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
     goalDirection = goalAxis + possible_goal_positions[randomSelectGoal][2]
     Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
     PrepInitData = [start, goal, startAxis, goalAxis]
+    Objects.savedState = PrepInitData
     return PrepInitData
 
 def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop):
     #create random Object on wall
     for i in range(frequency):
         #if random.random() <= probability:
-        randPosX = random.randint(1, xDots-4)
-        randPosY = random.randint(1, wallToTopShiftDots-4)
-        randSizeX = random.randint(1, 3)
-        randSizeY = random.randint(1, 3)
+        randPosX = random.randint(1, xDots-1)
+        randPosY = random.randint(1, wallToTopShiftDots-2)
+        randSizeX = random.randint(1, 2)
+        randSizeY = random.randint(1, 2)
         Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
         #else: continue
     #create random Objects on Top
     for i in range(frequency -2):
-        randPosX = random.randint(1, xDots - 4)
-        randPosY = random.randint(wallToTopShiftDots+2, yDots - 4)
-        randSizeX = random.randint(1, 5)
-        randSizeY = random.randint(1, 5)
+        randPosX = random.randint(1, xDots - 1)
+        randPosY = random.randint(wallToTopShiftDots+1, yDots-1)
+        randSizeX = random.randint(1, 2)
+        randSizeY = random.randint(1, 2)
         Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
-            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh):
+            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, ):
     #create wall
     if refresh == False:
         Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
@@ -689,132 +690,139 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     Objects.dotLengthDict.clear()
 
 
+    if refresh == False:
+        if level == "Level 1 (Easy)":
+            # fixme: unfinished
+            startAxis = lvf.up
+            goalAxis = lvf.down
+            startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+            goalDirection = goalAxis + vector(0, -4.5, 0)
+            start = (6, 1)  # this will be a random vector along the wall or a manual input
+            goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
+            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            #wall
+            obs1 = Objects.obstacle((4,9),(7,1), obsVisWall)
+            obs2 = Objects.obstacle((5,3),(1,1), obsVisWall)
+            obs3 = Objects.obstacle((3,3),(3,5), obsVisWall)
+            obs3 = Objects.obstacle((4,4),(3,13), obsVisWall)
+            #top
+            obs4 = Objects.obstacle((7,3),(3,17), obsVisTop)
+            obs5 = Objects.obstacle((2,2),(5,22), obsVisTop)
+            random = False
+        elif level == "Level 2 (Medium)":
+            #fixme: unfinished
+            startAxis = lvf.up
+            goalAxis = lvf.right
+            startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+            goalDirection = goalAxis + vector(6.5, 0, 0)
+            start = (6, 1)  # this will be a random vector along the wall or a manual input
+            goal = (1, 23)  # this will be either a random vector along wall the top or a manual input
+            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            obs1 = Objects.obstacle((1, 17), (1, 5), obsVisWall)
+            obs1 = Objects.obstacle((3, 7), (1, 1), obsVisWall)
+            #obs2 = Objects.obstacle(2, 5, (9, 1), obstacleVisible)
+            #obs3 = Objects.obstacle(1, 13, (5, 5), obstacleVisible)
 
-    if level == "Level 1 (Easy)":
-        # fixme: unfinished
-        startAxis = lvf.up
-        goalAxis = lvf.down
-        startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-        goalDirection = goalAxis + vector(0, -4.5, 0)
-        start = (6, 1)  # this will be a random vector along the wall or a manual input
-        goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
-        Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
-        #wall
-        obs1 = Objects.obstacle((4,9),(7,1), obsVisWall)
-        obs2 = Objects.obstacle((5,3),(1,1), obsVisWall)
-        obs3 = Objects.obstacle((3,3),(3,5), obsVisWall)
-        obs3 = Objects.obstacle((4,4),(3,13), obsVisWall)
-        #top
-        obs4 = Objects.obstacle((7,3),(3,17), obsVisTop)
-        obs5 = Objects.obstacle((2,2),(5,22), obsVisTop)
-        random = False
-    elif level == "Level 2 (Medium)":
-        #fixme: unfinished
-        startAxis = lvf.up
-        goalAxis = lvf.right
-        startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-        goalDirection = goalAxis + vector(6.5, 0, 0)
-        start = (6, 1)  # this will be a random vector along the wall or a manual input
-        goal = (1, 23)  # this will be either a random vector along wall the top or a manual input
-        Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
-        obs1 = Objects.obstacle((1, 17), (1, 5), obsVisWall)
-        obs1 = Objects.obstacle((3, 7), (1, 1), obsVisWall)
-        #obs2 = Objects.obstacle(2, 5, (9, 1), obstacleVisible)
-        #obs3 = Objects.obstacle(1, 13, (5, 5), obstacleVisible)
+            obsx = Objects.obstacle((1, 2), (6, 7), obsVisWall)
+            obsa = Objects.obstacle((1, 4), (8, 7), obsVisWall)
+            obsb = Objects.obstacle((1, 2), (10, 7), obsVisWall)
 
-        obsx = Objects.obstacle((1, 2), (6, 7), obsVisWall)
-        obsa = Objects.obstacle((1, 4), (8, 7), obsVisWall)
-        obsb = Objects.obstacle((1, 2), (10, 7), obsVisWall)
+            obs4 = Objects.obstacle((3, 2), (6, 11), obsVisWall)
 
-        obs4 = Objects.obstacle((3, 2), (6, 11), obsVisWall)
+            obsd = Objects.obstacle((2, 1), (9, 15), obsVisWall)
 
-        obsd = Objects.obstacle((2, 1), (9, 15), obsVisWall)
+            obse = Objects.obstacle((3, 3), (2, 14), obsVisWall)
 
-        obse = Objects.obstacle((3, 3), (2, 14), obsVisWall)
+            # top:
+            obs6 = Objects.obstacle((4, 1), (2, 17), obsVisTop)
+            obs7 = Objects.obstacle((7, 1), (1, 20), obsVisTop)
+            random = False
+        elif level == "Level 3 (Hard)":
+            startAxis = lvf.up
+            goalAxis = lvf.right
+            startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+            goalDirection = goalAxis + vector(6.5, 0, 0)
+            start = (10, 1)  # this will be a random vector along the wall or a manual input
+            goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
+            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
-        # top:
-        obs6 = Objects.obstacle((4, 1), (2, 17), obsVisTop)
-        obs7 = Objects.obstacle((7, 1), (1, 20), obsVisTop)
-        random = False
-    elif level == "Level 3 (Hard)":
-        startAxis = lvf.up
-        goalAxis = lvf.right
-        startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-        goalDirection = goalAxis + vector(6.5, 0, 0)
-        start = (10, 1)  # this will be a random vector along the wall or a manual input
-        goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
-        Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            #wall
+            obs1 = Objects.obstacle((1, 2), (9, 1), obsVisWall)
+            obs2 = Objects.obstacle((7, 1), (3, 4), obsVisWall)
+            obs3 = Objects.obstacle((4, 3), (3, 6), obsVisWall)
+            obs4 = Objects.obstacle((1, 7), (6, 10), obsVisWall)
+            obs5 = Objects.obstacle((3, 7), (8, 10), obsVisWall)
+            obs6 = Objects.obstacle((2, 4), (3, 13), obsVisWall)
 
-        #wall
-        obs1 = Objects.obstacle((1, 2), (9, 1), obsVisWall)
-        obs2 = Objects.obstacle((7, 1), (3, 4), obsVisWall)
-        obs3 = Objects.obstacle((4, 3), (3, 6), obsVisWall)
-        obs4 = Objects.obstacle((1, 7), (6, 10), obsVisWall)
-        obs5 = Objects.obstacle((3, 7), (8, 10), obsVisWall)
-        obs6 = Objects.obstacle((2, 4), (3, 13), obsVisWall)
+            #top
+            obs7 = Objects.obstacle((2, 4), (3, 17), obsVisTop)
+            obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
+            obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
+            obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
+            random = False
+        elif level == "Debug Long":
+            startAxis = lvf.up
+            goalAxis = lvf.right
+            startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+            goalDirection = goalAxis + vector(6.5, 0, 0)
+            start = (1, 1)  # this will be a random vector along the wall or a manual input
+            goal = (100, 25)  # this will be either a random vector along wall the top or a manual input
+            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
-        #top
-        obs7 = Objects.obstacle((2, 4), (3, 17), obsVisTop)
-        obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
-        obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
-        obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
-        random = False
-    elif level == "Debug Long":
-        startAxis = lvf.up
-        goalAxis = lvf.right
-        startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
-        goalDirection = goalAxis + vector(6.5, 0, 0)
-        start = (1, 1)  # this will be a random vector along the wall or a manual input
-        goal = (100, 25)  # this will be either a random vector along wall the top or a manual input
-        Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            #wall
+            obs1 = Objects.obstacle((1, 2), (9, 1), obsVisWall)
+            obs2 = Objects.obstacle((7, 1), (3, 4), obsVisWall)
+            obs3 = Objects.obstacle((4, 3), (3, 6), obsVisWall)
+            obs4 = Objects.obstacle((1, 7), (6, 10), obsVisWall)
+            obs5 = Objects.obstacle((3, 7), (8, 10), obsVisWall)
+            obs6 = Objects.obstacle((2, 4), (3, 13), obsVisWall)
 
-        #wall
-        obs1 = Objects.obstacle((1, 2), (9, 1), obsVisWall)
-        obs2 = Objects.obstacle((7, 1), (3, 4), obsVisWall)
-        obs3 = Objects.obstacle((4, 3), (3, 6), obsVisWall)
-        obs4 = Objects.obstacle((1, 7), (6, 10), obsVisWall)
-        obs5 = Objects.obstacle((3, 7), (8, 10), obsVisWall)
-        obs6 = Objects.obstacle((2, 4), (3, 13), obsVisWall)
+            #top
+            obs7 = Objects.obstacle((2, 4), (3, 17), obsVisTop)
+            obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
+            obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
+            obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
+            random = False
 
-        #top
-        obs7 = Objects.obstacle((2, 4), (3, 17), obsVisTop)
-        obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
-        obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
-        obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
-        random = False
+        elif level == "Low":
+            frequency = 5
+            random = True
+            PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
 
-    elif level == "Low":
-        frequency = 5
-        random = True
-        PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
+        elif level == "Medium":
+            frequency = 8
+            random = True
+            PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
-    elif level == "Medium":
-        frequency = 8
-        random = True
-        PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
+        elif level == "High":
+            frequency = 12
+            random = True
+            PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
-    elif level == "High":
-        frequency = 12
-        random = True
-        PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
+        elif level == "Very High":
+            frequency = 20
+            random = True
+            PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
-    elif level == "Very High":
-        frequency = 20
-        random = True
-        PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
+        elif level == "Extreme":
+            frequency = 30
+            random = True
+            PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
-    elif level == "Extreme":
-        frequency = 30
-        random = True
-        PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
-
-    elif level == "Very Extreme":
-        frequency = 50
-        random = True
-        PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
+        elif level == "Very Extreme":
+            frequency = 50
+            random = True
+            PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
 
-    refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible)
+    #refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible)
+
+    if random == True:
+        start = PrepInitData[0]
+        goal = PrepInitData[1]
+        startAxis = PrepInitData[2]
+        goalAxis = PrepInitData[3]
+
 
 
     # calculate a* route
@@ -827,29 +835,30 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             sBox = Objects.showcaseDict[key]
             sBox.visible = False
 
+        start = Objects.savedState[0]
+        goal = Objects.savedState[1]
+        startAxis = Objects.savedState[2]
+        goalAxis = Objects.savedState[3]
+
         cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
                                      testingPath,
-                                     testedPath, heuristicType)
+                                     testedPath, heuristicType, )
         print(cMatrix_route)
         if pipeVisible == True:
             pipeBuilder(cMatrix_route, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots,
                         wallVisible,
                         topVisible)
-        refresh = False
         return
 
     if random == False:
         if pipeVisible == True:
-            cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType)
+            cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, )
             print(cMatrix_route)
             if isinstance(cMatrix_route, list):
                 pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible)
     elif random == True:
 
-        start = PrepInitData[0]
-        goal = PrepInitData[1]
-        startAxis = PrepInitData[2]
-        goalAxis = PrepInitData[3]
+
 
         while isinstance(cMatrix_route, list) == False:
             #fixme: remove old obstacles with every new instance
@@ -862,7 +871,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                 sBox.visible = False
 
             # Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible,
-            #                         topVisible,
+            #                      topVisible,
             #                         coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
             lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist,
                           wall_thickness=wallThickness,
@@ -888,6 +897,8 @@ def refreshObjects(visible, dict):
         for key in dict.keys():
             object = dict[key]
             object.visible = False
+
+
 
 def refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible):
     refreshObjects(wallVisible, Objects.wallDict)
