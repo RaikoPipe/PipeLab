@@ -651,7 +651,7 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
     for i in range(frequency):
         #if random.random() <= probability:
         randPosX = random.randint(1, xDots-1)
-        randPosY = random.randint(1, wallToTopShiftDots-2)
+        randPosY = random.randint(1, wallToTopShiftDots-1)
         randSizeX = random.randint(1, 2)
         randSizeY = random.randint(1, 2)
         Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
@@ -659,7 +659,7 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
     #create random Objects on Top
     for i in range(frequency -2):
         randPosX = random.randint(1, xDots - 1)
-        randPosY = random.randint(wallToTopShiftDots+1, yDots-1)
+        randPosY = random.randint(wallToTopShiftDots+2, yDots-1)
         randSizeX = random.randint(1, 2)
         randSizeY = random.randint(1, 2)
         Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)

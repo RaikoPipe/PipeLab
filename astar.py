@@ -325,10 +325,10 @@ def determineCostAndDots(x,y):
 def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType):
     routeList = []
 
-    for i in range(10):
+    for i in range(-10,10):
         currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, i)
         if isinstance(currentRoute, str):
-            return "Creating route is not possible"
+            continue
 
         #dotList = []
         sumCost = 0
@@ -350,7 +350,10 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
         heapq.heappush(routeList, (sumCost, currentRoute))
     bestRoute = heapq.heappop(routeList)[1]
     print("hello")
-    return bestRoute
+    if isinstance(bestRoute, list):
+     return bestRoute
+    else:
+        return "Creating route is not possible"
 
 
 
