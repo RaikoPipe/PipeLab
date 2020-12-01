@@ -30,6 +30,17 @@ savedState = []
 
 # this function creates the canvas, wall and top and dots
 
+def resetShowcase():
+    for key in showcaseDict.keys():
+        sBox = showcaseDict[key]
+        sBox.visible = False
+
+def resetObstacles():
+    for key in obstacleDict.keys():
+        oldObs = obstacleDict[key]
+        oldObs.visible = False
+        del oldObs
+
 
 
 def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color, lamp_visible,

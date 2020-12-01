@@ -23,7 +23,7 @@ def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testin
         route = optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType)
     else:
         weight = 0
-        route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, weight)
+        route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, weight, weight)
     if isinstance(route, str):
         print(route)
     else:
@@ -57,7 +57,7 @@ def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testin
         return route
 
 
-'Custom Restriction Set:'
+'''Custom Restriction Set:'''
 #check through the whole x-space the neighbor wants to occupy and check if it crosses an obstacle
 def previousXoccupied(neighbor, current, array):
 
@@ -90,7 +90,7 @@ def previousYoccupied(neighbor, current, array):
 
     return False
 
-def directionalRulesApply(current, current_neighbor, shiftpos):
+def directional_rules_apply(current, current_neighbor, shiftpos):
     if current == (current[0], shiftpos - 1) and current_neighbor[1] > 0:
         #we are at shiftpos-1 and want to go up
         return False
@@ -102,15 +102,14 @@ def directionalRulesApply(current, current_neighbor, shiftpos):
     else:
         return True
 
-#check if restriction that it needs to change direction by 90° after laying a pipe or pipe combo isn't violated.
-def isDirectionRestricted(cameFromDifference, currentNeighbor):
+def direction_is_restricted(cameFromDifference, currentNeighbor):
     if cameFromDifference[0] > 0 and currentNeighbor[0] != 0: #if true, then neighbor that wants to go horizontally is disallowed
         return True
     elif cameFromDifference[1] > 0 and currentNeighbor[1] != 0: #if true, then neighbor that wants to go vertically is disallowed
         return True
     else: return False
 
-def startRestricted(current_neighbor, startAxis):
+def start_is_restricted(current_neighbor, startAxis):
     if startAxis == lvf.up and current_neighbor[1] > 0:
         return False
     elif startAxis == lvf.down and current_neighbor[1] < 0:
@@ -121,9 +120,42 @@ def startRestricted(current_neighbor, startAxis):
         return False
     else: return True
 
-def dimensionShiftViolated(j, shiftpos, current):
+def dimension_shift_violation(j, shiftpos, current):
     if j > (shiftpos - 1) - current[1] and current[1] < (shiftpos - 1):
         return True
+
+def bounds_violation(current, neighbor, array):
+    if 0 <= neighbor[0] < array.shape[0]:
+
+        if 0 <= neighbor[1] < array.shape[1]:
+            # check if the neighbor is occupied (0 means not occupied, 1 means is occupied)
+            if array[neighbor[0]][neighbor[1]] == 1:
+                return True
+
+            # if neighbor is not occupied, check if space before it is occupied
+            elif abs(current[0] - neighbor[0]) >= 1:
+                if previousXoccupied(neighbor, current, array):
+                    return True
+
+            # if neighbor is not occupied, check if space before it is occupied
+            elif abs(current[1] - neighbor[1]) >= 1:
+                if previousYoccupied(current, neighbor, array):
+                    return True
+
+
+
+        else:
+
+            # array bound y walls
+
+            return True
+
+    else:
+
+        # array bound x walls
+
+        return True
+    return False
 
 # fixme: There is a neighbor somewhere that shouldnt work with length 5
 'Custom Neighbor Set'
@@ -228,29 +260,14 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
 def determineTypeCost(currentNeighbor):
     x = abs(currentNeighbor[0])
     y = abs(currentNeighbor[1])
-    if x == 9 or y == 9:
-        costPerDot = 1.16
-    elif x == 8 or y == 8:
-        costPerDot = 1.28
-    elif x == 7 or y == 7:
-        costPerDot = 1.43
-    elif x == 6 or y == 6:
-        costPerDot = 1.55
-    elif x == 5 or y == 5:
-        costPerDot = 1.64
-    elif x == 4 or y == 4:
-        costPerDot = 1.73
-    elif x == 3 or y == 3:
-        costPerDot = 2.23
-    elif x == 2 or y == 2:
-        costPerDot = 3.24
-    elif x == 1 or y == 1:
-        costPerDot = 3.24
-    else:
-        type = "error"
-        print("type doesnt exist")
+    price_per_dot_List = [2.22,3.24,2.23,1.73,1.73,1.79,1.57,1.40, 1.40]
 
-    return costPerDot
+    if x != 0:
+        cost_per_dot = price_per_dot_List[x-1]
+    elif y!= 0:
+        cost_per_dot = price_per_dot_List[y-1]
+
+    return cost_per_dot
 
 
 
@@ -262,11 +279,11 @@ def heuristic(a,b): #fixme: Artificially change the score to favor long pipes
     # np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
     #return distance
 
-def artificialHeuristic(a,b, goal, currentNeighbor, heuristicType, weight):
-    neighToGoalDistance = np.abs(goal[0] - b[0]) + np.abs(goal[1] - b[1]) # manhattan distance from neigh to goal
-    currToGoalDistance = np.abs(goal[0] - a[0]) + np.abs(goal[1] - a[1]) # manhattan distance from a to goal
+def artificialHeuristic(a,b, currentNeighbor, heuristicType, weight):
+    neighToGoalDistance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1]) # manhattan distance from neigh to goal
+    currToGoalDistance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1]) # manhattan distance from a to goal
     #if the neighbor decreases the distance to goal, reward algo
-    distance = np.abs(goal[0] - b[0]) + np.abs(goal[1] - b[1])
+    distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
 
     if heuristicType == "add":
         add = abs(currentNeighbor[0]/2+currentNeighbor[1]/2)
@@ -285,38 +302,21 @@ def artificialHeuristic(a,b, goal, currentNeighbor, heuristicType, weight):
 
         return artificialDistance
     else:
-        artificialDistance = distance + weight * add
+        artificialDistance = distance + (weight * add)
         return artificialDistance
 
 def determineCostAndDots(x,y):
     x = abs(x)
     y = abs(y)
-    if x == 9 or y == 9:
-        cost = 10.44
-    elif x == 8 or y == 8:
-        cost = 10.22
-    elif x == 7 or y == 7:
-        cost = 10.00
-    elif x == 6 or y == 6:
-        cost = 9.27
-    elif x == 5 or y == 5:
-        cost = 8.09
-    elif x == 4 or y == 4:
-        cost = 6.92
-    elif x == 3 or y == 3:
-        cost = 6.70
-    elif x == 2 or y == 2:
-        cost = 6.47
-    elif x == 1 or y == 1:
-        cost = 1.15
-    else:
-        type = "error"
-        print("type doesnt exist")
+    priceList = [6.47,6.47,6.7,6.92,6.92,10.75,10.97,11.19,11.19]
 
-    if x !=0:
+    if x != 0:
+        cost = priceList[x-1]
         dots = x
-    elif y != 0:
+    elif y!= 0:
+        cost = priceList[y-1]
         dots = y
+
 
     return cost, dots
 
@@ -324,47 +324,66 @@ def determineCostAndDots(x,y):
 
 def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType):
     routeList = []
+    bestRoute = []
 
-    for i in range(-10,10):
-        currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, i)
-        if isinstance(currentRoute, str):
-            continue
+    currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis, testingPath, testedPath,
+                         heuristicType, 0, 0)
+    Objects.resetShowcase()
 
-        #dotList = []
-        sumCost = 0
-        for idx, (x,y) in enumerate(currentRoute):
+    if not isinstance(currentRoute, list):
+        return "Creating route is not possible"
 
-            #dont check next point if last point has been reached
-            if idx == len(currentRoute)-1:
-                break
 
-            #set pointA and pointB, calculate difference
-            pointA=currentRoute[idx]
-            pointB=currentRoute[idx+1]
-            differenceX = list(pointB)[0] - list(pointA)[0]
-            differenceY = list(pointB)[1] - list(pointA)[1]
+    for i in range(0,5):
+        for j in range(0,5):
+            Objects.resetShowcase()
+            gWeight = i/2
+            fWeight = j/2
 
-            cost, dots = determineCostAndDots(differenceX, differenceY)
-            sumCost += cost
-            #dotList.append(dots)
-        heapq.heappush(routeList, (sumCost, currentRoute))
-    bestRoute = heapq.heappop(routeList)[1]
-    print("hello")
-    if isinstance(bestRoute, list):
-     return bestRoute
-    else:
+            currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath,
+                                 heuristicType, gWeight, fWeight)
+            if isinstance(currentRoute, str):
+                continue
+
+            dotCost = 0
+            sumCost = 0
+            for idx, (x,y) in enumerate(currentRoute):
+
+                #dont check next point if last point has been reached
+                if idx == len(currentRoute)-1:
+                    break
+
+                #set pointA and pointB, calculate difference
+                pointA=currentRoute[idx]
+                pointB=currentRoute[idx+1]
+                differenceX = list(pointB)[0] - list(pointA)[0]
+                differenceY = list(pointB)[1] - list(pointA)[1]
+
+                cost, dots = determineCostAndDots(differenceX, differenceY)
+                sumCost += cost
+                dotCost += dots
+                #dotList.append(dots)
+            heapq.heappush(routeList, (sumCost, dotCost, currentRoute))
+    try:
+        bestRoute = heapq.heappop(routeList)[2]
+        return bestRoute
+    except:
         return "Creating route is not possible"
 
 
 
 
 
-def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, weight):
+def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, gWeight, fWeight):
     if array[start] == 1:
         return "Start point is blocked and therefore goal cant be reached"
     elif array[goal] == 1:
         return "Goal point is blocked and therefore cant be reached"
 
+    if heuristicType == "intelligent":
+        speed = 0.01
+    else:
+        speed = 0.1
 
     close_set = set()
 
@@ -432,78 +451,38 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
 
 
-            tentative_g_score = gscore[current] + heuristic(current, neighbor)
-            # if isRestricted(prevCurrdifference, current_neighbor):
-            #     continue
+            tentative_g_score = gscore[current] + artificialHeuristic(current, neighbor, current_neighbor, heuristicType, gWeight)
 
-            #if the neighbour is in the closed set and the G score is greater than the G score's for that position
-            # then ignore and continue the loop
             if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
                 continue
 
-            #if current neighbor is above shiftpos and current position is smaller than shiftpos, skip
-            if dimensionShiftViolated(j, shiftpos, current):
+            if dimension_shift_violation(j, shiftpos, current):
                 continue
 
-            #if current has reached shiftpos, then allow going vertical again
-            if directionalRulesApply(current, current_neighbor, shiftpos):
+            if directional_rules_apply(current, current_neighbor, shiftpos):
                 if current != start:
                     #restrict the way pipes can be placed according to rules
                     came_fromDifference = [abs(current[0] - came_from[current][0]), abs(current[1] - came_from[current][1])]
-                    if isDirectionRestricted(came_fromDifference, current_neighbor):
+                    if direction_is_restricted(came_fromDifference, current_neighbor):
                         continue
-                elif startRestricted(current_neighbor, startAxis):
+                elif start_is_restricted(current_neighbor, startAxis):
                      continue
 
-
-
-            if 0 <= neighbor[0] < array.shape[0]:
-
-                if 0 <= neighbor[1] < array.shape[1]:
-                    # check if the neighbor is occupied (0 means not occupied, 1 means is occupied)
-                    if array[neighbor[0]][neighbor[1]] == 1:
-                        continue
-
-                    #if neighbor is not occupied, check if space before it is occupied
-                    elif abs(current[0]- neighbor[0]) >= 1:
-                        if previousXoccupied(neighbor, current, array):
-                            continue
-
-                    # if neighbor is not occupied, check if space before it is occupied
-                    elif abs(current[1] - neighbor[1]) >=1:
-                        if previousYoccupied(current, neighbor, array):
-                            continue
-
-
-
-                else:
-
-                    # array bound y walls
-
-                    continue
-
-            else:
-
-                # array bound x walls
-
+            if bounds_violation(current, neighbor, array):
                 continue
 
 
-
-
-            #If the G score for the neighbour is less than the other G score's for that position OR if this neighbour
-            # is not in the open list (i.e. a new, untested position) then update our lists and add to the open list
             if tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap]:
                 if testingPath == True:
                     if neiCount > 0:
                         neighBox.obj.visible = False
                         neighBox.obj.delete()
                         neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                        time.sleep(0.1)
+                        time.sleep(speed)
                     else:
                         neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                         neiCount += 1
-                        time.sleep(0.1)
+                        time.sleep(speed)
 
                 if testedPath == True:
                     testedBox = Objects.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
@@ -512,7 +491,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
                 gscore[neighbor] = tentative_g_score
 
-                fscore[neighbor] = tentative_g_score + artificialHeuristic(current, neighbor, goal, current_neighbor, heuristicType,weight)
+                fscore[neighbor] = tentative_g_score + artificialHeuristic(neighbor, goal, current_neighbor, heuristicType, fWeight)
 
                 heapq.heappush(oheap, (fscore[neighbor], neighbor))
     return "Creating route is not possible"

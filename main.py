@@ -862,13 +862,8 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
         while isinstance(cMatrix_route, list) == False:
             #fixme: remove old obstacles with every new instance
-            for key in Objects.obstacleDict.keys():
-                oldObs = Objects.obstacleDict[key]
-                oldObs.visible = False
-                del oldObs
-            for key in Objects.showcaseDict.keys():
-                sBox = Objects.showcaseDict[key]
-                sBox.visible = False
+            Objects.resetObstacles()
+            Objects.resetShowcase()
 
             # Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible,
             #                      topVisible,
@@ -913,6 +908,9 @@ def refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible,
 if __name__ == "__main__":
     scene = canvas()
     app = App()
+
+
+
 
 # todo:
 #  known bugs:
