@@ -19,7 +19,7 @@ def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testin
 
 
     grid = lvf.glG_Call(x, y)  # 0s are positions we can travel on, 1s are walls(obstacles or already placed pipes)
-    if heuristicType == "intelligent":
+    if heuristicType == "intelligent" or heuristicType == "testPreviousVersion":
         route = optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType)
     else:
         weight = 0
@@ -260,7 +260,7 @@ def determineNeighbors(current, start, goal, goalAxis, shiftpos):
 def determineTypeCost(currentNeighbor):
     x = abs(currentNeighbor[0])
     y = abs(currentNeighbor[1])
-    price_per_dot_List = [2.22,3.24,2.23,1.73,1.73,1.79,1.57,1.40, 1.40]
+    price_per_dot_List = [2.22,3.24,2.23,1.73,1.73,1.79,1.57,1.40,1.40]
 
     if x != 0:
         cost_per_dot = price_per_dot_List[x-1]
@@ -279,31 +279,25 @@ def heuristic(a,b): #fixme: Artificially change the score to favor long pipes
     # np.sqrt((b[0] - a[0])** 2  + (b[1] - a[1]) ** 2)
     #return distance
 
-def artificialHeuristic(a,b, currentNeighbor, heuristicType, weight):
-    neighToGoalDistance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1]) # manhattan distance from neigh to goal
-    currToGoalDistance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1]) # manhattan distance from a to goal
+def modified_heuristic(a, b, currentNeighbor, heuristicType, weight, goal):
+    neighToGoalDistance = np.abs(goal[0] - b[0]) + np.abs(goal[1] - b[1]) # manhattan distance from neigh to goal
+    currToGoalDistance = np.abs(goal[0] - a[0]) + np.abs(goal[1] - a[1]) # manhattan distance from a to goal
     #if the neighbor decreases the distance to goal, reward algo
+
     distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
 
-    if heuristicType == "add":
-        add = abs(currentNeighbor[0]/2+currentNeighbor[1]/2)
-    elif heuristicType == "subtract":
-        add = -abs(currentNeighbor[0]/2+currentNeighbor[1]/2)
-    elif heuristicType == "intelligent":
+    if heuristicType == "intelligent":
         add = determineTypeCost(currentNeighbor)
     else:
         add = 0
 
-    if heuristicType != "intelligent":
-        if neighToGoalDistance < currToGoalDistance:
-            artificialDistance = distance + add
-        else:
-            artificialDistance = distance
 
-        return artificialDistance
-    else:
-        artificialDistance = distance + (weight * add)
-        return artificialDistance
+    currentLength = abs(currentNeighbor[0] + currentNeighbor[1])
+
+
+    modified_distance = distance + (weight * add * currentLength)
+
+    return modified_distance
 
 def determineCostAndDots(x,y):
     x = abs(x)
@@ -335,10 +329,10 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
 
 
     for i in range(0,5):
-        for j in range(0,5):
+        for j in range(-2,5):
             Objects.resetShowcase()
-            gWeight = i/2
-            fWeight = j/2
+            gWeight = i/4
+            fWeight = j/4
 
             currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath,
                                  heuristicType, gWeight, fWeight)
@@ -364,8 +358,12 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
                 dotCost += dots
                 #dotList.append(dots)
             heapq.heappush(routeList, (sumCost, dotCost, currentRoute))
+    print(heuristicType, routeList)
     try:
-        bestRoute = heapq.heappop(routeList)[2]
+
+        chosenRoute = heapq.heappop(routeList)
+        print(chosenRoute)
+        bestRoute = chosenRoute[2]
         return bestRoute
     except:
         return "Creating route is not possible"
@@ -446,12 +444,12 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
         for i, j in nextNeighbors:
 
-            current_neighbor = i, j
+            current_neighbor = (i, j)
             neighbor = current[0] + i, current[1] + j
 
 
 
-            tentative_g_score = gscore[current] + artificialHeuristic(current, neighbor, current_neighbor, heuristicType, gWeight)
+            tentative_g_score = gscore[current] + modified_heuristic(current, neighbor, current_neighbor, heuristicType, gWeight, goal)
 
             if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
                 continue
@@ -491,7 +489,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
                 gscore[neighbor] = tentative_g_score
 
-                fscore[neighbor] = tentative_g_score + artificialHeuristic(neighbor, goal, current_neighbor, heuristicType, fWeight)
+                fscore[neighbor] = tentative_g_score + modified_heuristic(neighbor, goal, current_neighbor, heuristicType, fWeight, goal)
 
                 heapq.heappush(oheap, (fscore[neighbor], neighbor))
     return "Creating route is not possible"
