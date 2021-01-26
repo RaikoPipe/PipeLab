@@ -199,7 +199,7 @@ class App:
 
             currentRealLength.config(text="current realLength: " +str(round(lengthCounter,3)) + " meter")
 
-            root.update()
+            #root.update()
 
 
 
@@ -363,7 +363,7 @@ class App:
         levelSelectLabel= ttk.Label(root, text = "Level Select:")
         levelSelectLabel.grid(row=0,column=4)
 
-        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "Save 1", "Save 2"], state="readonly")
+        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "High Complexity", "Save 1", "Save 2"], state="readonly")
         levelCombobox.grid(row=1, column=4)
 
         levelCombobox.bind("<<ComboboxSelected>>", disableRefreshPathButton)
@@ -445,15 +445,17 @@ def determineType(x,y):
     if x == 7 or y == 7:
         type="red+red"
     elif x == 6 or y == 6:
-        type="red+yellow"
+         type="red+yellow"
     elif x == 5 or y == 5:
-        type="yellow+yellow"
+         type="red+pink"
+    elif x == 4 or y == 4:
+          type="long4"
     elif x == 3 or y == 3:
-        type="blue"
+         type="pink+pink"
     elif x == 2 or y == 2:
         type ="green"
     elif x == 1 or y == 1:
-        type = "purple"
+         type = "purple"
     else:
         type = "error"
         print("type doesnt exist")
@@ -632,9 +634,9 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
 
 def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
     #Initialise Start and Endpositions for random position
-    possible_start_positions = [((1,1),lvf.up, lvf.upSG), ((6,1),lvf.up, lvf.upSG), ((xDots,1),lvf.up, lvf.upSG), ((1,3),lvf.right, lvf.rightSG), ((xDots,3),lvf.left, lvf.leftSG)]
+    possible_start_positions = [((2,1),lvf.up, lvf.upSG), ((6,1),lvf.up, lvf.upSG), ((xDots,1),lvf.up, lvf.upSG), ((1,2),lvf.right, lvf.rightSG), ((xDots,2),lvf.left, lvf.leftSG)]
     #possible_start_axis = {lvf.upTup, lvf.upTup, lvf.upTup, lvf.rightTup, lvf.leftTup}
-    possible_goal_positions = [((1,yDots),lvf.down, lvf.downSG), ((6,yDots),lvf.down, lvf.downSG), ((10,yDots),lvf.down, lvf.downSG), ((1,yDots-1), lvf.right, lvf.rightSG), ((10,yDots-1),lvf.left, lvf.leftSG)]
+    possible_goal_positions = [((1,yDots),lvf.down, lvf.downSG), ((6,yDots),lvf.down, lvf.downSG), ((10,yDots),lvf.down, lvf.downSG), ((1,yDots), lvf.right, lvf.rightSG), ((10,yDots),lvf.left, lvf.leftSG)]
     #possible_goal_axis = {lvf.downTup, lvf.downTup, lvf.downTup, lvf.rightTup, lvf.leftTup}
 
     randomSelectStart = random.randint(0, 4)
@@ -768,6 +770,32 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
             obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
             random = False
+
+        # elif level == "High Complexity":
+        #     startAxis = lvf.up
+        #     goalAxis = lvf.down
+        #     startDirection = startAxis + lvf.upSG  # adding vector is a placeholder solution
+        #     goalDirection = goalAxis + lvf.downSG
+        #     start = (10, 1)  # this will be a random vector along the wall or a manual input
+        #     goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
+        #     Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+        #
+        #     #wall
+        #     obs1 = Objects.obstacle((1, 7), (5, 4), obsVisWall)
+        #     obs2 = Objects.obstacle((3, 1), (8, 5), obsVisWall)
+        #     obs3 = Objects.obstacle((3, 1), (2, 7), obsVisWall)
+        #     obs4 = Objects.obstacle((1, 3), (2, 12), obsVisWall)
+        #     obs5 = Objects.obstacle((1, 5), (6, 12), obsVisWall)
+        #     obs6 = Objects.obstacle((3, 2), (8, 15), obsVisWall)
+        #     obs7 = Objects.obstacle((4, 1), (2, 16), obsVisWall)
+        #
+        #     #top
+        #     obs7 = Objects.obstacle((2, 1), (6, 18), obsVisTop)
+        #     obs8 = Objects.obstacle((1, 5), (8, 18), obsVisTop)
+        #     obs9 = Objects.obstacle((3, 3), (2, 22), obsVisTop)
+        #     obs10 = Objects.obstacle((3, 1), (6, 24), obsVisTop)
+        #     random = False
+
 
         elif level == "Save 1":
             startAxis = lvf.right

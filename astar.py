@@ -20,10 +20,10 @@ def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testin
 
     grid = lvf.glG_Call(x, y)  # 0s are positions we can travel on, 1s are walls(obstacles or already placed pipes)
     if heuristicType == "intelligent" or heuristicType == "testPreviousVersion":
-        route = optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType)
+        route = optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, y)
     else:
         weight = 0
-        route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, weight, weight)
+        route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, weight, weight, y)
     if isinstance(route, str):
         print(route)
     else:
@@ -157,105 +157,109 @@ def bounds_violation(current, neighbor, array):
         return True
     return False
 
+def neighborChanger(standardNeighbors, changetuple, case, specialCase, topGoalDistance):
+    newNeighbors = []
+    for count, tuple in enumerate(standardNeighbors):
+        xCoord = tuple[0]
+        yCoord = tuple[1]
+
+
+        if case == "AddToPositiveOnly":
+            if xCoord > 0:
+                xCoord = xCoord + changetuple[0]
+            elif yCoord > 0:
+                yCoord = yCoord + changetuple[1]
+        elif case == "AddToNegativeOnly":
+            if xCoord < 0:
+                xCoord = xCoord + changetuple[0]
+            elif yCoord < 0:
+                yCoord = yCoord + changetuple[1]
+        else:
+            if xCoord < 0:
+                xCoord = xCoord + abs(changetuple[0])
+            elif xCoord > 0:
+                xCoord = xCoord + changetuple[0]
+
+            if yCoord < 0:
+                yCoord = yCoord + abs(changetuple[1])
+            elif yCoord > 0:
+                yCoord = yCoord + changetuple[1]
+
+        newNeighbors.append((xCoord, yCoord))
+
+    if specialCase == True:
+        specialNeighbors = []
+        for count, tuple in enumerate(newNeighbors):
+
+            if tuple[0] >= topGoalDistance:
+                continue
+            elif tuple[1] >= topGoalDistance:
+                continue
+            else:
+                specialNeighbors.append(tuple)
+
+        newNeighbors = specialNeighbors
+
+
+    return newNeighbors
+
+
+
+
+
+
+
 # fixme: There is a neighbor somewhere that shouldnt work with length 5
 'Custom Neighbor Set'
-def determineNeighbors(current, start, goal, goalAxis, shiftpos):
+def determineNeighbors(current, start, goal, goalAxis, shiftpos, yDots):
+
+
     currToGoalDifference = (goal[0] - current[0], goal[1] - current[1])
+    topGoalDistance = yDots - shiftpos
+
+    # standardNeighbors = [(0, 8), (0, -8), (8, 0), (-8, 0), (0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0),
+    #                  (-6, 0),
+    #                  (0, 4), (0, -4), (4, 0), (-4, 0), (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0),
+    #                  (-2, 0)]
+    standardNeighbors = [(0, 5), (0, -5), (5, 0),(-5,0), (0, 2), (0, -2), (2, 0),(-2,0)]
+
 
     #current is at start
     if current == start:
         # neighbor needs to be shortened by 1 for some reason if current = start
-        neighbors = [(0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0), (-6, 0), (0, 5), (0, -5), (5, 0),
-                     (-5, 0),
-                     (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0), (-2, 0), (0, 1), (0, -1), (1, 0),
-                     (-1, 0)]
+        neighbors = neighborChanger(standardNeighbors, (-1,-1), "All", False, topGoalDistance)
         return neighbors
 
     #current is not in shiftpos but goal is in reach
     # ->check if we can close the distance by using a pipe without a corner first
     #goal is one same horizontal axis
     if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 8 and goalAxis == lvf.down:
-        neighbors = [(0, 7), (0, 6), (0, 5), (0, 3), (0, 2), (0, 1), (0, -8), (8, 0), (-8, 0), (0, -7), (7, 0),
-                     (-7, 0), (0, -6), (6, 0), (-6, 0), (0, -4), (4, 0), (-4, 0), (0, -3), (3, 0), (-3, 0), (0, -2),
-                     (2, 0),(-2, 0)]
+        neighbors = neighborChanger(standardNeighbors, (0, -1), "AddToPositiveOnly", False, topGoalDistance)
         return neighbors
     elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -8 and goalAxis == lvf.up:
-        neighbors = [(0, -7), (0, -6), (0, -5), (0, -3), (0, -2), (0, -1),(0, 8),  (8, 0), (-8, 0),(0, 7),  (7, 0),
-                     (-7, 0),(0, 6), (6, 0), (-6, 0),(0, 4), (4, 0), (-4, 0),(0, 3), (0, -3), (3, 0), (0, 2),
-                     (2, 0),(-2, 0)]
+
+        neighbors = neighborChanger(standardNeighbors, (0, 1), "AddToNegativeOnly", False, topGoalDistance)
+
         return neighbors
     #goal is on same vertical axis
     elif current[1] == goal[1] and currToGoalDifference[0] > 0 and currToGoalDifference[0] <= 8 and goalAxis == lvf.left:
-        neighbors = [(7, 0), (6, 0), (5, 0), (3, 0), (2, 0), (1, 0), (0, 8), (0, -8), (-8, 0),(0, 7), (0, -7), (-7, 0),
-                     (0, 6), (0, -6), (-6, 0), (0, 4), (0, -4),  (-4, 0),(0, 3), (0, -3),  (-3, 0),(0, 2), (0, -2),
-                     (-2, 0)]
+        neighbors = neighborChanger(standardNeighbors, (-1, 0), "AddToPositiveOnly", False, topGoalDistance)
         return neighbors
     elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >= -8 and goalAxis == lvf.right:
-        neighbors = [(-7, 0), (-6, 0), (-5, 0), (-3, 0), (-2, 0), (-1, 0), (0, 8), (0, -8), (8, 0), (0, 7), (0, -7),
-                     (7, 0), (0, 6), (0, -6), (6, 0), (0, 4), (0, -4), (4, 0),(0, 3), (0, -3), (3, 0),(0, 2), (0, -2),
-                     (2, 0)]
+        neighbors = neighborChanger(standardNeighbors, (1, 0), "AddToNegativeOnly", False, topGoalDistance)
         return neighbors
 
     if current == (current[0], shiftpos - 1):
         #we are not on same horizontal axis as goal and at shiftpos-1
         if current == (current[0], shiftpos - 1) and current[0] == goal[0] and goalAxis == lvf.down:
-            neighbors = [(0, -8), (8, 0), (-8, 0), (0, 8), (0, -7), (7, 0), (-7, 0), (0, 7), (0, -6), (6, 0),
-                         (-6, 0),
-                         (0, 5), (0, -4), (4, 0), (-4, 0), (0, 4), (0, -3), (3, 0), (-3, 0), (0, 3), (0, -2), (2, 0),
-                         (-2, 0)]
+            neighbors = neighborChanger(standardNeighbors, (0, 1), "AddToPositiveOnly", True, topGoalDistance)
             return neighbors
         elif current == (current[0],shiftpos-1):
-            neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
-                        (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
-                        (-2, 0)]
+            neighbors = neighborChanger(standardNeighbors, (0, 1), "AddToPositiveOnly", False, topGoalDistance)
             return neighbors
-        # we are not on same horizontal axis as goal and at shiftpos+1
-        # elif current == (current[0],shiftpos+1): # we are not on same horizontal axis as goal
-        #     neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
-        #                 (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
-        #                 (-2, 0)]
-        #     return neighbors
-        # elif current == (current[0],shiftpos-1):
-        #     neighbors = [(0, 9), (0, -8), (8, 0), (-8, 0),(0, 8), (0, -7), (7, 0), (-7, 0),(0, 7), (0, -6), (6, 0), (-6, 0),
-        #                 (0, 5), (0, -4), (4, 0), (-4, 0),(0, 4), (0, -3), (3, 0), (-3, 0),(0, 3), (0, -2), (2, 0),
-        #                 (-2, 0)]
-        #     return neighbors
-        # elif current == (current[0],shiftpos+1):
-        #     neighbors = [(0, 8), (0, -9), (8, 0), (-8, 0),(0, 7), (0, -8), (7, 0), (-7, 0),(0, 6), (0, -7), (6, 0), (-6, 0),
-        #                 (0, 4), (0, -5), (4, 0), (-4, 0),(0, 3), (0, -4), (3, 0), (-3, 0),(0, 2), (0, -3), (2, 0),
-        #                 (-2, 0)]
     else:
-        neighbors = [(0, 8), (0, -8), (8, 0), (-8, 0), (0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0),
-                     (-6, 0),
-                     (0, 4), (0, -4), (4, 0), (-4, 0), (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0),
-                     (-2, 0)]
+        neighbors = standardNeighbors
         return neighbors
-
-
-    # current is in shiftpos-1 or shiftpos+1
-    #fixme: differentiate between close to goal or not
-    #goal is not in reach
-
-
-
-        #The following might be useless and wrong, since if the goal is in reach but still blocked it will be stuck
-        # elif abs(currToGoalDifference[1]) <= 8 and current[0] == goal[0]: # we are on the same axis as goal and its reachable
-        #     #goal is on same horizontal axis, goal is above current
-        #     if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 8 and goalAxis == lvf.down:
-        #         neighbors = [(0, 8), (0, 7), (0, 6), (0, 4), (0, 3), (0, 2)]
-        #         return neighbors
-        #     #goal is on same horizontal axis, goal is below current
-        #     elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -8 and goalAxis == lvf.up:
-        #         neighbors = [(0, -8), (0, -7), (0, -6), (0, -4), (0, -3), (0, -2)]
-        #         return neighbors
-        # elif current[0] == goal[0] and abs(currToGoalDifference[1]) > 8: #we are on the same axis as goal, but its not reachable
-        #     neighbors = [(8, 0), (-8, 0), (0, 8), (0, -8), (7, 0), (-7, 0), (0, 7), (0, -7), (6, 0),
-        #                  (-6, 0),
-        #                  (0, 5), (0, -5), (4, 0), (-4, 0), (0, 4), (0, -4), (3, 0), (-3, 0), (0, 3), (0, -3), (2, 0),
-        #                  (-2, 0)]
-        #     return neighbors
-
-
 
 def determineTypeCost(currentNeighbor):
     x = abs(currentNeighbor[0])
@@ -316,12 +320,12 @@ def determineCostAndDots(x,y):
 
 
 
-def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType):
+def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, yDots):
     routeList = []
     bestRoute = []
 
     currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis, testingPath, testedPath,
-                         heuristicType, 0, 0)
+                         heuristicType, 0, 0, yDots)
     Objects.resetShowcase()
 
     if not isinstance(currentRoute, list):
@@ -335,7 +339,7 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
             fWeight = j/4
 
             currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath,
-                                 heuristicType, gWeight, fWeight)
+                                 heuristicType, gWeight, fWeight, yDots)
             if isinstance(currentRoute, str):
                 continue
 
@@ -358,11 +362,11 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
                 dotCost += dots
                 #dotList.append(dots)
             heapq.heappush(routeList, (sumCost, dotCost, currentRoute))
-    print(heuristicType, routeList)
+    #print(heuristicType, routeList)
     try:
 
         chosenRoute = heapq.heappop(routeList)
-        print(chosenRoute)
+        #print(chosenRoute)
         bestRoute = chosenRoute[2]
         return bestRoute
     except:
@@ -372,7 +376,7 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
 
 
 
-def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, gWeight, fWeight):
+def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, gWeight, fWeight, yDots):
     if array[start] == 1:
         return "Start point is blocked and therefore goal cant be reached"
     elif array[goal] == 1:
@@ -435,7 +439,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
         close_set.add(current) #add the from oheap popped coordinate to the closed list
 
-        nextNeighbors = determineNeighbors(current,start, goal, goalAxis, shiftpos)
+        nextNeighbors = determineNeighbors(current,start, goal, goalAxis, shiftpos, yDots)
         if testingPath == True:
             if neiCount > 0:
                 neighBox.obj.visible = False
