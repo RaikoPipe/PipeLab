@@ -47,7 +47,6 @@ class App:
         def refreshPath():
             refresh = True
             sendParameters(refresh)
-            sendParameters(refresh)
 
         def createNewScene():
             refresh = False
@@ -397,7 +396,7 @@ class App:
         heuristicLabel = ttk.Label(parameterOutputFrame, text="heuristic: ")
         heuristicLabel.grid(row=0, column=1)
 
-        heuristicCombobox = ttk.Combobox(parameterOutputFrame, values=["normal", "testPreviousVersion", "intelligent"], state="readonly")
+        heuristicCombobox = ttk.Combobox(parameterOutputFrame, values=["normal", "testPreviousVersion", "intelligent", "modified"], state="readonly")
         heuristicCombobox.grid(row=1, column=1)
 
         refreshPathButton=ttk.Button(parameterOutputFrame, text="Refresh Path", command=refreshPath)
@@ -588,16 +587,10 @@ def buildVpipes(dict):
     for count, objects in enumerate(dict):
         Objects.pipe(objects[0], objects[1], objects[2], objects[3])
 
-
-
-
-
-
-
-
-
 def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict):
     pipeBuildDict = []
+    if cRoute == False:
+        return
     for idx, (x,y) in enumerate(cRoute):
 
         #dont check next point if last point has been reached
@@ -1135,9 +1128,11 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         for key in Objects.pipeDict.keys():
             oldPipe = Objects.pipeDict[key]
             oldPipe.visible = False
+            del oldPipe
         for key in Objects.showcaseDict.keys():
             sBox = Objects.showcaseDict[key]
             sBox.visible = False
+            del sBox
 
         start = Objects.savedState[0]
         goal = Objects.savedState[1]
@@ -1154,13 +1149,14 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                 pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots,
                             wallVisible,
                             topVisible, pipeTypeDict)
+        return
 
-    if random == False:
-        if pipeVisible == True:
-            cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict)
-            print(cMatrix_route)
-            if isinstance(cMatrix_route, list):
-                pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
+    # if random == False:
+    #     if pipeVisible == True:
+    #         cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict)
+    #         print(cMatrix_route)
+    #         if isinstance(cMatrix_route, list):
+    #             pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
     elif random == True:
         # while isinstance(cMatrix_route, list) == False:
         #     Objects.resetObstacles()

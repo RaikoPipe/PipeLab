@@ -269,7 +269,7 @@ def determineTypeCost(currentNeighbor):
 
 
 
-def heuristic(a,b): #fixme: Artificially change the score to favor long pipes
+def heuristic(a,b):
     #manhattan distance
     distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
     return distance
@@ -278,9 +278,6 @@ def heuristic(a,b): #fixme: Artificially change the score to favor long pipes
     #return distance
 
 def modified_heuristic(a, b, currentNeighbor, heuristicType, weight, goal):
-    neighToGoalDistance = np.abs(goal[0] - b[0]) + np.abs(goal[1] - b[1]) # manhattan distance from neigh to goal
-    currToGoalDistance = np.abs(goal[0] - a[0]) + np.abs(goal[1] - a[1]) # manhattan distance from a to goal
-    #if the neighbor decreases the distance to goal, reward algo
 
     distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
 
@@ -288,6 +285,12 @@ def modified_heuristic(a, b, currentNeighbor, heuristicType, weight, goal):
         add = determineTypeCost(currentNeighbor)
     else:
         add = 0
+
+    if heuristicType == "modified":
+        neighToGoalDistance = np.abs(goal[0] - b[0]) + np.abs(goal[1] - b[1])  # manhattan distance from neigh to goal
+        currToGoalDistance = np.abs(goal[0] - a[0]) + np.abs(goal[1] - a[1])  # manhattan distance from a to goal
+        if neighToGoalDistance < currToGoalDistance:
+            distance = np.abs(b[0] - a[0])**2 + np.abs(b[1] - a[1])**2
 
 
     currentLength = abs(currentNeighbor[0] + currentNeighbor[1])
