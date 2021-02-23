@@ -10,7 +10,6 @@ import random
 
 
 savedState = []
-
 class App:
     def __init__(self):
         root = tk.Tk()
@@ -35,8 +34,19 @@ class App:
         displayWallDotsOption= tk.IntVar()
         displayTopDotsOption = tk.IntVar()
 
+        #partstrings
+        pl1 = tk.StringVar()
+        pc1 = tk.StringVar()
+        pl2 = tk.StringVar()
+        pc2 = tk.StringVar()
+        pl3 = tk.StringVar()
+        pc3 = tk.StringVar()
+
+
+
         def refreshPath():
             refresh = True
+            sendParameters(refresh)
             sendParameters(refresh)
 
         def createNewScene():
@@ -45,6 +55,19 @@ class App:
 
         def disableRefreshPathButton(event):
             refreshPathButton.config(state="disabled")
+
+        def checkPipes(dict):
+
+            if pl1.get() != "":
+                dict[int(pl1.get())] = int(pc1.get())
+            if pl2.get() != "":
+                dict[int(pl2.get())] = int(pc2.get())
+            if pl3.get() != "":
+                dict[int(pl3.get())] = int(pc3.get())
+
+            print(dict)
+
+            return dict
 
 
 
@@ -91,6 +114,8 @@ class App:
             displayTopDotsCheckButton.config(state="enabled")
             refreshPathButton.config(state="enabled")
             heuristicType = heuristicCombobox.get()
+            pipeTypeDict = {}
+            pipeTypeDict = checkPipes(pipeTypeDict)
             if randomizeOption.get() == 0:
                 level = levelCombobox.get()
             else: level = obstacleProbabilityCombobox.get()
@@ -104,12 +129,12 @@ class App:
                 pipeVisible = True
                 topDotVisible = True
                 wallDotVisible = True
-
-            createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
-                        topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
-                        coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
-                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
-                        , heuristicType, refreshing)
+            for i in range(2000):
+                createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
+                            topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
+                            coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
+                            dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
+                            , heuristicType, refreshing, pipeTypeDict)
 
         def refreshDisplayObjectsPrep():
             wallVisible = displayWallOption.get()
@@ -277,6 +302,31 @@ class App:
         defaultParametersButton = ttk.Checkbutton(root, text="Set default Values", command=setDefaultObjectParameters, variable = defaultOption)
         defaultParametersButton.grid(row=14, column=0)
 
+        # part parameters
+
+        pipePartsFrame = ttk.Frame(root)
+        pipePartsFrame.place(x=0,y=330)
+        SinglePipePartsLengthLabel=ttk.Label(pipePartsFrame, text = "Pipe Length:")
+        SinglePipePartsLengthLabel.grid(row=0,column=0)
+
+        SinglePipePartsCountLabel=ttk.Label(pipePartsFrame, text = "Pipe Count:")
+        SinglePipePartsCountLabel.grid(row=0,column=1)
+
+        pipePart1LengthEntry = ttk.Entry(pipePartsFrame, textvariable = pl1)
+        pipePart1LengthEntry.grid(row=1, column = 0)
+        pipePart1CountEntry = ttk.Entry(pipePartsFrame, textvariable=pc1)
+        pipePart1CountEntry.grid(row=1, column=1)
+
+        pipePart2LengthEntry = ttk.Entry(pipePartsFrame, textvariable = pl2)
+        pipePart2LengthEntry.grid(row=2, column = 0)
+        pipePart2CountEntry = ttk.Entry(pipePartsFrame, textvariable=pc2)
+        pipePart2CountEntry.grid(row=2, column=1)
+
+        pipePart3LengthEntry = ttk.Entry(pipePartsFrame, textvariable = pl3)
+        pipePart3LengthEntry.grid(row=3, column = 0)
+        pipePart3CountEntry = ttk.Entry(pipePartsFrame, textvariable=pc3)
+        pipePart3CountEntry.grid(row=3, column=1)
+
 
 
 
@@ -363,7 +413,7 @@ class App:
         levelSelectLabel= ttk.Label(root, text = "Level Select:")
         levelSelectLabel.grid(row=0,column=4)
 
-        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "High Complexity", "Save 1", "Save 2"], state="readonly")
+        levelCombobox = ttk.Combobox(root, values=["Level 1 (Easy)", "Level 2 (Medium)", "Level 3 (Hard)", "High Complexity", "Save 1", "Save 2", "Save 3", "Save 4"], state="readonly")
         levelCombobox.grid(row=1, column=4)
 
         levelCombobox.bind("<<ComboboxSelected>>", disableRefreshPathButton)
@@ -377,7 +427,7 @@ class App:
         obstacleProbabilityLabel= ttk.Label(root, text = "Obstacle frequency: ")
         obstacleProbabilityLabel.grid(row=4,column=4)
 
-        obstacleProbabilityCombobox = ttk.Combobox(root, values=["Low", "Medium", "High", "Very High", "Extreme", "Very Extreme"], state="readonly")
+        obstacleProbabilityCombobox = ttk.Combobox(root, values=["Empty", "Low", "Medium", "High", "Very High", "Extreme", "Very Extreme"], state="readonly")
         obstacleProbabilityCombobox.grid(row=5, column=4)
 
 
@@ -399,6 +449,10 @@ class App:
         topAndWallxSizeEntry.insert(0, "100.0")
         topHeightEntry.insert(0, "115.0")
         wallHeightEntry.insert(0, "200.0")
+        pipePart1LengthEntry.insert(0,"2")
+        pipePart1CountEntry.insert(0,"10")
+        pipePart2LengthEntry.insert(0,"4")
+        pipePart2CountEntry.insert(0,"10")
         backgroundCombobox.set("white")
         heuristicCombobox.set("normal")
         levelCombobox.set("Level 1 (Easy)")
@@ -434,31 +488,51 @@ class App:
 
     #functions
 
-def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType ):
-    route = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, )
+def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict ):
+    route, parts = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict)
     if isinstance(route, list):
         for idx,(x,y) in enumerate(route):
              route[idx] = (x+1,y+1)
-        return route
+        return route, parts
+    else: return False, False
 
-def determineType(x,y):
-    if x == 7 or y == 7:
+def pipeTypeDictEmpty(dict):
+    for index, (key, count) in enumerate(dict.items()):
+        empty = False
+        if count < 0:
+            empty = True
+            return empty
+    return empty
+
+
+def determineType(part):
+    if part == 7:
         type="red+red"
-    elif x == 6 or y == 6:
+        len = 7
+    elif part == 6:
          type="red+yellow"
-    elif x == 5 or y == 5:
+         len= 6
+    elif part == 5:
          type="red+pink"
-    elif x == 4 or y == 4:
+         len = 5
+    elif part == 4:
           type="long4"
-    elif x == 3 or y == 3:
-         type="pink+pink"
-    elif x == 2 or y == 2:
+          len = 4
+    elif part == 3:
+         type="blue"
+         len = 3
+    elif part == 2:
         type ="green"
-    elif x == 1 or y == 1:
+        len = 2
+    elif part == 1:
          type = "purple"
+         len = 1
     else:
         type = "error"
         print("type doesnt exist")
+
+    # dict[len] = dict[len] - 1
+    # empty = pipeTypeDictEmpty(dict)
 
     return type
 
@@ -507,7 +581,24 @@ def determineCorner(previousAxis, axis):
         print("Error: CornerType cant be determined")
     return cAxis
 
-def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible):
+
+
+
+
+def buildVpipes(dict):
+    for count, objects in enumerate(dict):
+        Objects.pipe(objects[0], objects[1], objects[2], objects[3])
+
+
+
+
+
+
+
+
+
+def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict):
+    pipeBuildDict = []
     for idx, (x,y) in enumerate(cRoute):
 
         #dont check next point if last point has been reached
@@ -519,6 +610,7 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
         pointB=cRoute[idx+1]
         differenceX = list(pointB)[0] - list(pointA)[0]
         differenceY = list(pointB)[1] - list(pointA)[1]
+        diff = (differenceX, differenceY)
 
         if pointB[1] > wallToTopShiftDots and topVisible:
             pipeVisible = True
@@ -527,9 +619,6 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
         else:
             pipeVisible = False
 
-
-
-
         # if we process the first point, there cant be a previous one where an axis could be checked
         if idx >0:
             previousAxis = axis
@@ -537,24 +626,7 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
         else:
             add, axis = determineAxis((differenceX, differenceY))
 
-        #determine type of pipe that is needed to close the distance between point a and b if horizontal
-        if differenceX !=0 and pointA == start:
-            type = determineType(abs(differenceX), abs(differenceY))
-        elif differenceX !=0 and pointB == goal and axis == -goalAxis:
-            type = determineType(abs(differenceX), abs(differenceY))
-        elif differenceX !=0:
-            type = determineType(abs(differenceX)-1, abs(differenceY))
-
-        # determine type of pipe that is needed to close the distance between point a and b if vertical
-        if differenceY !=0 and pointB == goal and axis == -goalAxis:
-            type = determineType(abs(differenceX), abs(differenceY))
-        elif differenceY !=0 and pointA == (x, wallToTopShiftDots) and \
-                axis == lvf.up or differenceY !=0 and pointB == (x, wallToTopShiftDots) and axis == lvf.down:
-            type = determineType(abs(differenceX), abs(differenceY) - 2)
-        elif differenceY !=0 and pointA != start:
-            type = determineType(abs(differenceX), abs(differenceY)- 1)
-        elif differenceY !=0:
-            type = determineType(abs(differenceX), abs(differenceY))
+        type = determineType(parts[(pointB[0]-1,pointB[1]-1)])
 
         if pointB == goal and pointA[1] == goal[1]:
             nearGoalHor = True
@@ -574,11 +646,17 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
         #todo: create a function for pipe creation
         if atShiftPoint == True:
             if axis == lvf.up and pointB != goal:
-                Objects.pipe(type, (x + add[0], y + add[1] + 1), axis, pipeVisible)
-                cornerAxis = determineCorner(previousAxis, axis)
-                corner = Objects.pipe("corner", (x, y+1), cornerAxis, pipeVisible)
-                if cornerAxis == lvf.totop:
-                    corner.corner.rotate(angle=-0.5 * pi)  # rotate object
+                pipe_coords = (x + add[0], y + add[1] + 1)
+                corner_coords = (x, y+1)
+                corner_axis = determineCorner(previousAxis, axis)
+
+                #Objects.pipe(type, pipe_coords, axis, pipeVisible)
+                #corner = Objects.pipe("corner", corner_coords, corner_axis, pipeVisible)
+
+                pipeBuildDict.append((type, pipe_coords, axis, pipeVisible))
+                pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+                # if corner_axis == lvf.totop:
+                #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
             elif pointB == goal:
                 closeWithoutCorner = True
                 if goalAxis==lvf.up and nearGoalHor == True:
@@ -591,46 +669,116 @@ def pipeBuilder(cRoute, pipeVisible, start, startAxis, goal, goalAxis, wallToTop
                     closeWithoutCorner = False
 
                 if closeWithoutCorner == True:
-                    Objects.pipe(type, (x + add[0], y + add[1] + 1), axis, pipeVisible)
-                    cornerAxis = determineCorner(previousAxis, axis)
-                    corner = Objects.pipe("corner", (x, y+1), cornerAxis, pipeVisible)
-                    if cornerAxis == lvf.totop:
-                        corner.corner.rotate(angle=-0.5 * pi)  # rotate object
+
+                    pipe_coords = (x + add[0], y + add[1] + 1)
+                    corner_coords = (x, y+1)
+                    corner_axis = determineCorner(previousAxis, axis)
+
+                    #Objects.pipe(type, pipe_coords, axis, pipeVisible)
+                    #corner = Objects.pipe("corner", corner_coords, corner_axis, pipeVisible)
+
+                    pipeBuildDict.append((type, pipe_coords, axis, pipeVisible))
+                    pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+
+                    # if corner_axis == lvf.totop:
+                    #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
                 else:
-                    Objects.pipe(type, (x + add[0], y + add[1] + 1), axis, pipeVisible)
-                    cornerAxis = determineCorner(previousAxis, axis)
-                    corner = Objects.pipe("corner", (x, y+1), cornerAxis, pipeVisible)
-                    cornerAxisEnd = determineCorner(axis, -goalAxis)
-                    cornerEnd = Objects.pipe("corner", (x + differenceX, y + differenceY), cornerAxisEnd, pipeVisible)
-                    if cornerAxis == lvf.totop:
-                        corner.corner.rotate(angle=-0.5 * pi)  # rotate object
+
+                    pipe_coords = (x + add[0], y + add[1] + 1)
+                    corner_coords = (x, y + 1)
+                    corner_end_coords = (x + differenceX, y + differenceY)
+                    corner_axis = determineCorner(previousAxis, axis)
+                    corner_axis_end = determineCorner(axis, -goalAxis)
+
+                    #Objects.pipe(type, pipe_coords, axis, pipeVisible)
+                    #corner = Objects.pipe("corner", corner_coords, corner_axis, pipeVisible)
+                    #cornerEnd = Objects.pipe("corner", corner_end_coords, corner_axis_end, pipeVisible)
+
+                    pipeBuildDict.append((type, pipe_coords, axis, pipeVisible))
+                    pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+                    pipeBuildDict.append(("corner", corner_end_coords, corner_axis_end, pipeVisible))
+
+                    # if corner_axis == lvf.totop:
+                    #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
             else:
-                Objects.pipe(type, (x + add[0], y + add[1]), axis, pipeVisible)
-                cornerAxis = determineCorner(previousAxis, axis)
-                corner = Objects.pipe("corner", (x, y), cornerAxis, pipeVisible)
-                if cornerAxis == lvf.totop:
-                    corner.corner.rotate(angle=-0.5 * pi)  # rotate object
+                pipe_coords = (x + add[0], y + add[1])
+                corner_coords = (x, y)
+                corner_axis = determineCorner(previousAxis, axis)
+
+                #Objects.pipe(type, pipe_coords, axis, pipeVisible)
+                #corner = Objects.pipe("corner", corner_coords, corner_axis, pipeVisible)
+
+                pipeBuildDict.append((type, pipe_coords, axis, pipeVisible))
+                pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+
+                # if corner_axis == lvf.totop:
+                #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
 
         else:
             if pointA == start:
-                Objects.pipe(type, (x,y), axis, pipeVisible)
-                #fixme: add corner to top instead of wall
-            # fixme: Doesnt work right
+                add, ax = determineAxis(diff)
+                if ax != startAxis:
+                    if ax == lvf.right:
+                        pipe_coords = (x+add[0],y+add[1])
+                        corner_coords = (x, y)
+                        corner_axis = determineCorner(startAxis, axis)
+                        pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+                    elif ax == lvf.left:
+                        pipe_coords = (x+add[0],y+add[1])
+                        corner_coords = (x, y)
+                        corner_axis = determineCorner(startAxis, axis)
+                        pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+                    elif ax == lvf.up:
+                        pipe_coords = (x+add[0],y+add[1])
+                        corner_coords = (x, y)
+                        corner_axis = determineCorner(startAxis, axis)
+                        pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+                    else:
+                        pipe_coords = (x,y-1+add[1])
+                        corner_coords = (x, y)
+                        corner_axis = determineCorner(startAxis, axis)
+                        pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+                else:
+                    pipe_coords = (x,y)
+
+                pipeBuildDict.append((type, pipe_coords, axis, pipeVisible))
+
             elif nearGoalHor == True and goalAxis==lvf.up or nearGoalHor == True and goalAxis==lvf.down or \
                     nearGoalVert == True and goalAxis == lvf.right or nearGoalVert == True and goalAxis == lvf.left:
-                Objects.pipe(type, (x+add[0],y+add[1]), axis, pipeVisible)
-                cornerAxis= determineCorner(previousAxis, axis)
-                corner = Objects.pipe("corner", (x,y), cornerAxis, pipeVisible)
-                cornerAxisEnd = determineCorner(axis, -goalAxis)
-                cornerEnd = Objects.pipe("corner", (x+differenceX,y+differenceY), cornerAxisEnd, pipeVisible)
-                if cornerAxis == lvf.totop:
-                    corner.corner.rotate(angle=-0.5 * pi)  # rotate object
+
+                pipe_coords = (x+add[0],y+add[1])
+                corner_coords = (x,y)
+                corner_axis= determineCorner(previousAxis, axis)
+                corner_end_coords = (x+differenceX,y+differenceY)
+                corner_axis_end = determineCorner(axis, -goalAxis)
+
+                #Objects.pipe(type, pipe_coords, axis, pipeVisible)
+                #corner = Objects.pipe("corner", corner_coords, corner_axis, pipeVisible)
+                #cornerEnd = Objects.pipe("corner", corner_end_coords, corner_axis_end, pipeVisible)
+
+                pipeBuildDict.append((type, pipe_coords, axis, pipeVisible))
+                pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+                pipeBuildDict.append(("corner", corner_end_coords, corner_axis_end, pipeVisible))
+
+                # if corner_axis == lvf.totop:
+                #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
             else:
-                Objects.pipe(type, (x+add[0],y+add[1]), axis, pipeVisible)
-                cornerAxis= determineCorner(previousAxis, axis)
-                corner = Objects.pipe("corner", (x,y), cornerAxis, pipeVisible)
-                if cornerAxis == lvf.totop:
-                    corner.corner.rotate(angle=-0.5 * pi)  # rotate object
+                pipe_coords = (x+add[0],y+add[1])
+                corner_coords = (x,y)
+                corner_axis= determineCorner(previousAxis, axis)
+
+                #Objects.pipe(type, pipe_coords, axis, pipeVisible)
+                #corner = Objects.pipe("corner", corner_coords, corner_axis, pipeVisible)
+
+                pipeBuildDict.append((type, pipe_coords, axis, pipeVisible))
+                pipeBuildDict.append(("corner", corner_coords, corner_axis, pipeVisible))
+
+
+                # if corner_axis == lvf.totop:
+                #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
+
+
+    buildVpipes(pipeBuildDict)
 
 def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
     #Initialise Start and Endpositions for random position
@@ -644,8 +792,8 @@ def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
 
     start = possible_start_positions[randomSelectStart][0]
     goal = possible_goal_positions[randomSelectGoal][0]
-    print("start set at:", start)
-    print("goal set at:", goal)
+    #print("start set at:", start)
+    #print("goal set at:", goal)
     startAxis = possible_start_positions[randomSelectStart][1]
     goalAxis = possible_goal_positions[randomSelectGoal][1]
     #axis + displacementVector
@@ -676,11 +824,11 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
-            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, ):
+            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict):
     #create wall
     if refresh == False:
-        Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
-                coordinateInfoVisible, camera, backgroundColor,xRes,yRes)
+        # Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
+        #         coordinateInfoVisible, camera, backgroundColor,xRes,yRes)
         #create logic matrix
         lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
                       dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
@@ -893,7 +1041,54 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             Objects.obstacle((1, 2), (4, 18), True)
             Objects.obstacle((2, 1), (6, 21), True)
 
+        elif level == "Save 3":
+            startAxis = lvf.up
+            goalAxis = lvf.left
+            startDirection = startAxis + lvf.upSG
+            goalDirection = goalAxis + lvf.leftSG
+            start = (6, 1)  # this will be a random vector along the wall or a manual input
+            goal = (10, 25)  # this will be either a random vector along wall the top or a manual input
+            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
+            Objects.obstacle((2, 2), (2, 8), True)
+            Objects.obstacle((1, 2), (7, 2), True)
+            Objects.obstacle((2, 1), (9, 2), True)
+            Objects.obstacle((2, 1), (2, 13), True)
+            Objects.obstacle((2, 1), (6, 11), True)
+            Objects.obstacle((2, 2), (5, 19), True)
+            Objects.obstacle((1, 2), (8, 22), True)
+            Objects.obstacle((2, 1), (4, 18), True)
+
+        elif level == "Save 4":
+            startAxis = lvf.up
+            goalAxis = lvf.down
+            startDirection = startAxis + lvf.upSG
+            goalDirection = goalAxis + lvf.leftSG
+            start = (6, 1)  # this will be a random vector along the wall or a manual input
+            goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
+            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+
+            Objects.obstacle((2, 1), (7, 5), True)
+            Objects.obstacle((1, 2), (5, 11), True)
+            Objects.obstacle((1, 2), (9, 9), True)
+            Objects.obstacle((2, 1), (5, 4), True)
+            Objects.obstacle((1, 1), (3, 9), True)
+            Objects.obstacle((2, 2), (4, 14), True)
+            Objects.obstacle((2, 1), (3, 4), True)
+            Objects.obstacle((1, 2), (4, 4), True)
+            Objects.obstacle((2, 2), (8, 20), True)
+            Objects.obstacle((2, 1), (2, 19), True)
+            Objects.obstacle((1, 2), (1, 24), True)
+            Objects.obstacle((2, 2), (6, 18), True)
+            Objects.obstacle((1, 1), (2, 23), True)
+            Objects.obstacle((2, 2), (9, 24), True)
+
+
+
+        elif level == "Empty":
+            frequency = 0
+            random = True
+            PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
         elif level == "Low":
             frequency = 5
             random = True
@@ -950,46 +1145,44 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         startAxis = Objects.savedState[2]
         goalAxis = Objects.savedState[3]
 
-        cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
+        cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
                                      testingPath,
-                                     testedPath, heuristicType, )
+                                     testedPath, heuristicType, pipeTypeDict)
         print(cMatrix_route)
         if pipeVisible == True:
-            pipeBuilder(cMatrix_route, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots,
-                        wallVisible,
-                        topVisible)
-        return
+            if isinstance(cMatrix_route, list):
+
+                pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots,
+                            wallVisible,
+                            topVisible, pipeTypeDict)
 
     if random == False:
         if pipeVisible == True:
-            cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, )
+            cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict)
             print(cMatrix_route)
             if isinstance(cMatrix_route, list):
-                pipeBuilder(cMatrix_route, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible)
+                pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
     elif random == True:
+        # while isinstance(cMatrix_route, list) == False:
+        #     Objects.resetObstacles()
+        #     Objects.resetShowcase()
+        #
+        #     # Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible,
+        #     #                      topVisible,
+        #     #                         coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
 
-
-
-        while isinstance(cMatrix_route, list) == False:
-            #fixme: remove old obstacles with every new instance
-            Objects.resetObstacles()
-            Objects.resetShowcase()
-
-            # Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible,
-            #                      topVisible,
-            #                         coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
-            lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist,
-                          wall_thickness=wallThickness,
-                          dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible,
-                          wall_visible=wallVisible)
-            RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop)
-            cMatrix_route = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
-                                         testingPath,
-                                         testedPath, heuristicType)
-            print(cMatrix_route)
-        if pipeVisible == True:
-            pipeBuilder(cMatrix_route, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
-                    topVisible)
+        lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist,
+                      wall_thickness=wallThickness,
+                      dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible,
+                      wall_visible=wallVisible)
+        RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop)
+        cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
+                                     testingPath,
+                                     testedPath, heuristicType, pipeTypeDict)
+        print(cMatrix_route)
+        # if pipeVisible == True:
+        #     pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
+        #             topVisible, pipeTypeDict)
 
 
 

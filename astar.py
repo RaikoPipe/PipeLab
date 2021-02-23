@@ -3,100 +3,49 @@ import heapq
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure
+from datetime import datetime
 import LogicalVfunctions as lvf
+import path_interpreter as pint
 from vpython import *
 import Objects
+from copy import deepcopy
 import time
 
+def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict):
 
-def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType):
-    route_call = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType)
-    return route_call
+    route, parts = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict)
+
+    return route, parts
 
 global showtime
 
-def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType):
-
+def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict):
 
     grid = lvf.glG_Call(x, y)  # 0s are positions we can travel on, 1s are walls(obstacles or already placed pipes)
     if heuristicType == "intelligent" or heuristicType == "testPreviousVersion":
-        route = optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, y)
+        route = optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, y, pipeTypeDict)
     else:
         weight = 0
-        route = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, weight, weight, y)
+        route, parts = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, weight, weight, y, pipeTypeDict, False)
+
+
+
     if isinstance(route, str):
         print(route)
+        return False, False
     else:
         route = route + [start_point]
         route = route[::-1]
-        print("astar path creation successful")
 
-        # plot map and path
-        x_coords = []
-        # y_coords = []
-        # for i in (range(0,len(route))):
-        #
-        #     x = route[i][0]
-        #
-        #     y = route[i][1]
-        #
-        #     x_coords.append(x)
-        #     y_coords.append(y)
-        #
-        # fig, ax = plt.subplots(figsize=(x, y))
-        #
-        # ax.imshow(grid, cmap=plt.cm.Dark2)
-        #
-        # ax.scatter(start_point[1], start_point[0], marker="*", color="green", s=200)
-        #
-        # ax.scatter(goal_point[1], goal_point[0], marker="*", color="orange", s=200)
-        #
-        # ax.plot(y_coords, x_coords, color="black")
-        #
-        # #plt.show()
-        return route
+        return route, parts
 
 
 '''Custom Restriction Set:'''
-#check through the whole x-space the neighbor wants to occupy and check if it crosses an obstacle
-def previousXoccupied(neighbor, current, array):
-
-    difference = current[0]- neighbor[0]
-    if difference > 0:
-        for ix in range(difference-1):
-            if array[neighbor[0] + (ix + 1), neighbor[1]] == 1:
-                return True
-        return False
-    else:
-        difference = abs(difference)
-        for ix in range(difference-1):
-            if array[neighbor[0] - (ix + 1), neighbor[1]] == 1:
-                return True
-        return False
-
-#check through the whole y-space the neighbor wants to occupy and check if it crosses an obstacle
-def previousYoccupied(neighbor, current, array):
-    difference = current[1] - neighbor[1]
-    if difference > 0:
-        for ix in range(difference-1):
-            if array[neighbor[0], neighbor[1] + (ix + 1)] == 1:
-                return True
-        return False
-    else:
-        difference = abs(difference)
-        for ix in range(difference-1):
-            if array[neighbor[0], neighbor[1] - (ix + 1)] == 1:
-                return True
-
-    return False
-
 def directional_rules_apply(current, current_neighbor, shiftpos):
     if current == (current[0], shiftpos - 1) and current_neighbor[1] > 0:
-        #we are at shiftpos-1 and want to go up
         return False
 
     elif current == (current[0], shiftpos +1) and current_neighbor[1] < 0:
-        #we are at shiftpos+1 and want to go down
         return False
 
     else:
@@ -109,6 +58,23 @@ def direction_is_restricted(cameFromDifference, currentNeighbor):
         return True
     else: return False
 
+def direction_violation(diff, current, neighbor, c):
+    if current == (current[0], c) and neighbor[1] > 0:
+        return False
+    elif current == (current[0], c +2) and neighbor[1] < 0:
+        return False
+    else:
+        if diff[0] > 0 and neighbor[0] != 0:  # if true, then neighbor that wants to go horizontally is disallowed
+            return True
+        elif diff[1] > 0 and neighbor[1] != 0:  # if true, then neighbor that wants to go vertically is disallowed
+            return True
+        else:
+            return False
+
+
+
+
+
 def start_is_restricted(current_neighbor, startAxis):
     if startAxis == lvf.up and current_neighbor[1] > 0:
         return False
@@ -120,46 +86,43 @@ def start_is_restricted(current_neighbor, startAxis):
         return False
     else: return True
 
-def dimension_shift_violation(j, shiftpos, current):
-    if j > (shiftpos - 1) - current[1] and current[1] < (shiftpos - 1):
+def dimension_shift_violation(current, neighbor, c):
+    if neighbor[1] > c and current[1] < c:
         return True
 
-def bounds_violation(current, neighbor, array):
+
+
+def out_of_bounds(current, neighbor, n, array):
+
+
     if 0 <= neighbor[0] < array.shape[0]:
 
         if 0 <= neighbor[1] < array.shape[1]:
-            # check if the neighbor is occupied (0 means not occupied, 1 means is occupied)
-            if array[neighbor[0]][neighbor[1]] == 1:
-                return True
-
-            # if neighbor is not occupied, check if space before it is occupied
-            elif abs(current[0] - neighbor[0]) >= 1:
-                if previousXoccupied(neighbor, current, array):
+            diff = abs(n[0] - n[1])
+            addX = 0
+            addY = 0
+            if n[0] > 0:
+                addX = 1
+            elif n[0] < 0:
+                addX = -1
+            elif n[1] > 0:
+                addY = 1
+            else:
+                addY = -1
+            for i in range(1, diff+1):
+                pos = (current[0]+ addX*i, current[1] + addY*i)
+                if array[pos] == 1:
                     return True
-
-            # if neighbor is not occupied, check if space before it is occupied
-            elif abs(current[1] - neighbor[1]) >= 1:
-                if previousYoccupied(current, neighbor, array):
-                    return True
-
-
-
         else:
-
-            # array bound y walls
-
-            return True
+            return True # array bound y walls
 
     else:
-
-        # array bound x walls
-
-        return True
+        return True         # array bound x walls
     return False
 
-def neighborChanger(standardNeighbors, changetuple, case, specialCase, topGoalDistance):
-    newNeighbors = []
-    for count, tuple in enumerate(standardNeighbors):
+def neighborChanger(standardNeighbors, changetuple, case):
+    newNeighbors = {}
+    for index, (tuple, type) in enumerate(standardNeighbors.items()):
         xCoord = tuple[0]
         yCoord = tuple[1]
 
@@ -185,81 +148,112 @@ def neighborChanger(standardNeighbors, changetuple, case, specialCase, topGoalDi
             elif yCoord > 0:
                 yCoord = yCoord + changetuple[1]
 
-        newNeighbors.append((xCoord, yCoord))
 
-    if specialCase == True:
-        specialNeighbors = []
-        for count, tuple in enumerate(newNeighbors):
+        newNeighbors[(xCoord, yCoord)] = type
 
-            if tuple[0] >= topGoalDistance:
-                continue
-            elif tuple[1] >= topGoalDistance:
-                continue
-            else:
-                specialNeighbors.append(tuple)
-
-        newNeighbors = specialNeighbors
-
-
+    # if specialCase == True:
+    #     specialNeighbors = []
+    #     for count, tuple in enumerate(newNeighbors):
+    #
+    #         if tuple[0] >= topGoalDistance:
+    #             continue
+    #         elif tuple[1] >= topGoalDistance:
+    #             continue
+    #         else:
+    #             specialNeighbors.append(tuple)
+    #
+    #     newNeighbors = specialNeighbors
+    #
+    #
     return newNeighbors
 
+def buildRoute(current, came_from):
+    data = []
 
+    while current in came_from:
+        data.append(current)
+        current = came_from[current]
 
+    return data
 
+def buildParts(route, dict):
+    parts = {}
+    for idx, (x,y) in enumerate(route):
+        #dont check next point if last point has been reached
+        if idx == len(route)-1:
+            break
+
+        #set pointA and pointB, calculate difference
+        current=(x,y)
+        og_part = dict.get(current)
+        parts[current] = og_part
+    return
 
 
 
 # fixme: There is a neighbor somewhere that shouldnt work with length 5
 'Custom Neighbor Set'
-def determineNeighbors(current, start, goal, goalAxis, shiftpos, yDots):
+def determineNeighbors(standardNeighbors, pipeTypeDict, current, start, goal, startAxis, goalAxis, shiftpos, yDots,
+                       unlimited_parts, part_dict, route):
 
+
+    neighbors = deepcopy(standardNeighbors)
+
+    if not unlimited_parts:
+        availableParts = pint.pipe_stock_check(route, pipeTypeDict, part_dict)
+        if availableParts:
+            neighbors = pint.set_standard_neighbors(availableParts)
+        else: return availableParts
 
     currToGoalDifference = (goal[0] - current[0], goal[1] - current[1])
-    topGoalDistance = yDots - shiftpos
-
-    # standardNeighbors = [(0, 8), (0, -8), (8, 0), (-8, 0), (0, 7), (0, -7), (7, 0), (-7, 0), (0, 6), (0, -6), (6, 0),
-    #                  (-6, 0),
-    #                  (0, 4), (0, -4), (4, 0), (-4, 0), (0, 3), (0, -3), (3, 0), (-3, 0), (0, 2), (0, -2), (2, 0),
-    #                  (-2, 0)]
-    standardNeighbors = [(0, 5), (0, -5), (5, 0),(-5,0), (0, 2), (0, -2), (2, 0),(-2,0)]
-
 
     #current is at start
     if current == start:
-        # neighbor needs to be shortened by 1 for some reason if current = start
-        neighbors = neighborChanger(standardNeighbors, (-1,-1), "All", False, topGoalDistance)
+        if startAxis == lvf.up:
+            neighbors = neighborChanger(neighbors, (0,-1), "AddToPositiveOnly")
+        elif startAxis == lvf.right:
+            neighbors = neighborChanger(neighbors, (-1, 0), "AddToPositiveOnly")
+        elif startAxis == lvf.left:
+            neighbors = neighborChanger(neighbors, (1, 0), "AddToNegativeOnly")
+        else:
+            neighbors = neighborChanger(neighbors, (0, 1), "AddToNegativeOnly")
+
         return neighbors
 
     #current is not in shiftpos but goal is in reach
     # ->check if we can close the distance by using a pipe without a corner first
     #goal is one same horizontal axis
-    if current[0] == goal[0] and currToGoalDifference[1] > 0 and currToGoalDifference[1] <= 8 and goalAxis == lvf.down:
-        neighbors = neighborChanger(standardNeighbors, (0, -1), "AddToPositiveOnly", False, topGoalDistance)
-        return neighbors
-    elif current[0] == goal[0] and currToGoalDifference[1] < 0 and currToGoalDifference[1] >= -8 and goalAxis == lvf.up:
 
-        neighbors = neighborChanger(standardNeighbors, (0, 1), "AddToNegativeOnly", False, topGoalDistance)
+    values = neighbors.values()
+    max_value = max(values) + 1
+
+    if current[0] == goal[0] and 0 < currToGoalDifference[1] <= max_value and goalAxis == lvf.down:
+        neighbors = neighborChanger(neighbors, (0, -1), "AddToPositiveOnly")
+        return neighbors
+    elif current[0] == goal[0] and 0 > currToGoalDifference[1] >= -max_value and goalAxis == lvf.up:
+
+        neighbors = neighborChanger(neighbors, (0, 1), "AddToNegativeOnly")
 
         return neighbors
     #goal is on same vertical axis
-    elif current[1] == goal[1] and currToGoalDifference[0] > 0 and currToGoalDifference[0] <= 8 and goalAxis == lvf.left:
-        neighbors = neighborChanger(standardNeighbors, (-1, 0), "AddToPositiveOnly", False, topGoalDistance)
+    elif current[1] == goal[1] and 0 < currToGoalDifference[0] <= max_value and goalAxis == lvf.left:
+        neighbors = neighborChanger(neighbors, (-1, 0), "AddToPositiveOnly")
         return neighbors
-    elif current[1] == goal[1] and currToGoalDifference[0] < 0 and currToGoalDifference[0] >= -8 and goalAxis == lvf.right:
-        neighbors = neighborChanger(standardNeighbors, (1, 0), "AddToNegativeOnly", False, topGoalDistance)
+    elif current[1] == goal[1] and 0 > currToGoalDifference[0] >= -max_value and goalAxis == lvf.right:
+        neighbors = neighborChanger(neighbors, (1, 0), "AddToNegativeOnly")
         return neighbors
 
     if current == (current[0], shiftpos - 1):
         #we are not on same horizontal axis as goal and at shiftpos-1
         if current == (current[0], shiftpos - 1) and current[0] == goal[0] and goalAxis == lvf.down:
-            neighbors = neighborChanger(standardNeighbors, (0, 1), "AddToPositiveOnly", True, topGoalDistance)
+            neighbors = neighborChanger(neighbors, (0, 1), "AddToPositiveOnly")
             return neighbors
         elif current == (current[0],shiftpos-1):
-            neighbors = neighborChanger(standardNeighbors, (0, 1), "AddToPositiveOnly", False, topGoalDistance)
+            neighbors = neighborChanger(neighbors, (0, 1), "AddToPositiveOnly")
             return neighbors
-    else:
-        neighbors = standardNeighbors
+
         return neighbors
+    return neighbors
 
 def determineTypeCost(currentNeighbor):
     x = abs(currentNeighbor[0])
@@ -325,7 +319,7 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
     bestRoute = []
 
     currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis, testingPath, testedPath,
-                         heuristicType, 0, 0, yDots)
+                         heuristicType, 0, 0, yDots, False)
     Objects.resetShowcase()
 
     if not isinstance(currentRoute, list):
@@ -339,7 +333,7 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
             fWeight = j/4
 
             currentRoute = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath,
-                                 heuristicType, gWeight, fWeight, yDots)
+                                 heuristicType, gWeight, fWeight, yDots, False)
             if isinstance(currentRoute, str):
                 continue
 
@@ -373,14 +367,24 @@ def optimizeRoute(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,t
         return "Creating route is not possible"
 
 
+def get_standard_neighbors(dict):
+    neighbors = {}
+    for key, (type, count) in enumerate(dict.items()):
+        neighbors[(type+1,0)] = type
+        neighbors[(-type-1, 0)] = type
+        neighbors[(0,type+1)] = type
+        neighbors[(0,-type-1)] = type
+    return neighbors
 
 
-
-def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, gWeight, fWeight, yDots):
+def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, gWeight, fWeight, yDots, pipeTypeDict, unlimited_parts):
+    execTimeFailure = open("execTimeFailure.txt", "a")
+    execTimeSuccess = open("execTimeSuccess.txt", "a")
+    startTime = datetime.now()
     if array[start] == 1:
-        return "Start point is blocked and therefore goal cant be reached"
+        return "Start point is blocked and therefore goal cant be reached", False
     elif array[goal] == 1:
-        return "Goal point is blocked and therefore cant be reached"
+        return "Goal point is blocked and therefore cant be reached", False
 
     if heuristicType == "intelligent":
         speed = 0.01
@@ -390,6 +394,8 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
     close_set = set()
 
     came_from = {}
+
+    part_dict = {}
 
     gscore = {start: 0}
 
@@ -401,6 +407,10 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
     count = 0
     neiCount = 0
 
+
+    standardNeighbors = get_standard_neighbors(pipeTypeDict)
+
+
     while oheap:
         current = heapq.heappop(oheap)[1]
 
@@ -408,12 +418,22 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                #currentBox.obj.delete()
                 currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
             else:
                 currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
                 count +=1
 
+        current_route = buildRoute(current, came_from)
+        current_route = current_route + [start]
+        current_route = current_route[::-1]
+        nextNeighbors = determineNeighbors(standardNeighbors, pipeTypeDict, current,start, goal, startAxis, goalAxis,
+                                           shiftpos, yDots, unlimited_parts, part_dict, current_route)
+
+
+        if pint.ouroboros(current_route, array):
+            continue
+
+        close_set.add(current) #add the from oheap popped coordinate to the closed list
 
         if current == goal:
 
@@ -427,50 +447,47 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
                 if count > 0:
                     currentBox.obj.color = vector(0, 0.5, 0)
                     currentBox.obj.opacity = 0.5
-
-            data = []
-
-            while current in came_from:
-                data.append(current)
-                current = came_from[current]
-
-
-            return data
+            if unlimited_parts:
+                #TODO: check how many parts are needed to complete optimal route"
+                print("Route Creation is possible with more parts")
+            data = buildRoute(current, came_from)
+            exectime = datetime.now() - startTime
+            execTimeSuccess.write(str(exectime.total_seconds())+"\n")
+            if unlimited_parts:
+                print("Optimal route is possible with more parts")
+            else:
+                return data, part_dict
 
         close_set.add(current) #add the from oheap popped coordinate to the closed list
 
-        nextNeighbors = determineNeighbors(current,start, goal, goalAxis, shiftpos, yDots)
+
         if testingPath == True:
             if neiCount > 0:
                 neighBox.obj.visible = False
                 neighBox.obj.delete()
                 neiCount = 0
 
+
         for i, j in nextNeighbors:
 
             current_neighbor = (i, j)
             neighbor = current[0] + i, current[1] + j
-
-
 
             tentative_g_score = gscore[current] + modified_heuristic(current, neighbor, current_neighbor, heuristicType, gWeight, goal)
 
             if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
                 continue
 
-            if dimension_shift_violation(j, shiftpos, current):
+            #restriction set
+            if dimension_shift_violation(current, neighbor, shiftpos-1):
                 continue
 
-            if directional_rules_apply(current, current_neighbor, shiftpos):
-                if current != start:
-                    #restrict the way pipes can be placed according to rules
-                    came_fromDifference = [abs(current[0] - came_from[current][0]), abs(current[1] - came_from[current][1])]
-                    if direction_is_restricted(came_fromDifference, current_neighbor):
-                        continue
-                elif start_is_restricted(current_neighbor, startAxis):
-                     continue
+            if current != start:
+                came_fromDifference = [abs(current[0] - came_from[current][0]), abs(current[1] - came_from[current][1])]
+                if direction_violation(came_fromDifference, current, current_neighbor, shiftpos-1):
+                    continue
 
-            if bounds_violation(current, neighbor, array):
+            if out_of_bounds(current, neighbor, current_neighbor, array):
                 continue
 
 
@@ -491,11 +508,21 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
 
                 came_from[neighbor] = current
 
+                part_dict[neighbor] = nextNeighbors.get((i,j))
+
                 gscore[neighbor] = tentative_g_score
 
                 fscore[neighbor] = tentative_g_score + modified_heuristic(neighbor, goal, current_neighbor, heuristicType, fWeight, goal)
 
                 heapq.heappush(oheap, (fscore[neighbor], neighbor))
-    return "Creating route is not possible"
+    # if not unlimited_parts:
+    #     exectime = datetime.now() - startTime
+    #     execTimeFailure.write(str(exectime.total_seconds()) + "\n")
+    #     print("Route creation is not possible with limited parts")
+    #     astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, gWeight, fWeight, yDots, pipeTypeDict, True)
+    print("Creating route is not possible, even with unlimited parts")
+    exectime = datetime.now() - startTime
+    execTimeFailure.write(str(exectime.total_seconds()) + "\n")
+    return "no route found", False
 
 
