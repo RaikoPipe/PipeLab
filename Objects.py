@@ -60,8 +60,6 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
     wallWidth = comp(wall_shape, vector(1,0,0))
     topHeight=comp(top_shape, vector(0,1,0))
     top_pos = vector(0.5*wallWidth,wallHeight+0.5*topHeight,0.5*wall_thickness)
-    # top_pos = 0.5 * wall_shape + 0.75 * proj(wall_shape, vector(0, 1,
-    #                                                             0))  # + vector(-0,150,0)#proj(wall_shape, vector(1,0,0)) + vector(50,0,0)
 
     top_shape_x_pos = (proj(top_shape, z_vector))  # gets vector with z coordinate only
     top_shape_z_pos = (proj(wall_shape, x_vector))  # gets vector with x coordinate only
@@ -118,19 +116,12 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
         vector_maxwidthheight_label = label(pos=vector(wallWidth,wallHeight+topHeight,wall_thickness), text=str(wallWidth) + "cm" + " x " +str(wallHeight+topHeight)+"cm", xoffset=20, yoffset=50, space=30,
                                            height=16, border=4, font="sans", color=text_color)
 
-    obstacleList = [] #will be used to identify obstacles later
-    #main.scene.waitfor("redraw")
-
     #initialise corner object
     CornerPipeTemp = extrusion(path=paths.arc(radius=2.6 * 3, angle1=-0.09, angle2=pi / 2 + 0.092),
                                shape=shapes.arc(radius=2.6, angle1=0, angle2=2 * pi, rotate=pi),
                                color=color.white, visible = False)
     global cornerTemp
     cornerTemp = compound([CornerPipeTemp], up=vec(0, 0, 1), visible = False)
-    # cornerPipeTemp1 = cylinder(size=vector(11.2,6,6), color = color.black, axis = lvf.right, pos = vector(0,0,5))
-    # cornerPipeTemp2 = cylinder(size=vector(11.2,6,6), color = color.black, axis = lvf.up, pos=vector(11.2-3,0,5))
-    # global cornerTemp
-    # cornerTemp = compound([cornerPipeTemp1, cornerPipeTemp2])
 
     #initialise SinglePipe Objects
     global SinglePipeTemp
@@ -152,21 +143,21 @@ def StartEndInt(start_position, end_position, start_direction, end_direction, ba
     endPos = lvf.cMatrix[end_position]
 
 
-    # startcylinder = cylinder(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - start_direction,axis=start_direction, size=vector(1, 8, 8),
-    #                          color=color.green, visible = wallvisible)
-    # start_label = label(pos=lvf.transformToVvector(startPos), xoffset = 30, text="Start", space=30,
-    #                     height=16, border=4,
-    #                     font="sans", color=text_color, visible = wallvisible)
-    # lvf.remember(startcylinder, wallDict)
-    # lvf.remember(start_label, wallDict)
-    #
-    # endcylinder = cylinder(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=end_direction, size=vector(1, 8, 8),
-    #                        color=color.orange, visible = topvisible)
-    # end_label = label(pos=lvf.transformToVvector(endPos), xoffset = 30, text="Goal", space=30,
-    #                   height=16, border=4,
-    #                   font="sans", color=text_color, visible= topvisible)
-    # lvf.remember(endcylinder, topDict)
-    # lvf.remember(end_label, topDict)
+    startcylinder = cylinder(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - start_direction,axis=start_direction, size=vector(1, 8, 8),
+                             color=color.green, visible = wallvisible)
+    start_label = label(pos=lvf.transformToVvector(startPos), xoffset = 30, text="Start", space=30,
+                        height=16, border=4,
+                        font="sans", color=text_color, visible = wallvisible)
+    lvf.remember(startcylinder, wallDict)
+    lvf.remember(start_label, wallDict)
+
+    endcylinder = cylinder(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=end_direction, size=vector(1, 8, 8),
+                           color=color.orange, visible = topvisible)
+    end_label = label(pos=lvf.transformToVvector(endPos), xoffset = 30, text="Goal", space=30,
+                      height=16, border=4,
+                      font="sans", color=text_color, visible= topvisible)
+    lvf.remember(endcylinder, topDict)
+    lvf.remember(end_label, topDict)
 
     pass
 
@@ -530,14 +521,6 @@ class Corner():
 
         lvf.remember(self.corner, pipeDict)
 
-# class Corner():
-#     def __init__(self,type, pipe_pos, pipe_axis, pipe_visible):
-#         self.corner = cornerTemp.clone(pos=lvf.transformToVvector(pipe_pos),
-#                                                 axis = pipe_axis, visible = pipe_visible)
-#         lvf.remember(self.corner, pipeDict)
-
-
-
 
 # create obstacles
 class obstacle:
@@ -546,13 +529,13 @@ class obstacle:
         size_y = size[1]
         pos = lvf.cMatrix[position]
         sizeVector= vector(size_x*10.5, size_y*10.5, 5)
-        #self.obstacle = box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
+        self.obstacle = box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
         lvf.setOccO_Call(size_x,size_y, position)
 
         #print("Obstacle with size: " + str([size_x, size_y]) +" at position: " + str(position) + " created ")
         #print("Objects.obstacle(" + str((size_x, size_y)) + "," + str(position) + "," + str(obstacle_visible) + ")")
 
-        #lvf.remember(self.obstacle, obstacleDict)
+        lvf.remember(self.obstacle, obstacleDict)
 
         pass
 

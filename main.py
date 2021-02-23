@@ -129,12 +129,11 @@ class App:
                 pipeVisible = True
                 topDotVisible = True
                 wallDotVisible = True
-            for i in range(2000):
-                createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
-                            topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
-                            coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
-                            dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
-                            , heuristicType, refreshing, pipeTypeDict)
+            createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
+                        topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
+                        coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
+                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
+                        , heuristicType, refreshing, pipeTypeDict)
 
         def refreshDisplayObjectsPrep():
             wallVisible = displayWallOption.get()
@@ -827,9 +826,9 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict):
     #create wall
     if refresh == False:
-        # Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
-        #         coordinateInfoVisible, camera, backgroundColor,xRes,yRes)
-        #create logic matrix
+        Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
+                coordinateInfoVisible, camera, backgroundColor,xRes,yRes)
+        # create logic matrix
         lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
                       dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
 
@@ -1167,10 +1166,9 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         #     Objects.resetObstacles()
         #     Objects.resetShowcase()
         #
-        #     # Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible,
-        #     #                      topVisible,
-        #     #                         coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
-
+        #     Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible,
+        #                          topVisible,
+        #                             coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
         lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist,
                       wall_thickness=wallThickness,
                       dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible,
@@ -1180,9 +1178,9 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                                      testingPath,
                                      testedPath, heuristicType, pipeTypeDict)
         print(cMatrix_route)
-        # if pipeVisible == True:
-        #     pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
-        #             topVisible, pipeTypeDict)
+        if pipeVisible == True:
+            pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
+                    topVisible, pipeTypeDict)
 
 
 

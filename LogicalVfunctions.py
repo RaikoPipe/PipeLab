@@ -103,23 +103,23 @@ def create_dotCoord_Matrix(x_dots, y_dots, x_gap, y_gap ,dot_dist, wall_thicknes
     for i in range(1, x_dots+1):
         add_y = y_gap  # variable for increasing y coordinate; 5cm is distance from top of wall
         y_point = 1
-        # wallDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
-        #       opacity=1, visible=wall_visible)
-        # remember(wallDot, wallDotDict)
+        wallDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
+              opacity=1, visible=wall_visible)
+        remember(wallDot, wallDotDict)
         coordinates_matrix[x_point, y_point] = (add_x, add_y, 0)
 
         # create dots along y axis
         for j in range(1, y_dots):
             y_point += 1
             add_y += dot_dist  # 10.5cm is y-distance between all dots
-            # if j < wall_to_top_shift_dots:
-            #     wallDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
-            #            opacity=1, visible=wall_visible)
-            #     remember(wallDot, wallDotDict)
-            # else:
-            #     topDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
-            #            opacity=1, visible=top_visible)
-            #     remember(topDot, topDotDict)
+            if j < wall_to_top_shift_dots:
+                wallDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
+                       opacity=1, visible=wall_visible)
+                remember(wallDot, wallDotDict)
+            else:
+                topDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
+                       opacity=1, visible=top_visible)
+                remember(topDot, topDotDict)
 
             coordinates_matrix[x_point, y_point] = (add_x, add_y, 0)
 
