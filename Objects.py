@@ -145,19 +145,26 @@ def StartEndInt(start_position, end_position, start_direction, end_direction, ba
 
     startcylinder = cylinder(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - start_direction,axis=start_direction, size=vector(1, 8, 8),
                              color=color.green, visible = wallvisible)
+    startArrow = arrow(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - start_direction*5,axis=start_direction, size=vector(20, 8, 8),
+                             color=color.green, visible = wallvisible)
     start_label = label(pos=lvf.transformToVvector(startPos), xoffset = 30, text="Start", space=30,
                         height=16, border=4,
                         font="sans", color=text_color, visible = wallvisible)
     lvf.remember(startcylinder, wallDict)
     lvf.remember(start_label, wallDict)
+    lvf.remember(startArrow, wallDict)
 
     endcylinder = cylinder(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=end_direction, size=vector(1, 8, 8),
                            color=color.orange, visible = topvisible)
+    endArrow = arrow(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=-end_direction, size=vector(20, 8, 8),
+                           color=color.orange, visible = topvisible)
+
     end_label = label(pos=lvf.transformToVvector(endPos), xoffset = 30, text="Goal", space=30,
                       height=16, border=4,
                       font="sans", color=text_color, visible= topvisible)
     lvf.remember(endcylinder, topDict)
     lvf.remember(end_label, topDict)
+    lvf.remember(endArrow,topDict)
 
     pass
 
@@ -189,186 +196,186 @@ class pipe:
     def __init__(self, type, pipe_coord, pipe_axis, pipe_visible):
         self.pipe_pos = lvf.cMatrix[pipe_coord]
         self.pipe_ax = pipe_axis
-        if type == "red+red":
-            self.pipe_length = 44
-            self.pipe_width = 5
-            self.overhang = 4.5
-            self.overhang2 = -4.5
-            self.dotlength= 7
-            self.cost = 5.87
-            self.realMeter = 0.718
-            self.secondDotDistance = 6
-            self.socketDotDistance = 3
-            self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
-            self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
-            self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2,
-                                                                         self.pipe_width)
-            # if validPlacement(position, pipe_length) == True
-            redpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
-                     size=vector(self.pipe_length, self.pipe_width, self.pipe_width),
-                     color=color.red, visible=pipe_visible)
-            redpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
-                     size=vector(self.pipe_length, self.pipe_width, self.pipe_width),
-                     color=color.red, visible=pipe_visible)
-            createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
-            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
-            #print("red+red created at position: " + str(pipe_coord))
-            lvf.remember(redpipe1, pipeDict)
-            lvf.remember(redpipe2, pipeDict)
-            costDict.append(self.cost)
-            dotLengthDict.append(self.dotlength)
-            lengthDict.append(self.realMeter)
-        elif type == "red+red":
-            self.pipe_length = 33.5
-            self.pipe_width = 5
-            self.overhang = 4.5
-            self.overhang2 = -4.5
-            self.dotlength= 7
-            self.cost = 5.87
-            self.realMeter = 0.718
-            self.secondDotDistance = 6
-            self.socketDotDistance = 3
-            self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
-            self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
-            self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2,
-                                                                         self.pipe_width)
-            # if validPlacement(position, pipe_length) == True
-            redpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
-                     size=vector(self.pipe_length, self.pipe_width, self.pipe_width),
-                     color=color.red, visible=pipe_visible)
-            redpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
-                     size=vector(self.pipe_length, self.pipe_width, self.pipe_width),
-                     color=color.red, visible=pipe_visible)
-            createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
-            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
-            #print("red+red created at position: " + str(pipe_coord))
-            lvf.remember(redpipe1, pipeDict)
-            lvf.remember(redpipe2, pipeDict)
-            costDict.append(self.cost)
-            dotLengthDict.append(self.dotlength)
-            lengthDict.append(self.realMeter)
+        # if type == "red+red":
+        #     self.pipe_length = 44
+        #     self.pipe_width = 5
+        #     self.overhang = 4.5
+        #     self.overhang2 = -4.5
+        #     self.dotlength= 7
+        #     self.cost = 5.87
+        #     self.realMeter = 0.718
+        #     self.secondDotDistance = 6
+        #     self.socketDotDistance = 3
+        #     self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
+        #     self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
+        #     self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2,
+        #                                                                  self.pipe_width)
+        #     # if validPlacement(position, pipe_length) == True
+        #     redpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
+        #              size=vector(self.pipe_length, self.pipe_width, self.pipe_width),
+        #              color=color.red, visible=pipe_visible)
+        #     redpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
+        #              size=vector(self.pipe_length, self.pipe_width, self.pipe_width),
+        #              color=color.red, visible=pipe_visible)
+        #     createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
+        #     lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+        #     #print("red+red created at position: " + str(pipe_coord))
+        #     lvf.remember(redpipe1, pipeDict)
+        #     lvf.remember(redpipe2, pipeDict)
+        #     costDict.append(self.cost)
+        #     dotLengthDict.append(self.dotlength)
+        #     lengthDict.append(self.realMeter)
+        # elif type == "red+red":
+        #     self.pipe_length = 33.5
+        #     self.pipe_width = 5
+        #     self.overhang = 4.5
+        #     self.overhang2 = -4.5
+        #     self.dotlength= 7
+        #     self.cost = 5.87
+        #     self.realMeter = 0.718
+        #     self.secondDotDistance = 6
+        #     self.socketDotDistance = 3
+        #     self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
+        #     self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
+        #     self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2,
+        #                                                                  self.pipe_width)
+        #     # if validPlacement(position, pipe_length) == True
+        #     redpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
+        #              size=vector(self.pipe_length, self.pipe_width, self.pipe_width),
+        #              color=color.red, visible=pipe_visible)
+        #     redpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
+        #              size=vector(self.pipe_length, self.pipe_width, self.pipe_width),
+        #              color=color.red, visible=pipe_visible)
+        #     createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
+        #     lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+        #     #print("red+red created at position: " + str(pipe_coord))
+        #     lvf.remember(redpipe1, pipeDict)
+        #     lvf.remember(redpipe2, pipeDict)
+        #     costDict.append(self.cost)
+        #     dotLengthDict.append(self.dotlength)
+        #     lengthDict.append(self.realMeter)
+        #
+        # elif type == "red+yellow":
+        #     self.pipe_length1 = 33.5
+        #     self.pipe_length2 = 23
+        #     self.pipe_width = 5
+        #     self.overhang = 4.5
+        #     self.overhang2= -4.5
+        #     self.dotlength= 6
+        #     self.cost= 5.65
+        #     self.realMeter = 0.613
+        #     self.secondDotDistance = 5
+        #     self.socketDotDistance = 3
+        #     self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
+        #     self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
+        #     self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2,
+        #                                                                  self.pipe_width)
+        #     # if validPlacement(position, pipe_length) == True
+        #     redpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
+        #              size=vector(self.pipe_length1, self.pipe_width, self.pipe_width),
+        #              color=color.red, visible=pipe_visible)
+        #     yellowpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
+        #              size=vector(self.pipe_length2, self.pipe_width, self.pipe_width),
+        #              color=color.yellow, visible=pipe_visible)
+        #     createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
+        #     lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+        #     #print("red+yellow created at position: " + str(pipe_coord))
+        #     lvf.remember(redpipe1, pipeDict)
+        #     lvf.remember(yellowpipe2, pipeDict)
+        #     costDict.append(self.cost)
+        #     dotLengthDict.append(self.dotlength)
+        #     lengthDict.append(self.realMeter)
+        # elif type == "yellow+yellow":
+        #     self.pipe_length1 = 23
+        #     self.pipe_length2 = 23
+        #     self.pipe_width = 5
+        #     self.overhang = 4.5
+        #     self.overhang2 = -4.5
+        #     self.dotlength= 5
+        #     self.cost = 5.43
+        #     self.realMeter = 0.508
+        #     self.secondDotDistance = 4
+        #     self.socketDotDistance = 2
+        #     self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
+        #     self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
+        #     self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2, self.pipe_width)
+        #
+        #     yellowpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
+        #              size=vector(self.pipe_length1, self.pipe_width, self.pipe_width),
+        #              color=color.yellow, visible=pipe_visible)
+        #     yellowpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
+        #              size=vector(self.pipe_length2, self.pipe_width, self.pipe_width),
+        #              color=color.yellow, visible=pipe_visible)
+        #     createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
+        #     lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+        #     #print("yellow+yellow created at position: " + str(pipe_coord))
+        #     lvf.remember(yellowpipe1, pipeDict)
+        #     lvf.remember(yellowpipe2, pipeDict)
+        #     costDict.append(self.cost)
+        #     dotLengthDict.append(self.dotlength)
+        #     lengthDict.append(self.realMeter)
+        # elif type == "red+pink":
+        #     self.pipe_length1 = 33.5
+        #     self.pipe_length2 = 12.5
+        #     self.pipe_width = 5
+        #     self.overhang = 4.5
+        #     self.overhang2 = -4.5
+        #     self.dotlength= 5
+        #     self.cost = 5.21
+        #     self.realMeter = 0.416
+        #     self.secondDotDistance = 4
+        #     self.socketDotDistance = 3
+        #     self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
+        #     self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
+        #     self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2, self.pipe_width)
+        #
+        #     redpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
+        #              size=vector(self.pipe_length1, self.pipe_width, self.pipe_width),
+        #              color=color.red, visible=pipe_visible)
+        #     pinkpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
+        #              size=vector(self.pipe_length2, self.pipe_width, self.pipe_width),
+        #              color=color.purple + vector(0.3,0.3,0.3), visible=pipe_visible)
+        #     createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
+        #     lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+        #     #print("yellow+yellow created at position: " + str(pipe_coord))
+        #     lvf.remember(redpipe1, pipeDict)
+        #     lvf.remember(pinkpipe2, pipeDict)
+        #     costDict.append(self.cost)
+        #     dotLengthDict.append(self.dotlength)
+        #     lengthDict.append(self.realMeter)
+        # elif type == "pink+pink":
+        #     self.pipe_length1 = 12.5
+        #     self.pipe_length2 = 12.5
+        #     self.pipe_width = 5
+        #     self.overhang = 4.5
+        #     self.overhang2 = -4.5
+        #     self.dotlength= 3
+        #     self.cost = 4.99
+        #     self.realMeter = 0.311
+        #     self.secondDotDistance = 2
+        #     self.socketDotDistance = 1
+        #     self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
+        #     self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
+        #     self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2, self.pipe_width)
+        #
+        #     pinkpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
+        #              size=vector(self.pipe_length1, self.pipe_width, self.pipe_width),
+        #              color=color.purple + vector(0.3,0.3,0.3), visible=pipe_visible)
+        #     pinkpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
+        #              size=vector(self.pipe_length2, self.pipe_width, self.pipe_width),
+        #              color=color.purple + vector(0.3,0.3,0.3), visible=pipe_visible)
+        #     createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
+        #     lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+        #     #print("yellow+yellow created at position: " + str(pipe_coord))
+        #     lvf.remember(pinkpipe1, pipeDict)
+        #     lvf.remember(pinkpipe2, pipeDict)
+        #     costDict.append(self.cost)
+        #     dotLengthDict.append(self.dotlength)
+        #     lengthDict.append(self.realMeter)
 
-        elif type == "red+yellow":
-            self.pipe_length1 = 33.5
-            self.pipe_length2 = 23
-            self.pipe_width = 5
-            self.overhang = 4.5
-            self.overhang2= -4.5
-            self.dotlength= 6
-            self.cost= 5.65
-            self.realMeter = 0.613
-            self.secondDotDistance = 5
-            self.socketDotDistance = 3
-            self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
-            self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
-            self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2,
-                                                                         self.pipe_width)
-            # if validPlacement(position, pipe_length) == True
-            redpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
-                     size=vector(self.pipe_length1, self.pipe_width, self.pipe_width),
-                     color=color.red, visible=pipe_visible)
-            yellowpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
-                     size=vector(self.pipe_length2, self.pipe_width, self.pipe_width),
-                     color=color.yellow, visible=pipe_visible)
-            createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
-            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
-            #print("red+yellow created at position: " + str(pipe_coord))
-            lvf.remember(redpipe1, pipeDict)
-            lvf.remember(yellowpipe2, pipeDict)
-            costDict.append(self.cost)
-            dotLengthDict.append(self.dotlength)
-            lengthDict.append(self.realMeter)
-        elif type == "yellow+yellow":
-            self.pipe_length1 = 23
-            self.pipe_length2 = 23
-            self.pipe_width = 5
-            self.overhang = 4.5
-            self.overhang2 = -4.5
-            self.dotlength= 5
-            self.cost = 5.43
-            self.realMeter = 0.508
-            self.secondDotDistance = 4
-            self.socketDotDistance = 2
-            self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
-            self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
-            self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2, self.pipe_width)
-
-            yellowpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
-                     size=vector(self.pipe_length1, self.pipe_width, self.pipe_width),
-                     color=color.yellow, visible=pipe_visible)
-            yellowpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
-                     size=vector(self.pipe_length2, self.pipe_width, self.pipe_width),
-                     color=color.yellow, visible=pipe_visible)
-            createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
-            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
-            #print("yellow+yellow created at position: " + str(pipe_coord))
-            lvf.remember(yellowpipe1, pipeDict)
-            lvf.remember(yellowpipe2, pipeDict)
-            costDict.append(self.cost)
-            dotLengthDict.append(self.dotlength)
-            lengthDict.append(self.realMeter)
-        elif type == "red+pink":
-            self.pipe_length1 = 33.5
-            self.pipe_length2 = 12.5
-            self.pipe_width = 5
-            self.overhang = 4.5
-            self.overhang2 = -4.5
-            self.dotlength= 5
-            self.cost = 5.21
-            self.realMeter = 0.416
-            self.secondDotDistance = 4
-            self.socketDotDistance = 3
-            self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
-            self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
-            self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2, self.pipe_width)
-
-            redpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
-                     size=vector(self.pipe_length1, self.pipe_width, self.pipe_width),
-                     color=color.red, visible=pipe_visible)
-            pinkpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
-                     size=vector(self.pipe_length2, self.pipe_width, self.pipe_width),
-                     color=color.purple + vector(0.3,0.3,0.3), visible=pipe_visible)
-            createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
-            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
-            #print("yellow+yellow created at position: " + str(pipe_coord))
-            lvf.remember(redpipe1, pipeDict)
-            lvf.remember(pinkpipe2, pipeDict)
-            costDict.append(self.cost)
-            dotLengthDict.append(self.dotlength)
-            lengthDict.append(self.realMeter)
-        elif type == "pink+pink":
-            self.pipe_length1 = 12.5
-            self.pipe_length2 = 12.5
-            self.pipe_width = 5
-            self.overhang = 4.5
-            self.overhang2 = -4.5
-            self.dotlength= 3
-            self.cost = 4.99
-            self.realMeter = 0.311
-            self.secondDotDistance = 2
-            self.socketDotDistance = 1
-            self.pipe_pos2 = lvf.cMatrix[lvf.determineSecondPipePlacement(pipe_axis, pipe_coord, self.secondDotDistance)]
-            self.directionalOverhang1 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
-            self.directionalOverhang2 = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang2, self.pipe_width)
-
-            pinkpipe1 = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang1, axis=pipe_axis,
-                     size=vector(self.pipe_length1, self.pipe_width, self.pipe_width),
-                     color=color.purple + vector(0.3,0.3,0.3), visible=pipe_visible)
-            pinkpipe2= cylinder(pos=lvf.transformToVvector(self.pipe_pos2) + self.directionalOverhang2, axis=-pipe_axis,
-                     size=vector(self.pipe_length2, self.pipe_width, self.pipe_width),
-                     color=color.purple + vector(0.3,0.3,0.3), visible=pipe_visible)
-            createSocket(pipe_coord, pipe_axis, self.socketDotDistance, pipe_visible)
-            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
-            #print("yellow+yellow created at position: " + str(pipe_coord))
-            lvf.remember(pinkpipe1, pipeDict)
-            lvf.remember(pinkpipe2, pipeDict)
-            costDict.append(self.cost)
-            dotLengthDict.append(self.dotlength)
-            lengthDict.append(self.realMeter)
 
 
-
-        elif type == "blue":
+        if type == "blue":
             self.pipe_length = 29.8
             self.pipe_width = 5
             self.overhang = 4.5
@@ -429,16 +436,16 @@ class pipe:
             dotLengthDict.append(self.dotlength)
             lengthDict.append(self.realMeter)
 
-        elif type == "long4":
+        elif type == "yellow":
             self.pipe_length = 40.3
             self.pipe_width = 5
             self.overhang = 4.5
             self.dotlength = 4
-            self.cost = 10
+            self.cost = 1.82
             self.realMeter = 0.403
             self.directionalOverhang = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
 
-            black = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.black, self.pipe_length,
+            yellow = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.yellow, self.pipe_length,
                                 self.pipe_width, self.overhang)
 
             #print("long4 created at position: " + str(pipe_coord))
@@ -449,16 +456,16 @@ class pipe:
             dotLengthDict.append(self.dotlength)
             lengthDict.append(self.realMeter)
 
-        elif type == "long5":
+        elif type == "red":
             self.pipe_length = 50.8
             self.pipe_width = 5
             self.overhang = 4.5
             self.dotlength = 5
-            self.cost = 10
+            self.cost =  2.04
             self.realMeter = 0.403
             self.directionalOverhang = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
             # if validPlacement(position, pipe_length) == True
-            black = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.black, self.pipe_length,
+            red = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.red, self.pipe_length,
                                 self.pipe_width, self.overhang)
 
 
@@ -492,7 +499,6 @@ class pipe:
             print("Error" +" at position: " + str(pipe_coord))
 
 
-    pass
 
 
 class SinglePipe():
@@ -512,12 +518,14 @@ class Corner():
         self.pipe_radius = 2.6
         self.overhang = -8
 
+
         self.directionalOverhang = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_radius)
         self.corner = cornerTemp.clone(pos = lvf.transformToVvector(pipe_pos) + self.directionalOverhang,
                                        axis = pipe_axis, visible = pipe_visible)
 
         if pipe_axis == lvf.totop:
             self.corner.rotate(angle=-0.5 * pi)
+
 
         lvf.remember(self.corner, pipeDict)
 
@@ -564,3 +572,12 @@ class possiblePositionDebugBox:
         self.obj = box(size=sizeVector, pos=lvf.transformToVvector(self.pos),
                        color=color.cyan, visible=True, opacity=0.5)
         lvf.remember(self.obj, showcaseDict)
+
+# class displayText:
+#     def __init__(self, pos):
+#         self.pos = pos
+#         self.T = label()
+#     def changeText(self, string_sequence):
+#         self.T.text = string_sequence
+#     def display(self, string_sequence):
+#         self.T = label(text=string_sequence, pos = self.pos, align="left", color=color.white, linewidth=5, background=color.black )

@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import Objects
 from vpython import *
 from win32api import GetSystemMetrics
@@ -8,8 +10,12 @@ from tkinter import ttk
 import math
 import random
 
-
+# lengthText = Objects.displayText(vector(10,10,5))
+# costText = Objects.displayText(vector(10,5,5))
 savedState = []
+costString = "Kosten: "
+lengthString = "Knotenlänge: "
+partString = "Teile übrig: "
 class App:
     def __init__(self):
         root = tk.Tk()
@@ -103,6 +109,7 @@ class App:
             backgroundColor = setBackgroundColor(backgroundCombobox.get())
             testingPath = showTestingPathsOption.get()
             testedPath = showTestedPathsOption.get()
+            search_type = searchTypeCombobox.get()
             refreshObjectsButton.config(state="enabled")
             refreshObjectsButton.config(state="enabled")
             displayPipesCheckButton.config(state="enabled")
@@ -132,7 +139,21 @@ class App:
                         topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
                         coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
                         dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
-                        , heuristicType, refreshing, pipeTypeDict)
+                        , heuristicType, refreshing, pipeTypeDict, search_type)
+            global dotLengthText
+            global costText
+            global partText
+            try:
+                dotLengthText.visible = False
+                dotLengthText.delete()
+                costText.visible = False
+                costText.delete()
+                partText.visible = False
+                partText.delete()
+            except: Exception
+            dotLengthText = label(text=lengthString, pos = vector(0,20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15)
+            costText = label(text=costString, pos = vector(0,10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
+            partText = label(text=partString, pos = vector(40,20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
 
         def refreshDisplayObjectsPrep():
             wallVisible = displayWallOption.get()
@@ -218,6 +239,12 @@ class App:
 
             for count, realLength in enumerate(Objects.lengthDict):
                 lengthCounter += realLength-0.020
+
+            try:
+                dotLengthText.text = lengthString + str(dotCounter)
+                costText.text = costString + str(round(costCounter,2))
+                partText.text = partString + str(pipeCounter)
+            except: Exception
 
 
             currentRealLength.config(text="current realLength: " +str(round(lengthCounter,3)) + " meter")
@@ -396,8 +423,14 @@ class App:
         heuristicLabel = ttk.Label(parameterOutputFrame, text="heuristic: ")
         heuristicLabel.grid(row=0, column=1)
 
-        heuristicCombobox = ttk.Combobox(parameterOutputFrame, values=["normal", "testPreviousVersion", "intelligent", "modified"], state="readonly")
+        heuristicCombobox = ttk.Combobox(parameterOutputFrame, values=["normal", "modified", "price-based"], state="readonly")
         heuristicCombobox.grid(row=1, column=1)
+
+        searchTypeLabel = ttk.Label(parameterOutputFrame, text="search type: ")
+        searchTypeLabel.grid(row=0, column=2)
+
+        searchTypeCombobox = ttk.Combobox(parameterOutputFrame, values=["astar", "dijkstra", "best-first"], state="readonly")
+        searchTypeCombobox.grid(row=1, column=2)
 
         refreshPathButton=ttk.Button(parameterOutputFrame, text="Refresh Path", command=refreshPath)
         refreshPathButton.grid(row=3, column=1)
@@ -453,6 +486,7 @@ class App:
         pipePart2CountEntry.insert(0,"10")
         backgroundCombobox.set("white")
         heuristicCombobox.set("normal")
+        searchTypeCombobox.set("astar")
         levelCombobox.set("Level 1 (Easy)")
         TwoDFrontCamOption.invoke()
         resolutionEntryW.insert(0, GetSystemMetrics(0))
@@ -486,8 +520,8 @@ class App:
 
     #functions
 
-def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict ):
-    route, parts = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict)
+def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type ):
+    route, parts = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type)
     if isinstance(route, list):
         for idx,(x,y) in enumerate(route):
              route[idx] = (x+1,y+1)
@@ -504,17 +538,12 @@ def pipeTypeDictEmpty(dict):
 
 
 def determineType(part):
-    if part == 7:
-        type="red+red"
-        len = 7
-    elif part == 6:
-         type="red+yellow"
-         len= 6
-    elif part == 5:
-         type="red+pink"
+
+    if part == 5:
+         type="red"
          len = 5
     elif part == 4:
-          type="long4"
+          type="yellow"
           len = 4
     elif part == 3:
          type="blue"
@@ -588,7 +617,9 @@ def buildVpipes(dict):
         Objects.pipe(objects[0], objects[1], objects[2], objects[3])
 
 def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict):
+    global pipeCounter
     pipeBuildDict = []
+    pipeCounter = deepcopy(pipeTypeDict)
     if cRoute == False:
         return
     for idx, (x,y) in enumerate(cRoute):
@@ -617,8 +648,10 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
             add, axis = determineAxis((differenceX, differenceY))
         else:
             add, axis = determineAxis((differenceX, differenceY))
-
-        type = determineType(parts[(pointB[0]-1,pointB[1]-1)])
+        partValue = parts[(pointB[0]-1,pointB[1]-1)]
+        type = determineType(partValue)
+        pipeCounter
+        pipeCounter[partValue] = pipeCounter[partValue] - 1
 
         if pointB == goal and pointA[1] == goal[1]:
             nearGoalHor = True
@@ -769,7 +802,6 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
                 # if corner_axis == lvf.totop:
                 #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
 
-
     buildVpipes(pipeBuildDict)
 
 def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
@@ -816,7 +848,7 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
-            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict):
+            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict, search_type):
     #create wall
     if refresh == False:
         Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
@@ -838,7 +870,6 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     Objects.costDict.clear()
     Objects.lengthDict.clear()
     Objects.dotLengthDict.clear()
-
 
     if refresh == False:
         if level == "Level 1 (Easy)":
@@ -1141,7 +1172,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
         cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
                                      testingPath,
-                                     testedPath, heuristicType, pipeTypeDict)
+                                     testedPath, heuristicType, pipeTypeDict, search_type)
         print(cMatrix_route)
         if pipeVisible == True:
             if isinstance(cMatrix_route, list):
@@ -1172,7 +1203,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop)
         cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
                                      testingPath,
-                                     testedPath, heuristicType, pipeTypeDict)
+                                     testedPath, heuristicType, pipeTypeDict, search_type)
         print(cMatrix_route)
         if pipeVisible == True:
             pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,

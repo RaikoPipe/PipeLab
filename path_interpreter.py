@@ -80,7 +80,7 @@ def set_standard_neighbors(list):
         dict[(0,-value-1)] = value
     return dict
 
-def ouroboros(route, matrix):
+def pathCheck(route, matrix):
     newMatrix = deepcopy(matrix)
     for index, v in enumerate(route):
         if index == len(route) - 1:
