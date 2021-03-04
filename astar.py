@@ -13,6 +13,7 @@ import time
 
 priceList = [6.47,6.70,6.92,7.14,7.36]
 
+
 def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type):
 
     route, parts = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type)
@@ -239,7 +240,8 @@ def positionDependence(Neighbors, start, startAxis, goal,goalAxis, current, z):
         for index, (n, t) in enumerate(Neighbors.items()):
             goalDistance = (np.abs(goal[0] - current[0]), np.abs(goal[1]-current[1]))
             absGoalDistance = np.abs(np.abs(goal[0] - current[0]) - np.abs(goal[1]-current[1]))
-            if (goalDistance[0] == t or goalDistance[1] == t) and absGoalDistance == t or goal == (current[0] + n[0], current[1] + n[1]):
+            if ((goalDistance[0] == t or goalDistance[1] == t) and absGoalDistance == t) or (goal == (current[0] + n[0], current[1] + n[1])
+                    and (goalDistance[0] == n[0] or goalDistance[1] == n[1])):
                 newNeighbors = changeNeighbors(Neighbors, -goalAxis)
                 break
     if current == (current[0], z):

@@ -404,12 +404,9 @@ class pipe:
             self.realMeter = 0.193
             self.directionalOverhang = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
 
-            green = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.green, self.pipe_length,
-                                self.pipe_width, self.overhang)
-
-            #print("green created at position: " + str(pipe_coord))
-
-            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+            # green = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.green, self.pipe_length,
+            #                     self.pipe_width, self.overhang)
+            # lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
 
             costDict.append(self.cost)
             dotLengthDict.append(self.dotlength)
@@ -445,12 +442,9 @@ class pipe:
             self.realMeter = 0.403
             self.directionalOverhang = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
 
-            yellow = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.yellow, self.pipe_length,
-                                self.pipe_width, self.overhang)
-
-            #print("long4 created at position: " + str(pipe_coord))
-
-            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+            # yellow = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.yellow, self.pipe_length,
+            #                     self.pipe_width, self.overhang)
+            # lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
 
             costDict.append(self.cost)
             dotLengthDict.append(self.dotlength)
@@ -483,11 +477,8 @@ class pipe:
             self.cost = 5.32
             self.realMeter = 0.082  # 112mm - (diameter of a pipe(50)/2) - thickness(5mm)
 
-            cornerAdd = Corner(type, self.pipe_pos, pipe_axis , pipe_visible)
-
-            #print("corner created at position: " + str(pipe_coord))
-
-            lvf.setOccP_Call(pipe_coord, self.dotlength, pipe_axis)
+            #cornerAdd = Corner(type, self.pipe_pos, pipe_axis , pipe_visible)
+            #lvf.setOccP_Call(pipe_coord, self.dotlength, pipe_axis)
 
             costDict.append(self.cost)
             dotLengthDict.append(self.dotlength)
