@@ -137,45 +137,46 @@ class App:
                 wallDotVisible = True
             searchTypeList = ["astar", "best-first", "dijkstra"]
             #pandas writer
-            for i in searchTypeList:
-                search_type = i
-                if i == "astar":
-                    refresh = False
-                else:
-                    refresh = True
-                createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
-                            topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
-                            coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
-                            dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
-                            , heuristicType, refreshing, pipeTypeDict, search_type)
-                global dotLengthText
-                global costText
-                global partText
-                try:
-                    dotLengthText.visible = False
-                    dotLengthText.delete()
-                    costText.visible = False
-                    costText.delete()
-                    partText.visible = False
-                    partText.delete()
-                except: Exception
-                dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15)
-                costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
-                partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
-                costCounter = 0
-                dotCounter = 0
-                for count, cost in enumerate(Objects.costDict):
-                    costCounter += cost
-                for count, dots in enumerate(Objects.dotLengthDict):
-                    dotCounter += dots
-                lengthNote = open("length.txt", "a")
-                costNote = open("cost.txt", "a")
-                if refresh == False:
-                    lengthNote.write("\n")
-                    costNote.write("\n")
-
-                lengthNote.write(search_type + ": " + str(dotCounter) + "\n")
-                costNote.write(search_type +": " +str(round(costCounter,2)) + "\n")
+            for i in range(100):
+                for i in searchTypeList:
+                    search_type = i
+                    if i == "astar":
+                        refresh = False
+                    else:
+                        refresh = True
+                    createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
+                                topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
+                                coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
+                                dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
+                                , heuristicType, refreshing, pipeTypeDict, search_type)
+                    global dotLengthText
+                    global costText
+                    global partText
+                    try:
+                        dotLengthText.visible = False
+                        dotLengthText.delete()
+                        costText.visible = False
+                        costText.delete()
+                        partText.visible = False
+                        partText.delete()
+                    except: Exception
+                    dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15)
+                    costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
+                    partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
+                    costCounter = 0
+                    dotCounter = 0
+                    for count, cost in enumerate(Objects.costDict):
+                        costCounter += cost
+                    for count, dots in enumerate(Objects.dotLengthDict):
+                        dotCounter += dots
+                    lengthNote = open("length.txt", "a")
+                    costNote = open("cost.txt", "a")
+                    if refresh == False:
+                        lengthNote.write("\n")
+                        costNote.write("\n")
+    
+                    lengthNote.write(search_type + ": " + str(dotCounter) + "\n")
+                    costNote.write(search_type +": " +str(round(costCounter,2)) + "\n")
 
 
 
