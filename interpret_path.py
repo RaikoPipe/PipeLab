@@ -87,8 +87,6 @@ def pathCheck(route, matrix):
             break
         a = route[index]
         b = route[index+1]
-        if b == (5,24):
-            print("hi")
         diffX = b[0] - a[0]
         diffY = b[1] - a[1]
         n = (diffX, diffY)

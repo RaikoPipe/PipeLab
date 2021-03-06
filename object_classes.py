@@ -45,6 +45,7 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
              wall_visible, top_visible, coordinate_info_visible, camera_pos, background_color,x_res,y_res):
 
     main.scene.delete()
+    del main.scene
 
     # creating the scene
     main.scene = canvas(width=x_res, height=y_res, center=camera_pos, background=background_color, fov=pi/5)
@@ -530,7 +531,6 @@ class obstacle:
 
         #print("Obstacle with size: " + str([size_x, size_y]) +" at position: " + str(position) + " created ")
         #print("Objects.obstacle(" + str((size_x, size_y)) + "," + str(position) + "," + str(obstacle_visible) + ")")
-
         lvf.remember(self.obstacle, obstacleDict)
 
         pass

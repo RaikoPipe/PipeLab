@@ -1,10 +1,10 @@
 from copy import deepcopy
 
-import Objects
+import object_classes
 from vpython import *
 from win32api import GetSystemMetrics
 import LogicalVfunctions as lvf
-import astar as agt
+import find_path as agt
 import tkinter as tk
 from tkinter import ttk
 import math
@@ -135,15 +135,17 @@ class App:
                 pipeVisible = True
                 topDotVisible = True
                 wallDotVisible = True
+
             searchTypeList = ["astar", "best-first", "dijkstra"]
-            #pandas writer
+            #write experiment data
             for i in range(100):
+                algList = []
                 for i in searchTypeList:
                     search_type = i
                     if i == "astar":
-                        refresh = False
+                        refreshing = False
                     else:
-                        refresh = True
+                        refreshing = True
                     createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
                                 topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
                                 coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
@@ -165,18 +167,24 @@ class App:
                     partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
                     costCounter = 0
                     dotCounter = 0
-                    for count, cost in enumerate(Objects.costDict):
+                    for count, cost in enumerate(object_classes.costDict):
                         costCounter += cost
-                    for count, dots in enumerate(Objects.dotLengthDict):
+                    for count, dots in enumerate(object_classes.dotLengthDict):
                         dotCounter += dots
+                    tempList = [search_type, dotCounter, costCounter]
+                    algList.append(tempList)
+
+                for j in algList:
+                    if j[0]==0 or j[1]==0 or j[2]==0:
+                        break
+                else:
+                    searchNote = open("searchtype.txt", "a")
                     lengthNote = open("length.txt", "a")
                     costNote = open("cost.txt", "a")
-                    if refresh == False:
-                        lengthNote.write("\n")
-                        costNote.write("\n")
-    
-                    lengthNote.write(search_type + ": " + str(dotCounter) + "\n")
-                    costNote.write(search_type +": " +str(round(costCounter,2)) + "\n")
+                    for y in algList:
+                        searchNote.write(y[0] + "\n")
+                        lengthNote.write(str(y[1]) + "\n")
+                        costNote.write(str(round(y[2],2)) + "\n")
 
 
 
@@ -256,17 +264,17 @@ class App:
             costCounter = 0
             dotCounter = 0
             lengthCounter = 0
-            for count, cost in enumerate(Objects.costDict):
+            for count, cost in enumerate(object_classes.costDict):
                 costCounter += cost
 
             costCurrentPipes.config(text="current cost: " +str(round(costCounter,2)) + " €")
 
-            for count, dots in enumerate(Objects.dotLengthDict):
+            for count, dots in enumerate(object_classes.dotLengthDict):
                 dotCounter += dots
 
             currentDotLength.config(text="current dotLength: " +str(dotCounter) + " dots")
 
-            for count, realLength in enumerate(Objects.lengthDict):
+            for count, realLength in enumerate(object_classes.lengthDict):
                 lengthCounter += realLength-0.020
 
             try:
@@ -643,7 +651,7 @@ def buildVpipes(dict):
 
     for count, objects in enumerate(dict):
         scene.waitfor("draw_complete")
-        Objects.pipe(objects[0], objects[1], objects[2], objects[3])
+        object_classes.pipe(objects[0], objects[1], objects[2], objects[3])
 
 
 def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict):
@@ -853,9 +861,9 @@ def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
     #axis + displacementVector
     startDirection = startAxis + possible_start_positions[randomSelectStart][2]
     goalDirection = goalAxis + possible_goal_positions[randomSelectGoal][2]
-    Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+    object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
     PrepInitData = [start, goal, startAxis, goalAxis]
-    Objects.savedState = PrepInitData
+    object_classes.savedState = PrepInitData
     return PrepInitData
 
 def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop):
@@ -866,7 +874,7 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
         randPosY = random.randint(1, wallToTopShiftDots-1)
         randSizeX = random.randint(1, 2)
         randSizeY = random.randint(1, 2)
-        Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
+        object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
         #else: continue
     #create random Objects on Top
     for i in range(frequency -2):
@@ -874,15 +882,15 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
         randPosY = random.randint(wallToTopShiftDots+2, yDots-1)
         randSizeX = random.randint(1, 2)
         randSizeY = random.randint(1, 2)
-        Objects.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
+        object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
             dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict, search_type):
     #create wall
     if refresh == False:
-        Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
-                coordinateInfoVisible, camera, backgroundColor,xRes,yRes)
+        object_classes.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
+                                       coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
         # create logic matrix
         lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
                       dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
@@ -897,9 +905,15 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     else: obsVisTop = False
 
     random = False
-    Objects.costDict.clear()
-    Objects.lengthDict.clear()
-    Objects.dotLengthDict.clear()
+    object_classes.costDict.clear()
+    object_classes.lengthDict.clear()
+    object_classes.dotLengthDict.clear()
+
+    try:
+        for key in object_classes.pipeDict.keys():
+            obstDel = object_classes.obstacleDict[key]
+            del obstDel
+    except: Exception
 
     if refresh == False:
         if level == "Level 1 (Easy)":
@@ -910,15 +924,15 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             goalDirection = goalAxis + vector(0, -4.5, 0)
             start = (6, 1)  # this will be a random vector along the wall or a manual input
             goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
-            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
             #wall
-            obs1 = Objects.obstacle((4,9),(7,1), obsVisWall)
-            obs2 = Objects.obstacle((5,3),(1,1), obsVisWall)
-            obs3 = Objects.obstacle((3,3),(3,5), obsVisWall)
-            obs3 = Objects.obstacle((4,4),(3,13), obsVisWall)
+            obs1 = object_classes.obstacle((4, 9), (7, 1), obsVisWall)
+            obs2 = object_classes.obstacle((5, 3), (1, 1), obsVisWall)
+            obs3 = object_classes.obstacle((3, 3), (3, 5), obsVisWall)
+            obs3 = object_classes.obstacle((4, 4), (3, 13), obsVisWall)
             #top
-            obs4 = Objects.obstacle((7,3),(3,17), obsVisTop)
-            obs5 = Objects.obstacle((2,2),(5,22), obsVisTop)
+            obs4 = object_classes.obstacle((7, 3), (3, 17), obsVisTop)
+            obs5 = object_classes.obstacle((2, 2), (5, 22), obsVisTop)
             random = False
         elif level == "Level 2 (Medium)":
             #fixme: unfinished
@@ -928,25 +942,25 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             goalDirection = goalAxis + vector(6.5, 0, 0)
             start = (6, 1)  # this will be a random vector along the wall or a manual input
             goal = (1, 23)  # this will be either a random vector along wall the top or a manual input
-            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
-            obs1 = Objects.obstacle((1, 17), (1, 5), obsVisWall)
-            obs1 = Objects.obstacle((3, 7), (1, 1), obsVisWall)
+            object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            obs1 = object_classes.obstacle((1, 17), (1, 5), obsVisWall)
+            obs1 = object_classes.obstacle((3, 7), (1, 1), obsVisWall)
             #obs2 = Objects.obstacle(2, 5, (9, 1), obstacleVisible)
             #obs3 = Objects.obstacle(1, 13, (5, 5), obstacleVisible)
 
-            obsx = Objects.obstacle((1, 2), (6, 7), obsVisWall)
-            obsa = Objects.obstacle((1, 4), (8, 7), obsVisWall)
-            obsb = Objects.obstacle((1, 2), (10, 7), obsVisWall)
+            obsx = object_classes.obstacle((1, 2), (6, 7), obsVisWall)
+            obsa = object_classes.obstacle((1, 4), (8, 7), obsVisWall)
+            obsb = object_classes.obstacle((1, 2), (10, 7), obsVisWall)
 
-            obs4 = Objects.obstacle((3, 2), (6, 11), obsVisWall)
+            obs4 = object_classes.obstacle((3, 2), (6, 11), obsVisWall)
 
-            obsd = Objects.obstacle((2, 1), (9, 15), obsVisWall)
+            obsd = object_classes.obstacle((2, 1), (9, 15), obsVisWall)
 
-            obse = Objects.obstacle((3, 3), (2, 14), obsVisWall)
+            obse = object_classes.obstacle((3, 3), (2, 14), obsVisWall)
 
             # top:
-            obs6 = Objects.obstacle((4, 1), (2, 17), obsVisTop)
-            obs7 = Objects.obstacle((7, 1), (1, 20), obsVisTop)
+            obs6 = object_classes.obstacle((4, 1), (2, 17), obsVisTop)
+            obs7 = object_classes.obstacle((7, 1), (1, 20), obsVisTop)
             random = False
         elif level == "Level 3 (Hard)":
             startAxis = lvf.up
@@ -955,21 +969,21 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             goalDirection = goalAxis + lvf.rightSG
             start = (10, 1)  # this will be a random vector along the wall or a manual input
             goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
-            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
             #wall
-            obs1 = Objects.obstacle((1, 2), (9, 1), obsVisWall)
-            obs2 = Objects.obstacle((7, 1), (3, 4), obsVisWall)
-            obs3 = Objects.obstacle((4, 3), (3, 6), obsVisWall)
-            obs4 = Objects.obstacle((1, 7), (6, 10), obsVisWall)
-            obs5 = Objects.obstacle((3, 7), (8, 10), obsVisWall)
-            obs6 = Objects.obstacle((2, 4), (3, 13), obsVisWall)
+            obs1 = object_classes.obstacle((1, 2), (9, 1), obsVisWall)
+            obs2 = object_classes.obstacle((7, 1), (3, 4), obsVisWall)
+            obs3 = object_classes.obstacle((4, 3), (3, 6), obsVisWall)
+            obs4 = object_classes.obstacle((1, 7), (6, 10), obsVisWall)
+            obs5 = object_classes.obstacle((3, 7), (8, 10), obsVisWall)
+            obs6 = object_classes.obstacle((2, 4), (3, 13), obsVisWall)
 
             #top
-            obs7 = Objects.obstacle((2, 4), (3, 17), obsVisTop)
-            obs8 = Objects.obstacle((1, 3), (6, 17), obsVisTop)
-            obs9 = Objects.obstacle((4, 1), (6, 20), obsVisTop)
-            obs10 = Objects.obstacle((8, 4), (3, 22), obsVisTop)
+            obs7 = object_classes.obstacle((2, 4), (3, 17), obsVisTop)
+            obs8 = object_classes.obstacle((1, 3), (6, 17), obsVisTop)
+            obs9 = object_classes.obstacle((4, 1), (6, 20), obsVisTop)
+            obs10 = object_classes.obstacle((8, 4), (3, 22), obsVisTop)
             random = False
 
         # elif level == "High Complexity":
@@ -1005,45 +1019,45 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             goalDirection = goalAxis + lvf.rightSG
             start = (1, 3)  # this will be a random vector along the wall or a manual input
             goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
-            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
-            Objects.obstacle((2, 1), (8, 2), True)
-            Objects.obstacle((2, 1), (1, 12), True)
-            Objects.obstacle((1, 1), (4, 7), True)
-            Objects.obstacle((2, 2), (2, 11), True)
-            Objects.obstacle((2, 2), (2, 1), True)
-            Objects.obstacle((1, 2), (7, 5), True)
-            Objects.obstacle((1, 1), (9, 14), True)
-            Objects.obstacle((1, 2), (1, 14), True)
-            Objects.obstacle((2, 1), (8, 5), True)
-            Objects.obstacle((2, 2), (3, 7), True)
-            Objects.obstacle((2, 1), (7, 4), True)
-            Objects.obstacle((1, 2), (7, 15), True)
-            Objects.obstacle((1, 1), (6, 9), True)
-            Objects.obstacle((1, 1), (1, 12), True)
-            Objects.obstacle((1, 2), (4, 3), True)
-            Objects.obstacle((1, 2), (2, 9), True)
-            Objects.obstacle((2, 2), (1, 14), True)
-            Objects.obstacle((1, 2), (2, 12), True)
-            Objects.obstacle((1, 1), (1, 8), True)
-            Objects.obstacle((1, 2), (2, 13), True)
-            Objects.obstacle((2, 2), (7, 24), True)
-            Objects.obstacle((1, 2), (8, 20), True)
-            Objects.obstacle((1, 1), (6, 21), True)
-            Objects.obstacle((1, 1), (5, 23), True)
-            Objects.obstacle((1, 2), (3, 24), True)
-            Objects.obstacle((2, 1), (7, 22), True)
-            Objects.obstacle((2, 1), (5, 22), True)
-            Objects.obstacle((1, 2), (8, 22), True)
-            Objects.obstacle((1, 1), (8, 22), True)
-            Objects.obstacle((1, 2), (6, 19), True)
-            Objects.obstacle((1, 2), (1, 22), True)
-            Objects.obstacle((2, 1), (4, 24), True)
-            Objects.obstacle((2, 2), (4, 20), True)
-            Objects.obstacle((1, 2), (8, 19), True)
-            Objects.obstacle((1, 1), (7, 20), True)
-            Objects.obstacle((2, 2), (6, 24), True)
-            Objects.obstacle((2, 2), (3, 21), True)
-            Objects.obstacle((1, 1), (9, 20), True)
+            object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            object_classes.obstacle((2, 1), (8, 2), True)
+            object_classes.obstacle((2, 1), (1, 12), True)
+            object_classes.obstacle((1, 1), (4, 7), True)
+            object_classes.obstacle((2, 2), (2, 11), True)
+            object_classes.obstacle((2, 2), (2, 1), True)
+            object_classes.obstacle((1, 2), (7, 5), True)
+            object_classes.obstacle((1, 1), (9, 14), True)
+            object_classes.obstacle((1, 2), (1, 14), True)
+            object_classes.obstacle((2, 1), (8, 5), True)
+            object_classes.obstacle((2, 2), (3, 7), True)
+            object_classes.obstacle((2, 1), (7, 4), True)
+            object_classes.obstacle((1, 2), (7, 15), True)
+            object_classes.obstacle((1, 1), (6, 9), True)
+            object_classes.obstacle((1, 1), (1, 12), True)
+            object_classes.obstacle((1, 2), (4, 3), True)
+            object_classes.obstacle((1, 2), (2, 9), True)
+            object_classes.obstacle((2, 2), (1, 14), True)
+            object_classes.obstacle((1, 2), (2, 12), True)
+            object_classes.obstacle((1, 1), (1, 8), True)
+            object_classes.obstacle((1, 2), (2, 13), True)
+            object_classes.obstacle((2, 2), (7, 24), True)
+            object_classes.obstacle((1, 2), (8, 20), True)
+            object_classes.obstacle((1, 1), (6, 21), True)
+            object_classes.obstacle((1, 1), (5, 23), True)
+            object_classes.obstacle((1, 2), (3, 24), True)
+            object_classes.obstacle((2, 1), (7, 22), True)
+            object_classes.obstacle((2, 1), (5, 22), True)
+            object_classes.obstacle((1, 2), (8, 22), True)
+            object_classes.obstacle((1, 1), (8, 22), True)
+            object_classes.obstacle((1, 2), (6, 19), True)
+            object_classes.obstacle((1, 2), (1, 22), True)
+            object_classes.obstacle((2, 1), (4, 24), True)
+            object_classes.obstacle((2, 2), (4, 20), True)
+            object_classes.obstacle((1, 2), (8, 19), True)
+            object_classes.obstacle((1, 1), (7, 20), True)
+            object_classes.obstacle((2, 2), (6, 24), True)
+            object_classes.obstacle((2, 2), (3, 21), True)
+            object_classes.obstacle((1, 1), (9, 20), True)
 
         elif level == "Save 2":
             startAxis = lvf.up
@@ -1052,47 +1066,47 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             goalDirection = goalAxis + lvf.rightSG
             start = (10, 1)  # this will be a random vector along the wall or a manual input
             goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
-            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
 
-            Objects.obstacle((2, 2), (2, 6), True)
-            Objects.obstacle((1, 1), (3, 3), True)
-            Objects.obstacle((2, 2), (3, 11), True)
-            Objects.obstacle((2, 2), (4, 15), True)
-            Objects.obstacle((1, 1), (9, 7), True)
-            Objects.obstacle((2, 1), (6, 1), True)
-            Objects.obstacle((2, 1), (3, 15), True)
-            Objects.obstacle((2, 1), (3, 15), True)
-            Objects.obstacle((1, 2), (1, 3), True)
-            Objects.obstacle((1, 2), (2, 4), True)
-            Objects.obstacle((2, 1), (4, 2), True)
-            Objects.obstacle((1, 1), (3, 4), True)
-            Objects.obstacle((2, 2), (6, 1), True)
-            Objects.obstacle((2, 1), (5, 13), True)
-            Objects.obstacle((2, 1), (4, 13), True)
-            Objects.obstacle((2, 2), (9, 12), True)
-            Objects.obstacle((1, 2), (6, 9), True)
-            Objects.obstacle((1, 1), (6, 15), True)
-            Objects.obstacle((2, 2), (5, 13), True)
-            Objects.obstacle((1, 1), (5, 9), True)
-            Objects.obstacle((2, 2), (8, 24), True)
-            Objects.obstacle((2, 1), (8, 20), True)
-            Objects.obstacle((1, 1), (9, 21), True)
-            Objects.obstacle((1, 1), (1, 23), True)
-            Objects.obstacle((1, 1), (6, 23), True)
-            Objects.obstacle((1, 1), (7, 24), True)
-            Objects.obstacle((2, 1), (6, 19), True)
-            Objects.obstacle((2, 1), (6, 19), True)
-            Objects.obstacle((1, 1), (5, 18), True)
-            Objects.obstacle((1, 1), (3, 18), True)
-            Objects.obstacle((2, 1), (8, 18), True)
-            Objects.obstacle((2, 2), (6, 22), True)
-            Objects.obstacle((1, 2), (3, 22), True)
-            Objects.obstacle((1, 1), (9, 18), True)
-            Objects.obstacle((2, 2), (5, 21), True)
-            Objects.obstacle((2, 2), (9, 19), True)
-            Objects.obstacle((1, 2), (4, 18), True)
-            Objects.obstacle((2, 1), (6, 21), True)
+            object_classes.obstacle((2, 2), (2, 6), True)
+            object_classes.obstacle((1, 1), (3, 3), True)
+            object_classes.obstacle((2, 2), (3, 11), True)
+            object_classes.obstacle((2, 2), (4, 15), True)
+            object_classes.obstacle((1, 1), (9, 7), True)
+            object_classes.obstacle((2, 1), (6, 1), True)
+            object_classes.obstacle((2, 1), (3, 15), True)
+            object_classes.obstacle((2, 1), (3, 15), True)
+            object_classes.obstacle((1, 2), (1, 3), True)
+            object_classes.obstacle((1, 2), (2, 4), True)
+            object_classes.obstacle((2, 1), (4, 2), True)
+            object_classes.obstacle((1, 1), (3, 4), True)
+            object_classes.obstacle((2, 2), (6, 1), True)
+            object_classes.obstacle((2, 1), (5, 13), True)
+            object_classes.obstacle((2, 1), (4, 13), True)
+            object_classes.obstacle((2, 2), (9, 12), True)
+            object_classes.obstacle((1, 2), (6, 9), True)
+            object_classes.obstacle((1, 1), (6, 15), True)
+            object_classes.obstacle((2, 2), (5, 13), True)
+            object_classes.obstacle((1, 1), (5, 9), True)
+            object_classes.obstacle((2, 2), (8, 24), True)
+            object_classes.obstacle((2, 1), (8, 20), True)
+            object_classes.obstacle((1, 1), (9, 21), True)
+            object_classes.obstacle((1, 1), (1, 23), True)
+            object_classes.obstacle((1, 1), (6, 23), True)
+            object_classes.obstacle((1, 1), (7, 24), True)
+            object_classes.obstacle((2, 1), (6, 19), True)
+            object_classes.obstacle((2, 1), (6, 19), True)
+            object_classes.obstacle((1, 1), (5, 18), True)
+            object_classes.obstacle((1, 1), (3, 18), True)
+            object_classes.obstacle((2, 1), (8, 18), True)
+            object_classes.obstacle((2, 2), (6, 22), True)
+            object_classes.obstacle((1, 2), (3, 22), True)
+            object_classes.obstacle((1, 1), (9, 18), True)
+            object_classes.obstacle((2, 2), (5, 21), True)
+            object_classes.obstacle((2, 2), (9, 19), True)
+            object_classes.obstacle((1, 2), (4, 18), True)
+            object_classes.obstacle((2, 1), (6, 21), True)
 
         elif level == "Save 3":
             startAxis = lvf.up
@@ -1101,16 +1115,16 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             goalDirection = goalAxis + lvf.leftSG
             start = (6, 1)  # this will be a random vector along the wall or a manual input
             goal = (10, 25)  # this will be either a random vector along wall the top or a manual input
-            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
-            Objects.obstacle((2, 2), (2, 8), True)
-            Objects.obstacle((1, 2), (7, 2), True)
-            Objects.obstacle((2, 1), (9, 2), True)
-            Objects.obstacle((2, 1), (2, 13), True)
-            Objects.obstacle((2, 1), (6, 11), True)
-            Objects.obstacle((2, 2), (5, 19), True)
-            Objects.obstacle((1, 2), (8, 22), True)
-            Objects.obstacle((2, 1), (4, 18), True)
+            object_classes.obstacle((2, 2), (2, 8), True)
+            object_classes.obstacle((1, 2), (7, 2), True)
+            object_classes.obstacle((2, 1), (9, 2), True)
+            object_classes.obstacle((2, 1), (2, 13), True)
+            object_classes.obstacle((2, 1), (6, 11), True)
+            object_classes.obstacle((2, 2), (5, 19), True)
+            object_classes.obstacle((1, 2), (8, 22), True)
+            object_classes.obstacle((2, 1), (4, 18), True)
 
         elif level == "Save 4":
             startAxis = lvf.up
@@ -1119,22 +1133,22 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             goalDirection = goalAxis + lvf.leftSG
             start = (6, 1)  # this will be a random vector along the wall or a manual input
             goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
-            Objects.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+            object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
-            Objects.obstacle((2, 1), (7, 5), True)
-            Objects.obstacle((1, 2), (5, 11), True)
-            Objects.obstacle((1, 2), (9, 9), True)
-            Objects.obstacle((2, 1), (5, 4), True)
-            Objects.obstacle((1, 1), (3, 9), True)
-            Objects.obstacle((2, 2), (4, 14), True)
-            Objects.obstacle((2, 1), (3, 4), True)
-            Objects.obstacle((1, 2), (4, 4), True)
-            Objects.obstacle((2, 2), (8, 20), True)
-            Objects.obstacle((2, 1), (2, 19), True)
-            Objects.obstacle((1, 2), (1, 24), True)
-            Objects.obstacle((2, 2), (6, 18), True)
-            Objects.obstacle((1, 1), (2, 23), True)
-            Objects.obstacle((2, 2), (9, 24), True)
+            object_classes.obstacle((2, 1), (7, 5), True)
+            object_classes.obstacle((1, 2), (5, 11), True)
+            object_classes.obstacle((1, 2), (9, 9), True)
+            object_classes.obstacle((2, 1), (5, 4), True)
+            object_classes.obstacle((1, 1), (3, 9), True)
+            object_classes.obstacle((2, 2), (4, 14), True)
+            object_classes.obstacle((2, 1), (3, 4), True)
+            object_classes.obstacle((1, 2), (4, 4), True)
+            object_classes.obstacle((2, 2), (8, 20), True)
+            object_classes.obstacle((2, 1), (2, 19), True)
+            object_classes.obstacle((1, 2), (1, 24), True)
+            object_classes.obstacle((2, 2), (6, 18), True)
+            object_classes.obstacle((1, 1), (2, 23), True)
+            object_classes.obstacle((2, 2), (9, 24), True)
 
 
 
@@ -1186,19 +1200,19 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     # calculate a* route
     cMatrix_route = ""
     if refresh == True:
-        for key in Objects.pipeDict.keys():
-            oldPipe = Objects.pipeDict[key]
+        for key in object_classes.pipeDict.keys():
+            oldPipe = object_classes.pipeDict[key]
             oldPipe.visible = False
             del oldPipe
-        for key in Objects.showcaseDict.keys():
-            sBox = Objects.showcaseDict[key]
+        for key in object_classes.showcaseDict.keys():
+            sBox = object_classes.showcaseDict[key]
             sBox.visible = False
             del sBox
 
-        start = Objects.savedState[0]
-        goal = Objects.savedState[1]
-        startAxis = Objects.savedState[2]
-        goalAxis = Objects.savedState[3]
+        start = object_classes.savedState[0]
+        goal = object_classes.savedState[1]
+        startAxis = object_classes.savedState[2]
+        goalAxis = object_classes.savedState[3]
 
         cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
                                      testingPath,
@@ -1254,10 +1268,10 @@ def refreshObjects(visible, dict):
 
 
 def refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible):
-    refreshObjects(wallVisible, Objects.wallDict)
-    refreshObjects(topVisible, Objects.topDict)
-    refreshObjects(pipeVisible, Objects.pipeDict)
-    refreshObjects(obstacleVisible, Objects.obstacleDict)
+    refreshObjects(wallVisible, object_classes.wallDict)
+    refreshObjects(topVisible, object_classes.topDict)
+    refreshObjects(pipeVisible, object_classes.pipeDict)
+    refreshObjects(obstacleVisible, object_classes.obstacleDict)
     refreshObjects(wallDotVisible, lvf.wallDotDict)
     refreshObjects(topDotVisible, lvf.topDotDict)
 

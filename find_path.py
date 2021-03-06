@@ -1,13 +1,11 @@
 import numpy as np
 import heapq
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.pyplot import figure
 from datetime import datetime
 import LogicalVfunctions as lvf
-import path_interpreter as pint
+import interpret_path as pint
 from vpython import *
-import Objects
+import object_classes
 from copy import deepcopy
 import time
 
@@ -448,9 +446,9 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
+                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
             else:
-                currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
+                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
                 count +=1
 
         current_route = buildRoute(current, came_from)
@@ -518,14 +516,14 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
                     if neiCount > 0:
                         neighBox.obj.visible = False
                         neighBox.obj.delete()
-                        neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                         time.sleep(speed)
                     else:
-                        neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                         neiCount += 1
                         time.sleep(speed)
                 if testedPath == True:
-                    testedBox = Objects.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                    testedBox = object_classes.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                 came_from[neighbor] = current
                 part_dict[neighbor] = Neighbors.get((i,j))
                 gscore[neighbor] = tentative_g_score
@@ -587,9 +585,9 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
+                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
             else:
-                currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
+                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
                 count +=1
 
         current_route = buildRoute(current, came_from)
@@ -659,14 +657,14 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
                     if neiCount > 0:
                         neighBox.obj.visible = False
                         neighBox.obj.delete()
-                        neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                         time.sleep(speed)
                     else:
-                        neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                         neiCount += 1
                         time.sleep(speed)
                 if testedPath == True:
-                    testedBox = Objects.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                    testedBox = object_classes.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                 came_from[neighbor] = current
                 part_dict[neighbor] = Neighbors.get((i,j))
                 gscore[neighbor] = tentative_g_score
@@ -722,9 +720,9 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
+                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
             else:
-                currentBox=Objects.currentDebugBox((current[0]+1, current[1]+1))
+                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
                 count +=1
 
         current_route = buildRoute(current, came_from)
@@ -788,14 +786,14 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
                     if neiCount > 0:
                         neighBox.obj.visible = False
                         neighBox.obj.delete()
-                        neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                         time.sleep(speed)
                     else:
-                        neighBox = Objects.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                         neiCount += 1
                         time.sleep(speed)
                 if testedPath == True:
-                    testedBox = Objects.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                    testedBox = object_classes.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
                 came_from[neighbor] = current
                 part_dict[neighbor] = Neighbors.get((i,j))
                 hscore[neighbor] = tentative_h_score + heuristic(neighbor, goal)
