@@ -9,6 +9,7 @@ import tkinter as tk
 from tkinter import ttk
 import math
 import random
+import winsound
 
 # lengthText = Objects.displayText(vector(10,10,5))
 # costText = Objects.displayText(vector(10,5,5))
@@ -138,7 +139,10 @@ class App:
 
             searchTypeList = ["astar", "best-first", "dijkstra"]
             #write experiment data
-            for i in range(100):
+            successcounter = 0
+            for i in range(300):
+                if successcounter >= 100:
+                    break
                 algList = []
                 for i in searchTypeList:
                     search_type = i
@@ -162,9 +166,9 @@ class App:
                         partText.visible = False
                         partText.delete()
                     except: Exception
-                    dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15)
-                    costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
-                    partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
+                    # dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15)
+                    # costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
+                    # partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
                     costCounter = 0
                     dotCounter = 0
                     for count, cost in enumerate(object_classes.costDict):
@@ -178,6 +182,7 @@ class App:
                     if j[0]==0 or j[1]==0 or j[2]==0:
                         break
                 else:
+                    successcounter = successcounter + 1
                     searchNote = open("searchtype.txt", "a")
                     lengthNote = open("length.txt", "a")
                     costNote = open("cost.txt", "a")
@@ -650,7 +655,7 @@ def determineCorner(previousAxis, axis):
 def buildVpipes(dict):
 
     for count, objects in enumerate(dict):
-        scene.waitfor("draw_complete")
+        #scene.waitfor("draw_complete")
         object_classes.pipe(objects[0], objects[1], objects[2], objects[3])
 
 
@@ -861,36 +866,38 @@ def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
     #axis + displacementVector
     startDirection = startAxis + possible_start_positions[randomSelectStart][2]
     goalDirection = goalAxis + possible_goal_positions[randomSelectGoal][2]
-    object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+    #object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
     PrepInitData = [start, goal, startAxis, goalAxis]
     object_classes.savedState = PrepInitData
     return PrepInitData
 
 def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop):
+    frequencyWall = frequency
+    frequencyTop = int(frequency*0.6)
     #create random Object on wall
-    for i in range(frequency):
+    for i in range(frequencyWall):
         #if random.random() <= probability:
-        randPosX = random.randint(1, xDots-1)
-        randPosY = random.randint(1, wallToTopShiftDots-1)
-        randSizeX = random.randint(1, 2)
-        randSizeY = random.randint(1, 2)
-        object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
+        randPosX = random.randint(1, xDots)
+        randPosY = random.randint(1, wallToTopShiftDots)
+        randSizeX = 1
+        randSizeY = 1
+        #object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
         #else: continue
     #create random Objects on Top
-    for i in range(frequency -2):
+    for i in range(frequencyTop):
         randPosX = random.randint(1, xDots - 1)
-        randPosY = random.randint(wallToTopShiftDots+2, yDots-1)
-        randSizeX = random.randint(1, 2)
-        randSizeY = random.randint(1, 2)
-        object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
+        randPosY = random.randint(wallToTopShiftDots+2, yDots)
+        randSizeX = 1
+        randSizeY = 1
+        #object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
             dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict, search_type):
     #create wall
     if refresh == False:
-        object_classes.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
-                                       coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
+        # object_classes.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
+        #                                coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
         # create logic matrix
         lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
                       dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
@@ -1157,32 +1164,32 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             random = True
             PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
         elif level == "Low":
-            frequency = 5
+            frequency = 15
             random = True
             PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
 
         elif level == "Medium":
-            frequency = 8
+            frequency = 30
             random = True
             PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
         elif level == "High":
-            frequency = 12
+            frequency = 45
             random = True
             PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
         elif level == "Very High":
-            frequency = 20
+            frequency = 60
             random = True
             PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
         elif level == "Extreme":
-            frequency = 30
+            frequency = 100
             random = True
             PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
         elif level == "Very Extreme":
-            frequency = 50
+            frequency = 150
             random = True
             PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
@@ -1278,13 +1285,8 @@ def refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible,
 
 #start the app
 if __name__ == "__main__":
-    scene = canvas()
+    #scene = canvas()
     app = App()
 
 
 
-
-# todo:
-#  known bugs:
-#  - ouroboros bug, pipe sometimes rotates in a circle to force a solution and "bites" itself
-#  (rotates into itself)-> disallow such solutions

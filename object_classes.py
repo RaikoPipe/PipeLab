@@ -526,12 +526,12 @@ class obstacle:
         size_y = size[1]
         pos = lvf.cMatrix[position]
         sizeVector= vector(size_x*10.5, size_y*10.5, 5)
-        self.obstacle = box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
+        # self.obstacle = box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
         lvf.setOccO_Call(size_x,size_y, position)
 
         #print("Obstacle with size: " + str([size_x, size_y]) +" at position: " + str(position) + " created ")
         #print("Objects.obstacle(" + str((size_x, size_y)) + "," + str(position) + "," + str(obstacle_visible) + ")")
-        lvf.remember(self.obstacle, obstacleDict)
+        # lvf.remember(self.obstacle, obstacleDict)
 
         pass
 
