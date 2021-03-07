@@ -142,6 +142,9 @@ class App:
             successcounter = 0
             for i in range(300):
                 if successcounter >= 100:
+                    duration = 1000  # milliseconds
+                    freq = 440  # Hz
+                    winsound.Beep(freq, duration)
                     break
                 algList = []
                 for i in searchTypeList:
@@ -874,8 +877,10 @@ def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
 def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop):
     frequencyWall = frequency
     frequencyTop = int(frequency*0.6)
+    checkList = []
     #create random Object on wall
-    for i in range(frequencyWall):
+    i = 0
+    while i <= frequencyWall:
         #if random.random() <= probability:
         randPosX = random.randint(1, xDots)
         randPosY = random.randint(1, wallToTopShiftDots)
@@ -883,13 +888,27 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
         randSizeY = 1
         #object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
         #else: continue
+        if (randPosX,randPosY) in checkList:
+            i = i-1
+            continue
+        else:
+            checkList.append((randPosX,randPosY))
+            i=i+1
     #create random Objects on Top
-    for i in range(frequencyTop):
+    i = 0
+    while i <= frequencyTop:
         randPosX = random.randint(1, xDots - 1)
         randPosY = random.randint(wallToTopShiftDots+2, yDots)
         randSizeX = 1
         randSizeY = 1
         #object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
+        if (randPosX,randPosY) in checkList:
+            i = i-1
+            continue
+        else:
+            checkList.append((randPosX,randPosY))
+            i=i+1
+        checkList.append((randPosX, randPosY))
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
