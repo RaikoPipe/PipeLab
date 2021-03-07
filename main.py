@@ -877,7 +877,6 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
         randSizeY = 1
         #else: continue
         if (randPosX,randPosY) in checkList:
-            i = i-1
             continue
         else:
             object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
@@ -891,13 +890,11 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
         randSizeX = 1
         randSizeY = 1
         if (randPosX,randPosY) in checkList:
-            i = i-1
             continue
         else:
             object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
             checkList.append((randPosX,randPosY))
             i=i+1
-        checkList.append((randPosX, randPosY))
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
