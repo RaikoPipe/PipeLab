@@ -530,7 +530,7 @@ class obstacle:
         lvf.setOccO_Call(size_x,size_y, position)
         lvf.remember(self.obstacle, obstacleDict)
         #print("Obstacle with size: " + str([size_x, size_y]) +" at position: " + str(position) + " created ")
-        #print("Objects.obstacle(" + str((size_x, size_y)) + "," + str(position) + "," + str(obstacle_visible) + ")")
+        print("Objects.obstacle(" + str((size_x, size_y)) + "," + str(position) + "," + str(obstacle_visible) + ")")
 
 
         pass

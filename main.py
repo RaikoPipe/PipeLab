@@ -686,7 +686,6 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
             add, axis = determineAxis((differenceX, differenceY))
         partValue = parts[(pointB[0]-1,pointB[1]-1)]
         type = determineType(partValue)
-        pipeCounter
         pipeCounter[partValue] = pipeCounter[partValue] - 1
 
         if pointB == goal and pointA[1] == goal[1]:

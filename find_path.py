@@ -93,8 +93,6 @@ def dimension_shift_violation(current, neighbor, z):
         return False
 
 def out_of_bounds(current, neighbor, n, array):
-
-
     if 0 <= neighbor[0] < array.shape[0]:
 
         if 0 <= neighbor[1] < array.shape[1]:
@@ -219,7 +217,7 @@ def changeNeighbors(Neighbors, axis):
             changedNeighbors[n] = t
     return changedNeighbors
 
-def zChangeNeighbors(Neighbors, add, axis):
+def ChangeZNeighbors(Neighbors, add, axis):
     changedNeighbors = {}
     for index, (n, t) in enumerate(Neighbors.items()):
         nAxis = getAxis(n)
@@ -229,25 +227,40 @@ def zChangeNeighbors(Neighbors, add, axis):
             changedNeighbors[n] = t
     return changedNeighbors
 
+def changeClosingNeighbors(Neighbors, axis, closingList):
+    changedNeighbors = {}
+    for index, (n, t) in enumerate(Neighbors.items()):
+        nAxis = getAxis(n)
+        if nAxis == (axis.x,axis.y) and t in closingList:
+            changedNeighbors[(t*nAxis[0],t*nAxis[1])] = t
+        else:
+            changedNeighbors[n] = t
+    return changedNeighbors
 
 def positionDependence(Neighbors, start, startAxis, goal,goalAxis, current, z):
     newNeighbors = deepcopy(Neighbors)
     if current == start:
         newNeighbors = changeNeighbors(Neighbors, startAxis)
     else:
+        closingParts = []
         for index, (n, t) in enumerate(Neighbors.items()):
+            axis = getAxis(n)
+            gAxis = (-goalAxis.x, -goalAxis.y)
             goalDistance = (np.abs(goal[0] - current[0]), np.abs(goal[1]-current[1]))
             absGoalDistance = np.abs(np.abs(goal[0] - current[0]) - np.abs(goal[1]-current[1]))
-            if ((goalDistance[0] == t or goalDistance[1] == t) and absGoalDistance == t) or (goal == (current[0] + n[0], current[1] + n[1])
-                    and (goalDistance[0] == n[0] or goalDistance[1] == n[1])):
-                newNeighbors = changeNeighbors(Neighbors, -goalAxis)
-                break
+            if (((current[0]+t*axis[0],current[1]+t*axis[1])==goal and axis ==gAxis) and absGoalDistance == t)\
+                    or (((current[0]+n[0],current[1]+n[1])==goal and axis ==gAxis)):
+                closingParts.append(t)
+                    # or (goal == (current[0] + n[0], current[1] + n[1])
+                    # and (goalDistance[0] == n[0] or goalDistance[1] == n[1])):
+        if closingParts:
+                newNeighbors = changeClosingNeighbors(Neighbors, -goalAxis, closingParts)
     if current == (current[0], z):
         add= 1
-        newNeighbors = zChangeNeighbors(newNeighbors, add, lvf.up)
+        newNeighbors = ChangeZNeighbors(newNeighbors, add, lvf.up)
     elif current == (current[0],z+1):
         add= -1
-        newNeighbors = zChangeNeighbors(newNeighbors, add, lvf.down)
+        newNeighbors = ChangeZNeighbors(newNeighbors, add, lvf.down)
     return newNeighbors
 
 # fixme: There is a neighbor somewhere that shouldnt work with length 5
