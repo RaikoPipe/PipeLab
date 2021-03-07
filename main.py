@@ -48,6 +48,10 @@ class App:
         pc2 = tk.StringVar()
         pl3 = tk.StringVar()
         pc3 = tk.StringVar()
+        pl4 = tk.StringVar()
+        pc4 = tk.StringVar()
+        pl5 = tk.StringVar()
+        pc5 = tk.StringVar()
 
 
 
@@ -70,6 +74,10 @@ class App:
                 dict[int(pl2.get())] = int(pc2.get())
             if pl3.get() != "":
                 dict[int(pl3.get())] = int(pc3.get())
+            if pl4.get() != "":
+                dict[int(pl4.get())] = int(pc4.get())
+            if pl5.get() != "":
+                dict[int(pl5.get())] = int(pc5.get())
 
             print(dict)
 
@@ -385,6 +393,16 @@ class App:
         pipePart3CountEntry = ttk.Entry(pipePartsFrame, textvariable=pc3)
         pipePart3CountEntry.grid(row=3, column=1)
 
+        pipePart4LengthEntry = ttk.Entry(pipePartsFrame, textvariable = pl4)
+        pipePart4LengthEntry.grid(row=4, column = 0)
+        pipePart4CountEntry = ttk.Entry(pipePartsFrame, textvariable=pc4)
+        pipePart4CountEntry.grid(row=4, column=1)
+
+        pipePart5LengthEntry = ttk.Entry(pipePartsFrame, textvariable = pl5)
+        pipePart5LengthEntry.grid(row=5, column = 0)
+        pipePart5CountEntry = ttk.Entry(pipePartsFrame, textvariable=pc5)
+        pipePart5CountEntry.grid(row=5, column=1)
+
 
 
 
@@ -574,26 +592,17 @@ def determineType(part):
 
     if part == 5:
          type="red"
-         len = 5
     elif part == 4:
           type="yellow"
-          len = 4
     elif part == 3:
          type="blue"
-         len = 3
     elif part == 2:
         type ="green"
-        len = 2
     elif part == 1:
          type = "purple"
-         len = 1
     else:
         type = "error"
         print("type doesnt exist")
-
-    # dict[len] = dict[len] - 1
-    # empty = pipeTypeDictEmpty(dict)
-
     return type
 
 def determineAxis(direction):
@@ -1169,22 +1178,22 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             random = True
             PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
         elif level == "Low":
-            frequency = 15
+            frequency = 10
             random = True
             PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
 
         elif level == "Medium":
-            frequency = 30
+            frequency = 20
             random = True
             PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
         elif level == "High":
-            frequency = 45
+            frequency = 30
             random = True
             PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
         elif level == "Very High":
-            frequency = 60
+            frequency = 40
             random = True
             PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
