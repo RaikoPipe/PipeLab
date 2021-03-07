@@ -405,9 +405,9 @@ class pipe:
             self.realMeter = 0.193
             self.directionalOverhang = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
 
-            # green = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.green, self.pipe_length,
-            #                     self.pipe_width, self.overhang)
-            # lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+            green = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.green, self.pipe_length,
+                                self.pipe_width, self.overhang)
+            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
 
             costDict.append(self.cost)
             dotLengthDict.append(self.dotlength)
@@ -423,9 +423,9 @@ class pipe:
             self.realMeter = 0.088
             self.directionalOverhang = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
 
-            # purple = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.purple, self.pipe_length,
-            #                     self.pipe_width, self.overhang)
-            # lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+            purple = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.purple, self.pipe_length,
+                                self.pipe_width, self.overhang)
+            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
 
             costDict.append(self.cost)
             dotLengthDict.append(self.dotlength)
@@ -440,9 +440,9 @@ class pipe:
             self.realMeter = 0.403
             self.directionalOverhang = lvf.determineDirectionalOverhang(type, pipe_axis, self.overhang, self.pipe_width)
 
-            # yellow = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.yellow, self.pipe_length,
-            #                     self.pipe_width, self.overhang)
-            # lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
+            yellow = SinglePipe(type, self.pipe_pos, pipe_axis, pipe_visible, color.yellow, self.pipe_length,
+                                self.pipe_width, self.overhang)
+            lvf.setOccP_Call(pipe_coord, self.dotlength, self.pipe_ax)
 
             costDict.append(self.cost)
             dotLengthDict.append(self.dotlength)
@@ -475,8 +475,8 @@ class pipe:
             self.cost = 5.32
             self.realMeter = 0.082  # 112mm - (diameter of a pipe(50)/2) - thickness(5mm)
 
-            #cornerAdd = Corner(type, self.pipe_pos, pipe_axis , pipe_visible)
-            #lvf.setOccP_Call(pipe_coord, self.dotlength, pipe_axis)
+            cornerAdd = Corner(type, self.pipe_pos, pipe_axis , pipe_visible)
+            lvf.setOccP_Call(pipe_coord, self.dotlength, pipe_axis)
 
             costDict.append(self.cost)
             dotLengthDict.append(self.dotlength)
@@ -526,12 +526,12 @@ class obstacle:
         size_y = size[1]
         pos = lvf.cMatrix[position]
         sizeVector= vector(size_x*10.5, size_y*10.5, 5)
-        # self.obstacle = box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
+        self.obstacle = box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
         lvf.setOccO_Call(size_x,size_y, position)
-
+        lvf.remember(self.obstacle, obstacleDict)
         #print("Obstacle with size: " + str([size_x, size_y]) +" at position: " + str(position) + " created ")
         #print("Objects.obstacle(" + str((size_x, size_y)) + "," + str(position) + "," + str(obstacle_visible) + ")")
-        # lvf.remember(self.obstacle, obstacleDict)
+
 
         pass
 

@@ -137,62 +137,52 @@ class App:
                 topDotVisible = True
                 wallDotVisible = True
 
-            searchTypeList = ["astar", "best-first", "dijkstra"]
-            #write experiment data
-            successcounter = 0
-            for i in range(300):
-                if successcounter >= 100:
-                    duration = 1000  # milliseconds
-                    freq = 440  # Hz
-                    winsound.Beep(freq, duration)
-                    break
-                algList = []
-                for i in searchTypeList:
-                    search_type = i
-                    if i == "astar":
-                        refreshing = False
-                    else:
-                        refreshing = True
-                    createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
-                                topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
-                                coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
-                                dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
-                                , heuristicType, refreshing, pipeTypeDict, search_type)
-                    global dotLengthText
-                    global costText
-                    global partText
-                    try:
-                        dotLengthText.visible = False
-                        dotLengthText.delete()
-                        costText.visible = False
-                        costText.delete()
-                        partText.visible = False
-                        partText.delete()
-                    except: Exception
-                    # dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15)
-                    # costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
-                    # partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
-                    costCounter = 0
-                    dotCounter = 0
-                    for count, cost in enumerate(object_classes.costDict):
-                        costCounter += cost
-                    for count, dots in enumerate(object_classes.dotLengthDict):
-                        dotCounter += dots
-                    tempList = [search_type, dotCounter, costCounter]
-                    algList.append(tempList)
+            # searchTypeList = ["astar", "best-first", "dijkstra"]
+            # #write experiment data
+            # successcounter = 0
+            # for i in range(300):
+            #     if successcounter >= 100:
+            #         duration = 1000  # milliseconds
+            #         freq = 440  # Hz
+            #         winsound.Beep(freq, duration)
+            #         break
+            algList = []
 
-                for j in algList:
-                    if j[0]==0 or j[1]==0 or j[2]==0:
-                        break
-                else:
-                    successcounter = successcounter + 1
-                    searchNote = open("searchtype.txt", "a")
-                    lengthNote = open("length.txt", "a")
-                    costNote = open("cost.txt", "a")
-                    for y in algList:
-                        searchNote.write(y[0] + "\n")
-                        lengthNote.write(str(y[1]) + "\n")
-                        costNote.write(str(round(y[2],2)) + "\n")
+            createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
+                        topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
+                        coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
+                        dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
+                        , heuristicType, refreshing, pipeTypeDict, search_type)
+            global dotLengthText
+            global costText
+            global partText
+            try:
+                dotLengthText.visible = False
+                dotLengthText.delete()
+                costText.visible = False
+                costText.delete()
+                partText.visible = False
+                partText.delete()
+            except: Exception
+            dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15)
+            costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
+            partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
+            costCounter = 0
+            dotCounter = 0
+            for count, cost in enumerate(object_classes.costDict):
+                costCounter += cost
+            for count, dots in enumerate(object_classes.dotLengthDict):
+                dotCounter += dots
+            tempList = [search_type, dotCounter, costCounter]
+            algList.append(tempList)
+
+            searchNote = open("searchtype.txt", "a")
+            lengthNote = open("length.txt", "a")
+            costNote = open("cost.txt", "a")
+            for y in algList:
+                searchNote.write(y[0] + "\n")
+                lengthNote.write(str(y[1]) + "\n")
+                costNote.write(str(round(y[2],2)) + "\n")
 
 
 
@@ -869,7 +859,7 @@ def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
     #axis + displacementVector
     startDirection = startAxis + possible_start_positions[randomSelectStart][2]
     goalDirection = goalAxis + possible_goal_positions[randomSelectGoal][2]
-    #object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
+    object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
     PrepInitData = [start, goal, startAxis, goalAxis]
     object_classes.savedState = PrepInitData
     return PrepInitData
@@ -886,26 +876,26 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
         randPosY = random.randint(1, wallToTopShiftDots)
         randSizeX = 1
         randSizeY = 1
-        #object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
         #else: continue
         if (randPosX,randPosY) in checkList:
             i = i-1
             continue
         else:
+            object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisWall)
             checkList.append((randPosX,randPosY))
             i=i+1
     #create random Objects on Top
     i = 0
     while i <= frequencyTop:
-        randPosX = random.randint(1, xDots - 1)
+        randPosX = random.randint(1, xDots)
         randPosY = random.randint(wallToTopShiftDots+2, yDots)
         randSizeX = 1
         randSizeY = 1
-        #object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
         if (randPosX,randPosY) in checkList:
             i = i-1
             continue
         else:
+            object_classes.obstacle((randSizeX, randSizeY), (randPosX, randPosY), obsVisTop)
             checkList.append((randPosX,randPosY))
             i=i+1
         checkList.append((randPosX, randPosY))
@@ -915,8 +905,8 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict, search_type):
     #create wall
     if refresh == False:
-        # object_classes.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
-        #                                coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
+        object_classes.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
+                                       coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
         # create logic matrix
         lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist, wall_thickness=wallThickness,
                       dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible, wall_visible=wallVisible)
@@ -1304,7 +1294,7 @@ def refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible,
 
 #start the app
 if __name__ == "__main__":
-    #scene = canvas()
+    scene = canvas()
     app = App()
 
 
