@@ -509,7 +509,7 @@ class App:
         obstacleProbabilityLabel= ttk.Label(root, text = "Obstacle frequency: ")
         obstacleProbabilityLabel.grid(row=4,column=4)
 
-        obstacleProbabilityCombobox = ttk.Combobox(root, values=["Empty", "Low", "Medium", "High", "Very High", "Extreme", "Very Extreme"], state="readonly")
+        obstacleProbabilityCombobox = ttk.Combobox(root, values=["0: Empty", "1: Very Low", "2: Low", "3: Medium", "4: High", "5: Very High", "6: Extreme", "7: Very Extreme", "8: Ultimate"], state = "readonly")
         obstacleProbabilityCombobox.grid(row=5, column=4)
 
 
@@ -549,7 +549,7 @@ class App:
         displayWallDotsCheckButton.invoke()
         displayTopDotsCheckButton.invoke()
         obstacleProbabilityCombobox.config(state="disabled")
-        obstacleProbabilityCombobox.set("Low")
+        obstacleProbabilityCombobox.set("0: Empty")
         refreshObjectsButton.config(state="disabled")
         displayPipesCheckButton.config(state="disabled")
         displayTopCheckButton.config(state="disabled")
@@ -878,7 +878,7 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
     checkList = []
     #create random Object on wall
     i = 0
-    while i <= frequencyWall:
+    while i < frequencyWall:
         #if random.random() <= probability:
         randPosX = random.randint(1, xDots)
         randPosY = random.randint(1, wallToTopShiftDots)
@@ -893,7 +893,7 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
             i=i+1
     #create random Objects on Top
     i = 0
-    while i <= frequencyTop:
+    while i < frequencyTop:
         randPosX = random.randint(1, xDots)
         randPosY = random.randint(wallToTopShiftDots+2, yDots)
         randSizeX = 1
@@ -1171,39 +1171,45 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             object_classes.obstacle((1, 1), (2, 23), True)
             object_classes.obstacle((2, 2), (9, 24), True)
 
-
-
-        elif level == "Empty":
+        elif level == "0: Empty":
             frequency = 0
             random = True
             PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
-        elif level == "Low":
+        elif level == "1: Very Low":
             frequency = 10
             random = True
             PrepInitData = randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible)
 
-        elif level == "Medium":
+        elif level == "2: Low":
             frequency = 20
             random = True
             PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
-        elif level == "High":
+        elif level == "3: Medium":
             frequency = 30
             random = True
             PrepInitData = randomPrepInit(xDots,yDots,backgroundColor, wallVisible, topVisible)
 
-        elif level == "Very High":
+        elif level == "4: High":
             frequency = 40
             random = True
             PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
-        elif level == "Extreme":
-            frequency = 100
+        elif level == "5: Very High":
+            frequency = 50
             random = True
             PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
-        elif level == "Very Extreme":
-            frequency = 150
+        elif level == "6: Extreme":
+            frequency = 60
+            random = True
+            PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
+        elif level == "7: Very Extreme":
+            frequency = 70
+            random = True
+            PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
+        elif level == "8: Ultimate":
+            frequency = 80
             random = True
             PrepInitData = randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
 
