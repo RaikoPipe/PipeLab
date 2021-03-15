@@ -49,6 +49,7 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
 
     # creating the scene
     main.scene = canvas(width=x_res, height=y_res, center=camera_pos, background=background_color, fov=pi/5)
+    main.scene.camera.rotate(angle=pi/2, axis=vector(0,0,1))
     print("Detected resolution: " + str(x_res) + "x" + str(y_res))
 
 
@@ -120,7 +121,7 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
     #initialise corner object
     CornerPipeTemp = extrusion(path=paths.arc(radius=2.6 * 3, angle1=-0.09, angle2=pi / 2 + 0.092),
                                shape=shapes.arc(radius=2.6, angle1=0, angle2=2 * pi, rotate=pi),
-                               color=color.white, visible = False)
+                               color=color.cyan, visible = False)
     global cornerTemp
     cornerTemp = compound([CornerPipeTemp], up=vec(0, 0, 1), visible = False)
 
@@ -148,9 +149,9 @@ def StartEndInt(start_position, end_position, start_direction, end_direction, ba
                              color=color.green, visible = wallvisible)
     startArrow = arrow(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - start_direction*5,axis=start_direction, size=vector(20, 8, 8),
                              color=color.green, visible = wallvisible)
-    start_label = label(pos=lvf.transformToVvector(startPos), xoffset = 30, text="Start", space=30,
-                        height=16, border=4,
-                        font="sans", color=text_color, visible = wallvisible)
+    start_label = label(pos=lvf.transformToVvector(startPos)- start_direction*6, text="Start", space=30,
+                        height=30, border=4,
+                        font="sans", color=text_color, visible = wallvisible, opacity = 1, line = True)
     lvf.remember(startcylinder, wallDict)
     lvf.remember(start_label, wallDict)
     lvf.remember(startArrow, wallDict)
@@ -160,9 +161,9 @@ def StartEndInt(start_position, end_position, start_direction, end_direction, ba
     endArrow = arrow(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=-end_direction, size=vector(20, 8, 8),
                            color=color.orange, visible = topvisible)
 
-    end_label = label(pos=lvf.transformToVvector(endPos), xoffset = 30, text="Goal", space=30,
-                      height=16, border=4,
-                      font="sans", color=text_color, visible= topvisible)
+    end_label = label(pos=lvf.transformToVvector(endPos) - end_direction*6, text="Goal", space=30,
+                      height=30, border=4,
+                      font="sans", color=text_color, visible= topvisible, opacity = 1, line= True)
     lvf.remember(endcylinder, topDict)
     lvf.remember(end_label, topDict)
     lvf.remember(endArrow,topDict)

@@ -52,5 +52,5 @@ goalAxis = PrepInitData[3]
 
 pipeDict = {2:20,4:20}
 
-cMatrix_route, parts = find_path.astar(array, start, goal, 16, startAxis, goalAxis, False, False, "normal", 0, 0, 25, pipeDict, False)
+cMatrix_route, parts = find_path.multicriteriaAstar(array, start, goal, 16, startAxis, goalAxis, False, False, "normal", 0, 0, 25, pipeDict, False)
 print(cMatrix_route)

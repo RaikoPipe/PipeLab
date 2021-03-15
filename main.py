@@ -14,9 +14,10 @@ import winsound
 # lengthText = Objects.displayText(vector(10,10,5))
 # costText = Objects.displayText(vector(10,5,5))
 savedState = []
-costString = "Kosten: "
-lengthString = "Knotenlänge: "
+costString = "P: "
+lengthString = "C: "
 partString = "Teile übrig: "
+MinOString = "MinO: "
 class App:
     def __init__(self):
         root = tk.Tk()
@@ -40,6 +41,9 @@ class App:
         randomizeOption = tk.IntVar()
         displayWallDotsOption= tk.IntVar()
         displayTopDotsOption = tk.IntVar()
+        gCoption = tk.StringVar()
+        gPoption = tk.StringVar()
+        gMinOoption = tk.StringVar()
 
         #partstrings
         pl1 = tk.StringVar()
@@ -128,7 +132,6 @@ class App:
             displayWallDotsCheckButton.config(state="enabled")
             displayTopDotsCheckButton.config(state="enabled")
             refreshPathButton.config(state="enabled")
-            heuristicType = heuristicCombobox.get()
             pipeTypeDict = {}
             pipeTypeDict = checkPipes(pipeTypeDict)
             if randomizeOption.get() == 0:
@@ -136,6 +139,10 @@ class App:
             else: level = obstacleProbabilityCombobox.get()
             xRes = resWidth.get()
             yRes = resHeight.get()
+
+            gC = int(gCoption.get())
+            gP = int(gPoption.get())
+            gMinO = int(gMinOoption.get())
             refreshing = refresh
             if refresh == False:
                 wallVisible = True
@@ -155,12 +162,13 @@ class App:
             #         winsound.Beep(freq, duration)
             #         break
             algList = []
+            heuristicType = ""
 
             createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible,
                         topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible,
                         coordinateInfoVisible, camera, backgroundColor, x_dots, y_dots, dot_distFromwall_x,
                         dot_distFromWallBottom_y, dot_distance, wallToTopShiftDots,testingPath,testedPath,level,xRes,yRes
-                        , heuristicType, refreshing, pipeTypeDict, search_type)
+                        , heuristicType, refreshing, pipeTypeDict, search_type,gC,gP,gMinO)
             global dotLengthText
             global costText
             global partText
@@ -172,9 +180,14 @@ class App:
                 partText.visible = False
                 partText.delete()
             except: Exception
-            dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15)
-            costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
-            partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15)
+            # dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15, opacity = 1)
+            # costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+            # partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+            dotLengthText = label(text=lengthString, pos = vector(110,0,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15, opacity = 1)
+            costText = label(text=costString, pos = vector(120,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+            MinOText = label(text=MinOString + str(MinOValue), pos = vector(130,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+            partText = label(text=partString, pos = vector(140,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+            MinOLabel.config(text="MinO: " + str(MinOValue))
             costCounter = 0
             dotCounter = 0
             for count, cost in enumerate(object_classes.costDict):
@@ -187,16 +200,12 @@ class App:
             searchNote = open("searchtype.txt", "a")
             lengthNote = open("length.txt", "a")
             costNote = open("cost.txt", "a")
+            MinONote = open("MinONote.txt", "a")
             for y in algList:
                 searchNote.write(y[0] + "\n")
                 lengthNote.write(str(y[1]) + "\n")
                 costNote.write(str(round(y[2],2)) + "\n")
-
-
-
-
-
-
+                MinONote.write(str(MinOValue) + "\n")
 
         def refreshDisplayObjectsPrep():
             wallVisible = displayWallOption.get()
@@ -206,7 +215,6 @@ class App:
             wallDotVisible = displayWallDotsOption.get()
             topDotVisible = displayTopDotsOption.get()
             refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible, topDotVisible, wallDotVisible)
-
 
         def setDefaultObjectParameters():
             if defaultOption.get() == 1:
@@ -273,12 +281,12 @@ class App:
             for count, cost in enumerate(object_classes.costDict):
                 costCounter += cost
 
-            costCurrentPipes.config(text="current cost: " +str(round(costCounter,2)) + " €")
+            costCurrentPipes.config(text="P: " +str(round(costCounter,2)) + " €")
 
             for count, dots in enumerate(object_classes.dotLengthDict):
                 dotCounter += dots
 
-            currentDotLength.config(text="current dotLength: " +str(dotCounter) + " dots")
+            currentDotLength.config(text="C: " +str(dotCounter))
 
             for count, realLength in enumerate(object_classes.lengthDict):
                 lengthCounter += realLength-0.020
@@ -288,7 +296,7 @@ class App:
                 costText.text = costString + str(round(costCounter,2))
                 partText.text = partString + str(pipeCounter)
             except: Exception
-            currentRealLength.config(text="current realLength: " +str(round(lengthCounter,3)) + " meter")
+            currentRealLength.config(text="actual Length: " +str(round(lengthCounter,3)) + " meter")
 
             #root.update()
 
@@ -403,9 +411,6 @@ class App:
         pipePart5CountEntry = ttk.Entry(pipePartsFrame, textvariable=pc5)
         pipePart5CountEntry.grid(row=5, column=1)
 
-
-
-
         #camera field
         CameraLabel=ttk.Label(root, text = "Camera Parameters:")
         CameraLabel.grid(row=0,column=1)
@@ -462,33 +467,59 @@ class App:
         shiftAtShowLabel = ttk.Label(parameterOutputFrame,text="shift at: ", style = "Res.TLabel")
         shiftAtShowLabel.grid(row=3, column=0)
 
-        costCurrentPipes = ttk.Label(parameterOutputFrame,text="current cost: ", style = "Res.TLabel")
-        costCurrentPipes.grid(row=4, column=0)
+        currentDotLength = ttk.Label(parameterOutputFrame,text="C: ", style = "Res.TLabel")
+        currentDotLength.grid(row=4, column=0)
 
-        currentDotLength = ttk.Label(parameterOutputFrame,text="current dotLength: ", style = "Res.TLabel")
-        currentDotLength.grid(row=5, column=0)
+        costCurrentPipes = ttk.Label(parameterOutputFrame,text="P: ", style = "Res.TLabel")
+        costCurrentPipes.grid(row=5, column=0)
 
         currentRealLength = ttk.Label(parameterOutputFrame,text="current Length: ", style = "Res.TLabel")
-        currentRealLength.grid(row=6, column=0)
+        #currentRealLength.grid(row=6, column=0)
 
-        heuristicLabel = ttk.Label(parameterOutputFrame, text="heuristic: ")
-        heuristicLabel.grid(row=0, column=1)
+        MinOLabel = ttk.Label(parameterOutputFrame,text="MinO: ", style = "Res.TLabel")
+        MinOLabel.grid(row=7, column=0)
 
-        heuristicCombobox = ttk.Combobox(parameterOutputFrame, values=["normal", "modified", "price-based"], state="readonly")
-        heuristicCombobox.grid(row=1, column=1)
+        priorityWeightLabel = ttk.Label(parameterOutputFrame, text="weights: ")
+        priorityWeightLabel.grid(row=0, column=2)
+
+        WeightCLabel = ttk.Label(parameterOutputFrame, text = "Weight C:")
+        WeightCLabel.grid(row=1, column = 2)
+
+        WeightPLabel = ttk.Label(parameterOutputFrame,text = "Weight P:")
+        WeightPLabel.grid(row=2, column = 2)
+
+        WeightMinOLabel = ttk.Label(parameterOutputFrame,text = "Weight MinO:")
+        WeightMinOLabel.grid(row=3, column = 2)
+
+        WeightCEntry = ttk.Entry(parameterOutputFrame, textvariable = gCoption)
+        WeightCEntry.grid(row=1, column = 3)
+
+        WeightPEntry = ttk.Entry(parameterOutputFrame, textvariable = gPoption)
+        WeightPEntry.grid(row=2, column = 3)
+
+        WeightMinOEntry = ttk.Entry(parameterOutputFrame, textvariable = gMinOoption)
+        WeightMinOEntry.grid(row=3, column = 3)
 
         searchTypeLabel = ttk.Label(parameterOutputFrame, text="search type: ")
-        searchTypeLabel.grid(row=0, column=2)
+        searchTypeLabel.grid(row=0, column=1)
 
-        searchTypeCombobox = ttk.Combobox(parameterOutputFrame, values=["astar", "dijkstra", "best-first"], state="readonly")
-        searchTypeCombobox.grid(row=1, column=2)
+        searchTypeCombobox = ttk.Combobox(parameterOutputFrame, values=["multicriteria astar", "astar", "dijkstra", "best-first"], state="readonly")
+        searchTypeCombobox.grid(row=1, column=1)
+
+        def checkSearchType(a):
+            if searchTypeCombobox.get()!= "multicriteria astar":
+                WeightCEntry.config(state="disabled")
+                WeightPEntry.config(state="disabled")
+                WeightMinOEntry.config(state="disabled")
+            else:
+                WeightCEntry.config(state="enabled")
+                WeightPEntry.config(state="enabled")
+                WeightMinOEntry.config(state="enabled")
+
+        searchTypeCombobox.bind("<<ComboboxSelected>>", checkSearchType)
 
         refreshPathButton=ttk.Button(parameterOutputFrame, text="Refresh Path", command=refreshPath)
         refreshPathButton.grid(row=3, column=1)
-
-
-
-        #fixme: round by multiple of 10.5
 
         #LevelSelect
 
@@ -523,21 +554,25 @@ class App:
         showTestedPathsCheckButton=ttk.Checkbutton(root, text= "Show tested positions", variable = showTestedPathsOption, style = "Nowidth.TCheckbutton")
         showTestedPathsCheckButton.grid(row=2,column=5)
 
-
-
-
-
         #insert default values
         topAndWallxSizeEntry.insert(0, "100.0")
         topHeightEntry.insert(0, "115.0")
         wallHeightEntry.insert(0, "200.0")
-        pipePart1LengthEntry.insert(0,"2")
+        pipePart1LengthEntry.insert(0,"1")
         pipePart1CountEntry.insert(0,"10")
-        pipePart2LengthEntry.insert(0,"4")
+        pipePart2LengthEntry.insert(0,"2")
         pipePart2CountEntry.insert(0,"10")
+        pipePart3LengthEntry.insert(0,"3")
+        pipePart3CountEntry.insert(0,"10")
+        pipePart4LengthEntry.insert(0,"4")
+        pipePart4CountEntry.insert(0,"10")
+        pipePart5LengthEntry.insert(0,"5")
+        pipePart5CountEntry.insert(0,"10")
+        WeightCEntry.insert(0,"1")
+        WeightPEntry.insert(0,"1")
+        WeightMinOEntry.insert(0,"1")
         backgroundCombobox.set("white")
-        heuristicCombobox.set("normal")
-        searchTypeCombobox.set("astar")
+        searchTypeCombobox.set("multicriteria astar")
         levelCombobox.set("Level 1 (Easy)")
         TwoDFrontCamOption.invoke()
         resolutionEntryW.insert(0, GetSystemMetrics(0))
@@ -571,8 +606,8 @@ class App:
 
     #functions
 
-def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type ):
-    route, parts = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type)
+def create_Route(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type ,gC,gP,gMinO):
+    route, parts = agt.displayPlot_Call(xDots, yDots, start, end, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
     if isinstance(route, list):
         for idx,(x,y) in enumerate(route):
              route[idx] = (x+1,y+1)
@@ -663,8 +698,11 @@ def buildVpipes(dict):
 
 def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict):
     global pipeCounter
+    global MinOValue
+    MinOValue = 0
     pipeBuildDict = []
     pipeCounter = deepcopy(pipeTypeDict)
+    Matrix = lvf.get_cMatrix()
     if cRoute == False:
         return
     for idx, (x,y) in enumerate(cRoute):
@@ -679,6 +717,7 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
         differenceX = list(pointB)[0] - list(pointA)[0]
         differenceY = list(pointB)[1] - list(pointA)[1]
         diff = (differenceX, differenceY)
+        MinOValue = MinOValue + agt.costMinO(Matrix,pointA,diff)
 
         if pointB[1] > wallToTopShiftDots and topVisible:
             pipeVisible = True
@@ -907,7 +946,7 @@ def RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, 
 
 def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolor, lampvisible, wallVisible, topVisible,
             obstacleVisible, pipeVisible, topDotVisible, wallDotVisible, coordinateInfoVisible, camera, backgroundColor, xDots, yDots, xGap, yGap,
-            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict, search_type):
+            dotDist, wallToTopShiftDots,testingPath,testedPath,level,xRes, yRes, heuristicType, refresh, pipeTypeDict, search_type,gC,gP,gMinO):
     #create wall
     if refresh == False:
         object_classes.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible, topVisible,
@@ -938,22 +977,32 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
     if refresh == False:
         if level == "Level 1 (Easy)":
-            # fixme: unfinished
             startAxis = lvf.up
             goalAxis = lvf.down
-            startDirection = startAxis + vector(0, 4.5, 0)  # adding vector is a placeholder solution
+            startDirection = startAxis + vector(0,4.5 , 0)  # adding vector is a placeholder solution
             goalDirection = goalAxis + vector(0, -4.5, 0)
-            start = (6, 1)  # this will be a random vector along the wall or a manual input
-            goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
+            start = (2, 1)  # this will be a random vector along the wall or a manual input
+            goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
             object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
             #wall
-            obs1 = object_classes.obstacle((4, 9), (7, 1), obsVisWall)
-            obs2 = object_classes.obstacle((5, 3), (1, 1), obsVisWall)
-            obs3 = object_classes.obstacle((3, 3), (3, 5), obsVisWall)
-            obs3 = object_classes.obstacle((4, 4), (3, 13), obsVisWall)
-            #top
-            obs4 = object_classes.obstacle((7, 3), (3, 17), obsVisTop)
-            obs5 = object_classes.obstacle((2, 2), (5, 22), obsVisTop)
+            object_classes.obstacle((1, 1), (6, 3), True)
+            object_classes.obstacle((1, 1), (8, 11), True)
+            object_classes.obstacle((1, 1), (10, 7), True)
+            object_classes.obstacle((1, 1), (9, 6), True)
+            object_classes.obstacle((1, 1), (10, 12), True)
+            object_classes.obstacle((1, 1), (5, 14), True)
+            object_classes.obstacle((1, 1), (9, 14), True)
+            object_classes.obstacle((1, 1), (5, 10), True)
+            object_classes.obstacle((1, 1), (1, 15), True)
+            object_classes.obstacle((1, 1), (2, 9), True)
+            object_classes.obstacle((1, 1), (3, 20), True)
+            object_classes.obstacle((1, 1), (3, 22), True)
+            object_classes.obstacle((1, 1), (9, 19), True)
+            object_classes.obstacle((1, 1), (4, 25), True)
+            object_classes.obstacle((1, 1), (6, 24), True)
+            object_classes.obstacle((1, 1), (6, 25), True)
+
+
             random = False
         elif level == "Level 2 (Medium)":
             #fixme: unfinished
@@ -984,28 +1033,31 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             obs7 = object_classes.obstacle((7, 1), (1, 20), obsVisTop)
             random = False
         elif level == "Level 3 (Hard)":
-            startAxis = lvf.up
-            goalAxis = lvf.right
-            startDirection = startAxis + lvf.upSG  # adding vector is a placeholder solution
-            goalDirection = goalAxis + lvf.rightSG
-            start = (10, 1)  # this will be a random vector along the wall or a manual input
-            goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
+            startAxis = lvf.right
+            goalAxis = lvf.up
+            startDirection = startAxis + lvf.rightSG  # adding vector is a placeholder solution
+            goalDirection = goalAxis + lvf.upSG
+            start = (1, 2)  # this will be a random vector along the wall or a manual input
+            goal = (6, 25)  # this will be either a random vector along wall the top or a manual input
             object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
-            #wall
-            obs1 = object_classes.obstacle((1, 2), (9, 1), obsVisWall)
-            obs2 = object_classes.obstacle((7, 1), (3, 4), obsVisWall)
-            obs3 = object_classes.obstacle((4, 3), (3, 6), obsVisWall)
-            obs4 = object_classes.obstacle((1, 7), (6, 10), obsVisWall)
-            obs5 = object_classes.obstacle((3, 7), (8, 10), obsVisWall)
-            obs6 = object_classes.obstacle((2, 4), (3, 13), obsVisWall)
+            object_classes.obstacle((1, 1), (3, 11), True)
+            object_classes.obstacle((1, 1), (5, 15), True)
+            object_classes.obstacle((1, 1), (1, 9), True)
+            object_classes.obstacle((1, 1), (7, 10), True)
+            object_classes.obstacle((1, 1), (6, 7), True)
+            object_classes.obstacle((1, 1), (9, 16), True)
+            object_classes.obstacle((1, 1), (10, 14), True)
+            object_classes.obstacle((1, 1), (10, 15), True)
+            object_classes.obstacle((1, 1), (5, 10), True)
+            object_classes.obstacle((1, 1), (3, 10), True)
+            object_classes.obstacle((1, 1), (7, 20), True)
+            object_classes.obstacle((1, 1), (9, 22), True)
+            object_classes.obstacle((1, 1), (5, 21), True)
+            object_classes.obstacle((1, 1), (9, 20), True)
+            object_classes.obstacle((1, 1), (8, 19), True)
+            object_classes.obstacle((1, 1), (3, 20), True)
 
-            #top
-            obs7 = object_classes.obstacle((2, 4), (3, 17), obsVisTop)
-            obs8 = object_classes.obstacle((1, 3), (6, 17), obsVisTop)
-            obs9 = object_classes.obstacle((4, 1), (6, 20), obsVisTop)
-            obs10 = object_classes.obstacle((8, 4), (3, 22), obsVisTop)
-            random = False
 
         # elif level == "High Complexity":
         #     startAxis = lvf.up
@@ -1034,51 +1086,20 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
 
         elif level == "Save 1":
-            startAxis = lvf.right
-            goalAxis = lvf.right
-            startDirection = startAxis + lvf.rightSG
-            goalDirection = goalAxis + lvf.rightSG
-            start = (1, 3)  # this will be a random vector along the wall or a manual input
-            goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
+            startAxis = lvf.left
+            goalAxis = lvf.left
+            startDirection = startAxis + lvf.leftSG
+            goalDirection = goalAxis + lvf.leftSG
+            start = (10, 1)  # this will be a random vector along the wall or a manual input
+            goal = (10, 25)  # this will be either a random vector along wall the top or a manual input
             object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
-            object_classes.obstacle((2, 1), (8, 2), True)
-            object_classes.obstacle((2, 1), (1, 12), True)
-            object_classes.obstacle((1, 1), (4, 7), True)
-            object_classes.obstacle((2, 2), (2, 11), True)
-            object_classes.obstacle((2, 2), (2, 1), True)
-            object_classes.obstacle((1, 2), (7, 5), True)
-            object_classes.obstacle((1, 1), (9, 14), True)
-            object_classes.obstacle((1, 2), (1, 14), True)
-            object_classes.obstacle((2, 1), (8, 5), True)
-            object_classes.obstacle((2, 2), (3, 7), True)
-            object_classes.obstacle((2, 1), (7, 4), True)
-            object_classes.obstacle((1, 2), (7, 15), True)
-            object_classes.obstacle((1, 1), (6, 9), True)
-            object_classes.obstacle((1, 1), (1, 12), True)
-            object_classes.obstacle((1, 2), (4, 3), True)
-            object_classes.obstacle((1, 2), (2, 9), True)
-            object_classes.obstacle((2, 2), (1, 14), True)
-            object_classes.obstacle((1, 2), (2, 12), True)
-            object_classes.obstacle((1, 1), (1, 8), True)
-            object_classes.obstacle((1, 2), (2, 13), True)
-            object_classes.obstacle((2, 2), (7, 24), True)
-            object_classes.obstacle((1, 2), (8, 20), True)
-            object_classes.obstacle((1, 1), (6, 21), True)
-            object_classes.obstacle((1, 1), (5, 23), True)
-            object_classes.obstacle((1, 2), (3, 24), True)
-            object_classes.obstacle((2, 1), (7, 22), True)
-            object_classes.obstacle((2, 1), (5, 22), True)
-            object_classes.obstacle((1, 2), (8, 22), True)
-            object_classes.obstacle((1, 1), (8, 22), True)
-            object_classes.obstacle((1, 2), (6, 19), True)
-            object_classes.obstacle((1, 2), (1, 22), True)
-            object_classes.obstacle((2, 1), (4, 24), True)
-            object_classes.obstacle((2, 2), (4, 20), True)
-            object_classes.obstacle((1, 2), (8, 19), True)
-            object_classes.obstacle((1, 1), (7, 20), True)
-            object_classes.obstacle((2, 2), (6, 24), True)
-            object_classes.obstacle((2, 2), (3, 21), True)
-            object_classes.obstacle((1, 1), (9, 20), True)
+            object_classes.obstacle((1, 18),(5, 4), True)
+            object_classes.obstacle((1, 18), (4, 4), True)
+            object_classes.obstacle((5, 1), (5, 4), True)
+            object_classes.obstacle((5, 1), (5, 20), True)
+            object_classes.obstacle((4, 1), (7, 13), True)
+            # object_classes.obstacle((1, 2), (8, 22), True)
+
 
         elif level == "Save 2":
             startAxis = lvf.up
@@ -1243,7 +1264,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
         cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
                                      testingPath,
-                                     testedPath, heuristicType, pipeTypeDict, search_type)
+                                     testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
         print(cMatrix_route)
         if pipeVisible == True:
             if isinstance(cMatrix_route, list):
@@ -1253,12 +1274,14 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                             topVisible, pipeTypeDict)
         return
 
-    # if random == False:
-    #     if pipeVisible == True:
-    #         cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict)
-    #         print(cMatrix_route)
-    #         if isinstance(cMatrix_route, list):
-    #             pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
+    if random == False:
+        if pipeVisible == True:
+            cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
+                                                testingPath,
+                                                testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
+            print(cMatrix_route)
+            if isinstance(cMatrix_route, list):
+                pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
     elif random == True:
         # while isinstance(cMatrix_route, list) == False:
         #     Objects.resetObstacles()
@@ -1274,7 +1297,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop)
         cMatrix_route, parts = create_Route(xDots, yDots, start, goal, wallToTopShiftDots, startAxis, goalAxis,
                                      testingPath,
-                                     testedPath, heuristicType, pipeTypeDict, search_type)
+                                     testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
         print(cMatrix_route)
         if pipeVisible == True:
             pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
