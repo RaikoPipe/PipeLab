@@ -106,5 +106,34 @@ def pathCheck(route, matrix):
             if newMatrix[pos] == 1:
                 return True
             else: newMatrix[pos] = 1
-
     return False
+
+def getAxis(n):
+    x=0
+    y=0
+    if n[0] != 0:
+        x = (n[0])**0
+    else:
+        y = (n[1])**0
+    if n[0]<0:
+        x = -x
+    elif n[1]<0:
+        y = -y
+    return x,y
+
+def getAlteredMatrix(path, Matrix):
+    newMatrix = deepcopy(Matrix)
+    for index, v in enumerate(path):
+        if index == len(path) - 1:
+            break
+        a = path[index]
+        b = path[index + 1]
+        n = (b[0] - a[0],b[1] - a[1])
+        axis = getAxis(n)
+        nLength = abs(n[0] - n[1])
+        for i in range(1, nLength + 1):
+            pos = (a[0] + axis[0] * i, a[1] + axis[1] * i)
+            newMatrix[pos] = 2
+    return newMatrix
+
+

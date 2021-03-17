@@ -10,6 +10,7 @@ from copy import deepcopy
 import time
 
 
+
 def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO):
 
     route, parts = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
@@ -106,20 +107,11 @@ def outOfBounds(neighbor, array):
         return True # array bound x walls
 
 def collidedObstacle(current, n, array):
-    diff = abs(n[0] - n[1])
-    addX = 0
-    addY = 0
-    if n[0] > 0:
-        addX = 1
-    elif n[0] < 0:
-        addX = -1
-    elif n[1] > 0:
-        addY = 1
-    else:
-        addY = -1
-    for i in range(1, diff + 1):
-        pos = (current[0] + addX * i, current[1] + addY * i)
-        if array[pos] == 1:
+    nLength = abs(n[0] - n[1])
+    axis = pint.getAxis(n)
+    for i in range(1, nLength + 1):
+        pos = (current[0] + axis[0] * i, current[1] + axis[1] * i)
+        if array[pos] != 0:
             return True
 
 
@@ -197,23 +189,10 @@ def stockCheck(path, type_dict, part_dict, unlimited_parts):
         availableParts = pint.pipe_stock_check(path, type_dict, part_dict)
         return availableParts
 
-def getAxis(n):
-    x=0
-    y=0
-    if n[0] != 0:
-        x = (n[0])**0
-    else:
-        y = (n[1])**0
-    if n[0]<0:
-        x = -x
-    elif n[1]<0:
-        y = -y
-    return (x,y)
-
 def changeNeighbors(Neighbors, axis):
     changedNeighbors = {}
     for index, (n, t) in enumerate(Neighbors.items()):
-        nAxis = getAxis(n)
+        nAxis = pint.getAxis(n)
         if nAxis == (axis.x,axis.y):
             changedNeighbors[(t*nAxis[0],t*nAxis[1])] = t
         else:
@@ -223,7 +202,7 @@ def changeNeighbors(Neighbors, axis):
 def ChangeZNeighbors(Neighbors, add, axis):
     changedNeighbors = {}
     for index, (n, t) in enumerate(Neighbors.items()):
-        nAxis = getAxis(n)
+        nAxis = pint.getAxis(n)
         if nAxis == (axis.x,axis.y):
             changedNeighbors[(n[0], n[1] + add)] = t
         else:
@@ -233,7 +212,7 @@ def ChangeZNeighbors(Neighbors, add, axis):
 def changeClosingNeighbors(Neighbors, axis, closingList):
     changedNeighbors = {}
     for index, (n, t) in enumerate(Neighbors.items()):
-        nAxis = getAxis(n)
+        nAxis = pint.getAxis(n)
         if nAxis == (axis.x,axis.y) and t in closingList:
             changedNeighbors[(t*nAxis[0],t*nAxis[1])] = t
         else:
@@ -247,7 +226,7 @@ def positionDependence(Neighbors, start, startAxis, goal,goalAxis, current, z):
     else:
         closingParts = []
         for index, (n, t) in enumerate(Neighbors.items()):
-            axis = getAxis(n)
+            axis = pint.getAxis(n)
             gAxis = (-goalAxis.x, -goalAxis.y)
             goalDistance = (np.abs(goal[0] - current[0]), np.abs(goal[1]-current[1]))
             absGoalDistance = np.abs(np.abs(goal[0] - current[0]) - np.abs(goal[1]-current[1]))
@@ -346,42 +325,6 @@ def partHeuristic(length, current, neighbor, goal):
 
     return distance
 
-
-
-# def modified_heuristic(a, b, currentNeighbor, heuristicType, weight, goal):
-#     distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
-#
-#     if heuristicType == "modified":
-#         neighToGoalDistance = np.abs(goal[0] - currentNeighbor[0]) + np.abs(goal[1] - currentNeighbor[1])  # manhattan distance from neigh to goal
-#         currToGoalDistance = np.abs(goal[0] - a[0]) + np.abs(goal[1] - a[1])  # manhattan distance from a to goal
-#         if currToGoalDistance < neighToGoalDistance:
-#             distance = np.abs(b[0] - a[0])**2 + np.abs(b[1] - a[1])**2
-#
-#     return distance
-
-
-
-
-# def costR(path, Neighbors, partDict):
-#     upperBound =
-#     R = 0
-#     for i in enumerate(path):
-#         pathLength = abs(i[0]-i[1])
-#         #part = partDict(i)
-#         if pathLength in Neighbors:
-#             R = R+1
-#         else:
-#             R=R+2
-#     return R
-
-
-
-
-
-
-
-
-
 def get_standard_neighbors(dict):
     neighbors = {}
     for key, (type, count) in enumerate(dict.items()):
@@ -442,9 +385,7 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
         L = stockCheck(current_route, pipeTypeDict, part_dict, unlimited_parts)
         N = pint.set_standard_neighbors(L)
         Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, current, shiftpos-1)
-
-        if pint.pathCheck(current_route, array):
-            continue
+        altMatrix = pint.getAlteredMatrix(current_route, array)
 
         close_set.add(current) #add the from oheap popped coordinate to the closed list
 
@@ -494,7 +435,7 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
                 if direction_violation(came_fromDifference, current, current_neighbor, shiftpos-1):
                     continue
             if not outOfBounds(neighbor, array):
-                if collidedObstacle(current, current_neighbor, array):
+                if collidedObstacle(current, current_neighbor, altMatrix):
                     continue
             else:
                 continue
@@ -531,16 +472,10 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
     execTimeFailure.write(str(exectime.total_seconds()) + "\n")
     return "no route found", False
 
-#TODO: Add Upper bound (100%)
-
-def stepHeuristic(a, b, upperBound):
-    #manhattan distance
-    distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
-    return distance/upperBound
-
-
-priceList = [1.15,1.38,1.60,1.82,2.04]
-priceListWithCorner = [6.47,6.70,6.92,7.14,7.36]
+# priceList = [1.15,1.38,1.60,1.82,2.04]
+# priceListWithCorner = [6.47,6.70,6.92,7.14,7.36]
+priceList = [1.15,1.38,1.60,20,2.04]
+priceListWithCorner = [6.47,6.70,6.92,25.32,7.36]
 upperBoundPL = 0
 upperBoundPLWC = 0
 for i in range(len(priceList)):
@@ -562,45 +497,27 @@ def costP(n, part):
     return P/upperBound
 
 def costMinO(Matrix, a, n):
-    axis = getAxis(n)
+    axis = pint.getAxis(n)
     nLength = abs(n[0] - n[1])
     MinO = nLength * 2
     upperBound = MinO
+    left = (-axis[1], -axis[0])
+    right = (axis[1], axis[0])
     for i in range(nLength): #check pos right of pipe
-        n_check = (-axis[1],-axis[0])
-        b = (a[0] + n_check[0], a[1] + n_check[1])
-        if not outOfBounds(b,Matrix):
-            if collidedObstacle(a, n_check, Matrix):
-                break
-        else:
-            MinO = MinO - 1
+        n_left = (left[0]+(axis[0]*(i)),left[1]+(axis[1]*(i)))
+        b_left = (a[0] + n_left[0], a[1] + n_left[1])
+        if not outOfBounds(b_left,Matrix):
+            if Matrix[b_left] != 0:
+                continue
+        MinO = MinO - 1
     for i in range(nLength): #check pos left of pipe
-        n_check = (axis[1], axis[0])
-        b = (a[0] + n_check[0],a[1] + n_check[1])
-        if not outOfBounds(b,Matrix):
-            if collidedObstacle(a, n_check, Matrix):
-                break
-        else:
-            MinO = MinO - 1
+        n_right = (right[0]+(axis[0]*(i)),right[1]+(axis[1]*(i)))
+        b_right = (a[0] + n_right[0], a[1] + n_right[1])
+        if not outOfBounds(b_right,Matrix):
+            if Matrix[b_right] != 0:
+                continue
+        MinO = MinO - 1
     return MinO/upperBound
-
-def otherCostMinO(Matrix, Neighbors, a, n):
-    #Todo: upper bound
-    axis = getAxis(n)
-    evalDist = Neighbors(n) / 2
-    evalPos = (a[0]+evalDist*axis[0],a[1]+evalDist*axis[1])
-    MinO = 0
-
-    for i in range(3):
-        checkPos = (evalPos[0]+i*axis[1],evalPos[1]+i*axis[0])
-        if Matrix[checkPos]:
-            if Matrix[checkPos] == 1:
-                break
-            else:
-                MinO = MinO - 1
-        else:
-            MinO = MinO - 1
-    return MinO
 
 def getMax(Dict):
     maxValue = 0
@@ -622,7 +539,7 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
         speed = 0.01
     else:
         speed = 0.1
-    close_set = set()
+    closedList = set()
     came_from = {}
     part_dict = {}
     gscore = {start: 0}
@@ -632,30 +549,28 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
     count = 0
     neiCount = 0
     while oheap:
-        current = heapq.heappop(oheap)[1]
+        v = heapq.heappop(oheap)[1]
 
         if testingPath == True:
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
+                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
             else:
-                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
+                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
                 count +=1
 
-        current_route = buildRoute(current, came_from)
+        current_route = buildRoute(v, came_from)
         current_route = current_route + [start]
         current_route = current_route[::-1]
 
         L = stockCheck(current_route, pipeTypeDict, part_dict, unlimited_parts)
         N = pint.set_standard_neighbors(L)
-        Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, current, shiftpos-1)
+        Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, v, shiftpos-1)
+        altMatrix = pint.getAlteredMatrix(current_route, array)
 
-        if pint.pathCheck(current_route, array):
-            continue
-
-        close_set.add(current) #add the from oheap popped coordinate to the closed list
-        if current == goal:
+        closedList.add(v) #add the from oheap popped coordinate to the closed list
+        if v == goal:
             if testingPath == True:
                 if neiCount > 0:
                     neighBox.obj.visible = False
@@ -668,7 +583,7 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
             if unlimited_parts:
                 #TODO: check how many parts are needed to complete optimal route"
                 print("Route Creation is possible with more parts")
-            data = buildRoute(current, came_from)
+            data = buildRoute(v, came_from)
             exectime = datetime.now() - startTime
             execTimeSuccess.write(str(exectime.total_seconds())+"\n")
             if unlimited_parts:
@@ -676,7 +591,7 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
             else:
                 return data, part_dict
 
-        close_set.add(current) #add the from oheap popped coordinate to the closed list
+        closedList.add(v) #add the from oheap popped coordinate to the closed list
 
         if testingPath == True:
             if neiCount > 0:
@@ -685,23 +600,23 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
                 neiCount = 0
         for i, j in Neighbors:
             current_neighbor = (i, j)
-            neighbor = current[0] + i, current[1] + j
+            neighbor = v[0] + i, v[1] + j
 
-            altM = costMinO(array, current, current_neighbor)*gMinO + costP(current_neighbor, Neighbors.get((i,j)))*gP
-            alt = gscore[current] + manhattanDistance(current, neighbor)
-            if neighbor in close_set and alt >= gscore.get(neighbor, 0):
+            altM = costMinO(altMatrix, v, current_neighbor)*gMinO + costP(current_neighbor, Neighbors.get((i,j)))*gP
+            alt = gscore[v] + manhattanDistance(v, neighbor)
+            if neighbor in closedList and alt >= gscore.get(neighbor, 0):
                 continue
             #restriction set
-            if dimension_shift_violation(current, neighbor, shiftpos-1):
+            if dimension_shift_violation(v, neighbor, shiftpos-1):
                 continue
             # if current == (4,6) and neighbor == (4,12):
             #     print("here")
-            if current != start:
-                came_fromDifference = (abs(current[0] - came_from[current][0]), abs(current[1] - came_from[current][1]))
-                if direction_violation(came_fromDifference, current, current_neighbor, shiftpos-1):
+            if v != start:
+                came_fromDifference = (abs(v[0] - came_from[v][0]), abs(v[1] - came_from[v][1]))
+                if direction_violation(came_fromDifference, v, current_neighbor, shiftpos-1):
                     continue
             if not outOfBounds(neighbor, array):
-                if collidedObstacle(current, current_neighbor, array):
+                if collidedObstacle(v, current_neighbor, altMatrix):
                     continue
             else:
                 continue
@@ -718,7 +633,7 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
                         #time.sleep(speed)
                 if testedPath == True:
                     testedBox = object_classes.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                came_from[neighbor] = current
+                came_from[neighbor] = v
                 part_dict[neighbor] = Neighbors.get((i,j))
                 gscore[neighbor] = alt
                 fscore[neighbor] = (alt + manhattanDistance(neighbor, goal))/fscore[start]*gC + altM
@@ -783,8 +698,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
         N = pint.set_standard_neighbors(L)
         Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, current, shiftpos-1)
 
-        if pint.pathCheck(current_route, array):
-            continue
+        altMatrix = pint.getAlteredMatrix(current_route, array)
 
         close_set.add(current) #add the from oheap popped coordinate to the closed list
         if current == goal:
@@ -829,7 +743,7 @@ def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedP
                 if direction_violation(came_fromDifference, current, current_neighbor, shiftpos-1):
                     continue
             if not outOfBounds(neighbor, array):
-                if collidedObstacle(current, current_neighbor, array):
+                if collidedObstacle(current, current_neighbor, altMatrix):
                     continue
             else:
                 continue
@@ -904,8 +818,7 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
         N = pint.set_standard_neighbors(L)
         Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, current, shiftpos-1)
 
-        if pint.pathCheck(current_route, array):
-            continue
+        altMatrix = pint.getAlteredMatrix(current_route, array)
 
         close_set.add(current) #add the from oheap popped coordinate to the closed list
         if current == goal:
@@ -951,7 +864,7 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
                 if direction_violation(came_fromDifference, current, current_neighbor, shiftpos-1):
                     continue
             if not outOfBounds(neighbor, array):
-                if collidedObstacle(current, current_neighbor, array):
+                if collidedObstacle(current, current_neighbor, altMatrix):
                     continue
             else:
                 continue

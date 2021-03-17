@@ -10,6 +10,8 @@ from tkinter import ttk
 import math
 import random
 import winsound
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import figure
 
 # lengthText = Objects.displayText(vector(10,10,5))
 # costText = Objects.displayText(vector(10,5,5))
@@ -56,6 +58,8 @@ class App:
         pc4 = tk.StringVar()
         pl5 = tk.StringVar()
         pc5 = tk.StringVar()
+
+
 
 
 
@@ -180,13 +184,13 @@ class App:
                 partText.visible = False
                 partText.delete()
             except: Exception
-            # dotLengthText = label(text=lengthString, pos = vector(0,-20,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15, opacity = 1)
-            # costText = label(text=costString, pos = vector(0,-10,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
-            # partText = label(text=partString, pos = vector(40,-20,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
-            dotLengthText = label(text=lengthString, pos = vector(110,0,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15, opacity = 1)
-            costText = label(text=costString, pos = vector(120,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
-            MinOText = label(text=MinOString + str(MinOValue), pos = vector(130,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
-            partText = label(text=partString, pos = vector(140,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+            searchTypeText = label(text=search_type, pos=vector(110, 0, 5), align="left", color=color.white, linewidth=3,
+                             background=color.black, height=15, opacity=1)
+            dotLengthText = label(text=lengthString, pos = vector(120,0,5), align="left", color=color.white, linewidth=3, background=color.black, height = 15, opacity = 1)
+            costText = label(text=costString, pos = vector(130,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+            MinOText = label(text=MinOString + str(MinOValue), pos = vector(140,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+            partText = label(text=partString, pos = vector(150,0,5), align="left", color=color.white, linewidth=3, background=color.black , height = 15, opacity = 1)
+
             MinOLabel.config(text="MinO: " + str(MinOValue))
             costCounter = 0
             dotCounter = 0
@@ -196,16 +200,17 @@ class App:
                 dotCounter += dots
             tempList = [search_type, dotCounter, costCounter]
             algList.append(tempList)
-
             searchNote = open("searchtype.txt", "a")
             lengthNote = open("length.txt", "a")
             costNote = open("cost.txt", "a")
             MinONote = open("MinONote.txt", "a")
+            partNote = open("partNote.txt", "a")
             for y in algList:
                 searchNote.write(y[0] + "\n")
                 lengthNote.write(str(y[1]) + "\n")
                 costNote.write(str(round(y[2],2)) + "\n")
                 MinONote.write(str(MinOValue) + "\n")
+                partNote.write(str(pipeCounter) + "\n")
 
         def refreshDisplayObjectsPrep():
             wallVisible = displayWallOption.get()
@@ -686,14 +691,65 @@ def determineCorner(previousAxis, axis):
     return cAxis
 
 
+def plotGraph(search_type, shiftpos, route, start, goal, M):
+            if search_type == "multicriteria astar":
+                search_type = "MCA*"
+                col = "blue"
+            elif search_type == "astar":
+                search_type = "A*"
+                col = "cyan"
+            elif search_type == "best-first":
+                search_type = "Bestensuche"
+                col = "yellow"
+            else:
+                search_type = "Dijkstra"
+                col = "orange"
+            x_coords = []
+            y_coords = []
+            x_acoords = []
+            y_acoords = []
+            shiftcoordsX = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            shiftcoordsY = [shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1,
+                            shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1]
 
+            for i in (range(0, len(route))):
+                x = route[i][0] -1
+                y = route[i][1] -1
+                x_coords.append(x)
+                y_coords.append(y)
 
+            aroute = [(1, 2), (1, 6), (3, 6), (3, 11), (9, 11), (9, 16), (7, 16), (7, 20), (5, 20), (5, 22), (1, 22), (1, 25)]
 
-def buildVpipes(dict):
+            for i in (range(0, len(aroute))):
+                x = aroute[i][0] -1
+                y = aroute[i][1] -1
+                x_acoords.append(x)
+                y_acoords.append(y)
 
-    for count, objects in enumerate(dict):
-        #scene.waitfor("draw_complete")
+            # plot map and path
+            font = {'family': 'normal',
+                    'weight': 'bold',
+                    'size': 22}
+            plt.rc('font', **font)
+            fig, ax = plt.subplots(figsize=(20, 20))
+            ax.imshow(M, cmap=plt.cm.Greys)
+            ax.scatter(start[1]-1, start[0]-1, marker="*", color="green", s=600, label = "Start")
+            ax.scatter(goal[1]-1, goal[0]-1, marker="*", color="red", s=600, label = "Ziel")
+            plt.xlabel("Y-Koordinate")
+            plt.ylabel("X-Koordinate")
+            #plt.legend(loc="upper left")
+            ax.plot(y_coords, x_coords, color=col, label = search_type, linewidth=2.5)
+            ax.plot(y_acoords, x_acoords, color="cyan", label="A*", linewidth=2.5)
+            ax.plot(shiftcoordsY, shiftcoordsX, color="red", label = "Übergang")
+            plt.legend()
+            plt.show()
+
+def buildVpipes(buildPipeDict, buildClampDict):
+
+    for count, objects in enumerate(buildPipeDict):
         object_classes.pipe(objects[0], objects[1], objects[2], objects[3])
+    for count, objects in enumerate(buildClampDict):
+        object_classes.clamp(objects[0], objects[1], True)
 
 
 def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict):
@@ -701,8 +757,9 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
     global MinOValue
     MinOValue = 0
     pipeBuildDict = []
+    clampDict = []
     pipeCounter = deepcopy(pipeTypeDict)
-    Matrix = lvf.get_cMatrix()
+    Matrix = lvf.get_boolGrid()
     if cRoute == False:
         return
     for idx, (x,y) in enumerate(cRoute):
@@ -717,7 +774,7 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
         differenceX = list(pointB)[0] - list(pointA)[0]
         differenceY = list(pointB)[1] - list(pointA)[1]
         diff = (differenceX, differenceY)
-        MinOValue = MinOValue + agt.costMinO(Matrix,pointA,diff)
+        MinOValue = MinOValue + agt.costMinO(Matrix,(pointA[0]-1,pointA[1]-1),diff)
 
         if pointB[1] > wallToTopShiftDots and topVisible:
             pipeVisible = True
@@ -884,8 +941,9 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
 
                 # if corner_axis == lvf.totop:
                 #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
-
-    buildVpipes(pipeBuildDict)
+        clampCoord = lvf.determineClampPlacement(Matrix, pipe_coords, diff, type)
+        clampDict.append((clampCoord, axis))
+    buildVpipes(pipeBuildDict, clampDict)
 
 def randomPrepInit(xDots,yDots, backgroundColor, wallVisible, topVisible):
     #Initialise Start and Endpositions for random position
@@ -1086,19 +1144,61 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
 
         elif level == "Save 1":
-            startAxis = lvf.left
-            goalAxis = lvf.left
-            startDirection = startAxis + lvf.leftSG
-            goalDirection = goalAxis + lvf.leftSG
-            start = (10, 1)  # this will be a random vector along the wall or a manual input
-            goal = (10, 25)  # this will be either a random vector along wall the top or a manual input
+            startAxis = lvf.right
+            goalAxis = lvf.down
+            startDirection = startAxis + lvf.rightSG
+            goalDirection = goalAxis + lvf.downSG
+            start = (1, 2)  # this will be a random vector along the wall or a manual input
+            goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
             object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
-            object_classes.obstacle((1, 18),(5, 4), True)
-            object_classes.obstacle((1, 18), (4, 4), True)
-            object_classes.obstacle((5, 1), (5, 4), True)
-            object_classes.obstacle((5, 1), (5, 20), True)
-            object_classes.obstacle((4, 1), (7, 13), True)
-            # object_classes.obstacle((1, 2), (8, 22), True)
+            object_classes.obstacle((1, 1), (5, 6), True)
+            object_classes.obstacle((1, 1), (5, 1), True)
+            object_classes.obstacle((1, 1), (1, 14), True)
+            object_classes.obstacle((1, 1), (5, 14), True)
+            object_classes.obstacle((1, 1), (4, 15), True)
+            object_classes.obstacle((1, 1), (6, 8), True)
+            object_classes.obstacle((1, 1), (5, 2), True)
+            object_classes.obstacle((1, 1), (4, 13), True)
+            object_classes.obstacle((1, 1), (7, 13), True)
+            object_classes.obstacle((1, 1), (7, 1), True)
+            object_classes.obstacle((1, 1), (3, 5), True)
+            object_classes.obstacle((1, 1), (7, 2), True)
+            object_classes.obstacle((1, 1), (7, 3), True)
+            object_classes.obstacle((1, 1), (10, 11), True)
+            object_classes.obstacle((1, 1), (10, 1), True)
+            object_classes.obstacle((1, 1), (7, 9), True)
+            object_classes.obstacle((1, 1), (2, 7), True)
+            object_classes.obstacle((1, 1), (6, 16), True)
+            object_classes.obstacle((1, 1), (8, 14), True)
+            object_classes.obstacle((1, 1), (3, 2), True)
+            object_classes.obstacle((1, 1), (3, 1), True)
+            object_classes.obstacle((1, 1), (9, 10), True)
+            object_classes.obstacle((1, 1), (4, 7), True)
+            object_classes.obstacle((1, 1), (5, 13), True)
+            object_classes.obstacle((1, 1), (8, 2), True)
+            object_classes.obstacle((1, 1), (4, 12), True)
+            object_classes.obstacle((1, 1), (10, 14), True)
+            object_classes.obstacle((1, 1), (9, 5), True)
+            object_classes.obstacle((1, 1), (4, 16), True)
+            object_classes.obstacle((1, 1), (4, 8), True)
+            object_classes.obstacle((1, 1), (8, 21), True)
+            object_classes.obstacle((1, 1), (1, 20), True)
+            object_classes.obstacle((1, 1), (4, 21), True)
+            object_classes.obstacle((1, 1), (9, 23), True)
+            object_classes.obstacle((1, 1), (7, 25), True)
+            object_classes.obstacle((1, 1), (3, 20), True)
+            object_classes.obstacle((1, 1), (6, 23), True)
+            object_classes.obstacle((1, 1), (8, 25), True)
+            object_classes.obstacle((1, 1), (3, 24), True)
+            object_classes.obstacle((1, 1), (6, 25), True)
+            object_classes.obstacle((1, 1), (5, 19), True)
+            object_classes.obstacle((1, 1), (7, 23), True)
+            object_classes.obstacle((1, 1), (5, 18), True)
+            object_classes.obstacle((1, 1), (5, 24), True)
+            object_classes.obstacle((1, 1), (7, 24), True)
+            object_classes.obstacle((1, 1), (4, 19), True)
+            object_classes.obstacle((1, 1), (9, 25), True)
+            object_classes.obstacle((1, 1), (8, 18), True)
 
 
         elif level == "Save 2":
@@ -1268,7 +1368,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         print(cMatrix_route)
         if pipeVisible == True:
             if isinstance(cMatrix_route, list):
-
+                #plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
                 pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots,
                             wallVisible,
                             topVisible, pipeTypeDict)
@@ -1281,6 +1381,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                                                 testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
             print(cMatrix_route)
             if isinstance(cMatrix_route, list):
+                #plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
                 pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
     elif random == True:
         # while isinstance(cMatrix_route, list) == False:
@@ -1300,6 +1401,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                                      testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
         print(cMatrix_route)
         if pipeVisible == True:
+            #plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
             pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
                     topVisible, pipeTypeDict)
 
