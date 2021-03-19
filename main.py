@@ -718,7 +718,7 @@ def plotGraph(search_type, shiftpos, route, start, goal, M):
                 x_coords.append(x)
                 y_coords.append(y)
 
-            aroute = [(1, 2), (1, 6), (3, 6), (3, 11), (9, 11), (9, 16), (7, 16), (7, 20), (5, 20), (5, 22), (1, 22), (1, 25)]
+            aroute = [(1, 2), (2, 2), (2, 7), (4, 7), (4, 12), (7, 12), (7, 16), (7, 21), (1, 21), (1, 25)]
 
             for i in (range(0, len(aroute))):
                 x = aroute[i][0] -1
@@ -747,7 +747,21 @@ def plotGraph(search_type, shiftpos, route, start, goal, M):
 def buildVpipes(buildPipeDict, buildClampDict):
 
     for count, objects in enumerate(buildPipeDict):
-        object_classes.pipe(objects[0], objects[1], objects[2], objects[3])
+        part = objects[0]
+        if part == "red":
+            newPipe = object_classes.red
+        elif part == "yellow":
+            newPipe = object_classes.yellow
+        elif part == "blue":
+            newPipe = object_classes.blue
+        elif part == "green":
+            newPipe = object_classes.green
+        elif part == "purple":
+            newPipe = object_classes.purple
+        else:
+            newPipe = object_classes.corner
+        newPipe.showObject(objects[1], objects[2])
+        newPipe.countObject()
     for count, objects in enumerate(buildClampDict):
         object_classes.clamp(objects[0], objects[1], True)
 
@@ -941,7 +955,7 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
 
                 # if corner_axis == lvf.totop:
                 #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
-        clampCoord = lvf.determineClampPlacement(Matrix, pipe_coords, diff, type)
+        clampCoord = lvf.determineClampPlacement(Matrix, pipe_coords, diff, partValue)
         clampDict.append((clampCoord, axis))
     buildVpipes(pipeBuildDict, clampDict)
 
@@ -1202,53 +1216,62 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
 
 
         elif level == "Save 2":
-            startAxis = lvf.up
+            startAxis = lvf.right
             goalAxis = lvf.right
-            startDirection = startAxis + lvf.upSG
+            startDirection = startAxis + lvf.rightSG
             goalDirection = goalAxis + lvf.rightSG
-            start = (10, 1)  # this will be a random vector along the wall or a manual input
-            goal = (1, 24)  # this will be either a random vector along wall the top or a manual input
+            start = (1, 2)  # this will be a random vector along the wall or a manual input
+            goal = (1, 25)  # this will be either a random vector along wall the top or a manual input
             object_classes.StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible)
 
-
-            object_classes.obstacle((2, 2), (2, 6), True)
-            object_classes.obstacle((1, 1), (3, 3), True)
-            object_classes.obstacle((2, 2), (3, 11), True)
-            object_classes.obstacle((2, 2), (4, 15), True)
-            object_classes.obstacle((1, 1), (9, 7), True)
-            object_classes.obstacle((2, 1), (6, 1), True)
-            object_classes.obstacle((2, 1), (3, 15), True)
-            object_classes.obstacle((2, 1), (3, 15), True)
-            object_classes.obstacle((1, 2), (1, 3), True)
-            object_classes.obstacle((1, 2), (2, 4), True)
-            object_classes.obstacle((2, 1), (4, 2), True)
-            object_classes.obstacle((1, 1), (3, 4), True)
-            object_classes.obstacle((2, 2), (6, 1), True)
-            object_classes.obstacle((2, 1), (5, 13), True)
-            object_classes.obstacle((2, 1), (4, 13), True)
-            object_classes.obstacle((2, 2), (9, 12), True)
-            object_classes.obstacle((1, 2), (6, 9), True)
+            object_classes.obstacle((1, 1), (6, 14), True)
             object_classes.obstacle((1, 1), (6, 15), True)
-            object_classes.obstacle((2, 2), (5, 13), True)
-            object_classes.obstacle((1, 1), (5, 9), True)
-            object_classes.obstacle((2, 2), (8, 24), True)
-            object_classes.obstacle((2, 1), (8, 20), True)
+            object_classes.obstacle((1, 1), (6, 16), True)
+            object_classes.obstacle((1, 1), (4, 13), True)
+            object_classes.obstacle((1, 1), (5, 15), True)
+            object_classes.obstacle((1, 1), (8, 2), True)
+            object_classes.obstacle((1, 1), (5, 14), True)
+            object_classes.obstacle((1, 1), (7, 2), True)
+            object_classes.obstacle((1, 1), (1, 11), True)
+            object_classes.obstacle((1, 1), (3, 8), True)
+            object_classes.obstacle((1, 1), (5, 8), True)
+            object_classes.obstacle((1, 1), (9, 2), True)
+            object_classes.obstacle((1, 1), (10, 3), True)
+            object_classes.obstacle((1, 1), (7, 4), True)
+            object_classes.obstacle((1, 1), (6, 1), True)
+            object_classes.obstacle((1, 1), (8, 11), True)
+            object_classes.obstacle((1, 1), (6, 11), True)
+            object_classes.obstacle((1, 1), (10, 6), True)
+            object_classes.obstacle((1, 1), (5, 13), True)
+            object_classes.obstacle((1, 1), (4, 3), True)
+            object_classes.obstacle((1, 1), (8, 10), True)
+            object_classes.obstacle((1, 1), (3, 6), True)
+            object_classes.obstacle((1, 1), (3, 16), True)
+            object_classes.obstacle((1, 1), (10, 1), True)
+            object_classes.obstacle((1, 1), (6, 10), True)
+            object_classes.obstacle((1, 1), (10, 11), True)
+            object_classes.obstacle((1, 1), (9, 9), True)
+            object_classes.obstacle((1, 1), (5, 3), True)
+            object_classes.obstacle((1, 1), (1, 6), True)
+            object_classes.obstacle((1, 1), (9, 8), True)
+            object_classes.obstacle((1, 1), (10, 24), True)
+            object_classes.obstacle((1, 1), (6, 25), True)
+            object_classes.obstacle((1, 1), (3, 20), True)
+            object_classes.obstacle((1, 1), (4, 19), True)
+            object_classes.obstacle((1, 1), (3, 25), True)
             object_classes.obstacle((1, 1), (9, 21), True)
-            object_classes.obstacle((1, 1), (1, 23), True)
-            object_classes.obstacle((1, 1), (6, 23), True)
-            object_classes.obstacle((1, 1), (7, 24), True)
-            object_classes.obstacle((2, 1), (6, 19), True)
-            object_classes.obstacle((2, 1), (6, 19), True)
-            object_classes.obstacle((1, 1), (5, 18), True)
-            object_classes.obstacle((1, 1), (3, 18), True)
-            object_classes.obstacle((2, 1), (8, 18), True)
-            object_classes.obstacle((2, 2), (6, 22), True)
-            object_classes.obstacle((1, 2), (3, 22), True)
-            object_classes.obstacle((1, 1), (9, 18), True)
-            object_classes.obstacle((2, 2), (5, 21), True)
-            object_classes.obstacle((2, 2), (9, 19), True)
-            object_classes.obstacle((1, 2), (4, 18), True)
-            object_classes.obstacle((2, 1), (6, 21), True)
+            object_classes.obstacle((1, 1), (1, 20), True)
+            object_classes.obstacle((1, 1), (7, 25), True)
+            object_classes.obstacle((1, 1), (6, 18), True)
+            object_classes.obstacle((1, 1), (4, 20), True)
+            object_classes.obstacle((1, 1), (8, 25), True)
+            object_classes.obstacle((1, 1), (6, 20), True)
+            object_classes.obstacle((1, 1), (2, 24), True)
+            object_classes.obstacle((1, 1), (4, 22), True)
+            object_classes.obstacle((1, 1), (10, 18), True)
+            object_classes.obstacle((1, 1), (8, 20), True)
+            object_classes.obstacle((1, 1), (8, 23), True)
+            object_classes.obstacle((1, 1), (3, 19), True)
 
         elif level == "Save 3":
             startAxis = lvf.up
@@ -1350,7 +1373,8 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     if refresh == True:
         for key in object_classes.pipeDict.keys():
             oldPipe = object_classes.pipeDict[key]
-            oldPipe.visible = False
+            oldPipe.color = color.gray(0.7)
+            oldPipe.opacity = 0.5
             del oldPipe
         for key in object_classes.showcaseDict.keys():
             sBox = object_classes.showcaseDict[key]
@@ -1368,7 +1392,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         print(cMatrix_route)
         if pipeVisible == True:
             if isinstance(cMatrix_route, list):
-                #plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
+                plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
                 pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots,
                             wallVisible,
                             topVisible, pipeTypeDict)
@@ -1381,7 +1405,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                                                 testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
             print(cMatrix_route)
             if isinstance(cMatrix_route, list):
-                #plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
+                plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
                 pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
     elif random == True:
         # while isinstance(cMatrix_route, list) == False:
@@ -1401,7 +1425,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                                      testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
         print(cMatrix_route)
         if pipeVisible == True:
-            #plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
+            plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
             pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
                     topVisible, pipeTypeDict)
 

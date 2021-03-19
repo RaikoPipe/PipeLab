@@ -1,237 +1,31 @@
 multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
 multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
 astar
 multicriteria astar
 multicriteria astar
 multicriteria astar
 multicriteria astar
-astar
 multicriteria astar
 multicriteria astar
 multicriteria astar
 multicriteria astar
 multicriteria astar
 multicriteria astar
-multicriteria astar
 astar
 multicriteria astar
-astar
 astar
-astar
 multicriteria astar
-multicriteria astar
-astar
 astar
 astar
-astar
-astar
-multicriteria astar
 astar
 multicriteria astar
-dijkstra
-best-first
-multicriteria astar
-astar
-astar
-astar
-astar
-astar
 astar
-astar
-astar
-astar
-astar
-astar
-astar
 multicriteria astar
-astar
 astar
-astar
-astar
-astar
-astar
-astar
-astar
-astar
-astar
-multicriteria astar
-dijkstra
-best-first
 multicriteria astar
 astar
-best-first
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
 multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
 astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
-multicriteria astar
 multicriteria astar
 multicriteria astar
 multicriteria astar

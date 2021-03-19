@@ -242,45 +242,55 @@ def determineSecondPipePlacement(pipe_axis, pipe_coord, secondPipeLength):
         print("Unknown pipe_axis at coordinate: " + pipe_coord)
 
 def determineClampPlacement(Matrix, a, n, type):
+    if type == 3:
+        print("here")
     axis = pint.getAxis(n)
     nLength = abs(n[0] - n[1])
     if nLength != type:
-        nLength = nLength - 1
-    aS = (a[0]-1,a[1]-1)
+        nLength = nLength -1
+    countList = []
+    sorter = [int(type/2),3,1, 2, 4, 0, 5]
+    for i in range(0,type):
+        countList.append(i)
+    aS = (a[0] - 1, a[1] - 1)
     left = (-axis[1], -axis[0])
     right = (axis[1], axis[0])
-    #first best option: both sides are empty
-    for i in range(nLength): #check pos right of pipe
-        n_left = (left[0]+(axis[0]*(i)),left[1]+(axis[1]*(i)))
+    # first best option: both sides are empty
+    for i in sorter:  # check pos right of pipe
+        if i not in countList:
+            continue
+        n_left = (left[0] + (axis[0] * (i)), left[1] + (axis[1] * (i)))
         b_left = (aS[0] + n_left[0], aS[1] + n_left[1])
-        n_right = (right[0]+(axis[0]*(i)),right[1]+(axis[1]*(i)))
+        n_right = (right[0] + (axis[0] * (i)), right[1] + (axis[1] * (i)))
         b_right = (aS[0] + n_right[0], aS[1] + n_right[1])
-        if not agt.outOfBounds(b_left,Matrix) and not agt.outOfBounds(b_right,Matrix):
+        if not agt.outOfBounds(b_left, Matrix) and not agt.outOfBounds(b_right, Matrix):
             if Matrix[b_left] != 0 or Matrix[b_right] != 0:
                 continue
             else:
-                clampCoord = (aS[0] + i*axis[0]+1,aS[1]+i*axis[1]+1)
+                clampCoord = (aS[0] + i * axis[0] + 1, aS[1] + i * axis[1] + 1)
                 return clampCoord
         else:
-            clampCoord = (aS[0] + i*axis[0]+1,aS[1]+i*axis[1]+1)
+            clampCoord = (aS[0] + i * axis[0] + 1, aS[1] + i * axis[1] + 1)
             return clampCoord
-    else: #second best option: one side is empty
-
-        for i in range(nLength): #check pos right of pipe
-            n_left = (left[0]+(axis[0]*(i)),left[1]+(axis[1]*(i)))
+    else:  # second best option: one side is empty
+        for i in sorter:  # check pos right of pipe
+            if i not in countList:
+                continue
+            n_left = (left[0] + (axis[0] * (i)), left[1] + (axis[1] * (i)))
             b_left = (aS[0] + n_left[0], aS[1] + n_left[1])
-            n_right = (right[0]+(axis[0]*(i)),right[1]+(axis[1]*(i)))
+            n_right = (right[0] + (axis[0] * (i)), right[1] + (axis[1] * (i)))
             b_right = (aS[0] + n_right[0], aS[1] + n_right[1])
-            if not agt.outOfBounds(b_left,Matrix) and not agt.outOfBounds(b_right,Matrix):
+            if not agt.outOfBounds(b_left, Matrix) and not agt.outOfBounds(b_right, Matrix):
                 if Matrix[b_left] != 0 and Matrix[b_right] != 0:
                     continue
                 else:
-                    clampCoord = (aS[0] + i*axis[0]+1,aS[1]+i*axis[1]+1)
+                    clampCoord = (aS[0] + i * axis[0] + 1, aS[1] + i * axis[1] + 1)
                     break
             else:
-                clampCoord = (aS[0] + i*axis[0]+1,aS[1]+i*axis[1]+1)
+                clampCoord = (aS[0] + i * axis[0] + 1, aS[1] + i * axis[1] + 1)
                 break
-        else: clampCoord = a
+        else:
+            clampCoord = a
         return clampCoord
 
 
