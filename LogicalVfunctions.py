@@ -4,23 +4,16 @@ import interpret_path as pint
 import weakref
 import find_path as agt
 
-
+# all dot objects are saved here
 global topDotDict
 topDotDict = weakref.WeakValueDictionary()
 global wallDotDict
 wallDotDict = weakref.WeakValueDictionary()
 
-
 up = vector(0,1,0)
 right =vector(1,0,0)
 left = vector(-1,0,0)
 down = vector(0,-1,0)
-
-# downtoleft = vector(0,1,0)
-# righttoup = vector(0,-1,0)
-# lefttoup = vector(1,0,0)
-# downtoright = vector(-1,0,0)
-# totop = vector(0,0,-1)
 
 downtoleft = vector(1,0,0)
 downtoright = vector(0,1,0)
@@ -28,15 +21,22 @@ lefttoup = vector(0,-1,0)
 righttoup = vector(-1,0,0)
 totop = vector(0,-0.9999,0)
 
-#fromwall = vector(0,-0.9999,0)
-
 upSG=vector(0, 4.5, 0)
 rightSG=vector(4.5, 0, 0)
 leftSG=vector(-4.5, 0, 0)
 downSG=vector(0, -4.5, 0)
 
+# downtoleft = vector(0,1,0)
+# righttoup = vector(0,-1,0)
+# lefttoup = vector(1,0,0)
+# downtoright = vector(-1,0,0)
+# totop = vector(0,0,-1)
 
-# trasform numpy array into Vpython vector (why is there no function in vpython for this!?)
+
+
+
+
+# trasform numpy array into Vpython vector
 def transformToVvector(npVector):
     x_coord = npVector[0]
     y_coord = npVector[1]
@@ -56,13 +56,14 @@ def glG_Call(x_dots, y_dots):
     boolGrid = getlogicalGrid(x_dots, y_dots, cMatrix)
     return boolGrid
 
+
+#adds object to reference dict
 def remember(obj, dict):
     oid = id(obj)
     dict[oid] = obj
     return oid
 
-
-
+#returns a positional vector depending on the object and its axis, that is used to place it correctly on the wall
 def determineDirectionalOverhang(type, pipe_axis, overhang, width):
 
     if type == "corner":
@@ -93,8 +94,7 @@ def determineDirectionalOverhang(type, pipe_axis, overhang, width):
             print("direction of pipe not recognized")
     return direction
 
-# class CoordMatrix():
-#     def __init__(self,x_dots, y_dots, z_dots, x_gap, y_gap ,dot_dist, wall_thickness, dot_color):
+# creates a numpy array that acts as MBASE (contains 3D-build positions)
 def create_dotCoord_Matrix(x_dots, y_dots, x_gap, y_gap ,dot_dist, wall_thickness, dot_color,wall_to_top_shift_dots, wall_visible, top_visible):
 
     coordinates_matrix = np.zeros((x_dots+1, y_dots+1), dtype="f,f,b")
@@ -133,11 +133,12 @@ def create_dotCoord_Matrix(x_dots, y_dots, x_gap, y_gap ,dot_dist, wall_thicknes
     return coordinates_matrix
 pass
 
+#this has no use anymore
 def setOccP_Call(pipe_pos, dotlength, pipe_ax):
     #setOccupancyPipe(pipe_pos, dotlength, pipe_ax, cMatrix)
     return
 
-
+#this also has no use anymore
 def setOccupancyPipe(pipe_pos, dotlength, pipe_ax, dcm):
     if pipe_ax == up:
         for i in range(dotlength):
@@ -164,12 +165,13 @@ def setOccupancyPipe(pipe_pos, dotlength, pipe_ax, dcm):
             dcm[pipe_pos][2] = 1
     cMatrix = dcm
 
+
 def setOccO_Call(pipe_pos, dotlength, pipe_ax):
     setOccupancyObstacle(pipe_pos, dotlength, pipe_ax, cMatrix)
     return
 
+#sets obstacle positions on MBASE (cMatrix)
 def setOccupancyObstacle(sizeX, sizeY, pos, dcm):
-    i=0
     j=0
     for i in range(sizeX):
         add_pos = (i, j)
@@ -182,10 +184,7 @@ def setOccupancyObstacle(sizeX, sizeY, pos, dcm):
 
     cMatrix = dcm
 
-
-
-
-
+# returns a numpy array with all the occupied positions (M)
 def getlogicalGrid(x_dots, y_dots, cMatrix):
     x = x_dots
     y = y_dots
@@ -215,6 +214,7 @@ def get_cMatrix():
 def get_boolGrid():
     return boolGrid
 
+#determines where pipe should be placed if two in a row are used
 def determineSecondPipePlacement(pipe_axis, pipe_coord, secondPipeLength):
     if pipe_axis == up:
         vert = pipe_coord[1] + secondPipeLength
@@ -241,6 +241,7 @@ def determineSecondPipePlacement(pipe_axis, pipe_coord, secondPipeLength):
     else:
         print("Unknown pipe_axis at coordinate: " + pipe_coord)
 
+#determines where clamps should be put depending on obstacles and the most stable position
 def determineClampPlacement(Matrix, a, n, type):
     if type == 3:
         print("here")
@@ -293,5 +294,58 @@ def determineClampPlacement(Matrix, a, n, type):
             clampCoord = a
         return clampCoord
 
+#determines what axis the corner should have depending on direction of pipes
+def determineCorner(previousAxis, axis):
+    if previousAxis == up and axis == up:
+        cAxis = totop
+    elif previousAxis == down and axis == down:
+        cAxis = totop
+    elif previousAxis == right and axis == up:
+        cAxis = lefttoup
+    elif previousAxis == left and axis == up:
+        cAxis = righttoup
+    elif previousAxis == right and axis == down:
+        cAxis = downtoleft
+    elif previousAxis == left and axis == down:
+        cAxis = downtoright
+    elif previousAxis == down and axis == right:
+        cAxis = righttoup
+    elif previousAxis == down and axis == left:
+        cAxis = lefttoup
+    elif previousAxis == up and axis == right:
+        cAxis = downtoright
+    elif previousAxis == up and axis == left:
+        cAxis = downtoleft
 
+    else:
+        cAxis = up
+        print("Error: CornerType cant be determined")
+    return cAxis
+
+# def determineCorner(previousAxis, axis):
+#     if previousAxis == up and axis == up:
+#         cAxis = totop
+#     elif previousAxis == down and axis == down:
+#         cAxis = totop
+#     elif previousAxis == right and axis == up:
+#         cAxis = up
+#     elif previousAxis == left and axis == up:
+#         cAxis = up
+#     elif previousAxis == right and axis == down:
+#         cAxis = down
+#     elif previousAxis == left and axis == down:
+#         cAxis = down
+#     elif previousAxis == down and axis == right:
+#         cAxis = right
+#     elif previousAxis == down and axis == left:
+#         cAxis = left
+#     elif previousAxis == up and axis == right:
+#         cAxis = right
+#     elif previousAxis == up and axis == left:
+#         cAxis = left
+#
+#     else:
+#         cAxis = up
+#         print("Error: CornerType cant be determined")
+#     return cAxis
 

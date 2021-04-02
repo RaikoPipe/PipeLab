@@ -1,32 +1,778 @@
 multicriteria astar
 multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+best-first
+multicriteria astar
+multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+astar
+multicriteria astar
+
+multicriteria astar
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+astar
+multicriteria astar
+astar
+multicriteria astar
 astar
 multicriteria astar
 multicriteria astar
+
 multicriteria astar
+
 multicriteria astar
+
 multicriteria astar
+
 multicriteria astar
+astar
+
 multicriteria astar
+astar
+
 multicriteria astar
+
 multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+astar
+
+multicriteria astar
+
+multicriteria astar
+astar
+
+multicriteria astar
+
 multicriteria astar
 astar
 multicriteria astar
-astar
+
 multicriteria astar
 astar
-astar
-astar
+
+multicriteria astar
+
+multicriteria astar
+
 multicriteria astar
 astar
+
 multicriteria astar
 astar
+
 multicriteria astar
 astar
+best-first
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
 multicriteria astar
 astar
+
+multicriteria astar
+
 multicriteria astar
 multicriteria astar
+
 multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+astar
+
+multicriteria astar
+astar
+
+astar
+
+astar
+
+astar
+best-first
+
+best-first
+
+best-first
+
+best-first
+
+best-first
+
+best-first
+
+best-first
+
+best-first
+
+best-first
+multicriteria astar
+multicriteria astar
+best-first
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+astar
+
+multicriteria astar
+astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+best-first
+multicriteria astar
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+best-first
+
+dijkstra
+
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+best-first
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+astar
+
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+astar
+
+astar
+
+astar
+
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+astar
+
+astar
+best-first
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+astar
+
+astar
+
+astar
+
+astar
+best-first
+
+multicriteria astar
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+astar
+
+astar
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+astar
+
+multicriteria astar
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+best-first
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
 multicriteria astar

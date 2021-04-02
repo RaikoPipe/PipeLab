@@ -12,7 +12,6 @@ def pipeTypeDictEmpty(dict):
                 availableParts.append(key)
     return availableParts
 
-
 def determineAxis(direction):
     if direction[0] > 0:
         angle =  lvf.right

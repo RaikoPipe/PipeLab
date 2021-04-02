@@ -51,7 +51,7 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
 
     # creating the scene
     main.scene = canvas(width=x_res, height=y_res, center=camera_pos, background=background_color, fov=pi/5)
-    #main.scene.camera.rotate(angle=pi/2, axis=vector(0,0,1))
+    main.scene.camera.rotate(angle=pi/2, axis=vector(0,0,1))
     print("Detected resolution: " + str(x_res) + "x" + str(y_res))
 
 
@@ -136,37 +136,39 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
 
 
 
-def StartEndInt(start_position, end_position, start_direction, end_direction, background_color, wallvisible, topvisible):
-    if background_color == color.black:
+def StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible):
+    if backgroundColor == color.black:
         text_color = color.white
     else: text_color = color.black
     # initialise Start and End position Cylinders
-    startPos = lvf.cMatrix[start_position]
-    endPos = lvf.cMatrix[end_position]
+    startPos = lvf.cMatrix[start]
+    endPos = lvf.cMatrix[goal]
 
 
-    startcylinder = cylinder(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - start_direction,axis=start_direction, size=vector(1, 8, 8),
-                             color=color.green, visible = wallvisible)
-    startArrow = arrow(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - start_direction*5,axis=start_direction, size=vector(20, 8, 8),
-                             color=color.green, visible = wallvisible)
-    start_label = label(pos=lvf.transformToVvector(startPos)- start_direction*6, text="Start", space=30,
+    startcylinder = cylinder(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - startDirection, axis=startDirection, size=vector(1, 8, 8),
+                             color=color.green, visible = wallVisible)
+    startArrow = arrow(pos=lvf.transformToVvector(startPos) + vector(0, 0, 5) - startDirection * 5, axis=startDirection, size=vector(20, 8, 8),
+                       color=color.green, visible = wallVisible)
+    start_label = label(pos=lvf.transformToVvector(startPos) - startDirection * 6, text="Start", space=30,
                         height=30, border=4,
-                        font="sans", color=text_color, visible = wallvisible, opacity = 1, line = True)
+                        font="sans", color=text_color, visible = wallVisible, opacity = 1, line = True)
     lvf.remember(startcylinder, wallDict)
     lvf.remember(start_label, wallDict)
     lvf.remember(startArrow, wallDict)
 
-    endcylinder = cylinder(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=end_direction, size=vector(1, 8, 8),
-                           color=color.orange, visible = topvisible)
-    endArrow = arrow(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - end_direction, axis=-end_direction, size=vector(20, 8, 8),
-                           color=color.orange, visible = topvisible)
+    endcylinder = cylinder(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - goalDirection, axis=goalDirection, size=vector(1, 8, 8),
+                           color=color.orange, visible = topVisible)
+    endArrow = arrow(pos=lvf.transformToVvector(endPos) + vector(0, 0, 5) - goalDirection, axis=-goalDirection, size=vector(20, 8, 8),
+                     color=color.orange, visible = topVisible)
 
-    end_label = label(pos=lvf.transformToVvector(endPos) - end_direction*6, text="Goal", space=30,
+    end_label = label(pos=lvf.transformToVvector(endPos) - goalDirection * 6, text="Goal", space=30,
                       height=30, border=4,
-                      font="sans", color=text_color, visible= topvisible, opacity = 1, line= True)
+                      font="sans", color=text_color, visible= topVisible, opacity = 1, line= True)
     lvf.remember(endcylinder, topDict)
     lvf.remember(end_label, topDict)
     lvf.remember(endArrow,topDict)
+    print("object_classes.StartEndInt(" + str(start) + "," + str(goal) + "," + str(startDirection) + "," + str(goalDirection) + ","
+          + str(backgroundColor) + "," + str(wallVisible) + "," + str(topVisible))
 
     pass
 
@@ -211,7 +213,7 @@ class Pipe:
         self.pipe_pos = lvf.cMatrix[pipeCoord]
         self.pipe_axis = pipeAxis
         self.directionalOverhang = lvf.determineDirectionalOverhang(self.type, self.pipe_axis, self.overhang, self.pipeWidth)
-        self.pipe = SinglePipeTemp.clone(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang, axis=self.pipe_axis,
+        self.pipe = cylinder(pos=lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang, axis=self.pipe_axis,
                           size=vector(self.pipeLength, self.pipeWidth, self.pipeWidth),
                           color= self.color, visible=self.pipeVisible)
         if pipeCoord[1] > z:
@@ -239,6 +241,14 @@ class Corner():
         self.pipe_axis = pipeAxis
         self.directionalOverhang = lvf.determineDirectionalOverhang(self.type, self.pipe_axis, self.overhang,
                                                                     self.pipeWidth)
+        # size = 1
+        # sizeVector = vector(size * 5, size * 5, 5)
+        # self.corner = cylinder(size=sizeVector, pos=lvf.transformToVvector(self.pipe_pos),axis = vector(0,1,0),
+        #                     color=color.cyan, visible=self.pipeVisible)
+        # self.c2 = cylinder(size=sizeVector, pos=lvf.transformToVvector(self.pipe_pos),axis = vector(1,0,0),
+        #                     color=color.cyan, visible=self.pipeVisible)
+        # self.c3 = sphere(size=sizeVector, pos=lvf.transformToVvector(self.pipe_pos),axis = vector(1,0,0),
+        #                     color=color.cyan, visible=self.pipeVisible)
         self.corner = cornerTemp.clone(pos = lvf.transformToVvector(self.pipe_pos) + self.directionalOverhang,
                                    axis = self.pipe_axis, visible = self.pipeVisible)
         if self.pipe_axis == lvf.totop:
@@ -257,7 +267,7 @@ class Corner():
 purple = Pipe(pipeLength=8.8,dotLength=1,cost=1.15, color = color.purple, pipe_visible=True, type = "purple")
 green = Pipe(pipeLength=19.3,dotLength=2,cost=1.38, color = color.green, pipe_visible=True, type = "green")
 blue = Pipe(pipeLength=29.8,dotLength=3,cost=1.6, color = color.blue, pipe_visible=True, type = "blue")
-yellow = Pipe(pipeLength=40.3,dotLength=4,cost=20, color = color.yellow, pipe_visible=True, type = "yellow")
+yellow = Pipe(pipeLength=40.3,dotLength=4,cost=1.82, color = color.yellow, pipe_visible=True, type = "yellow")
 red = Pipe(pipeLength=50.8,dotLength=5,cost=2.04, color = color.red, pipe_visible=True, type = "red")
 corner = Corner(cost=5.32,pipe_visible=True,color=color.cyan, type = "corner")
 
@@ -272,8 +282,7 @@ class obstacle:
         self.obstacle = box(size=sizeVector, pos = lvf.transformToVvector(pos) + sizeVector/2 - vector(5.25,5.25,0), color=color.orange, visible=obstacle_visible)
         lvf.setOccO_Call(size_x,size_y, position)
         lvf.remember(self.obstacle, obstacleDict)
-        #print("Obstacle with size: " + str([size_x, size_y]) +" at position: " + str(position) + " created ")
-        print("Objects.obstacle(" + str((size_x, size_y)) + "," + str(position) + "," + str(obstacle_visible) + ")")
+        print("object_classes.obstacle(" + str((size_x, size_y)) + "," + str(position) + "," + str(obstacle_visible) + ")")
 
 
 class currentDebugBox:
