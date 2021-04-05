@@ -699,7 +699,7 @@ def plotGraph(search_type, shiftpos, route, start, goal, M):
                 x_coords.append(x)
                 y_coords.append(y)
 
-            aroute = [(10, 1), (7, 1), (7, 5), (9, 5), (9, 11), (6, 11), (6, 16), (8, 16), (8, 21), (2, 21), (2, 23), (1, 23)]
+            aroute = []
 
             for i in (range(0, len(aroute))):
                 x = aroute[i][0] -1
@@ -720,7 +720,7 @@ def plotGraph(search_type, shiftpos, route, start, goal, M):
             plt.ylabel("X-Koordinate")
             #plt.legend(loc="upper left")
             ax.plot(y_coords, x_coords, color=col, label = search_type, linewidth=2.5)
-            ax.plot(y_acoords, x_acoords, color="cyan", label="A*", linewidth=2.5)
+            # ax.plot(y_acoords, x_acoords, color="cyan", label="A*", linewidth=2.5)
             ax.plot(shiftcoordsY, shiftcoordsX, color="red", label = "Übergang")
             plt.legend()
             plt.show()
@@ -1057,16 +1057,9 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                                                 testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
             print(cMatrix_route)
             if isinstance(cMatrix_route, list):
-                plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
                 pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
+                plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
     elif random == True:
-        # while isinstance(cMatrix_route, list) == False:
-        #     Objects.resetObstacles()
-        #     Objects.resetShowcase()
-        #
-        #     Objects.PipeLabInstance(wallShape, topShape, wallThickness, wallcolor, topcolor, lampvisible, wallVisible,
-        #                          topVisible,
-        #                             coordinateInfoVisible, camera, backgroundColor, xRes, yRes)
         lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist,
                       wall_thickness=wallThickness,
                       dot_color=dotcolor, wall_to_top_shift_dots=wallToTopShiftDots, top_visible=topVisible,
@@ -1083,9 +1076,9 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                                      testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
         print(cMatrix_route)
         if pipeVisible == True:
-            plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
             pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
                     topVisible, pipeTypeDict)
+            plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
 
 
 

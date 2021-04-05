@@ -10,51 +10,46 @@ from copy import deepcopy
 import time
 
 
-# im too lazy te reduce this for now
-def displayPlot_Call(x,y, start, goal, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO):
-
-    route, parts = displayPlot(tuple(map(lambda c,k: c-k, start, (1,1))),tuple(map(lambda c,k: c-k, goal, (1,1))),x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO)
-
-    return route, parts
-
-global showtime
-
-# can also be reduced and put into main
-def displayPlot(start_point,goal_point,x,y, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict,search_type,gC,gP,gMinO):
-
-    grid = lvf.glG_Call(x, y)  # 0s are positions we can travel on, 1s are walls(obstacles or already placed pipes)
+# prepare path finding, returns numpy matrix (which is rotated by 90°) with obstacle pos (1) and planned layout pos (2)
+def displayPlot_Call(x,y, s, t, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO):
+    s = (s[0]-1,s[1]-1)
+    t = (t[0] - 1, t[1] - 1)
+    grid = lvf.glG_Call(x, y)  #numpy matrix with obstacle positions #altM is Matrix with obstacles and planned layout
     if search_type == "dijkstra":
-        route, parts = dijkstra(grid, start_point, goal_point, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, 1, y, pipeTypeDict, False)
+        route, parts, altM = dijkstra(grid, s, t, shiftpos, startAxis, goalAxis, testingPath, testedPath, heuristicType, 1, y, pipeTypeDict, False)
     elif search_type == "best-first":
-        route, parts = bestFirstSearch(grid, start_point, goal_point, shiftpos, startAxis, goalAxis, testingPath, testedPath,
-                             heuristicType, 1, y, pipeTypeDict, False)
+        route, parts, altM = bestFirstSearch(grid, s, t, shiftpos, startAxis, goalAxis, testingPath, testedPath,
+                                       heuristicType, 1, y, pipeTypeDict, False)
     elif search_type == "multicriteria astar":
-        route, parts = multicriteriaAstar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis, testingPath, testedPath,
-                             heuristicType, 1, y, pipeTypeDict, False,gC,gP,gMinO)
+        route, parts, altM = multicriteriaAstar(grid, s, t, shiftpos, startAxis, goalAxis, testingPath, testedPath,
+                                          heuristicType, 1, y, pipeTypeDict, False, gC, gP, gMinO)
     else:
-        route, parts = astar(grid, start_point, goal_point, shiftpos, startAxis, goalAxis, testingPath, testedPath, heuristicType, 1, y, pipeTypeDict, False)
+        route, parts, altM = astar(grid, s, t, shiftpos, startAxis, goalAxis, testingPath, testedPath, heuristicType, 1, y, pipeTypeDict, False)
 
     if isinstance(route, str):
         print(route)
         return False, False
     else:
-        route = route + [start_point]
+        route = route + [s]
         route = route[::-1]
-
+        altM[s] = 2
         return route, parts
+
+global showtime
+
 
 #restriction functions start here
 
 #checks if direction is the same as previous (which is not allowed)
-def directionRestricted(diff, v, vn, c):
-    if v == (v[0], c) and vn[1] > 0:
+def directionRestricted(diff, v, n, z):
+    if v[1] == z and n[1] > 0:
         return False
-    elif v == (v[0], c + 2) and vn[1] < 0:
+    elif v[1] == z + 2 and n[1] < 0:
         return False
     else:
-        if diff[0] > 0 and vn[0] != 0:  # if true, then neighbor that wants to go horizontally is disallowed
+        if diff[0] > 0 and n[0] != 0:  # if true, then neighbor that wants to go horizontally is disallowed
             return True
-        elif diff[1] > 0 and vn[1] != 0:  # if true, then neighbor that wants to go vertically is disallowed
+        elif diff[1] > 0 and n[1] != 0:  # if true, then neighbor that wants to go vertically is disallowed
             return True
         else:
             return False
@@ -154,7 +149,7 @@ def positionDependence(Neighbors, start, startAxis, goal,goalAxis, current, z):
     if current == (current[0], z):
         add= 1
         newNeighbors = ChangeZNeighbors(newNeighbors, add, lvf.up)
-    elif current == (current[0],z+1):
+    elif current == (current[0],z+2):
         add= -1
         newNeighbors = ChangeZNeighbors(newNeighbors, add, lvf.down)
     return newNeighbors
@@ -232,14 +227,14 @@ def getMax(Dict):
     return maxValue
 
 #path finding algorithms start here
-def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, weight,  yDots, pipeTypeDict, unlimited_parts):
+def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts):
     execTimeFailure = open("execTimeFailure.txt", "a")
     execTimeSuccess = open("execTimeSuccess.txt", "a")
     startTime = datetime.now()
-    if array[start] == 1:
+    if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
         return "Start point is blocked and therefore goal cant be reached", False
-    elif array[goal] == 1:
+    elif M[t] == 1:
         execTimeSuccess.write("blocked" + "\n")
         return "Goal point is blocked and therefore cant be reached", False
 
@@ -248,43 +243,43 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
     else:
         speed = 0.1
 
-    close_set = set()
+    closedList = set()
 
-    came_from = {}
+    Previous = {}
 
-    part_dict = {}
+    nDict = {}
 
-    gscore = {start: 0}
+    G = {s: 0}
 
-    oheap = []
+    OpenList = []
 
-    heapq.heappush(oheap, (gscore[start], start))
+    heapq.heappush(OpenList, (G[s], s))
     count = 0
     neiCount = 0
-    while oheap:
-        current = heapq.heappop(oheap)[1]
+    while OpenList:
+        v = heapq.heappop(OpenList)[1]
 
         if testingPath == True:
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
+                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
             else:
-                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
+                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
                 count +=1
 
-        current_route = buildPath(current, came_from)
-        current_route = current_route + [start]
-        current_route = current_route[::-1]
+        Path = buildPath(v, Previous)
+        Path = Path + [s]
+        Path = Path[::-1]
 
-        L = stockCheck(current_route, pipeTypeDict, part_dict, unlimited_parts)
+        L = stockCheck(Path, pipeTypeDict, nDict, unlimited_parts)
         N = pint.set_standard_neighbors(L)
-        Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, current, shiftpos-1)
-        altMatrix = pint.getAlteredMatrix(current_route, array)
+        Neighbors = positionDependence(N, s, sdir, t, tdir, v, z - 1)
+        altMatrix = pint.getAlteredMatrix(Path, M)
 
-        close_set.add(current) #add the from oheap popped coordinate to the closed list
+        closedList.add(v) #add the from OpenList popped coordinate to the closed list
 
-        if current == goal:
+        if v == t:
             if testingPath == True:
                 if neiCount > 0:
                     neighBox.obj.visible = False
@@ -294,15 +289,15 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
                 if count > 0:
                     currentBox.obj.color = vector(0, 0.5, 0)
                     currentBox.obj.opacity = 0.5
-            data = buildPath(current, came_from)
+            data = buildPath(v, Previous)
             exectime = datetime.now() - startTime
             execTimeSuccess.write(str(exectime.total_seconds())+"\n")
             if unlimited_parts:
                 print("Optimal route is possible with more parts")
             else:
-                return data, part_dict
+                return data, nDict, altMatrix
 
-        close_set.add(current) #add the from oheap popped coordinate to the closed list
+        closedList.add(v) #add the from OpenList popped coordinate to the closed list
 
         if testingPath == True:
             if neiCount > 0:
@@ -310,24 +305,24 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
                 neighBox.obj.delete()
                 neiCount = 0
         for i, j in Neighbors:
-            current_neighbor = (i, j)
-            neighbor = current[0] + i, current[1] + j
-            tentative_g_score = gscore[current] + manhattanDistance(current, neighbor)
-            if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
+            n = (i, j)
+            neighbor = v[0] + i, v[1] + j
+            alt = G[v] + manhattanDistance(v, neighbor)
+            if neighbor in closedList and alt >= G.get(neighbor, 0):
                 continue
             #restriction set
-            if dimensionRestricted(current, neighbor, shiftpos - 1):
+            if dimensionRestricted(v, neighbor, z - 1):
                 continue
-            if current != start:
-                came_fromDifference = (abs(current[0] - came_from[current][0]), abs(current[1] - came_from[current][1]))
-                if directionRestricted(came_fromDifference, current, current_neighbor, shiftpos - 1):
+            if v != s:
+                diff = (abs(v[0] - Previous[v][0]), abs(v[1] - Previous[v][1]))
+                if directionRestricted(diff, v, n, z - 1):
                     continue
-            if not outOfBounds(neighbor, array):
-                if collidedObstacle(current, current_neighbor, altMatrix):
+            if not outOfBounds(neighbor, M):
+                if collidedObstacle(v, n, altMatrix):
                     continue
             else:
                 continue
-            if tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap]:
+            if alt < G.get(neighbor, 0) or neighbor not in [i[1] for i in OpenList]:
                 if testingPath == True:
                     if neiCount > 0:
                         neighBox.obj.visible = False
@@ -340,10 +335,10 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
                         #time.sleep(speed)
                 if testedPath == True:
                     testedBox = object_classes.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                came_from[neighbor] = current
-                part_dict[neighbor] = Neighbors.get((i,j))
-                gscore[neighbor] = tentative_g_score
-                heapq.heappush(oheap, (gscore[neighbor], neighbor))
+                Previous[neighbor] = v
+                nDict[neighbor] = Neighbors.get((i,j))
+                G[neighbor] = alt
+                heapq.heappush(OpenList, (G[neighbor], neighbor))
     # if not unlimited_parts:
     #     exectime = datetime.now() - startTime
     #     execTimeFailure.write(str(exectime.total_seconds()) + "\n")
@@ -352,17 +347,17 @@ def dijkstra(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,test
     print("Creating route is not possible, even with unlimited parts")
     exectime = datetime.now() - startTime
     execTimeSuccess.write(str(exectime.total_seconds()) + "\n")
-    return "no route found", False
+    return "no route found", False, False
 
 
-def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts,gC,gP,gMinO):
+def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts, gC, gP, gMinO):
     execTimeFailure = open("execTimeFailure.txt", "a")
     execTimeSuccess = open("execTimeSuccess.txt", "a")
     startTime = datetime.now()
-    if array[start] == 1:
+    if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
         return "Start point is blocked and therefore goal cant be reached", False
-    elif array[goal] == 1:
+    elif M[t] == 1:
         execTimeSuccess.write("blocked" + "\n")
         return "Goal point is blocked and therefore cant be reached", False
 
@@ -371,14 +366,133 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
     else:
         speed = 0.1
     closedList = set()
-    came_from = {}
-    part_dict = {}
-    gscore = {start: 0}
-    fscore = {start: manhattanDistance(start, goal)}
-    oheap = []
-    heapq.heappush(oheap, (fscore[start], start))
+    previous = {}
+    nDict = {}
+    G = {s: 0}
+    F = {s: manhattanDistance(s, t)}
+    OpenList = []
+    heapq.heappush(OpenList, (F[s], s))
     count = 0
     neiCount = 0
+    while OpenList:
+        v = heapq.heappop(OpenList)[1]
+
+        if testingPath == True:
+            if count > 0:
+                currentBox.obj.color = vector(0,0.5,0)
+                currentBox.obj.opacity = 0.5
+                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+            else:
+                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                count +=1
+
+        current_route = buildPath(v, previous)
+        current_route = current_route + [s]
+        current_route = current_route[::-1]
+
+        L = stockCheck(current_route, pipeTypeDict, nDict, unlimited_parts)
+        N = pint.set_standard_neighbors(L)
+        Neighbors = positionDependence(N, s, sdir, t, tdir, v, z - 1)
+        altMatrix = pint.getAlteredMatrix(current_route, M)
+
+        closedList.add(v) #add the from OpenList popped coordinate to the closed list
+        if v == t:
+            if testingPath == True:
+                if neiCount > 0:
+                    neighBox.obj.visible = False
+                    neighBox.obj.delete()
+                    neiCount = 0
+            if testingPath == True:
+                if count > 0:
+                    currentBox.obj.color = vector(0, 0.5, 0)
+                    currentBox.obj.opacity = 0.5
+            # if unlimited_parts:
+            #     print("Route Creation is possible with more parts")
+            data = buildPath(v, previous)
+            exectime = datetime.now() - startTime
+            execTimeSuccess.write(str(exectime.total_seconds())+"\n")
+            if unlimited_parts:
+                print("Optimal route is possible with more parts")
+            else:
+                return data, nDict, altMatrix
+
+        closedList.add(v) #add the from OpenList popped coordinate to the closed list
+
+        if testingPath == True:
+            if neiCount > 0:
+                neighBox.obj.visible = False
+                neighBox.obj.delete()
+                neiCount = 0
+        for i, j in Neighbors:
+            n = (i, j)
+            vn = v[0] + i, v[1] + j
+
+            altF = costMinO(altMatrix, v, n)*gMinO + costP(n, Neighbors.get((i,j)))*gP
+            alt = G[v] + manhattanDistance(v, vn)
+            if vn in closedList: #and alt >= G.get(vn, 0):
+                continue
+            #restriction set
+            if dimensionRestricted(v, vn, z - 1):
+                continue
+            if v != s:
+                came_fromDifference = (abs(v[0] - previous[v][0]), abs(v[1] - previous[v][1]))
+                if directionRestricted(came_fromDifference, v, n, z - 1):
+                    continue
+            if not outOfBounds(vn, M):
+                if collidedObstacle(v, n, altMatrix):
+                    continue
+            else:
+                continue
+            if alt < G.get(vn, 0) or vn not in [i[1] for i in OpenList]:
+                if testingPath == True:
+                    if neiCount > 0:
+                        neighBox.obj.visible = False
+                        neighBox.obj.delete()
+                        neighBox = object_classes.neighborDebugBox((vn[0] + 1, vn[1] + 1))
+                        #time.sleep(speed)
+                    else:
+                        neighBox = object_classes.neighborDebugBox((vn[0] + 1, vn[1] + 1))
+                        neiCount += 1
+                        #time.sleep(speed)
+                if testedPath == True:
+                    testedBox = object_classes.possiblePositionDebugBox((vn[0] + 1, vn[1] + 1))
+                previous[vn] = v
+                nDict[vn] = Neighbors.get((i,j))
+                G[vn] = alt
+                F[vn] = (alt + manhattanDistance(vn, t)) / F[s] * gC + altF
+                heapq.heappush(OpenList, (F[vn], vn))
+
+    print("Creating route is not possible, even with unlimited parts")
+    exectime = datetime.now() - startTime
+    execTimeSuccess.write(str(exectime.total_seconds()) + "\n")
+    return "no route found", False, False
+
+def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts):
+    execTimeFailure = open("execTimeFailure.txt", "a")
+    execTimeSuccess = open("execTimeSuccess.txt", "a")
+    startTime = datetime.now()
+    if M[s] == 1:
+        execTimeSuccess.write("blocked" + "\n")
+        return "Start point is blocked and therefore goal cant be reached", False
+    elif M[t] == 1:
+        execTimeSuccess.write("blocked" + "\n")
+        return "Goal point is blocked and therefore cant be reached", False
+
+    if heuristicType == "intelligent":
+        speed = 0.01
+    else:
+        speed = 0.1
+
+    ClosedList = set()
+    previous = {}
+    nDict = {}
+    G = {s: 0}
+    F = {s: manhattanDistance(s, t)}
+    oheap = []
+    heapq.heappush(oheap, (F[s], s))
+    count = 0
+    neiCount = 0
+
     while oheap:
         v = heapq.heappop(oheap)[1]
 
@@ -391,17 +505,18 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
                 currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
                 count +=1
 
-        current_route = buildPath(v, came_from)
-        current_route = current_route + [start]
-        current_route = current_route[::-1]
+        Path = buildPath(v, previous)
+        Path = Path + [s]
+        Path = Path[::-1]
 
-        L = stockCheck(current_route, pipeTypeDict, part_dict, unlimited_parts)
+        L = stockCheck(Path, pipeTypeDict, nDict, unlimited_parts)
         N = pint.set_standard_neighbors(L)
-        Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, v, shiftpos-1)
-        altMatrix = pint.getAlteredMatrix(current_route, array)
+        Neighbors = positionDependence(N, s, sdir, t, tdir, v, z - 1)
 
-        closedList.add(v) #add the from oheap popped coordinate to the closed list
-        if v == goal:
+        altMatrix = pint.getAlteredMatrix(Path, M)
+
+        ClosedList.add(v) #add the from oheap popped coordinate to the closed list
+        if v == t:
             if testingPath == True:
                 if neiCount > 0:
                     neighBox.obj.visible = False
@@ -414,15 +529,15 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
             if unlimited_parts:
                 #TODO: check how many parts are needed to complete optimal route"
                 print("Route Creation is possible with more parts")
-            data = buildPath(v, came_from)
+            data = buildPath(v, previous)
             exectime = datetime.now() - startTime
             execTimeSuccess.write(str(exectime.total_seconds())+"\n")
             if unlimited_parts:
                 print("Optimal route is possible with more parts")
             else:
-                return data, part_dict
+                return data, nDict, altMatrix
 
-        closedList.add(v) #add the from oheap popped coordinate to the closed list
+        ClosedList.add(v) #add the from oheap popped coordinate to the closed list
 
         if testingPath == True:
             if neiCount > 0:
@@ -430,172 +545,45 @@ def multicriteriaAstar(array, start, goal, shiftpos, startAxis, goalAxis, testin
                 neighBox.obj.delete()
                 neiCount = 0
         for i, j in Neighbors:
-            current_neighbor = (i, j)
-            neighbor = v[0] + i, v[1] + j
-
-            altM = costMinO(altMatrix, v, current_neighbor)*gMinO + costP(current_neighbor, Neighbors.get((i,j)))*gP
-            alt = gscore[v] + manhattanDistance(v, neighbor)
-            if neighbor in closedList: #and alt >= gscore.get(neighbor, 0):
+            n = (i, j)
+            vn = v[0] + i, v[1] + j
+            tentative_g_score = G[v] + manhattanDistance(v, vn)
+            if vn in ClosedList and tentative_g_score >= G.get(vn, 0):
                 continue
             #restriction set
-            if dimensionRestricted(v, neighbor, shiftpos - 1):
+            if dimensionRestricted(v, vn, z - 1):
                 continue
-            if v != start:
-                came_fromDifference = (abs(v[0] - came_from[v][0]), abs(v[1] - came_from[v][1]))
-                if directionRestricted(came_fromDifference, v, current_neighbor, shiftpos - 1):
+            if v != s:
+                came_fromDifference = (abs(v[0] - previous[v][0]), abs(v[1] - previous[v][1]))
+                if directionRestricted(came_fromDifference, v, n, z - 1):
                     continue
-            if not outOfBounds(neighbor, array):
-                if collidedObstacle(v, current_neighbor, altMatrix):
+            if not outOfBounds(vn, M):
+                if collidedObstacle(v, n, altMatrix):
                     continue
             else:
                 continue
-            if alt < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap]:
+            if tentative_g_score < G.get(vn, 0) or vn not in [i[1] for i in oheap]:
                 if testingPath == True:
                     if neiCount > 0:
                         neighBox.obj.visible = False
                         neighBox.obj.delete()
-                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                        #time.sleep(speed)
-                    else:
-                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                        neiCount += 1
-                        #time.sleep(speed)
-                if testedPath == True:
-                    testedBox = object_classes.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                came_from[neighbor] = v
-                part_dict[neighbor] = Neighbors.get((i,j))
-                gscore[neighbor] = alt
-                fscore[neighbor] = (alt + manhattanDistance(neighbor, goal))/fscore[start]*gC + altM
-                heapq.heappush(oheap, (fscore[neighbor], neighbor))
-
-    print("Creating route is not possible, even with unlimited parts")
-    exectime = datetime.now() - startTime
-    execTimeSuccess.write(str(exectime.total_seconds()) + "\n")
-    return "no route found", False
-
-def astar(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, weight,  yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("execTimeFailure.txt", "a")
-    execTimeSuccess = open("execTimeSuccess.txt", "a")
-    startTime = datetime.now()
-    if array[start] == 1:
-        execTimeSuccess.write("blocked" + "\n")
-        return "Start point is blocked and therefore goal cant be reached", False
-    elif array[goal] == 1:
-        execTimeSuccess.write("blocked" + "\n")
-        return "Goal point is blocked and therefore cant be reached", False
-
-    if heuristicType == "intelligent":
-        speed = 0.01
-    else:
-        speed = 0.1
-
-    close_set = set()
-
-    came_from = {}
-
-    part_dict = {}
-
-    gscore = {start: 0}
-
-    fscore = {start: manhattanDistance(start, goal)}
-
-    oheap = []
-
-    heapq.heappush(oheap, (fscore[start], start))
-    count = 0
-    neiCount = 0
-
-    while oheap:
-        current = heapq.heappop(oheap)[1]
-
-        if testingPath == True:
-            if count > 0:
-                currentBox.obj.color = vector(0,0.5,0)
-                currentBox.obj.opacity = 0.5
-                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
-            else:
-                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
-                count +=1
-
-        current_route = buildPath(current, came_from)
-        current_route = current_route + [start]
-        current_route = current_route[::-1]
-
-        L = stockCheck(current_route, pipeTypeDict, part_dict, unlimited_parts)
-        N = pint.set_standard_neighbors(L)
-        Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, current, shiftpos-1)
-
-        altMatrix = pint.getAlteredMatrix(current_route, array)
-
-        close_set.add(current) #add the from oheap popped coordinate to the closed list
-        if current == goal:
-            if testingPath == True:
-                if neiCount > 0:
-                    neighBox.obj.visible = False
-                    neighBox.obj.delete()
-                    neiCount = 0
-            if testingPath == True:
-                if count > 0:
-                    currentBox.obj.color = vector(0, 0.5, 0)
-                    currentBox.obj.opacity = 0.5
-            if unlimited_parts:
-                #TODO: check how many parts are needed to complete optimal route"
-                print("Route Creation is possible with more parts")
-            data = buildPath(current, came_from)
-            exectime = datetime.now() - startTime
-            execTimeSuccess.write(str(exectime.total_seconds())+"\n")
-            if unlimited_parts:
-                print("Optimal route is possible with more parts")
-            else:
-                return data, part_dict
-
-        close_set.add(current) #add the from oheap popped coordinate to the closed list
-
-        if testingPath == True:
-            if neiCount > 0:
-                neighBox.obj.visible = False
-                neighBox.obj.delete()
-                neiCount = 0
-        for i, j in Neighbors:
-            current_neighbor = (i, j)
-            neighbor = current[0] + i, current[1] + j
-            tentative_g_score = gscore[current] + manhattanDistance(current, neighbor)
-            if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
-                continue
-            #restriction set
-            if dimensionRestricted(current, neighbor, shiftpos - 1):
-                continue
-            if current != start:
-                came_fromDifference = (abs(current[0] - came_from[current][0]), abs(current[1] - came_from[current][1]))
-                if directionRestricted(came_fromDifference, current, current_neighbor, shiftpos - 1):
-                    continue
-            if not outOfBounds(neighbor, array):
-                if collidedObstacle(current, current_neighbor, altMatrix):
-                    continue
-            else:
-                continue
-            if tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap]:
-                if testingPath == True:
-                    if neiCount > 0:
-                        neighBox.obj.visible = False
-                        neighBox.obj.delete()
-                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((vn[0] + 1, vn[1] + 1))
                         time.sleep(speed)
                     else:
-                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((vn[0] + 1, vn[1] + 1))
                         neiCount += 1
                         time.sleep(speed)
                 if testedPath == True:
-                    testedBox = object_classes.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                came_from[neighbor] = current
-                part_dict[neighbor] = Neighbors.get((i,j))
-                gscore[neighbor] = tentative_g_score
-                fscore[neighbor] = tentative_g_score + manhattanDistance(neighbor, goal)
-                heapq.heappush(oheap, (fscore[neighbor], neighbor))
+                    testedBox = object_classes.possiblePositionDebugBox((vn[0] + 1, vn[1] + 1))
+                previous[vn] = v
+                nDict[vn] = Neighbors.get((i,j))
+                G[vn] = tentative_g_score
+                F[vn] = tentative_g_score + manhattanDistance(vn, t)
+                heapq.heappush(oheap, (F[vn], vn))
     print("Creating route is not possible, even with unlimited parts")
     exectime = datetime.now() - startTime
     execTimeSuccess.write(str(exectime.total_seconds()) + "\n")
-    return "no route found", False
+    return "no route found", False, False
 
 def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, weight,  yDots, pipeTypeDict, unlimited_parts):
     execTimeFailure = open("execTimeFailure.txt", "a")
@@ -613,44 +601,39 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
     else:
         speed = 0.1
 
-    close_set = set()
-
-    came_from = {}
-
-    part_dict = {}
-
-    hscore = {start: manhattanDistance(start, goal)}
-
-    oheap = []
-
-    heapq.heappush(oheap, (hscore[start], start))
+    ClosedList = set()
+    previous = {}
+    nDict = {}
+    H = {start: manhattanDistance(start, goal)}
+    OpenList = []
+    heapq.heappush(OpenList, (H[start], start))
     count = 0
     neiCount = 0
 
-    while oheap:
-        current = heapq.heappop(oheap)[1]
+    while OpenList:
+        v = heapq.heappop(OpenList)[1]
 
         if testingPath == True:
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
+                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
             else:
-                currentBox=object_classes.currentDebugBox((current[0] + 1, current[1] + 1))
+                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
                 count +=1
 
-        current_route = buildPath(current, came_from)
-        current_route = current_route + [start]
-        current_route = current_route[::-1]
+        Path = buildPath(v, previous)
+        Path = Path + [start]
+        Path = Path[::-1]
 
-        L = stockCheck(current_route, pipeTypeDict, part_dict, unlimited_parts)
+        L = stockCheck(Path, pipeTypeDict, nDict, unlimited_parts)
         N = pint.set_standard_neighbors(L)
-        Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, current, shiftpos-1)
+        Neighbors = positionDependence(N, start, startAxis, goal, goalAxis, v, shiftpos-1)
 
-        altMatrix = pint.getAlteredMatrix(current_route, array)
+        altMatrix = pint.getAlteredMatrix(Path, array)
 
-        close_set.add(current) #add the from oheap popped coordinate to the closed list
-        if current == goal:
+        ClosedList.add(v) #add the from OpenList popped coordinate to the closed list
+        if v == goal:
             if testingPath == True:
                 if neiCount > 0:
                     neighBox.obj.visible = False
@@ -663,15 +646,15 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
             if unlimited_parts:
                 #TODO: check how many parts are needed to complete optimal route"
                 print("Route Creation is possible with more parts")
-            data = buildPath(current, came_from)
+            data = buildPath(v, previous)
             exectime = datetime.now() - startTime
             execTimeSuccess.write(str(exectime.total_seconds())+"\n")
             if unlimited_parts:
                 print("Optimal route is possible with more parts")
             else:
-                return data, part_dict
+                return data, nDict, altMatrix
 
-        close_set.add(current) #add the from oheap popped coordinate to the closed list
+        ClosedList.add(v) #add the from OpenList popped coordinate to the closed list
 
         if testingPath == True:
             if neiCount > 0:
@@ -679,41 +662,41 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
                 neighBox.obj.delete()
                 neiCount = 0
         for i, j in Neighbors:
-            current_neighbor = (i, j)
-            neighbor = current[0] + i, current[1] + j
-            tentative_h_score = hscore[current] + manhattanDistance(current, neighbor)
+            n = (i, j)
+            vn = v[0] + i, v[1] + j
+            alt = H[v] + manhattanDistance(v, vn)
 
-            if neighbor in close_set:
+            if vn in ClosedList:
                 continue
             #restriction set
-            if dimensionRestricted(current, neighbor, shiftpos - 1):
+            if dimensionRestricted(v, vn, shiftpos - 1):
                 continue
-            if current != start:
-                came_fromDifference = (abs(current[0] - came_from[current][0]), abs(current[1] - came_from[current][1]))
-                if directionRestricted(came_fromDifference, current, current_neighbor, shiftpos - 1):
+            if v != start:
+                came_fromDifference = (abs(v[0] - previous[v][0]), abs(v[1] - previous[v][1]))
+                if directionRestricted(came_fromDifference, v, n, shiftpos - 1):
                     continue
-            if not outOfBounds(neighbor, array):
-                if collidedObstacle(current, current_neighbor, altMatrix):
+            if not outOfBounds(vn, array):
+                if collidedObstacle(v, n, altMatrix):
                     continue
             else:
                 continue
-            if neighbor not in [i[1] for i in oheap]:
+            if vn not in [i[1] for i in OpenList]:
                 if testingPath == True:
                     if neiCount > 0:
                         neighBox.obj.visible = False
                         neighBox.obj.delete()
-                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((vn[0] + 1, vn[1] + 1))
                         #time.sleep(speed)
                     else:
-                        neighBox = object_classes.neighborDebugBox((neighbor[0] + 1, neighbor[1] + 1))
+                        neighBox = object_classes.neighborDebugBox((vn[0] + 1, vn[1] + 1))
                         neiCount += 1
                         #time.sleep(speed)
                 if testedPath == True:
-                    testedBox = object_classes.possiblePositionDebugBox((neighbor[0] + 1, neighbor[1] + 1))
-                came_from[neighbor] = current
-                part_dict[neighbor] = Neighbors.get((i,j))
-                hscore[neighbor] = tentative_h_score + manhattanDistance(neighbor, goal)
-                heapq.heappush(oheap, (hscore[neighbor], neighbor))
+                    testedBox = object_classes.possiblePositionDebugBox((vn[0] + 1, vn[1] + 1))
+                previous[vn] = v
+                nDict[vn] = Neighbors.get((i,j))
+                H[vn] = alt + manhattanDistance(vn, goal)
+                heapq.heappush(OpenList, (H[vn], vn))
     # if not unlimited_parts:
     #     exectime = datetime.now() - startTime
     #     execTimeFailure.write(str(exectime.total_seconds()) + "\n")
@@ -722,7 +705,7 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
     print("Creating route is not possible, even with unlimited parts")
     exectime = datetime.now() - startTime
     execTimeSuccess.write(str(exectime.total_seconds()) + "\n")
-    return "no route found", False
+    return "no route found", False, False
 
 
 #function graveyard starts here

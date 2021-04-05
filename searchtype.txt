@@ -776,3 +776,23 @@ multicriteria astar
 multicriteria astar
 
 multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar
+
+astar
+
+dijkstra
+
+best-first
+
+multicriteria astar
+
+multicriteria astar
+
+multicriteria astar

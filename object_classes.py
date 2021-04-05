@@ -28,7 +28,7 @@ savedState = []
 global topPipeDict
 topPipeDict = weakref.WeakValueDictionary()
 
-# this function creates the canvas, wall and top and dots
+
 
 def resetShowcase():
     for key in showcaseDict.keys():
@@ -42,7 +42,7 @@ def resetObstacles():
         del oldObs
 
 
-
+# this function creates the canvas, wall and top objects
 def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color, lamp_visible,
              wall_visible, top_visible, coordinate_info_visible, camera_pos, background_color,x_res,y_res):
 
@@ -262,16 +262,6 @@ class Corner():
         dotLengthDict.append(self.dotLength)
         lengthDict.append(self.realMeter)
 
-
-
-purple = Pipe(pipeLength=8.8,dotLength=1,cost=1.15, color = color.purple, pipe_visible=True, type = "purple")
-green = Pipe(pipeLength=19.3,dotLength=2,cost=1.38, color = color.green, pipe_visible=True, type = "green")
-blue = Pipe(pipeLength=29.8,dotLength=3,cost=1.6, color = color.blue, pipe_visible=True, type = "blue")
-yellow = Pipe(pipeLength=40.3,dotLength=4,cost=1.82, color = color.yellow, pipe_visible=True, type = "yellow")
-red = Pipe(pipeLength=50.8,dotLength=5,cost=2.04, color = color.red, pipe_visible=True, type = "red")
-corner = Corner(cost=5.32,pipe_visible=True,color=color.cyan, type = "corner")
-
-
 # create obstacles
 class obstacle:
     def __init__(self, size, position, obstacle_visible):
@@ -319,4 +309,9 @@ class clamp:
             lvf.remember(self.obj, topPipeDict)
         lvf.remember(self.obj, pipeDict)
 
-
+purple = Pipe(pipeLength=8.8,dotLength=1,cost=1.15, color = color.purple, pipe_visible=True, type = "purple")
+green = Pipe(pipeLength=19.3,dotLength=2,cost=1.38, color = color.green, pipe_visible=True, type = "green")
+blue = Pipe(pipeLength=29.8,dotLength=3,cost=1.6, color = color.blue, pipe_visible=True, type = "blue")
+yellow = Pipe(pipeLength=40.3,dotLength=4,cost=1.82, color = color.yellow, pipe_visible=True, type = "yellow")
+red = Pipe(pipeLength=50.8,dotLength=5,cost=2.04, color = color.red, pipe_visible=True, type = "red")
+corner = Corner(cost=5.32,pipe_visible=True,color=color.cyan, type = "corner")
