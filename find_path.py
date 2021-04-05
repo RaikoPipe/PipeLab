@@ -56,7 +56,7 @@ def directionRestricted(diff, v, n, z):
 
 
 #if v is below z or above z+1 then shift is not allowed
-def dimensionRestricted(v, neighbor, z):
+def crossingRestricted(v, neighbor, z):
     if neighbor[1] > z and v[1] < z:
         return True
     elif neighbor[1] < z+1 and v[1] > z+1:
@@ -311,7 +311,7 @@ def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, wei
             if neighbor in closedList and alt >= G.get(neighbor, 0):
                 continue
             #restriction set
-            if dimensionRestricted(v, neighbor, z - 1):
+            if crossingRestricted(v, neighbor, z - 1):
                 continue
             if v != s:
                 diff = (abs(v[0] - Previous[v][0]), abs(v[1] - Previous[v][1]))
@@ -432,7 +432,7 @@ def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristi
             if vn in closedList: #and alt >= G.get(vn, 0):
                 continue
             #restriction set
-            if dimensionRestricted(v, vn, z - 1):
+            if crossingRestricted(v, vn, z - 1):
                 continue
             if v != s:
                 came_fromDifference = (abs(v[0] - previous[v][0]), abs(v[1] - previous[v][1]))
@@ -551,7 +551,7 @@ def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight
             if vn in ClosedList and tentative_g_score >= G.get(vn, 0):
                 continue
             #restriction set
-            if dimensionRestricted(v, vn, z - 1):
+            if crossingRestricted(v, vn, z - 1):
                 continue
             if v != s:
                 came_fromDifference = (abs(v[0] - previous[v][0]), abs(v[1] - previous[v][1]))
@@ -669,7 +669,7 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
             if vn in ClosedList:
                 continue
             #restriction set
-            if dimensionRestricted(v, vn, shiftpos - 1):
+            if crossingRestricted(v, vn, shiftpos - 1):
                 continue
             if v != start:
                 came_fromDifference = (abs(v[0] - previous[v][0]), abs(v[1] - previous[v][1]))
