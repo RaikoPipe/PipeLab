@@ -200,11 +200,11 @@ class App:
                 dotCounter += dots
             tempList = [search_type, dotCounter, costCounter]
             algList.append(tempList)
-            searchNote = open("searchtype.txt", "a")
-            lengthNote = open("length.txt", "a")
-            costNote = open("cost.txt", "a")
-            MinONote = open("MinONote.txt", "a")
-            partNote = open("partNote.txt", "a")
+            searchNote = open("Testdata/searchtype.txt", "a")
+            lengthNote = open("Testdata/length.txt", "a")
+            costNote = open("Testdata/cost.txt", "a")
+            MinONote = open("Testdata/MinONote.txt", "a")
+            partNote = open("Testdata/partNote.txt", "a")
             if refresh == False:
                 searchNote.write("\n")
                 lengthNote.write("\n")
@@ -726,7 +726,7 @@ def plotGraph(search_type, shiftpos, route, start, goal, M):
             plt.show()
 
 def buildVpipes(buildPipeDict, buildClampDict):
-    tVisual = open("visualRefreshTime.txt", "a")
+    tVisual = open("Testdata/visualRefreshTime.txt", "a")
     startTime = datetime.now()
     for count, objects in enumerate(buildPipeDict):
         part = objects[0]
@@ -1066,7 +1066,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                       wall_visible=wallVisible)
         RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop)
         try:
-            vIT= open("visualInitTime.txt", "a")
+            vIT= open("Testdata/visualInitTime.txt", "a")
             execTime = datetime.now() - execTime
             vIT.write(str(execTime.total_seconds()) + "\n")
 

@@ -228,8 +228,8 @@ def getMax(Dict):
 
 #path finding algorithms start here
 def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("execTimeFailure.txt", "a")
-    execTimeSuccess = open("execTimeSuccess.txt", "a")
+    execTimeFailure = open("Testdata/execTimeFailure.txt", "a")
+    execTimeSuccess = open("Testdata/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -351,8 +351,8 @@ def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, wei
 
 
 def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts, gC, gP, gMinO):
-    execTimeFailure = open("execTimeFailure.txt", "a")
-    execTimeSuccess = open("execTimeSuccess.txt", "a")
+    execTimeFailure = open("Testdata/execTimeFailure.txt", "a")
+    execTimeSuccess = open("Testdata/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -468,8 +468,8 @@ def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristi
     return "no route found", False, False
 
 def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("execTimeFailure.txt", "a")
-    execTimeSuccess = open("execTimeSuccess.txt", "a")
+    execTimeFailure = open("Testdata/execTimeFailure.txt", "a")
+    execTimeSuccess = open("Testdata/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -586,8 +586,8 @@ def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight
     return "no route found", False, False
 
 def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, weight,  yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("execTimeFailure.txt", "a")
-    execTimeSuccess = open("execTimeSuccess.txt", "a")
+    execTimeFailure = open("Testdata/execTimeFailure.txt", "a")
+    execTimeSuccess = open("Testdata/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if array[start] == 1:
         execTimeSuccess.write("blocked" + "\n")
