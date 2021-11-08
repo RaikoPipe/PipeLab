@@ -1,6 +1,6 @@
-import LogicalVfunctions as lvf
+from rendering import placement_functions as lvf
 from copy import deepcopy
-import numpy
+
 
 def pipeTypeDictEmpty(dict):
     availableParts = []

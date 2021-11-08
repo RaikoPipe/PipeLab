@@ -1,8 +1,7 @@
 import numpy as np
 from vpython import *
-import interpret_path as pint
 import weakref
-import find_path as agt
+from path_finding import find_path as agt, interpret_path as pint
 
 # all dot objects are saved here
 global topDotDict
@@ -49,11 +48,11 @@ def transformToVvector(npVector):
 
 def cdCm_Call(x_dots, y_dots, x_gap, y_gap ,dot_dist, wall_thickness, dot_color,wall_to_top_shift_dots, wall_visible, top_visible):
     global cMatrix
-    cMatrix = create_dotCoord_Matrix(x_dots, y_dots, x_gap, y_gap, dot_dist, wall_thickness, dot_color,wall_to_top_shift_dots, wall_visible, top_visible)
+    cMatrix = get_empty_coord_matrix(x_dots, y_dots, x_gap, y_gap, dot_dist, wall_thickness, dot_color, wall_to_top_shift_dots, wall_visible, top_visible)
 
 def glG_Call(x_dots, y_dots):
     global boolGrid
-    boolGrid = getlogicalGrid(x_dots, y_dots, cMatrix)
+    boolGrid = get_empty_coordinate_grid(x_dots, y_dots, cMatrix)
     return boolGrid
 
 
@@ -93,45 +92,6 @@ def determineDirectionalOverhang(type, pipe_axis, overhang, width):
         else:
             print("direction of pipe not recognized")
     return direction
-
-# creates a numpy array that acts as MBASE (contains 3D-build positions)
-def create_dotCoord_Matrix(x_dots, y_dots, x_gap, y_gap ,dot_dist, wall_thickness, dot_color,wall_to_top_shift_dots, wall_visible, top_visible):
-
-    coordinates_matrix = np.zeros((x_dots+1, y_dots+1), dtype="f,f,b")
-    x_point = 1
-    # create dots on wall
-    add_x = x_gap  # variable for increasing x coordinate; 2.5cm is distance from end of wall
-    # create dot along x axis
-    for i in range(1, x_dots+1):
-        add_y = y_gap  # variable for increasing y coordinate; 5cm is distance from top of wall
-        y_point = 1
-        wallDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
-              opacity=1, visible=wall_visible)
-        remember(wallDot, wallDotDict)
-        coordinates_matrix[x_point, y_point] = (add_x, add_y, 0)
-
-        # create dots along y axis
-        for j in range(1, y_dots):
-            y_point += 1
-            add_y += dot_dist  # 10.5cm is y-distance between all dots
-            if j < wall_to_top_shift_dots:
-                wallDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
-                       opacity=1, visible=wall_visible)
-                remember(wallDot, wallDotDict)
-            else:
-                topDot = sphere(pos=vector(add_x, add_y, wall_thickness), radius=1.3, color=dot_color, shininess=0,
-                       opacity=1, visible=top_visible)
-                remember(topDot, topDotDict)
-
-            coordinates_matrix[x_point, y_point] = (add_x, add_y, 0)
-
-        pass
-        add_x += dot_dist  # 10.5cm is x-distance between all dots
-        x_point += 1
-    pass
-    "How do I create a compound with wall/top and spheres?"
-    return coordinates_matrix
-pass
 
 #this has no use anymore
 def setOccP_Call(pipe_pos, dotlength, pipe_ax):
@@ -184,29 +144,6 @@ def setOccupancyObstacle(sizeX, sizeY, pos, dcm):
 
     cMatrix = dcm
 
-# returns a numpy array with all the occupied positions (M)
-def getlogicalGrid(x_dots, y_dots, cMatrix):
-    x = x_dots
-    y = y_dots
-
-    logicalGrid = np.tile(0, (x, y))
-    y_point = 1
-    # create dots on wall
-
-    # get dots on y-axis
-    for j in range(1, y_dots + 1):
-        x_point = 1
-        logicalGrid[x_point-1, y_point-1] = cMatrix[x_point, y_point][2]
-
-        # get dots on x-axis
-        for i in range(1, x_dots):
-            x_point += 1
-            logicalGrid[x_point-1, y_point-1] = cMatrix[x_point, y_point][2]
-
-        pass
-        y_point += 1
-    pass
-    return logicalGrid
 
 def get_cMatrix():
     return cMatrix

@@ -1,8 +1,3 @@
-import object_classes
-from vpython import *
-from datetime import datetime
-
-
 # for i in range(1, 102):
 #     scene = canvas()
 #     execTime = datetime.now()

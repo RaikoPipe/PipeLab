@@ -1,5 +1,5 @@
 from vpython import *
-import LogicalVfunctions as lvf
+import placement_functions as lvf
 import main
 import weakref
 

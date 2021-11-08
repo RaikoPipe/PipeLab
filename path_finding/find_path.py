@@ -1,11 +1,9 @@
-import numpy as np
 import heapq
 import numpy as np
 from datetime import datetime
-import LogicalVfunctions as lvf
 import interpret_path as pint
 from vpython import *
-import object_classes
+from rendering import object_classes, placement_functions as lvf
 from copy import deepcopy
 import time
 
@@ -228,8 +226,8 @@ def getMax(Dict):
 
 #path finding algorithms start here
 def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("Testdata/execTimeFailure.txt", "a")
-    execTimeSuccess = open("Testdata/execTimeSuccess.txt", "a")
+    execTimeFailure = open("../Testdata/execTimeFailure.txt", "a")
+    execTimeSuccess = open("../Testdata/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -263,9 +261,9 @@ def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, wei
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                currentBox= object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
             else:
-                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                currentBox= object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
                 count +=1
 
         Path = buildPath(v, Previous)
@@ -351,8 +349,8 @@ def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, wei
 
 
 def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts, gC, gP, gMinO):
-    execTimeFailure = open("Testdata/execTimeFailure.txt", "a")
-    execTimeSuccess = open("Testdata/execTimeSuccess.txt", "a")
+    execTimeFailure = open("../Testdata/execTimeFailure.txt", "a")
+    execTimeSuccess = open("../Testdata/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -381,9 +379,9 @@ def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristi
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                currentBox= object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
             else:
-                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                currentBox= object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
                 count +=1
 
         current_route = buildPath(v, previous)
@@ -468,8 +466,8 @@ def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristi
     return "no route found", False, False
 
 def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("Testdata/execTimeFailure.txt", "a")
-    execTimeSuccess = open("Testdata/execTimeSuccess.txt", "a")
+    execTimeFailure = open("../Testdata/execTimeFailure.txt", "a")
+    execTimeSuccess = open("../Testdata/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -500,9 +498,9 @@ def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                currentBox= object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
             else:
-                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                currentBox= object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
                 count +=1
 
         Path = buildPath(v, previous)
@@ -586,8 +584,8 @@ def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight
     return "no route found", False, False
 
 def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, weight,  yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("Testdata/execTimeFailure.txt", "a")
-    execTimeSuccess = open("Testdata/execTimeSuccess.txt", "a")
+    execTimeFailure = open("../Testdata/execTimeFailure.txt", "a")
+    execTimeSuccess = open("../Testdata/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if array[start] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -617,9 +615,9 @@ def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPa
             if count > 0:
                 currentBox.obj.color = vector(0,0.5,0)
                 currentBox.obj.opacity = 0.5
-                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                currentBox= object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
             else:
-                currentBox=object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
+                currentBox= object_classes.currentDebugBox((v[0] + 1, v[1] + 1))
                 count +=1
 
         Path = buildPath(v, previous)

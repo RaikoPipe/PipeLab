@@ -1,17 +1,15 @@
 from copy import deepcopy
 
-import object_classes
 from vpython import *
 from win32api import GetSystemMetrics
-import LogicalVfunctions as lvf
-import find_path as agt
+from path_finding import find_path as agt
 import tkinter as tk
 from tkinter import ttk
 import math
 import random
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from datetime import datetime
-import levelData
+from rendering import level_templates, object_classes, placement_functions as lvf
 
 # lengthText = Objects.displayText(vector(10,10,5))
 # costText = Objects.displayText(vector(10,5,5))
@@ -90,8 +88,6 @@ class App:
             print(dict)
 
             return dict
-
-
 
 
         #functions
@@ -672,58 +668,58 @@ def determineAxis(direction):
 
 
 
-def plotGraph(search_type, shiftpos, route, start, goal, M):
-            if search_type == "multicriteria astar":
-                search_type = "MCA*"
-                col = "blue"
-            elif search_type == "astar":
-                search_type = "A*"
-                col = "cyan"
-            elif search_type == "best-first":
-                search_type = "Bestensuche"
-                col = "yellow"
-            else:
-                search_type = "Dijkstra"
-                col = "orange"
-            x_coords = []
-            y_coords = []
-            x_acoords = []
-            y_acoords = []
-            shiftcoordsX = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            shiftcoordsY = [shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1,
-                            shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1]
-
-            for i in (range(0, len(route))):
-                x = route[i][0] -1
-                y = route[i][1] -1
-                x_coords.append(x)
-                y_coords.append(y)
-
-            aroute = []
-
-            for i in (range(0, len(aroute))):
-                x = aroute[i][0] -1
-                y = aroute[i][1] -1
-                x_acoords.append(x)
-                y_acoords.append(y)
-
-            # plot map and path
-            font = {'family': 'normal',
-                    'weight': 'bold',
-                    'size': 22}
-            plt.rc('font', **font)
-            fig, ax = plt.subplots(figsize=(20, 20))
-            ax.imshow(M, cmap=plt.cm.Greys)
-            ax.scatter(start[1]-1, start[0]-1, marker="*", color="green", s=600, label = "Start")
-            ax.scatter(goal[1]-1, goal[0]-1, marker="*", color="red", s=600, label = "Ziel")
-            plt.xlabel("Y-Koordinate")
-            plt.ylabel("X-Koordinate")
-            #plt.legend(loc="upper left")
-            ax.plot(y_coords, x_coords, color=col, label = search_type, linewidth=2.5)
-            # ax.plot(y_acoords, x_acoords, color="cyan", label="A*", linewidth=2.5)
-            ax.plot(shiftcoordsY, shiftcoordsX, color="red", label = "Übergang")
-            plt.legend()
-            plt.show()
+# def plotGraph(search_type, shiftpos, route, start, goal, M):
+#             if search_type == "multicriteria astar":
+#                 search_type = "MCA*"
+#                 col = "blue"
+#             elif search_type == "astar":
+#                 search_type = "A*"
+#                 col = "cyan"
+#             elif search_type == "best-first":
+#                 search_type = "Bestensuche"
+#                 col = "yellow"
+#             else:
+#                 search_type = "Dijkstra"
+#                 col = "orange"
+#             x_coords = []
+#             y_coords = []
+#             x_acoords = []
+#             y_acoords = []
+#             shiftcoordsX = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+#             shiftcoordsY = [shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1,
+#                             shiftpos - 1, shiftpos - 1, shiftpos - 1, shiftpos - 1]
+#
+#             for i in (range(0, len(route))):
+#                 x = route[i][0] -1
+#                 y = route[i][1] -1
+#                 x_coords.append(x)
+#                 y_coords.append(y)
+#
+#             aroute = []
+#
+#             for i in (range(0, len(aroute))):
+#                 x = aroute[i][0] -1
+#                 y = aroute[i][1] -1
+#                 x_acoords.append(x)
+#                 y_acoords.append(y)
+#
+#             # plot map and path
+#             font = {'family': 'normal',
+#                     'weight': 'bold',
+#                     'size': 22}
+#             plt.rc('font', **font)
+#             fig, ax = plt.subplots(figsize=(20, 20))
+#             ax.imshow(M, cmap=plt.cm.Greys)
+#             ax.scatter(start[1]-1, start[0]-1, marker="*", color="green", s=600, label = "Start")
+#             ax.scatter(goal[1]-1, goal[0]-1, marker="*", color="red", s=600, label = "Ziel")
+#             plt.xlabel("Y-Koordinate")
+#             plt.ylabel("X-Koordinate")
+#             #plt.legend(loc="upper left")
+#             ax.plot(y_coords, x_coords, color=col, label = search_type, linewidth=2.5)
+#             # ax.plot(y_acoords, x_acoords, color="cyan", label="A*", linewidth=2.5)
+#             ax.plot(shiftcoordsY, shiftcoordsX, color="red", label = "Übergang")
+#             plt.legend()
+#             plt.show()
 
 def buildVpipes(buildPipeDict, buildClampDict):
     tVisual = open("Testdata/visualRefreshTime.txt", "a")
@@ -1012,11 +1008,11 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
     except: Exception
 
     if refresh == False:
-        levelInfo = levelData.selectLevel(level, backgroundColor, wallVisible, topVisible, obsVisWall, obsVisTop)
+        levelInfo = level_templates.selectLevel(level, backgroundColor, wallVisible, topVisible, obsVisWall, obsVisTop)
         if not levelInfo:
             random = True
-            frequency = levelData.selectRandomLevel(level)
-            levelInfo = levelData.randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
+            frequency = level_templates.selectRandomLevel(level)
+            levelInfo = level_templates.randomPrepInit(xDots, yDots, backgroundColor, wallVisible, topVisible)
         start = levelInfo[0]
         goal = levelInfo[1]
         startAxis = levelInfo[2]
@@ -1058,7 +1054,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
             print(cMatrix_route)
             if isinstance(cMatrix_route, list):
                 pipeBuilder(cMatrix_route, parts, pipeVisible, start,startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible, topVisible, pipeTypeDict)
-                plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
+                #plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
     elif random == True:
         lvf.cdCm_Call(x_dots=xDots, y_dots=yDots, x_gap=xGap, y_gap=yGap, dot_dist=dotDist,
                       wall_thickness=wallThickness,
@@ -1078,7 +1074,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
         if pipeVisible == True:
             pipeBuilder(cMatrix_route, parts, pipeVisible, start, startAxis, goal, goalAxis, wallToTopShiftDots, wallVisible,
                     topVisible, pipeTypeDict)
-            plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
+            #plotGraph(search_type, wallToTopShiftDots, cMatrix_route, start, goal, lvf.get_boolGrid())
 
 
 
@@ -1107,6 +1103,8 @@ def refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible,
 if __name__ == "__main__":
     scene = canvas()
     app = App()
+
+
 
 
 
