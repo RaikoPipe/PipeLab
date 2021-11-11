@@ -2,6 +2,9 @@ from vpython import vector, color
 import numpy as np
 import rendering
 from path_finding import find_path
+from grid import grid_functions
+
+# todo: finish later
 
 class PipeLab:
     """An instance of PipeLab acts as an interface for path finding, rendering and user IO"""
@@ -56,12 +59,4 @@ class PipeLab:
         return solution_package
 
 
-    def render_base(self, base_display_options:dict):
-        """renders the base on which solutions can be displayed"""
-
-    def render_solution(self, solution_display_options:dict):
-        """renders a solution according to solution_display_options onto base"""
-
-
-pipelab = PipeLab
 

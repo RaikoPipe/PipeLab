@@ -196,11 +196,11 @@ class App:
                 dotCounter += dots
             tempList = [search_type, dotCounter, costCounter]
             algList.append(tempList)
-            searchNote = open("Testdata/searchtype.txt", "a")
-            lengthNote = open("Testdata/length.txt", "a")
-            costNote = open("Testdata/cost.txt", "a")
-            MinONote = open("Testdata/MinONote.txt", "a")
-            partNote = open("Testdata/partNote.txt", "a")
+            searchNote = open("results/searchtype.txt", "a")
+            lengthNote = open("results/length.txt", "a")
+            costNote = open("results/cost.txt", "a")
+            MinONote = open("results/MinONote.txt", "a")
+            partNote = open("results/partNote.txt", "a")
             if refresh == False:
                 searchNote.write("\n")
                 lengthNote.write("\n")
@@ -722,7 +722,7 @@ def determineAxis(direction):
 #             plt.show()
 
 def buildVpipes(buildPipeDict, buildClampDict):
-    tVisual = open("Testdata/visualRefreshTime.txt", "a")
+    tVisual = open("results/visualRefreshTime.txt", "a")
     startTime = datetime.now()
     for count, objects in enumerate(buildPipeDict):
         part = objects[0]
@@ -1062,7 +1062,7 @@ def createScene(wallShape, topShape, wallThickness, wallcolor, topcolor, dotcolo
                       wall_visible=wallVisible)
         RandomLevelCreator(frequency, wallToTopShiftDots, xDots, yDots, obsVisWall, obsVisTop)
         try:
-            vIT= open("Testdata/visualInitTime.txt", "a")
+            vIT= open("results/visualInitTime.txt", "a")
             execTime = datetime.now() - execTime
             vIT.write(str(execTime.total_seconds()) + "\n")
 

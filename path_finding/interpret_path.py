@@ -1,6 +1,7 @@
 from rendering import placement_functions as lvf
 from copy import deepcopy
 
+# todo: full refactoring
 
 def pipeTypeDictEmpty(dict):
     availableParts = []

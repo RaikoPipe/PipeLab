@@ -1,6 +1,6 @@
 from vpython import *
 import placement_functions as lvf
-import main
+import GUI
 import weakref
 
 'All Wall Objects are relative to Vector(0,0,0)'
@@ -46,12 +46,12 @@ def resetObstacles():
 def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color, lamp_visible,
              wall_visible, top_visible, coordinate_info_visible, camera_pos, background_color,x_res,y_res):
 
-    main.scene.delete()
-    del main.scene
+    GUI.scene.delete()
+    del GUI.scene
 
     # creating the scene
-    main.scene = canvas(width=x_res, height=y_res, center=camera_pos, background=background_color, fov=pi/5)
-    main.scene.camera.rotate(angle=pi/2, axis=vector(0,0,1))
+    GUI.scene = canvas(width=x_res, height=y_res, center=camera_pos, background=background_color, fov=pi / 5)
+    GUI.scene.camera.rotate(angle=pi / 2, axis=vector(0, 0, 1))
     print("Detected resolution: " + str(x_res) + "x" + str(y_res))
 
 
@@ -128,13 +128,6 @@ def PipeLabInstance(wall_shape, top_shape, wall_thickness, wall_color, top_color
     #initialise SinglePipe Objects
     global SinglePipeTemp
     SinglePipeTemp = cylinder()
-
-
-
-
-
-
-
 
 def StartEndInt(start, goal, startDirection, goalDirection, backgroundColor, wallVisible, topVisible):
     if backgroundColor == color.black:

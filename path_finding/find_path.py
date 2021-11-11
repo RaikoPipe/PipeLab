@@ -7,6 +7,8 @@ from rendering import object_classes, placement_functions as lvf
 from copy import deepcopy
 import time
 
+#todo: full refactoring
+#save showcase inside a show_case_grid
 
 # prepare path finding, returns numpy matrix (which is rotated by 90°) with obstacle pos (1) and planned layout pos (2)
 def displayPlot_Call(x,y, s, t, shiftpos, startAxis, goalAxis,testingPath,testedPath, heuristicType, pipeTypeDict, search_type,gC,gP,gMinO):
@@ -226,8 +228,8 @@ def getMax(Dict):
 
 #path finding algorithms start here
 def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("../Testdata/execTimeFailure.txt", "a")
-    execTimeSuccess = open("../Testdata/execTimeSuccess.txt", "a")
+    execTimeFailure = open("../results/execTimeFailure.txt", "a")
+    execTimeSuccess = open("../results/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -349,8 +351,8 @@ def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, wei
 
 
 def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts, gC, gP, gMinO):
-    execTimeFailure = open("../Testdata/execTimeFailure.txt", "a")
-    execTimeSuccess = open("../Testdata/execTimeSuccess.txt", "a")
+    execTimeFailure = open("../results/execTimeFailure.txt", "a")
+    execTimeSuccess = open("../results/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -466,8 +468,8 @@ def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristi
     return "no route found", False, False
 
 def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("../Testdata/execTimeFailure.txt", "a")
-    execTimeSuccess = open("../Testdata/execTimeSuccess.txt", "a")
+    execTimeFailure = open("../results/execTimeFailure.txt", "a")
+    execTimeSuccess = open("../results/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if M[s] == 1:
         execTimeSuccess.write("blocked" + "\n")
@@ -584,8 +586,8 @@ def astar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight
     return "no route found", False, False
 
 def bestFirstSearch(array, start, goal, shiftpos, startAxis, goalAxis, testingPath,testedPath, heuristicType, weight,  yDots, pipeTypeDict, unlimited_parts):
-    execTimeFailure = open("../Testdata/execTimeFailure.txt", "a")
-    execTimeSuccess = open("../Testdata/execTimeSuccess.txt", "a")
+    execTimeFailure = open("../results/execTimeFailure.txt", "a")
+    execTimeSuccess = open("../results/execTimeSuccess.txt", "a")
     startTime = datetime.now()
     if array[start] == 1:
         execTimeSuccess.write("blocked" + "\n")
