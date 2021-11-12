@@ -3,6 +3,8 @@ import numpy as np
 from datetime import datetime
 import interpret_path as pint
 from vpython import *
+
+from path_finding.path_data_classes import Solution, PathProblem
 from rendering import object_classes, placement_functions as lvf
 from copy import deepcopy
 import time
@@ -84,18 +86,18 @@ def collidedObstacle(v, n, array):
             return True
 
 #build the path (doesnt include s, but it should)
-def buildPath(current, came_from):
-    data = []
-    while current in came_from:
-        data.append(current)
-        current = came_from[current]
-    return data
+def buildPath(current_node, pointer_to_previous_node, start_pos):
+    path = []
+    while current_node in pointer_to_previous_node:
+        path.append(current_node)
+        current_node = pointer_to_previous_node[current_node]
+    path.append(start_pos)
+    path = path[::-1] # reverses the path to correct order (from start to goal)
+    return path
 
 #check if parts are available
-def stockCheck(path, type_dict, part_dict, unlimited_parts):
-    if not unlimited_parts:
-        availableParts = pint.pipe_stock_check(path, type_dict, part_dict)
-        return availableParts
+def stockCheck(path, type_dict, part_dict):
+    availableParts = pint.pipe_stock_check(path, type_dict, part_dict)
 
 #changes Neighbors efficiently
 def changeNeighbors(Neighbors, axis):
@@ -349,8 +351,115 @@ def dijkstra(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, wei
     execTimeSuccess.write(str(exectime.total_seconds()) + "\n")
     return "no route found", False, False
 
+def neighbor_restricted(current_node, neighbor_node, start_pos, pos, previous, current_state_grid) -> bool:
+    if current_node != start_pos:
+        previous_pos = (abs(current_node[0]-previous[current_node][0]),abs(current_node[1]-previous[current_node][1]))
+        if directionRestricted(previous_pos, current_node, pos):
+            return True
+
+    if not outOfBounds(neighbor_node, current_state_grid):
+        if collidedObstacle(current_node, pos, current_state_grid):
+            return True
+    else: return True
+
+    return False
+
+def get_f_score(algorithm, weights, current_node, neighbor_node, verifiable_neighbors_pos, pos, current_state_grid, current_score_to_start,
+                score_to_goal, start_pos, goal_pos):
+    score = 0
+    if algorithm == "mca*":
+        distance = (current_score_to_start +
+                    manhattanDistance(neighbor_node, goal_pos)) / score_to_goal[start_pos] * weights.path_length
+        cost = costP(pos, verifiable_neighbors_pos.get(pos)) * weights.cost
+        distance_to_obstacles = costMinO(current_state_grid, current_node, pos)* weights.distance_to_obstacles
+        score = distance + cost + distance_to_obstacles
+    return score
+
+
+
+
+#todo: crossingRestricted not needed anymore
+class PathFinder:
+    """class for calculating a path solution"""
+    def __init__(self, path_problem:PathProblem):
+        self.path_problem = path_problem
+        self.state_grid = path_problem.state_grid
+        self.start_pos = path_problem.start_pos
+        self.goal_pos = path_problem.goal_pos
+        self.start_axis = path_problem.start_axis
+        self.goal_axis = path_problem.goal_axis
+        self.pipe_stock = path_problem.pipe_stock
+        self.goal_is_transition = path_problem.goal_is_transition
+    #todo: for partial solution finding, we need to separate pipes and corners.
+    # i.e. there needs to be a list that point to the previously used part -> used_parts (corner can be identified as 0)
+    def multi_criteria_a_star(self, weights):
+        closed_list = set()
+        open_list = []
+
+        predecessor_node = {}
+
+        #the lower the score, the better the node
+        score_to_start = {self.start_pos:0} # G
+        score_to_goal = {self.start_pos: manhattanDistance(self.start_pos,self.goal_pos)} # F
+
+        used_parts = []
+
+        heapq.heappush(open_list, (score_to_goal[self.start_pos], self.start_pos))
+        while open_list:
+            current_node = heapq.heappop(open_list)[1] # pops the node with the smallest score from open_list
+            current_path = buildPath(current_node, predecessor_node, self.start_pos)
+            available_parts = pint.pipe_stock_check(current_path, self.pipe_stock, used_parts)
+            verifiable_neighbors_pos = positionDependence(pint.set_standard_neighbors(available_parts), self.start_pos,
+                                                          self.start_axis, self.goal_pos, self.goal_axis, current_node)
+            current_state_grid = pint.getAlteredMatrix(current_path, self.state_grid)
+
+
+            if current_node == self.goal_pos:
+                # search is finished!
+                overall_score = 0 # todo: calculate overall score with function
+                solution = Solution(current_path, used_parts, current_state_grid, overall_score,  "undefined",
+                                    self.path_problem)
+                return solution
+
+            closed_list.add(current_node)
+
+
+
+            for pos in verifiable_neighbors_pos:
+                neighbor_node = (current_node+ pos[0], current_node + pos[1])
+
+                current_score_to_start = score_to_goal[current_node] + manhattanDistance(current_node, neighbor_node)
+
+                if neighbor_node in closed_list and current_score_to_start >= score_to_start.get(neighbor_node, 0):
+                    continue
+
+                if current_node in closed_list:
+                    continue
+
+                if neighbor_restricted(current_node, neighbor_node, self.start_pos, pos, closed_list, predecessor_node,
+                                       current_state_grid):
+                    continue
+
+                current_score_to_goal = get_f_score(algorithm, weights, current_node, neighbor_node,
+                                                    verifiable_neighbors_pos, pos, current_state_grid,
+                                                    current_score_to_start, score_to_goal, self.start_pos, self.goal_pos)
+
+                if current_score_to_start < score_to_start.get(neighbor_node, 0) or neighbor_node not in [i[1] for i in open_list]:
+                    predecessor_node[neighbor_node] = current_node
+                    used_parts.append(verifiable_neighbors_pos.get(pos))
+                    score_to_start[neighbor_node] = current_score_to_start
+                    score_to_goal[neighbor_node] =
+
+
+
+
+
+
+
+
 
 def multicriteriaAstar(M, s, t, z, sdir, tdir, testingPath, testedPath, heuristicType, weight, yDots, pipeTypeDict, unlimited_parts, gC, gP, gMinO):
+    # what the fuck is this code? what the fuck are those parameters!?
     execTimeFailure = open("../results/execTimeFailure.txt", "a")
     execTimeSuccess = open("../results/execTimeSuccess.txt", "a")
     startTime = datetime.now()

@@ -7,13 +7,14 @@ from grid import grid_functions
 # todo: finish later
 
 class PipeLab:
+    solution_list: dict  # {solution: score}
     """An instance of PipeLab acts as an interface for path finding, rendering and user IO"""
     def __init__(self):
 
         self.coord_grid = None
         self.state_grid = None
 
-        self.solution_list = []
+        self.solution_list = {}
 
         # self.wallDim = wallShape
         # self.topDim = topShape
