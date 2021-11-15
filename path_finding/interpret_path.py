@@ -1,4 +1,4 @@
-from rendering import placement_functions as lvf
+from rendering import positional_functions_old as lvf
 from copy import deepcopy
 
 # todo: full refactoring
@@ -78,6 +78,15 @@ def set_standard_neighbors(list):
         dict[(-value-1, 0)] = value
         dict[(0,value+1)] = value
         dict[(0,-value-1)] = value
+    return dict
+
+def get_neighbors(parts:dict) -> dict:
+    dict = {}
+    for length, part_id in dict:
+        dict[(length,0)] = part_id # right
+        dict[(-length, 0)] = part_id # left
+        dict[(0,length)] = part_id # up
+        dict[(0,-length)] = part_id # down
     return dict
 
 def pathCheck(route, matrix):

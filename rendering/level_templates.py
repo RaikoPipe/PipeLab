@@ -1,6 +1,6 @@
-import object_classes
+from rendering import object_classes
 from vpython import vector
-import placement_functions as lvf
+from rendering import positional_functions_old as lvf
 import random
 
 #select level based on user input

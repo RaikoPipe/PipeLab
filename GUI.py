@@ -9,7 +9,7 @@ import math
 import random
 #import matplotlib.pyplot as plt
 from datetime import datetime
-from rendering import level_templates, object_classes, placement_functions as lvf
+from rendering import level_templates, object_classes, positional_functions_old as lvf
 
 # lengthText = Objects.displayText(vector(10,10,5))
 # costText = Objects.displayText(vector(10,5,5))
@@ -1100,9 +1100,9 @@ def refreshDisplayObjects(wallVisible, topVisible, obstacleVisible, pipeVisible,
 
 
 #start the app
-if __name__ == "__main__":
-    scene = canvas()
-    app = App()
+# if __name__ == "__main__":
+#     scene = canvas()
+#     app = App()
 
 
 

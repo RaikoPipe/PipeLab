@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 
+@dataclass
 class PathProblem:
     """Data class that contains detailed information about the path problem."""
     state_grid: any
     start_pos: tuple
     goal_pos: tuple
     start_axis: tuple # direction that start is restricted to
+
     goal_axis: tuple # direction that goal is restricted to (i.e. last part that is linked to the goal)
     goal_is_transition: bool # direction of the transition point; Is None if goal is not a transition
     pipe_stock: dict #{point_length: amount}
@@ -20,7 +22,8 @@ class Solution:
     algorithm: str # what algorithm has been used to search
     path_problem: PathProblem # the original path problem
 
-class weights:
+@dataclass
+class Weights:
     """Data class that contains values for the weights used in a multi criteria a* search."""
     path_length : float
     cost: float
