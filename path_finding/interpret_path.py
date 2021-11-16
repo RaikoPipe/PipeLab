@@ -31,28 +31,29 @@ def determineAxis(direction):
         angle = lvf.right
     return add, angle
 
-def pipe_stock_check(route, pipeTypeDict, part_dict):
-    availableParts = []
-    pipeDict = deepcopy(pipeTypeDict)
-    if not part_dict:
-        availableParts = pipeTypeDictEmpty(pipeDict)
-        return availableParts
+def pipe_stock_check(current_path, pipe_stock, used_parts):
+    available_parts = []
+    pipe_stock_copy = deepcopy(pipe_stock)
+    if not used_parts:
+        #no parts used, no need to check current path
+        available_parts = pipeTypeDictEmpty(pipe_stock_copy)
+        return available_parts
 
 
-    for idx, (x,y) in enumerate(route):
+    for idx, _ in enumerate(current_path):
 
         #dont check next point if last point has been reached
-        if idx == len(route)-1:
+        if idx == len(current_path)-1:
             break
 
         #set pointA and pointB, calculate difference
-        pointB = route[idx+1]
-        og_part = part_dict.get(pointB)
+        pointB = current_path[idx + 1]
+        og_part = used_parts.get(pointB)
 
-        pipeDict[og_part] = pipeDict[og_part] - 1
-        availableParts = pipeTypeDictEmpty(pipeDict)
+        pipe_stock_copy[og_part] = pipe_stock_copy[og_part] - 1
+        available_parts = pipeTypeDictEmpty(pipe_stock_copy)
 
-    return availableParts
+    return available_parts
 
 
 def change_standard_neighbors(standardNeighbors, emptyList):
