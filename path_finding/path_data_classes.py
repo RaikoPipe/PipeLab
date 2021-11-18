@@ -6,9 +6,10 @@ class PathProblem:
     state_grid: any
     start_pos: tuple
     goal_pos: tuple
-    start_axis: tuple # direction that start is restricted to
 
+    start_axis: tuple # direction that start is restricted to
     goal_axis: tuple # direction that goal is restricted to (i.e. last part that is linked to the goal)
+
     goal_is_transition: bool # direction of the transition point; Is None if goal is not a transition
     pipe_stock: dict #{point_length: amount}
     part_cost: dict # dictionary that contains the replacement costs (or opportunity costs) of parts

@@ -152,14 +152,11 @@ def getMax(Dict):
     return maxValue
 
 def neighbor_restricted(current_node, neighbor_node, start_pos, pos, previous, current_state_grid) -> bool:
-    # if current_node != start_pos:
-    #     previous_pos = (abs(current_node[0]-previous[current_node][0]),abs(current_node[1]-previous[current_node][1]))
-    #     if directionRestricted(previous_pos, current_node, pos):
-    #         return True
 
     if not outOfBounds(neighbor_node, current_state_grid):
         if collidedObstacle(current_node, pos, current_state_grid):
             return True
+
     else: return True
 
     return False
@@ -239,7 +236,7 @@ def determine_neighbor_pos(axis, goal_pos, goal_axis, current_node, predecessor_
     # check which parts are still available for the next move
     available_parts = pint.pipe_stock_check(current_path, pipe_stock, used_parts)
     neighbor_pos = []
-    previous_part = used_parts.get(predecessor_node)
+    previous_part = used_parts.get(current_node)
     if previous_part is None:
         # todo: it is assumed that if there is no previous part, we are at start pos. However, this only works when
         #  nodes cant be overwritten while searching; proposal: check instead if current node is start (easy)
@@ -276,6 +273,7 @@ class PathFinder:
         self.goal_is_transition = path_problem.goal_is_transition
         self.part_cost = path_problem.part_cost
     def find_path(self, weights, algorithm):
+        """"""
         closed_list = set()
         open_list = []
 
@@ -288,12 +286,9 @@ class PathFinder:
 
         used_part = {}
 
-
-
         while open_list:
             current_node = heapq.heappop(open_list)[1] # pops the node with the smallest score from open_list
             current_path = buildPath(current_node, predecessor_node, self.start_pos)
-            available_parts = pint.pipe_stock_check(current_path, self.pipe_stock, used_part)
 
             if current_node == self.start_pos:
                 verifiable_neighbors = determine_neighbor_pos(axis=self.start_axis,
@@ -319,6 +314,7 @@ class PathFinder:
                 #todo: list with parts used in the solution (medium)
                 overall_score = 0
                 solution_parts = []
+                print(used_part)
 
                 solution = Solution(current_path, solution_parts, current_state_grid, overall_score,  algorithm,
                                     self.path_problem)
