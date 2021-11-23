@@ -1,21 +1,13 @@
 import heapq
 import numpy as np
-from datetime import datetime
-from path_finding import interpret_path as pint
-from vpython import *
 
+from path_finding import interpret_path as pint
 from path_finding.path_data_classes import Solution, PathProblem, Weights
-from rendering import object_classes, positional_functions_old as lvf
-from copy import deepcopy
-import time
 from path_finding.tuple_math import *
 from typing import Optional
 
+# idea: make a separate function for search showcase
 
-# todo: full refactoring
-# save showcase inside a show_case_grid
-
-# if neighbor vn is outside array shape, dont allow
 def out_of_bounds(neighbor_node: tuple, state_grid):
     """Checks if neighbor is outside of the boundaries of the state grid."""
     if 0 <= neighbor_node[0] < state_grid.shape[0]:
@@ -123,7 +115,7 @@ def get_e_score(algorithm: str, weights: Weights, current_node: tuple, neighbor_
     # E Score: Extra Score (additional score values)
     score = 0
 
-    # todo: suggestion: add a dict containing part id:length to explicitly differentiate between length and id
+    # suggestion: add a dict containing part id:length to explicitly differentiate between length and id
     if algorithm == "mca*":
         if part_id == 0:
             length = 1
@@ -200,7 +192,7 @@ def determine_neighbor_pos(axis: tuple, goal_node: tuple, goal_axis: tuple, curr
     previous_part = used_parts.get(current_node)
 
     if previous_part is None:
-        # todo: it is assumed that if there is no previous part, we are at start pos. However, this only works when
+        # suggestion: it is assumed that if there is no previous part, we are at start pos. However, this only works when
         #  nodes cant be overwritten while searching; proposal: check instead if current node is start (easy)
         # current node is start -> only one axis is allowed
         neighbor_pos.extend(get_corner_neighbors(axis, available_parts))
@@ -232,23 +224,26 @@ def get_f_score(current_score_start_distance: float, current_score_goal_distance
     return score
 
 
-def get_worst_move_cost(part_cost: dict):
+def get_worst_move_cost(part_cost: dict) -> (float,list):
+    """Calculates the cost of the worst move."""
     # is there a more efficient way of doing this?
     worst_move_cost = 0
+    worst_moves = []
     for _, (part_id, cost) in enumerate(part_cost.items()):
         length = part_id
         if part_id == 0:
             length = 1
-        if worst_move_cost < cost / length:
+        if worst_move_cost <= cost / length:
             worst_move_cost = cost / length
-    return worst_move_cost
+            worst_moves.append(part_id)
+    return worst_move_cost, worst_moves
 
 
 class PathFinder:
-    """class for calculating a path solution"""
+    """class for calculating a path solution."""
 
     def __init__(self, path_problem: PathProblem):
-        self.path_problem = path_problem
+        self._path_problem = path_problem # the original path problem
         self.state_grid = path_problem.state_grid
         self.start_node = path_problem.start_node
         self.goal_node = path_problem.goal_node
@@ -257,7 +252,8 @@ class PathFinder:
         self.pipe_stock = path_problem.pipe_stock
         self.goal_is_transition = path_problem.goal_is_transition
         self.part_cost = path_problem.part_cost
-        self.worst_move_cost = get_worst_move_cost(self.part_cost)
+        self.worst_move_cost, self.worst_moves = get_worst_move_cost(self.part_cost)
+        self.solutions = []
 
     def find_path(self, weights, algorithm) -> Optional[Solution]:
         """Searches for a solution for the given path problem."""
@@ -305,9 +301,10 @@ class PathFinder:
                     solution_parts.append(used_part[current_node])
                     current_node = predecessor_node[current_node]
                 solution_parts = solution_parts[::-1]
-
                 solution = Solution(current_path, solution_parts, current_state_grid, overall_score, algorithm,
-                                    self.path_problem)
+                                    self._path_problem)
+
+                self.solutions.append(solution)
                 return solution
 
             closed_list.add(current_node)
@@ -350,3 +347,26 @@ class PathFinder:
         else:
             # no solution found!
             return None
+
+    def get_invalid_solutions(self, remove:bool=True) -> list:
+        """Gets invalid solutions and returns them. Optionally also removes them. Should be called after modifying the
+         path problem."""
+
+        #todo: code function
+
+    def set_path_problem(self, path_problem: PathProblem, remove_invalid_solutions: bool=False) -> list:
+        """Convenience function for modifying a path problem. Returns solutions that are now invalid."""
+
+        self.state_grid = path_problem.state_grid
+        self.start_node = path_problem.start_node
+        self.goal_node = path_problem.goal_node
+        self.start_axis = path_problem.start_axis
+        self.goal_axis = path_problem.goal_axis
+        self.pipe_stock = path_problem.pipe_stock
+        self.goal_is_transition = path_problem.goal_is_transition
+        self.part_cost = path_problem.part_cost
+        self.worst_move_cost, self.worst_moves = get_worst_move_cost(self.part_cost)
+
+        return self.get_invalid_solutions(remove=remove_invalid_solutions)
+
+
