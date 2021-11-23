@@ -4,8 +4,8 @@ from dataclasses import dataclass
 class PathProblem:
     """Data class that contains detailed information about the path problem."""
     state_grid: any
-    start_pos: tuple
-    goal_pos: tuple
+    start_node: tuple
+    goal_node: tuple
 
     start_axis: tuple # direction that start is restricted to
     goal_axis: tuple # direction that goal is restricted to (i.e. last part that is linked to the goal)
