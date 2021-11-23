@@ -201,7 +201,7 @@ def determineClampPlacement(Matrix, a, n, type):
         b_left = (aS[0] + n_left[0], aS[1] + n_left[1])
         n_right = (right[0] + (axis[0] * (i)), right[1] + (axis[1] * (i)))
         b_right = (aS[0] + n_right[0], aS[1] + n_right[1])
-        if not agt.outOfBounds(b_left, Matrix) and not agt.outOfBounds(b_right, Matrix):
+        if not agt.out_of_bounds(b_left, Matrix) and not agt.out_of_bounds(b_right, Matrix):
             if Matrix[b_left] != 0 or Matrix[b_right] != 0:
                 continue
             else:
@@ -218,7 +218,7 @@ def determineClampPlacement(Matrix, a, n, type):
             b_left = (aS[0] + n_left[0], aS[1] + n_left[1])
             n_right = (right[0] + (axis[0] * (i)), right[1] + (axis[1] * (i)))
             b_right = (aS[0] + n_right[0], aS[1] + n_right[1])
-            if not agt.outOfBounds(b_left, Matrix) and not agt.outOfBounds(b_right, Matrix):
+            if not agt.out_of_bounds(b_left, Matrix) and not agt.out_of_bounds(b_right, Matrix):
                 if Matrix[b_left] != 0 and Matrix[b_right] != 0:
                     continue
                 else:

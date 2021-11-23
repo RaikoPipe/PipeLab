@@ -768,7 +768,7 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
         differenceX = list(pointB)[0] - list(pointA)[0]
         differenceY = list(pointB)[1] - list(pointA)[1]
         diff = (differenceX, differenceY)
-        MinOValue = MinOValue + agt.costMinO(Matrix,(pointA[0]-1,pointA[1]-1),diff) * abs(diff[0] - diff[1])*2
+        MinOValue = MinOValue + agt.calculate_distance_to_obstacles(Matrix, (pointA[0] - 1, pointA[1] - 1), diff) * abs(diff[0] - diff[1]) * 2
 
         if pointB[1] > wallToTopShiftDots and topVisible:
             pipeVisible = True
