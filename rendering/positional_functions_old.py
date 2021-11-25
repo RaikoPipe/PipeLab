@@ -1,7 +1,9 @@
 import numpy as np
 from vpython import *
 import weakref
-from path_finding import find_path as agt, interpret_path as pint
+
+import path_finding.restrictions
+from path_finding import path_finder as agt, restrictions as pint
 
 # all dot objects are saved here
 global topDotDict
@@ -182,7 +184,7 @@ def determineSecondPipePlacement(pipe_axis, pipe_coord, secondPipeLength):
 def determineClampPlacement(Matrix, a, n, type):
     if type == 3:
         print("here")
-    axis = pint.getAxis(n)
+    axis = pint.get_direction_of_pos(n)
     nLength = abs(n[0] - n[1])
     if nLength != type:
         nLength = nLength -1
@@ -201,7 +203,7 @@ def determineClampPlacement(Matrix, a, n, type):
         b_left = (aS[0] + n_left[0], aS[1] + n_left[1])
         n_right = (right[0] + (axis[0] * (i)), right[1] + (axis[1] * (i)))
         b_right = (aS[0] + n_right[0], aS[1] + n_right[1])
-        if not agt.out_of_bounds(b_left, Matrix) and not agt.out_of_bounds(b_right, Matrix):
+        if not path_finding.restrictions.out_of_bounds(b_left, Matrix) and not path_finding.restrictions.out_of_bounds(b_right, Matrix):
             if Matrix[b_left] != 0 or Matrix[b_right] != 0:
                 continue
             else:
@@ -218,7 +220,7 @@ def determineClampPlacement(Matrix, a, n, type):
             b_left = (aS[0] + n_left[0], aS[1] + n_left[1])
             n_right = (right[0] + (axis[0] * (i)), right[1] + (axis[1] * (i)))
             b_right = (aS[0] + n_right[0], aS[1] + n_right[1])
-            if not agt.out_of_bounds(b_left, Matrix) and not agt.out_of_bounds(b_right, Matrix):
+            if not path_finding.restrictions.out_of_bounds(b_left, Matrix) and not path_finding.restrictions.out_of_bounds(b_right, Matrix):
                 if Matrix[b_left] != 0 and Matrix[b_right] != 0:
                     continue
                 else:

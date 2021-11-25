@@ -1,12 +1,77 @@
-import heapq
 import numpy as np
 
-from path_finding import interpret_path as pint
-from path_finding.path_data_classes import Solution, PathProblem, Weights
-from path_finding.tuple_math import *
-from typing import Optional
+from path_finding.path_data_classes import Weights
+from path_finding.tuple_math import sum_absolute_a_b, sum_tuple
+from math import copysign
+from copy import deepcopy
 
-# idea: make a separate function for search showcase
+# todo: full refactoring
+
+def get_available_parts(pipe_stock: dict) -> list:
+    """Returns available parts as list."""
+    available_parts = []
+    for _, (part_id, amount) in enumerate(pipe_stock.items()):
+        if amount > 0:
+            if part_id in available_parts:
+                continue
+            else:
+                available_parts.append(part_id)
+    return available_parts
+
+def pipe_stock_check(current_path:list, pipe_stock:dict, used_parts:dict) -> list:
+    """Checks how many parts are available."""
+    available_parts = []
+    pipe_stock_copy = deepcopy(pipe_stock)
+    if not used_parts:
+        #no parts used, no need to check current path
+        available_parts = get_available_parts(pipe_stock_copy)
+        return available_parts
+
+
+    for idx, _ in enumerate(current_path):
+
+        #dont check next point if last point has been reached
+        if idx == len(current_path)-1:
+            break
+
+        b = current_path[idx + 1]
+        og_part = used_parts.get(b)
+
+        pipe_stock_copy[og_part] = pipe_stock_copy[og_part] - 1
+        available_parts = get_available_parts(pipe_stock_copy)
+
+    return available_parts
+
+def get_direction_of_pos(pos) -> tuple:
+    """Returns the direction of a relative position."""
+    if pos[0]==0:
+        x = 0
+        y = pos[1]**0
+    else:
+        x= pos[0]**0
+        y=0
+    x= copysign(x,pos[0])
+    y= copysign(y,pos[1])
+    return x,y
+
+print(get_direction_of_pos((-4,0)))
+
+def get_current_state_grid(current_path, state_grid):
+    """Returns the current state grid according to the current path."""
+    current_state_grid = deepcopy(state_grid)
+    for index, v in enumerate(current_path):
+        if index == len(current_path) - 1:
+            break
+        a = current_path[index]
+        b = current_path[index + 1]
+        pos = (b[0] - a[0],b[1] - a[1])
+        direction = get_direction_of_pos(pos)
+        length = abs(pos[0] - pos[1])
+        for i in range(1, length + 1):
+            pos = (a[0] + direction[0] * i, a[1] + direction[1] * i)
+            current_state_grid[pos] = 2 # 2: occupied by pipe
+    return current_state_grid
+
 
 def out_of_bounds(neighbor_node: tuple, state_grid):
     """Checks if neighbor is outside of the boundaries of the state grid."""
@@ -23,7 +88,7 @@ def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid) -> 
     """Checks if the path from current_node to neighbor_node obstructs any obstacles."""
 
     length = abs(neighbor_node[0] - neighbor_node[1])
-    axis = pint.getAxis(neighbor_node)
+    axis = get_direction_of_pos(neighbor_node)
 
     for i in range(1, length + 1):
         pos = (current_node[0] + axis[0] * i, current_node[1] + axis[1] * i)
@@ -54,7 +119,7 @@ def calculate_distance_to_obstacles(state_grid, current_node: tuple, neighbor_po
     """Calculates the amount of obstacles next to the move divided by the maximum possible amount of obstacles next to
      the move."""
 
-    axis = pint.getAxis(neighbor_pos)
+    axis = get_direction_of_pos(neighbor_pos)
     length = abs(neighbor_pos[0] - neighbor_pos[1])
     min_o = length * 2
     upper_bound = min_o
@@ -113,8 +178,8 @@ def get_e_score(algorithm: str, weights: Weights, current_node: tuple, neighbor_
                 part_cost: dict, worst_move_cost: float, current_state_grid) -> float:
     """Calculates normalized E Score for MCA*/MCSA*."""
     # E Score: Extra Score (additional score values)
-    score = 0
 
+    score = 0
     # suggestion: add a dict containing part id:length to explicitly differentiate between length and id
     if algorithm == "mca*":
         if part_id == 0:
@@ -131,9 +196,8 @@ def get_e_score(algorithm: str, weights: Weights, current_node: tuple, neighbor_
     return score
 
 
-def get_corner_neighbors(axis: tuple, available_parts: dict) -> list:
-    """Returns all the neighbors that are allowed as the next move by the currently available corner parts
-     (usually only 1 neighbor)."""
+def get_corner_neighbors(axis: tuple, available_parts: list) -> list:
+    """Returns all the neighbors that are allowed as the next move by the currently available corner parts."""
 
     # corner moves can ONLY go in one direction
     neighbors = []
@@ -187,7 +251,7 @@ def determine_neighbor_pos(axis: tuple, goal_node: tuple, goal_axis: tuple, curr
                            pipe_stock, used_parts) -> list:
     """Determines what neighbors are reachable from the current position and with the available parts."""
 
-    available_parts = pint.pipe_stock_check(current_path, pipe_stock, used_parts)
+    available_parts = pipe_stock_check(current_path, pipe_stock, used_parts)
     neighbor_pos = []
     previous_part = used_parts.get(current_node)
 
@@ -237,136 +301,3 @@ def get_worst_move_cost(part_cost: dict) -> (float,list):
             worst_move_cost = cost / length
             worst_moves.append(part_id)
     return worst_move_cost, worst_moves
-
-
-class PathFinder:
-    """class for calculating a path solution."""
-
-    def __init__(self, path_problem: PathProblem):
-        self._path_problem = path_problem # the original path problem
-        self.state_grid = path_problem.state_grid
-        self.start_node = path_problem.start_node
-        self.goal_node = path_problem.goal_node
-        self.start_axis = path_problem.start_axis
-        self.goal_axis = path_problem.goal_axis
-        self.pipe_stock = path_problem.pipe_stock
-        self.goal_is_transition = path_problem.goal_is_transition
-        self.part_cost = path_problem.part_cost
-        self.worst_move_cost, self.worst_moves = get_worst_move_cost(self.part_cost)
-        self.solutions = []
-
-    def find_path(self, weights, algorithm) -> Optional[Solution]:
-        """Searches for a solution for the given path problem."""
-
-        closed_list = set()
-        open_list = []
-
-        predecessor_node = {}
-
-        score_start = {self.start_node: 0}  # G
-        upper_bound_distance = manhattan_distance(self.start_node,
-                                                  self.goal_node)  # artificial upper bound for distance
-        total_score = {self.start_node: upper_bound_distance}  # F
-
-        heapq.heappush(open_list, (total_score[self.start_node], self.start_node))
-
-        used_part = {}
-
-        while open_list:
-            current_node = heapq.heappop(open_list)[1]  # pops the node with the smallest score from open_list
-            current_path = build_path(current_node=current_node, predecessor_node=predecessor_node,
-                                      start_node=self.start_node)
-
-            if current_node == self.start_node:
-                verifiable_neighbors = determine_neighbor_pos(axis=self.start_axis,
-                                                              goal_node=self.goal_node, goal_axis=self.goal_axis,
-                                                              current_node=current_node,
-                                                              current_path=current_path,
-                                                              pipe_stock=self.pipe_stock, used_parts=used_part)
-            else:
-                axis = pint.getAxis(diff_tuple(current_node, predecessor_node.get(current_node)))
-                verifiable_neighbors = determine_neighbor_pos(axis=axis,
-                                                              goal_node=self.goal_node, goal_axis=self.goal_axis,
-                                                              current_node=current_node,
-                                                              current_path=current_path,
-                                                              pipe_stock=self.pipe_stock, used_parts=used_part)
-
-            current_state_grid = pint.getAlteredMatrix(current_path, self.state_grid)
-
-            if current_node == self.goal_node:
-                # search is finished!
-                overall_score = total_score[current_node]
-                solution_parts = []
-                while current_node in used_part:
-                    solution_parts.append(used_part[current_node])
-                    current_node = predecessor_node[current_node]
-                solution_parts = solution_parts[::-1]
-                solution = Solution(current_path, solution_parts, current_state_grid, overall_score, algorithm,
-                                    self._path_problem)
-
-                self.solutions.append(solution)
-                return solution
-
-            closed_list.add(current_node)
-
-            for (pos, part_id) in verifiable_neighbors:
-                neighbor_node = sum_tuple(current_node, pos)
-
-                current_score_start_distance = score_start[current_node] + \
-                                               manhattan_distance(current_node, neighbor_node) / total_score[
-                                                   self.start_node]
-
-                if neighbor_node in closed_list:  # and current_score_start >= score_start.get(neighbor_node, 0):
-                    continue
-
-                if neighbor_restricted(current_node=current_node, neighbor_node=neighbor_node, pos=pos,
-                                       current_state_grid=current_state_grid):
-                    continue
-
-                if current_score_start_distance < score_start.get(neighbor_node, 0) or neighbor_node not in [p[1] for p
-                                                                                                             in
-                                                                                                             open_list]:
-                    predecessor_node[neighbor_node] = current_node
-
-                    used_part[neighbor_node] = part_id
-
-                    score_start[neighbor_node] = current_score_start_distance
-
-                    current_score_goal_distance = get_m_score(algorithm=algorithm, goal_node=self.goal_node,
-                                                              neighbor_node=neighbor_node,
-                                                              weights=weights, upper_bound=total_score[self.start_node])
-
-                    current_score_extra = get_e_score(algorithm=algorithm, weights=weights, current_node=current_node,
-                                                      neighbor_pos=pos,
-                                                      part_cost=self.part_cost, worst_move_cost=self.worst_move_cost,
-                                                      current_state_grid=current_state_grid, part_id=part_id)
-
-                    total_score[neighbor_node] = get_f_score(current_score_start_distance, current_score_goal_distance,
-                                                             current_score_extra, total_score[current_node], algorithm)
-                    heapq.heappush(open_list, (total_score[neighbor_node], neighbor_node))
-        else:
-            # no solution found!
-            return None
-
-    def get_invalid_solutions(self, remove:bool=True) -> list:
-        """Gets invalid solutions and returns them. Optionally also removes them. Should be called after modifying the
-         path problem."""
-
-        #todo: code function
-
-    def set_path_problem(self, path_problem: PathProblem, remove_invalid_solutions: bool=False) -> list:
-        """Convenience function for modifying a path problem. Returns solutions that are now invalid."""
-
-        self.state_grid = path_problem.state_grid
-        self.start_node = path_problem.start_node
-        self.goal_node = path_problem.goal_node
-        self.start_axis = path_problem.start_axis
-        self.goal_axis = path_problem.goal_axis
-        self.pipe_stock = path_problem.pipe_stock
-        self.goal_is_transition = path_problem.goal_is_transition
-        self.part_cost = path_problem.part_cost
-        self.worst_move_cost, self.worst_moves = get_worst_move_cost(self.part_cost)
-
-        return self.get_invalid_solutions(remove=remove_invalid_solutions)
-
-

@@ -1,7 +1,7 @@
 from vpython import vector, color
 import numpy as np
 import rendering
-from path_finding import find_path
+from path_finding import path_finder
 from grid import grid_functions
 
 # todo: finish later
@@ -42,17 +42,17 @@ class PipeLab:
     def find_solution(self, solution_preferences:dict, available_parts:dict, state_grid)->dict:
         """finds a solution to the given conditions"""
         if solution_preferences["algorithm"] == "dijkstra":
-            path, parts_used, solution_grid = find_path.dijkstra(self.lMatrix, self.start, self.goal, self.shiftPos, self.startAxis, self.goalAxis, False,
-                                    False, "", 1, self.yDots, self.availableTypes, False)
+            path, parts_used, solution_grid = path_finder.dijkstra(self.lMatrix, self.start, self.goal, self.shiftPos, self.startAxis, self.goalAxis, False,
+                                                                   False, "", 1, self.yDots, self.availableTypes, False)
         elif solution_preferences["algorithm"] == "best-first":
-            path, parts_used, solution_grid = find_path.bestFirstSearch(self.lMatrix, self.start, self.goal, self.shiftPos, self.startAxis, self.goalAxis, False,
-                                    False, "", 1, self.yDots, self.availableTypes, False)
+            path, parts_used, solution_grid = path_finder.bestFirstSearch(self.lMatrix, self.start, self.goal, self.shiftPos, self.startAxis, self.goalAxis, False,
+                                                                          False, "", 1, self.yDots, self.availableTypes, False)
         elif solution_preferences["algorithm"] == "multicriteria astar":
-            path, parts_used, solution_grid = find_path.multicriteriaAstar(self.lMatrix, self.start, self.goal, self.shiftPos, self.startAxis, self.goalAxis, False,
-                                    False, "", 1, self.yDots, self.availableTypes, False ,gC, gP, gMinO)
+            path, parts_used, solution_grid = path_finder.multicriteriaAstar(self.lMatrix, self.start, self.goal, self.shiftPos, self.startAxis, self.goalAxis, False,
+                                                                             False, "", 1, self.yDots, self.availableTypes, False, gC, gP, gMinO)
         else:
-            path, parts_used, solution_grid = find_path.astar(self.lMatrix, self.start, self.goal, self.shiftPos, self.startAxis, self.goalAxis, False,
-                                    False, "", 1, self.yDots, self.availableTypes, False)
+            path, parts_used, solution_grid = path_finder.astar(self.lMatrix, self.start, self.goal, self.shiftPos, self.startAxis, self.goalAxis, False,
+                                                                False, "", 1, self.yDots, self.availableTypes, False)
         solution_package = {"path":path,"parts_used":parts_used, "solution_grid":solution_grid}
 
         self.solution_list.append(solution_package)

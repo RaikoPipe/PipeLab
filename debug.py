@@ -1,4 +1,4 @@
-from path_finding.find_path import PathFinder
+from path_finding.path_finder import PathFinder
 from path_finding.path_data_classes import PathProblem, Weights
 from grid.grid_functions import get_empty_stategrid, change_grid_states
 
