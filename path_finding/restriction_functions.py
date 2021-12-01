@@ -1,7 +1,8 @@
 import numpy as np
 
-from path_finding.path_data_classes import Weights
-from path_finding.tuple_math import sum_absolute_a_b, sum_tuple
+from data_class.Weights import Weights
+from data_class.PredecessorData import PredecessorData
+from path_finding.p_math import sum_absolute_a_b, sum_nodes, diff_nodes
 from math import copysign
 from copy import deepcopy
 
@@ -18,6 +19,7 @@ def get_available_parts(pipe_stock: dict) -> list:
                 available_parts.append(part_id)
     return available_parts
 
+#todo: simplify this
 def pipe_stock_check(current_path:list, pipe_stock:dict, used_parts:dict) -> list:
     """Checks how many parts are available."""
     available_parts = []
@@ -42,7 +44,7 @@ def pipe_stock_check(current_path:list, pipe_stock:dict, used_parts:dict) -> lis
 
     return available_parts
 
-def get_direction_of_pos(pos) -> tuple:
+def get_direction_of_pos(pos:tuple) -> tuple:
     """Returns the direction of a relative position."""
     if pos[0]==0:
         x = 0
@@ -50,8 +52,8 @@ def get_direction_of_pos(pos) -> tuple:
     else:
         x= pos[0]**0
         y=0
-    x= copysign(x,pos[0])
-    y= copysign(y,pos[1])
+    x= int(copysign(x,pos[0]))
+    y= int(copysign(y,pos[1]))
     return x,y
 
 print(get_direction_of_pos((-4,0)))
@@ -88,22 +90,22 @@ def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid) -> 
     """Checks if the path from current_node to neighbor_node obstructs any obstacles."""
 
     length = abs(neighbor_node[0] - neighbor_node[1])
-    axis = get_direction_of_pos(neighbor_node)
+    direction = get_direction_of_pos(neighbor_node)
 
     for i in range(1, length + 1):
-        pos = (current_node[0] + axis[0] * i, current_node[1] + axis[1] * i)
-        if state_grid[pos] != 0:
+        node = (current_node[0] + direction[0] * i, current_node[1] + direction[1] * i)
+        if state_grid[node] != 0:
             return True
 
 
-def build_path(current_node: tuple, predecessor_node: dict, start_node: tuple) -> list:
+def build_path(current_node: tuple, predecessor: dict, start_node: tuple) -> list:
     """Constructs a path from start to the current node."""
 
     path = []
 
-    while current_node in predecessor_node:
+    while current_node in predecessor:
         path.append(current_node)
-        current_node = predecessor_node[current_node]
+        current_node = predecessor.get(current_node).predecessor_node
     path.append(start_node)
     path = path[::-1]  # reverses the path to correct order (from start to goal)
     return path
@@ -247,7 +249,7 @@ def goal_restricted(part_id, neighbor_node, axis, goal_node, goal_axis):
     return True
 
 
-def determine_neighbor_pos(axis: tuple, goal_node: tuple, goal_axis: tuple, current_node: tuple, current_path,
+def determine_neighbor_pos(direction: tuple, goal_node: tuple, goal_direction: tuple, current_node: tuple, current_path,
                            pipe_stock, used_parts) -> list:
     """Determines what neighbors are reachable from the current position and with the available parts."""
 
@@ -259,18 +261,18 @@ def determine_neighbor_pos(axis: tuple, goal_node: tuple, goal_axis: tuple, curr
         # suggestion: it is assumed that if there is no previous part, we are at start pos. However, this only works when
         #  nodes cant be overwritten while searching; proposal: check instead if current node is start (easy)
         # current node is start -> only one axis is allowed
-        neighbor_pos.extend(get_corner_neighbors(axis, available_parts))
-        neighbor_pos.extend(get_pipe_neighbors(axis, available_parts, True))
+        neighbor_pos.extend(get_corner_neighbors(direction, available_parts))
+        neighbor_pos.extend(get_pipe_neighbors(direction, available_parts, True))
     elif previous_part == 0:
         # previous move was corner -> only pipes allowed
-        neighbor_pos.extend(get_pipe_neighbors(axis, available_parts, False))
+        neighbor_pos.extend(get_pipe_neighbors(direction, available_parts, False))
     else:
         # previous mode was pipe -> only corners allowed
-        neighbor_pos.extend(get_corner_neighbors(axis, available_parts))
+        neighbor_pos.extend(get_corner_neighbors(direction, available_parts))
 
     for idx, (pos, part_id) in enumerate(neighbor_pos):
-        if goal_restricted(part_id=part_id, neighbor_node=sum_tuple(current_node, pos), axis=axis, goal_node=goal_node,
-                           goal_axis=goal_axis):
+        if goal_restricted(part_id=part_id, neighbor_node=sum_nodes(current_node, pos), axis=direction, goal_node=goal_node,
+                           goal_axis=goal_direction):
             # disallow any neighbors that violate goal condition
             neighbor_pos.pop(idx)
 
@@ -301,3 +303,18 @@ def get_worst_move_cost(part_cost: dict) -> (float,list):
             worst_move_cost = cost / length
             worst_moves.append(part_id)
     return worst_move_cost, worst_moves
+
+
+def get_changed_nodes(predecessor_node, current_node):
+    pos = diff_nodes(predecessor_node, current_node)
+
+    direction = get_direction_of_pos(pos)
+    length = abs(pos[0] - pos[1])
+
+    occupied_nodes = []
+
+    for i in range(1, length + 1):
+        pos = (predecessor_node[0] + direction[0] * i, predecessor_node[1] + direction[1] * i)
+        occupied_nodes.append((pos, 2))
+
+    return occupied_nodes

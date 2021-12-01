@@ -3,8 +3,8 @@ from copy import deepcopy
 from vpython import *
 from win32api import GetSystemMetrics
 
-import path_finding.restrictions
-from path_finding import path_finder as agt
+import path_finding.restriction_functions
+from path_finding import search_algorithm as agt
 import tkinter as tk
 from tkinter import ttk
 import math
@@ -770,7 +770,7 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
         differenceX = list(pointB)[0] - list(pointA)[0]
         differenceY = list(pointB)[1] - list(pointA)[1]
         diff = (differenceX, differenceY)
-        MinOValue = MinOValue + path_finding.restrictions.calculate_distance_to_obstacles(Matrix, (pointA[0] - 1, pointA[1] - 1), diff) * abs(diff[0] - diff[1]) * 2
+        MinOValue = MinOValue + path_finding.restriction_functions.calculate_distance_to_obstacles(Matrix, (pointA[0] - 1, pointA[1] - 1), diff) * abs(diff[0] - diff[1]) * 2
 
         if pointB[1] > wallToTopShiftDots and topVisible:
             pipeVisible = True
