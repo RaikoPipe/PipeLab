@@ -23,7 +23,7 @@ def grid_changed(captured_state_grid, state_grid):
     if captured_state_grid != state_grid:
         return True
 
-def get_current_part_stock(part_stock, parts_used):
+def get_current_part_stock(part_stock: dict, parts_used:list) -> dict:
     """Returns the part stock sans the parts already used."""
     for part_id in parts_used:
         part_stock[part_id] -= 1
@@ -35,7 +35,6 @@ def get_new_solution(path_problem, weights):
 
 #todo: it is assumed that the sensor detects changes on the grid and the layout (current path and currently used parts)
 
-
 def check_solution_stack(completed_solutions_stack, current_path_problem) -> Optional[Solution]:
     for path_problem in completed_solutions_stack:
         if path_problem == current_path_problem:
@@ -45,40 +44,43 @@ def check_solution_stack(completed_solutions_stack, current_path_problem) -> Opt
 
 
 class EventHandler:
-    solution_list: dict  # {solution: score}
     """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events."""
-    def __init__(self, initial_path_problem: PathProblem, optimization_weights: Weights = standard_weights,
+    def __init__(self, initial_path_problem: PathProblem, current_layout_solution: Solution, optimization_weights: Weights = standard_weights,
                  algorithm : str = standard_algorithm):
 
         self.completed_solutions_stack = {} # PathProblem: Solution
 
-        self._path_problem = initial_path_problem # original path problem
-        self.optimal_solution = find_path(standard_weights, algorithm, self._path_problem)
+        self._initial_path_problem = initial_path_problem # original path problem
+        self.optimal_solution = find_path(standard_weights, algorithm, self._initial_path_problem)
 
         self.latest_path_problem = copy(initial_path_problem)
-        self.previous_path_problem : PathProblem
 
-        self.latest_layout: Solution
+        self.current_layout_solution = current_layout_solution
 
         self.weights = optimization_weights
         self.algorithm = algorithm
 
     def grid_check(self, captured_state_grid, parts_used, path) -> Optional[Solution]:
+
         if grid_changed(captured_state_grid, self.latest_path_problem.state_grid):
             self.latest_path_problem = self.get_new_path_problem(state_grid=captured_state_grid, parts_used=parts_used, path=path)
+            # todo: check if problem is solved/layout completed (last entry in path = goal)
+            #  -> no new solution needed
+            self.current_layout_solution = self.get_current_layout_solution
 
             solution = check_solution_stack(self.completed_solutions_stack, self.latest_path_problem)
             if solution is None:
                 solution = get_new_solution(path_problem=self.latest_path_problem, weights=self.weights)
             return solution
+
         return None # grid has not changed, nothing to do.
 
-    def get_new_path_problem(self, state_grid, parts_used:dict, path:list) -> PathProblem:
+    def get_new_path_problem(self, state_grid, parts_used:list, path:list) -> PathProblem:
         """Returns a new path problem according to detected changes"""
 
-        new_path_problem = copy(self._path_problem) # make a copy of the original path problem
+        new_path_problem = copy(self._initial_path_problem) # make a copy of the original path problem
 
-        current_pipe_stock = get_current_part_stock(copy(self._path_problem.part_stock), parts_used)
+        current_pipe_stock = get_current_part_stock(copy(self._initial_path_problem.part_stock), parts_used)
         new_path_problem.part_stock = current_pipe_stock
         new_path_problem.state_grid = state_grid
         new_path_problem.start_node = path[-1] # last entry is new start pos
@@ -87,7 +89,10 @@ class EventHandler:
 
         return new_path_problem
 
-
+    def get_current_layout_solution(self, captured_state_grid, parts_used, path):
+        new_layout_solution = Solution(path=path, algorithm=None, parts=parts_used, path_problem=self._initial_path_problem,
+                                       problem_solved=False, score = None, solution_grid=captured_state_grid)
+        return new_layout_solution
 
     def get_invalid_solutions(self, remove:bool=True) -> list:
         """Gets invalid solutions and returns them. Optionally also removes them. Should be called after modifying the
