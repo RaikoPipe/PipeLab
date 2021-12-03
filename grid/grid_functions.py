@@ -20,7 +20,7 @@ def get_empty_stategrid(x_length: int, y_length: int):
     state_grid = np.tile(0, (x_length, y_length))
     return state_grid
 
-def change_grid_states(state_grid, node_states: list):
+def change_grid_states(state_grid, node_states: list): # [((0,0),1),((0,1),1)]
     """modify grid states according to items in position_states"""
 
     for item in node_states:
