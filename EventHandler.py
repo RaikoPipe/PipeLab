@@ -6,7 +6,7 @@ from grid import grid_functions
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
 from data_class.Weights import Weights
-from copy import copy
+from copy import deepcopy, copy
 from path_finding.restriction_functions import get_direction_of_pos, get_worst_move_cost
 from path_finding.p_math import diff_nodes
 from path_finding.search_algorithm import find_path
@@ -18,9 +18,10 @@ from typing import Optional
 standard_weights = Weights(1,1,1)
 standard_algorithm = "mcsa*"
 
-def grid_changed(captured_state_grid, state_grid):
+def grid_changed(captured_state_grid:np.ndarray , state_grid:np.ndarray):
     """Compares captured state_grid to another."""
-    if captured_state_grid != state_grid:
+    comparison = captured_state_grid == state_grid
+    if not comparison.all():
         return True
 
 def get_current_part_stock(part_stock: dict, parts_used:list) -> dict:
@@ -45,7 +46,7 @@ def check_solution_stack(completed_solutions_stack, current_path_problem) -> Opt
 
 class EventHandler:
     """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events."""
-    def __init__(self, initial_path_problem: PathProblem, current_layout_solution: Solution, optimization_weights: Weights = standard_weights,
+    def __init__(self, initial_path_problem: PathProblem, current_layout_solution: Optional[Solution], optimization_weights: Weights = standard_weights,
                  algorithm : str = standard_algorithm):
 
         self.completed_solutions_stack = {} # PathProblem: Solution
@@ -53,7 +54,7 @@ class EventHandler:
         self._initial_path_problem = initial_path_problem # original path problem
         self.optimal_solution = find_path(standard_weights, algorithm, self._initial_path_problem)
 
-        self.latest_path_problem = copy(initial_path_problem)
+        self.latest_path_problem = deepcopy(initial_path_problem)
 
         self.current_layout_solution = current_layout_solution
 
@@ -66,7 +67,7 @@ class EventHandler:
             self.latest_path_problem = self.get_new_path_problem(state_grid=captured_state_grid, parts_used=parts_used, path=path)
             # todo: check if problem is solved/layout completed (last entry in path = goal)
             #  -> no new solution needed
-            self.current_layout_solution = self.get_current_layout_solution
+            self.current_layout_solution = self.get_current_layout_solution(captured_state_grid,parts_used, path)
 
             solution = check_solution_stack(self.completed_solutions_stack, self.latest_path_problem)
             if solution is None:
@@ -78,7 +79,7 @@ class EventHandler:
     def get_new_path_problem(self, state_grid, parts_used:list, path:list) -> PathProblem:
         """Returns a new path problem according to detected changes"""
 
-        new_path_problem = copy(self._initial_path_problem) # make a copy of the original path problem
+        new_path_problem = deepcopy(self._initial_path_problem) # make a copy of the original path problem
 
         current_pipe_stock = get_current_part_stock(copy(self._initial_path_problem.part_stock), parts_used)
         new_path_problem.part_stock = current_pipe_stock

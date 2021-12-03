@@ -14,7 +14,7 @@ from grid.grid_functions import change_grid_states
 
 # idea: make a separate function for search showcase
 # optimization idea: save pipe stock in each node, save state grid in each node (reduce pipe stock, occupy path from current node to neighbor node on state grid)
-# todo: assign current pipe stock to predecessor
+# todo: assign current pipe stock to predecessor, use pipe stock of predecessor to determine current pipe stock
 def find_path(weights: Weights, algorithm: str, path_problem: PathProblem) -> Optional[Solution]:
     """Searches for a solution for the given path problem."""
     starting_part = path_problem.starting_part
@@ -82,8 +82,8 @@ def find_path(weights: Weights, algorithm: str, path_problem: PathProblem) -> Op
                 solution_parts.append(predecessor.get(current_node).part_used)
                 current_node = predecessor.get(current_node).node
             solution_parts = solution_parts[::-1] # reverse order
-            solution = Solution(current_path, solution_parts, current_state_grid, overall_score, algorithm,
-                                path_problem)
+            solution = Solution(path=current_path, parts=solution_parts, solution_grid=current_state_grid, score=overall_score,
+                                algorithm = algorithm, path_problem=path_problem, problem_solved=True)
 
             return solution
 
@@ -108,7 +108,7 @@ def find_path(weights: Weights, algorithm: str, path_problem: PathProblem) -> Op
                                                                                                          open_list]:
                 predecessor[neighbor_node] = PredecessorData(node=current_node, part_used=part_id,
                                                              direction=rest.get_direction_of_pos(pos), path=current_path,
-                                                             state_grid=current_state_grid)
+                                                             state_grid=current_state_grid, part_stock=pipe_stock)
 
                 used_part[neighbor_node] = part_id
 
