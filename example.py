@@ -4,6 +4,7 @@ from EventHandler import EventHandler
 from grid.grid_functions import get_empty_stategrid, change_grid_states
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
+import traceback
 
 s = get_empty_stategrid(20,20)
 part_stock = {0:20,1:20,2:20,3:20,4:20}
@@ -13,6 +14,10 @@ initial_path_problem = PathProblem(state_grid=s, start_node=(1,1), goal_node=(9,
                                    starting_part=None, goal_is_transition=False, part_stock=part_stock,part_cost=part_cost)
 event_handler = EventHandler(initial_path_problem=initial_path_problem, current_layout_solution=None)
 
+try:
+    change_grid_states(s, [((1,1),2),((1,2),2),((1,3),2),((1,4),2)])
+except:
+    traceback.print_exc()
 
 async def event_scheduler():
     """coroutine to schedule a random capture event"""

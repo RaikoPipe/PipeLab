@@ -1,4 +1,4 @@
-import numpy as np
+import numpy as nd
 import vpython as vpy
 
 """contains grid class and all functions concerning manipulating its contents"""
@@ -10,17 +10,17 @@ class GridPreset:
         self.coord_grid = None
         self.solutions = []
 
-    def init_empty_grid(self, x_length, y_length):
+    def init_empty_grid(self, x_length: int, y_length: int):
         self.state_grid = get_empty_stategrid(x_length, y_length)
         self.coord_grid = get_coord_grid(x_length, y_length)
 
 
 def get_empty_stategrid(x_length: int, y_length: int):
     """returns state grid according to input parameters"""
-    state_grid = np.tile(0, (x_length, y_length))
+    state_grid = nd.tile(0, (x_length, y_length))
     return state_grid
 
-def change_grid_states(state_grid, node_states: list): # [((0,0),1),((0,1),1)]
+def change_grid_states(state_grid: nd.ndarray, node_states: list): # [((0,0),1),((0,1),1)]
     """modify grid states according to items in position_states"""
 
     for item in node_states:
