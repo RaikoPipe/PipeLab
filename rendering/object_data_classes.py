@@ -5,7 +5,7 @@ from win32api import GetSystemMetrics
 default_mounting_wall_dim = vpy.vector(1000,2000,150)
 
 @dataclass
-class scene:
+class scene_data:
     # camera
     camera_fov: float = vpy.pi/5
     camera_pos: vpy.vector = .5 * default_mounting_wall_dim
@@ -25,16 +25,16 @@ class scene:
 
 
 @dataclass
-class mounting_wall:
+class mounting_wall_data:
     """Data class that contains visual information of mounting_wall objects. Provides a default."""
     dim: vpy.vector = default_mounting_wall_dim
-    wrap_color: vpy.vector = vpy.vector(0.689, 0.515, 0.412)
+    #wrap_color: vpy.vector = vpy.vector(0.689, 0.515, 0.412)
     mount_color: vpy.vector = vpy.vector(0.8, 0.8, 0.8)
     mount_spot_color: vpy.vector = vpy.color.black
-    mount_spot_radius: float =  80
+    mount_spot_radius: float =  10
 
 @dataclass
-class pipe:
+class pipe_data:
     """Data class that contains computational and visual information of pipe object. Provides no default values."""
     # computational values
     point_length: int
@@ -47,7 +47,7 @@ class pipe:
     overhang_length: float = 45
 
 @dataclass
-class corner:
+class corner_data:
     """Data class that contains computational and visual information of corner objects. Provides a default."""
     # computational values
     cost: float
@@ -59,7 +59,7 @@ class corner:
     color: vpy.vector = vpy.color.gray
 
 @dataclass
-class obstacle:
+class obstacle_data:
     """Data class that contains visual information of obstacle objects. Provides a default."""
     dim : vpy.vector = vpy.vector(105,105,50)
     color: vpy.vector = vpy.color.orange

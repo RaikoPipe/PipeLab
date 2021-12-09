@@ -1,5 +1,6 @@
-import numpy as nd
+import numpy as np
 import vpython as vpy
+from rendering.object_data_classes import mounting_wall_data
 
 """contains grid class and all functions concerning manipulating its contents"""
 
@@ -12,15 +13,15 @@ class GridPreset:
 
     def init_empty_grid(self, x_length: int, y_length: int):
         self.state_grid = get_empty_stategrid(x_length, y_length)
-        self.coord_grid = get_coord_grid(x_length, y_length)
+        self.coord_grid = get_rendering_grid(x_length, y_length)
 
 
 def get_empty_stategrid(x_length: int, y_length: int):
     """returns state grid according to input parameters"""
-    state_grid = nd.tile(0, (x_length, y_length))
+    state_grid = np.tile(0, (x_length, y_length))
     return state_grid
 
-def change_grid_states(state_grid: nd.ndarray, node_states: list): # [((0,0),1),((0,1),1)]
+def change_grid_states(state_grid: np.ndarray, node_states: list): # [((0,0),1),((0,1),1)]
     """modify grid states according to items in position_states"""
 
     for item in node_states:
@@ -32,12 +33,13 @@ def change_grid_states(state_grid: nd.ndarray, node_states: list): # [((0,0),1),
 x_start_default = 50
 y_start_default = 100
 z_start_default = 150
-dot_dist_default = 10.5
+dot_dist_default = 105
 
-def get_coord_grid(x_length:int, y_length:int, x_start:float = x_start_default,
-                   y_start:float = y_start_default, z_start:float = z_start_default, dot_dist:float = dot_dist_default) -> np.ndarray:
-    """create a coordinate grid that contains 2D-coordinates for each position"""
-    coord_grid = np.zeros((x_length, y_length), dtype=vpy.vector)
+def get_rendering_grid(x_length:int, y_length:int, x_start:float = x_start_default,
+                       y_start:float = y_start_default, z_start:float = z_start_default, dot_dist:float = dot_dist_default) -> \
+tuple[np.ndarray, mounting_wall_data]:
+    """create a grid that contains 2D-coordinates for each position"""
+    rendering_grid = np.zeros((x_length, y_length), dtype=vpy.vector)
 
     x_pos = x_start
     y_pos = y_start
@@ -45,14 +47,17 @@ def get_coord_grid(x_length:int, y_length:int, x_start:float = x_start_default,
 
     for x in range(0, x_length):
         y = 0
-        coord_grid[x, y] = vpy.vector(x_pos, y_pos, z_pos)
+        y_pos = y_start
+        rendering_grid[x, y] = vpy.vector(x_pos, y_pos, z_pos)
 
         # create dots along y axis
         for y in range(0, y_length):
             y_pos += dot_dist
 
-            coord_grid[x, y] = vpy.vector(x_pos, y_pos, z_pos)
+            rendering_grid[x, y] = vpy.vector(x_pos, y_pos, z_pos)
 
         x_pos += dot_dist
-    return coord_grid
+
+    size_data = mounting_wall_data(dim= vpy.vector(x_pos + x_start - dot_dist, 2*y_start + y_pos, z_pos))
+    return rendering_grid, size_data
 

@@ -11,7 +11,6 @@ from path_finding.restriction_functions import get_direction_of_pos, get_worst_m
 from path_finding.p_math import diff_nodes
 from path_finding.search_algorithm import find_path
 from typing import Optional
-import numpy as nd
 
 # todo: finish later
 # todo: Questions: What information can we get? Only the current state of the grid? If a part has been placed?
@@ -37,7 +36,7 @@ def get_new_solution(path_problem, weights):
 
 #todo: it is assumed that the sensor detects changes on the grid and the layout (current path and currently used parts)
 
-def check_solution_stack(completed_solutions_stack, current_path_problem) -> Optional[Solution]:
+def check_solution_stack(completed_solutions_stack: dict, current_path_problem: PathProblem) -> Optional[Solution]:
     for path_problem in completed_solutions_stack:
         if path_problem == current_path_problem:
             return completed_solutions_stack[path_problem]
@@ -62,7 +61,7 @@ class EventHandler:
         self.weights = optimization_weights
         self.algorithm = algorithm
 
-    def grid_check(self, captured_state_grid: nd.ndarray, parts_used : list, path: list) -> Optional[Solution]:
+    def grid_check(self, captured_state_grid: np.ndarray, parts_used : list, path: list) -> Optional[Solution]:
 
         if grid_changed(captured_state_grid, self.latest_path_problem.state_grid):
             self.latest_path_problem = self.get_new_path_problem(state_grid=captured_state_grid, parts_used=parts_used, path=path)
@@ -77,7 +76,7 @@ class EventHandler:
 
         return None # grid has not changed, nothing to do.
 
-    def get_new_path_problem(self, state_grid, parts_used:list, path:list) -> PathProblem:
+    def get_new_path_problem(self, state_grid: np.ndarray, parts_used:list, path:list) -> PathProblem:
         """Returns a new path problem according to detected changes"""
 
         new_path_problem = deepcopy(self._initial_path_problem) # make a copy of the original path problem
@@ -91,7 +90,7 @@ class EventHandler:
 
         return new_path_problem
 
-    def get_current_layout_solution(self, captured_state_grid: nd.ndarray, parts_used: list, path: list):
+    def get_current_layout_solution(self, captured_state_grid: np.ndarray, parts_used: list, path: list):
         new_layout_solution = Solution(path=path, algorithm=None, parts=parts_used, path_problem=self._initial_path_problem,
                                        problem_solved=False, score = None, solution_grid=captured_state_grid)
         return new_layout_solution
