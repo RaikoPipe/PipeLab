@@ -71,8 +71,6 @@ def find_path(weights: Weights, algorithm: str, path_problem: PathProblem) -> Op
                                                           pipe_stock=pipe_stock, used_parts=used_part)
 
 
-
-
         if current_node == goal_node:
             # search is finished!
             overall_score = total_score[current_node]

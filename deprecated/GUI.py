@@ -11,7 +11,7 @@ import math
 import random
 #import matplotlib.pyplot as plt
 from datetime import datetime
-from rendering import level_templates, object_classes, positional_functions_old as lvf
+from deprecated import object_classes, level_templates, positional_functions as lvf
 
 # lengthText = Objects.displayText(vector(10,10,5))
 # costText = Objects.displayText(vector(10,5,5))

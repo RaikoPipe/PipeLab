@@ -1,6 +1,5 @@
-from rendering import object_classes
+from deprecated import object_classes, positional_functions as lvf
 from vpython import vector
-from rendering import positional_functions_old as lvf
 import random
 
 #select level based on user input

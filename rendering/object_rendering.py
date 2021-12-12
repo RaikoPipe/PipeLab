@@ -1,7 +1,7 @@
 import vpython as vpy
-import object_data_classes as odc
+from rendering import object_data_classes as odc
 import numpy as np
-
+from typing import Optional
 """functions for rendering single objects (or compound objects)"""
 
 testvector = vpy.vector(0,0,0)
@@ -19,6 +19,9 @@ pipe_blue = odc.pipe_data(point_length=2, cost = 1.38, length= 193, color= vpy.c
 pipe_cyan = odc.pipe_data(point_length=3, cost = 1.6, length= 298, color= vpy.color.cyan)
 pipe_green = odc.pipe_data(point_length=4, cost = 1.82, length= 403, color= vpy.color.green)
 pipe_dark_green = odc.pipe_data(point_length=5, cost = 2.04, length= 508, color= vpy.vector(.5, 1, .5))
+pipe_black = odc.pipe_data(point_length=6, cost = 2.50, length= 613, color=vpy.color.black)
+
+default_pipes = {0: "corner not implemented", 1:pipe_magenta, 2: pipe_blue, 3:pipe_cyan, 4: pipe_green, 5:pipe_dark_green, 6: pipe_black}
 
 
 def create_new_scene(scene_data: odc.scene_data = default_scene) -> vpy.canvas:
@@ -67,16 +70,27 @@ def render_obstacle(scene : vpy.canvas, pos: vpy.vector, obstacle_data: odc.obst
 
     return obstacle
 
-# def render_pipe(pos: vpy.vector, axis:vpy.vector, scene : vpy.scene, pipe_data: odc.pipe) -> vpy.cylinder:
-#     """Renders a pipe object."""
-#
-#     #todo: create function get_directional_overhang
-#     directional_overhang = get_directional_overhang(pipe_data.overhang_length, axis)
-#
-#     pipe = vpy.cylinder(pos = pos + directional_overhang, size = vpy.vector(pipe_data.length, 2*pipe_data.radius, 2*pipe_data.radius),
-#                         color = pipe_data.color)
-#
-#     return pipe
+# todo: handle corners
+def render_pipe(scene : vpy.canvas, pos: vpy.vector, direction: tuple[int,int], pipe_data: Optional[odc.pipe_data], part_id: Optional[int] = None,
+                )\
+        -> vpy.cylinder:
+    """Renders a pipe object."""
+    if part_id is not None:
+        pipe_data = default_pipes[part_id]
+
+    # determine dimensions
+    pos += vpy.vector(pipe_data.overhang_length*direction[0], pipe_data.overhang_length*direction[1], pipe_data.radius)
+    size = vpy.vector(pipe_data.length, pipe_data.radius*2, pipe_data.radius*2)
+    direction = vpy.vector(direction[0], direction[1], 0)
+
+    pipe = vpy.cylinder(scene= scene, pos=pos, axis = direction, size=size, color=pipe_data.color)
+
+    return pipe
+
+
+
+
+
 
 
 

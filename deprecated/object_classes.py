@@ -1,5 +1,5 @@
 from vpython import *
-from rendering import positional_functions_old as lvf
+from deprecated import positional_functions as lvf
 import GUI
 import weakref
 
