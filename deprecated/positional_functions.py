@@ -184,7 +184,7 @@ def determineSecondPipePlacement(pipe_axis, pipe_coord, secondPipeLength):
 def determineClampPlacement(Matrix, a, n, type):
     if type == 3:
         print("here")
-    axis = pint.get_direction_of_pos(n)
+    axis = pint.get_direction(n)
     nLength = abs(n[0] - n[1])
     if nLength != type:
         nLength = nLength -1

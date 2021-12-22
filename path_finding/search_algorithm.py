@@ -15,7 +15,7 @@ from grid.grid_functions import change_grid_states
 # idea: make a separate function for search showcase
 # optimization idea: save pipe stock in each node, save state grid in each node (reduce pipe stock, occupy path from current node to neighbor node on state grid)
 # todo: assign current pipe stock to predecessor, use pipe stock of predecessor to determine current pipe stock
-def find_path(weights: Weights, algorithm: str, path_problem: PathProblem) -> Optional[Solution]:
+def find_path(path_problem: PathProblem) -> Optional[Solution]:
     """Searches for a solution for the given path problem."""
     starting_part = path_problem.starting_part
     state_grid = path_problem.state_grid
@@ -27,6 +27,8 @@ def find_path(weights: Weights, algorithm: str, path_problem: PathProblem) -> Op
     goal_is_transition = path_problem.goal_is_transition
     part_cost = path_problem.part_cost
     worst_move_cost, worst_moves = get_worst_move_cost(part_cost)
+    weights = path_problem.weights
+    algorithm = path_problem.algorithm
 
 
 
@@ -105,7 +107,7 @@ def find_path(weights: Weights, algorithm: str, path_problem: PathProblem) -> Op
                                                                                                          in
                                                                                                          open_list]:
                 predecessor[neighbor_node] = PredecessorData(node=current_node, part_used=part_id,
-                                                             direction=rest.get_direction_of_pos(pos), path=current_path,
+                                                             direction=rest.get_direction(pos), path=current_path,
                                                              state_grid=current_state_grid, part_stock=pipe_stock)
 
                 used_part[neighbor_node] = part_id

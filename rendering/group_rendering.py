@@ -1,15 +1,16 @@
-from rendering.object_rendering import render_obstacle, render_pipe
+from rendering.object_rendering import render_obstacle, render_pipe, render_corner
 import vpython as vpy
 import numpy as np
-from path_finding.p_math import diff_nodes
-from path_finding.restriction_functions import get_direction_of_pos
+from path_finding.p_math import diff_nodes, sum_nodes
+from path_finding.restriction_functions import get_direction, get_diagonal_direction
 from data_class.Solution import Solution
 from typing import Optional
 
 """functions for rendering a group of objects"""
 
-def render_obstacles_from_state_grid(state_grid, rendering_grid, scene) -> Optional[vpy.compound]:
-    """initialises obstacles from a preset to a scene (therefore rendering them) and grouping them as a compound"""
+def render_obstacles_from_state_grid(state_grid: np.ndarray, rendering_grid:np.ndarray, scene:vpy.canvas) -> Optional[vpy.compound]:
+    """Renders obstacles according to obstructions on the state_grid to VPython canvas.
+    Returns a list containing the rendered objects, if any were created."""
     obstacle_compound_list = []
     for index, state in np.ndenumerate(state_grid):
         rendering_grid_pos = vpy.vector(rendering_grid[index])
@@ -23,17 +24,29 @@ def render_obstacles_from_state_grid(state_grid, rendering_grid, scene) -> Optio
 
 
 # todo: get directions from solution data class
-def render_solution(parts_used:list, path:list, rendering_grid: np.ndarray, scene: vpy.canvas) -> list[vpy.cylinder]:
-    """fully renders a given solution (regardless of obstruction) + start/goal points"""
+def render_pipe_layout(parts_used:list, path:list, rendering_grid: np.ndarray, scene: vpy.canvas) -> list[vpy.cylinder]:
+    """Renders pipe objects on a VPython canvas according to the given list of parts used."""
     solution_layout = []
     for index, part_id in enumerate(parts_used):
-        #skip the first entry
-        if index == 0 or part_id== 0:
+        # skip the first entry
+        if index == 0:
             continue
-        pipe = render_pipe(scene=scene, pos=rendering_grid[path[index-1]],
-                    direction=get_direction_of_pos(diff_nodes(path[index-1], path[index])), pipe_data=None,
-                    part_id=part_id)
-        solution_layout.append(pipe)
+        elif part_id == 0:
+            # create corner
+            from_dir = get_direction(diff_nodes(path[index - 1], path[index]))
+            to_dir = get_direction(diff_nodes(path[index], path[index + 1]))
+
+            pos = rendering_grid[path[index]]
+            corner = render_corner(scene=scene, pos=pos, course=(from_dir, to_dir))
+            solution_layout.append(corner)
+
+        else:
+            direction = get_direction(diff_nodes(path[index - 1], path[index]))
+            pos = rendering_grid[path[index-1]]
+            pipe = render_pipe(scene=scene, pos=pos,
+                        direction=direction, pipe_data=None,
+                        part_id=part_id)
+            solution_layout.append(pipe)
 
     return solution_layout
 

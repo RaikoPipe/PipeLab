@@ -46,17 +46,17 @@ class pipe_data:
     radius: float = 25
     overhang_length: float = 45
 
-@dataclass
-class corner_data:
-    """Data class that contains computational and visual information of corner objects. Provides a default."""
-    # computational values
-    cost: float
-    point_length: int = 1
-    overhang_length : float = -80
-
-    # visual values
-    radius: float = 26
-    color: vpy.vector = vpy.color.gray
+# @dataclass
+# class corner_data:
+#     """Data class that contains computational and visual information of corner objects. Provides a default."""
+#     # computational values
+#     cost: float
+#     point_length: int = 1
+#     overhang_length : float = -80
+#
+#     # visual values
+#     radius: float = 26
+#     color: vpy.vector = vpy.color.gray
 
 @dataclass
 class obstacle_data:

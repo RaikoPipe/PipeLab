@@ -7,7 +7,7 @@ from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
 from data_class.Weights import Weights
 from copy import deepcopy, copy
-from path_finding.restriction_functions import get_direction_of_pos, get_worst_move_cost
+from path_finding.restriction_functions import get_direction, get_worst_move_cost
 from path_finding.p_math import diff_nodes
 from path_finding.search_algorithm import find_path
 from typing import Optional
@@ -62,7 +62,7 @@ class EventHandler:
         self.algorithm = algorithm
 
     def grid_check(self, captured_state_grid: np.ndarray, parts_used : list, path: list) -> Optional[Solution]:
-
+        """Checks for changes in the captured grid and returns a solution on change (if solvable)."""
         if grid_changed(captured_state_grid, self.latest_path_problem.state_grid):
             self.latest_path_problem = self.get_new_path_problem(state_grid=captured_state_grid, parts_used=parts_used, path=path)
             # todo: check if problem is solved/layout completed (last entry in path = goal)
@@ -77,7 +77,7 @@ class EventHandler:
         return None # grid has not changed, nothing to do.
 
     def get_new_path_problem(self, state_grid: np.ndarray, parts_used:list, path:list) -> PathProblem:
-        """Returns a new path problem according to detected changes"""
+        """Makes a copy of the initial path problem and adjusts it according to parameters. Returns the adjusted copy."""
 
         new_path_problem = deepcopy(self._initial_path_problem) # make a copy of the original path problem
 
@@ -85,7 +85,7 @@ class EventHandler:
         new_path_problem.part_stock = current_pipe_stock
         new_path_problem.state_grid = state_grid
         new_path_problem.start_node = path[-1] # last entry is new start pos
-        new_path_problem.start_direction = get_direction_of_pos(diff_nodes(path[-2], path[-1])) # direction from second last entry to last entry is start direction
+        new_path_problem.start_direction = get_direction(diff_nodes(path[-2], path[-1])) # direction from second last entry to last entry is start direction
         # goal parameters stay the same
 
         return new_path_problem

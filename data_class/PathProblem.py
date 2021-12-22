@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Optional
+from data_class.Weights import Weights
 
 @dataclass
 class PathProblem:
@@ -17,3 +18,7 @@ class PathProblem:
     goal_is_transition: bool # direction of the transition point; Is None if goal is not a transition
     part_stock: dict #{point_length: amount}
     part_cost: dict # dictionary that contains the replacement costs (or opportunity costs) of parts
+
+    #solving options
+    weights: Optional[Weights]
+    algorithm: Optional[str]

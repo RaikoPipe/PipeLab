@@ -13,22 +13,25 @@ x=20
 y=20
 
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x,y)
-state_grid = grid_functions.get_empty_stategrid(x,y)
-#state_grid = randomizer.set_random_obstacles(0.1, state_grid)
+solution = None
+state_grid = grid_functions.get_empty_stategrid(x, y)
+while solution is None:
 
-pipe_stock= {0:100,1:100, 2:100, 3:100, 4:100, 5:100, 6:100}
+    state_grid = randomizer.set_random_obstacles(0.1, state_grid)
 
-part_cost = {0: 5.32, 1: 3.00, 2:3.00, 3:3.00, 4:3.00, 5:3.00, 6:00}
+    pipe_stock = {0: 100, 1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100}
 
-path_problem = PathProblem(state_grid = state_grid, start_node=(0,0), goal_node=(4,9), start_direction=(1,0),
-                           goal_direction=(0,1), goal_is_transition=False, part_cost=part_cost,
-                           starting_part=None, part_stock=pipe_stock)
+    part_cost = {0: 5.32, 1: 3.00, 2: 3.00, 3: 3.00, 4: 3.00, 5: 3.00, 6: 00}
 
-weights = Weights(path_length=1, cost=0, distance_to_obstacles=0)
+    weights = Weights(path_length=1, cost=0, distance_to_obstacles=0)
 
-solution = find_path(weights, "mca*", path_problem=path_problem)
+    path_problem = PathProblem(state_grid=state_grid, start_node=(0, 0), goal_node=(19, 19), start_direction=(1, 0),
+                               goal_direction=(0, -1), goal_is_transition=False, part_cost=part_cost,
+                               starting_part=None, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
 
-print(solution)
+    solution = find_path(path_problem=path_problem)
+    print(solution)
+
 
 #rendering
 
@@ -38,4 +41,4 @@ mounting_wall, dot_object = \
 
 obstacles = group_rendering.render_obstacles_from_state_grid(state_grid=state_grid, rendering_grid=r_grid, scene=scene)
 
-solution_layout = group_rendering.render_solution(solution.parts, solution.path, r_grid, scene)
+solution_layout = group_rendering.render_pipe_layout(solution.parts, solution.path, r_grid, scene)

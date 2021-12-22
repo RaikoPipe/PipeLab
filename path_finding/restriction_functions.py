@@ -44,7 +44,15 @@ def pipe_stock_check(current_path:list, pipe_stock:dict, used_parts:dict) -> lis
 
     return available_parts
 
-def get_direction_of_pos(pos:tuple) -> tuple:
+def get_diagonal_direction(pos:tuple) -> tuple:
+    """Returns the direction of a relative position."""
+    x = pos[0]
+    y = pos[1]
+    x= int(copysign(x,pos[0]))
+    y= int(copysign(y,pos[1]))
+    return x,y
+
+def get_direction(pos:tuple) -> tuple:
     """Returns the direction of a relative position."""
     if pos[0]==0:
         x = 0
@@ -56,7 +64,6 @@ def get_direction_of_pos(pos:tuple) -> tuple:
     y= int(copysign(y,pos[1]))
     return x,y
 
-print(get_direction_of_pos((-4,0)))
 
 def get_current_state_grid(current_path, state_grid):
     """Returns the current state grid according to the current path."""
@@ -67,7 +74,7 @@ def get_current_state_grid(current_path, state_grid):
         a = current_path[index]
         b = current_path[index + 1]
         pos = (b[0] - a[0],b[1] - a[1])
-        direction = get_direction_of_pos(pos)
+        direction = get_direction(pos)
         length = abs(pos[0] - pos[1])
         for i in range(1, length + 1):
             pos = (a[0] + direction[0] * i, a[1] + direction[1] * i)
@@ -90,7 +97,7 @@ def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid) -> 
     """Checks if the path from current_node to neighbor_node obstructs any obstacles."""
 
     length = abs(neighbor_node[0] - neighbor_node[1])
-    direction = get_direction_of_pos(neighbor_node)
+    direction = get_direction(neighbor_node)
 
     for i in range(1, length + 1):
         node = (current_node[0] + direction[0] * i, current_node[1] + direction[1] * i)
@@ -121,7 +128,7 @@ def calculate_distance_to_obstacles(state_grid, current_node: tuple, neighbor_po
     """Calculates the amount of obstacles next to the move divided by the maximum possible amount of obstacles next to
      the move."""
 
-    axis = get_direction_of_pos(neighbor_pos)
+    axis = get_direction(neighbor_pos)
     length = abs(neighbor_pos[0] - neighbor_pos[1])
     min_o = length * 2
     upper_bound = min_o
@@ -308,7 +315,7 @@ def get_worst_move_cost(part_cost: dict) -> (float,list):
 def get_changed_nodes(predecessor_node, current_node):
     pos = diff_nodes(predecessor_node, current_node)
 
-    direction = get_direction_of_pos(pos)
+    direction = get_direction(pos)
     length = abs(pos[0] - pos[1])
 
     occupied_nodes = []
