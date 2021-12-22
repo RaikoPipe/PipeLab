@@ -14,10 +14,13 @@ y=20
 
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x,y)
 solution = None
-state_grid = grid_functions.get_empty_stategrid(x, y)
 while solution is None:
-
+    state_grid = grid_functions.get_empty_stategrid(x, y)
     state_grid = randomizer.set_random_obstacles(0.1, state_grid)
+    start_node = (0,0)
+    goal_node = (17,19)
+    state_grid[start_node] = 0
+    state_grid[goal_node] = 0
 
     pipe_stock = {0: 100, 1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100}
 
@@ -25,13 +28,16 @@ while solution is None:
 
     weights = Weights(path_length=1, cost=0, distance_to_obstacles=0)
 
-    path_problem = PathProblem(state_grid=state_grid, start_node=(0, 0), goal_node=(19, 19), start_direction=(1, 0),
-                               goal_direction=(0, -1), goal_is_transition=False, part_cost=part_cost,
+    path_problem = PathProblem(state_grid=state_grid, start_node=start_node, goal_node=goal_node, start_direction=(1, 0),
+                               goal_direction=(0, 1), goal_is_transition=False, part_cost=part_cost,
                                starting_part=None, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
 
-    solution = find_path(path_problem=path_problem)
-    print(solution)
 
+
+    solution = find_path(path_problem=path_problem)
+
+print(path_problem)
+print(solution)
 
 #rendering
 

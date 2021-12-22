@@ -78,7 +78,7 @@ def something(layout_paths: list, captured_state_grid: np.ndarray, initial_path_
         something_path_problem.goal_node = first_node
         solution_first = find_path(something_path_problem)
 
-        # then try to get solution from start to first node
+        # then try to get solution from start to last node
         something_path_problem.goal_node = last_node
         solution_last = find_path(something_path_problem)
 
