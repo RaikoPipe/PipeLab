@@ -15,6 +15,7 @@ from grid.grid_functions import change_grid_states
 # idea: make a separate function for search showcase
 # optimization idea: save pipe stock in each node, save state grid in each node (reduce pipe stock, occupy path from current node to neighbor node on state grid)
 # todo: assign current pipe stock to predecessor, use pipe stock of predecessor to determine current pipe stock
+# todo: allow start_axis/goal_axis as None to signify that start/goal direction restriction can be ignored
 def find_path(path_problem: PathProblem) -> Optional[Solution]:
     """Searches for a solution for the given path problem."""
     starting_part = path_problem.starting_part
