@@ -1,12 +1,14 @@
 from vpython import *
 
-#directions
+# directions
 up = (0,1)
 down = (0,-1)
 right = (1,0)
 left = (-1,0)
 
-#vpy.vector directions
+directions = {up,down,left,right}
+
+# vpy.vector directions
 v_up = vector(0,1,0)
 v_down = vector(0,-1,0)
 v_right = vector(1,0,0)

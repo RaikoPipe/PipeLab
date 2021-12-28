@@ -44,7 +44,6 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
     upper_bound_distance = manhattan_distance(start_node,
                                               goal_node)  # artificial upper bound for distance
     total_score = {start_node: upper_bound_distance}  # F
-
     heapq.heappush(open_list, (total_score[start_node], start_node))
 
     used_part = {}
@@ -91,7 +90,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
         closed_list.add(current_node)
 
         for (pos, part_id) in verifiable_neighbors:
-            neighbor_node = sum_nodes(current_node, pos)
+            neighbor_node = sum_pos(current_node, pos)
 
             current_score_start_distance = score_start[current_node] + \
                                            manhattan_distance(current_node, neighbor_node) / total_score[

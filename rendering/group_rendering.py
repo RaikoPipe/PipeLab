@@ -1,7 +1,7 @@
 from rendering.object_rendering import render_obstacle, render_pipe, render_corner
 import vpython as vpy
 import numpy as np
-from path_finding.p_math import diff_nodes, sum_nodes
+from path_finding.p_math import diff_pos, sum_pos
 from path_finding.restriction_functions import get_direction, get_diagonal_direction
 from data_class.Solution import Solution
 from typing import Optional
@@ -33,15 +33,15 @@ def render_pipe_layout(parts_used:list, path:list, rendering_grid: np.ndarray, s
             continue
         elif part_id == 0:
             # create corner
-            from_dir = get_direction(diff_nodes(path[index - 1], path[index]))
-            to_dir = get_direction(diff_nodes(path[index], path[index + 1]))
+            from_dir = get_direction(diff_pos(path[index - 1], path[index]))
+            to_dir = get_direction(diff_pos(path[index], path[index + 1]))
 
             pos = rendering_grid[path[index]]
             corner = render_corner(scene=scene, pos=pos, course=(from_dir, to_dir))
             solution_layout.append(corner)
 
         else:
-            direction = get_direction(diff_nodes(path[index - 1], path[index]))
+            direction = get_direction(diff_pos(path[index - 1], path[index]))
             pos = rendering_grid[path[index-1]]
             pipe = render_pipe(scene=scene, pos=pos,
                         direction=direction, pipe_data=None,

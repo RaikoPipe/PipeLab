@@ -2,11 +2,11 @@ import numpy as np
 
 from data_class.Weights import Weights
 from data_class.PredecessorData import PredecessorData
-from path_finding.p_math import sum_absolute_a_b, sum_nodes, diff_nodes
+from path_finding.p_math import sum_absolute_a_b, sum_pos, diff_pos
 from math import copysign
 from copy import deepcopy
 
-# todo: full refactoring
+# todo: put non restriction functions into support functions
 
 def get_available_parts(pipe_stock: dict) -> list:
     """Returns available parts as list."""
@@ -118,7 +118,7 @@ def build_path(current_node: tuple, predecessor: dict, start_node: tuple) -> lis
     return path
 
 
-def manhattan_distance(a, b):
+def manhattan_distance(a:tuple[int,int], b:tuple[int,int]):
     """Calculates the distance between to nodes in horizontal/vertical steps required."""
     distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
     return distance
@@ -278,7 +278,7 @@ def determine_neighbor_pos(direction: tuple, goal_node: tuple, goal_direction: t
         neighbor_pos.extend(get_corner_neighbors(direction, available_parts))
 
     for idx, (pos, part_id) in enumerate(neighbor_pos):
-        if goal_restricted(part_id=part_id, neighbor_node=sum_nodes(current_node, pos), axis=direction, goal_node=goal_node,
+        if goal_restricted(part_id=part_id, neighbor_node=sum_pos(current_node, pos), axis=direction, goal_node=goal_node,
                            goal_axis=goal_direction):
             # disallow any neighbors that violate goal condition
             neighbor_pos.pop(idx)
@@ -313,7 +313,7 @@ def get_worst_move_cost(part_cost: dict) -> (float,list):
 
 
 def get_changed_nodes(predecessor_node, current_node):
-    pos = diff_nodes(predecessor_node, current_node)
+    pos = diff_pos(predecessor_node, current_node)
 
     direction = get_direction(pos)
     length = abs(pos[0] - pos[1])
