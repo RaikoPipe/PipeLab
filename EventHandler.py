@@ -12,7 +12,7 @@ from path_finding.p_math import diff_pos
 from path_finding.search_algorithm import find_path
 from typing import Optional
 from path_finding.p_math import get_adjacency, sum_pos
-from path_finding.common_types import Pos
+from path_finding.common_types import *
 
 from constants import directions
 
@@ -41,22 +41,13 @@ def get_neighbor(pos, pos_list) -> Optional[Pos]:
 
 
 
-def get_trails_from_state_grid(state_grid: np.ndarray):
-    # todo:
-    #   1. np.ndenumerate state_grid, check for states, add nodes to respective set according to state
-    #   2. go trough set where node_state==2, if one node is adjacent, they are part of a layout
-    #   -> follow adjacent node until node is in 0/1 set -> interpret length
-    #   (dont forget to remove node after expansion)
-
+def get_trails_from_state_grid(state_grid: np.ndarray) -> list[Trail]:
     trail_pos_list = []
-    all_trails = []
 
     # sort nodes
     for pos, state in np.ndenumerate(state_grid):
         if state == 2:
             trail_pos_list.append(pos)
-
-    neighbor_pos = directions
 
     trail_list = []
     for trail_pos in trail_pos_list:
@@ -78,41 +69,71 @@ def get_trails_from_state_grid(state_grid: np.ndarray):
 
             trail_list.append(trail)
 
+    return trail_list
 
-        current_trail = []
+#todo: interpret trail as path, parts_used
 
+# def get_path_from_trail(trail:Trail, part_stock: dict[int:int]):
+#     # todo: go through trail; get length of one direction; at first, we assume there are no straight pipes with len=1
+#     path = []
+#     current_direction = None
+#     length = 0
+#     for idx, pos in enumerate(trail):
+#         previous_direction = current_direction
+#         a = pos
+#         b = trail[idx+1]
+#         current_direction = diff_pos(a,b) # diff of two adjacent trail pos is direction
+#
+#         if current_direction == previous_direction or previous_direction is None:
+#             length += 1
+#         else:
+#             path.append()
 
+def get_path_from_trail(trail: Trail):
+    # todo: go through trail; get length of one direction; at first, we assume there are no straight pipes with len=1
+    path = []
 
+    while trail:
+        pos = trail[0]
+        path.append(pos)
 
+        next_pos = trail[1]
 
-    # # get first pos in list
-    # while trail_pos_list:
-    #     #get a start point (has only 1 neighbor)
-    #     for pos in trail_pos_list:
-    #         for neigh_pos in neighbor_pos:
-    #
-    #     start_pos = trail_pos_list[0]
-    #     current_trail = [start_pos]
-    #     while start_pos:
-    #         for neigh_pos in neighbor_pos:
-    #             neighbor = sum_pos(start_pos, neigh_pos)
-    #
-    #             if neighbor in trail_pos_list:
-    #                 current_trail.append(neighbor)
-    #                 trail_pos_list.remove(neighbor)
-    #                 start_pos = neighbor
-    #             else: start_pos = None
-    #
-    #     else:
-    #         all_trails.append(current_trail)
-    #         break
-    #
-    return all_trails
+        direction = diff_pos(pos, next_pos)
+        while sum_pos(pos, direction) in trail:
+            trail.pop(0)
+            pos = trail[0]
+        else:
+            path.append(pos)
+            trail.pop(0)
 
+    return path
 
+def correct_path_start(path:Path, part_stock:dict[int:int]):
+    """Corrects the beginning of path if the part isn't available in the stock by adding a corner."""
+    a = path[0]
+    b = path[1]
+    length = abs(b[0]-a[0])+abs(b[1]-a[1])
+    part = part_stock.get(length)
+    if part is None or part == 0:
+        direction = get_direction(diff_pos(a,b))
+        path.insert(0, a)
+        path[1] = sum_pos(a,direction)
+        part_stock[length-1] -= 1
+        part_stock[0] -= 1
+    return path, part_stock
 
+def event_part_removed(part_id,part_stock):
+    part_stock[part_id] -= 1
+    return part_stock
 
+def event_part_placed():
+    # todo: check where part has been placed and if it is adjacent to a current layout and valid -> expand this path
+    # todo: check if paths have been connected: fuse into one path
+    # todo: check if current_state_grid overlaps with optimal_solution_state_grid
 
+def event_part_removed():
+    #todo: check where part was removed and if path was split or just reduced
 
 def grid_changed(captured_state_grid:np.ndarray , state_grid:np.ndarray):
     """Compares captured state_grid to another."""

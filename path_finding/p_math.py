@@ -6,7 +6,7 @@ def sum_pos(a:Pos, b:Pos) -> Pos:
     return a[0] + b[0], a[1] + b[1]
 
 def diff_pos(a:Pos, b:Pos) -> Pos:
-    """Sums up two pos element wise. -> relative distance between two nodes"""
+    """Subtracts two pos element wise. -> relative distance between two nodes"""
     return b[0]-a[0], b[1]-a[1]
 
 def sum_abs_pos(a:Pos, b:Pos) -> Pos:

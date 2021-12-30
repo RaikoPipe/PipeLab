@@ -1,43 +1,76 @@
-import asyncio
-import time
-from EventHandler import EventHandler
-from grid.grid_functions import get_empty_stategrid, change_grid_states
+from path_finding.search_algorithm import find_path
 from data_class.PathProblem import PathProblem
-from data_class.Solution import Solution
-import traceback
+from data_class.Weights import Weights
+from grid.grid_functions import get_empty_stategrid, change_grid_states
+import numpy as np
 
-s = get_empty_stategrid(20,20)
-part_stock = {0:20,1:20,2:20,3:20,4:20}
-part_cost = {0:5,1:2,2:2.5,3:2.5,4:3}
-initial_path_problem = PathProblem(state_grid=s, start_node=(1,1), goal_node=(9,9), start_direction=(0,1), goal_direction=(0,-1),
-                                   #upwards (0,1), downwards(0,-1), right(1,0), left(-1,0)
-                                   starting_part=None, goal_is_transition=False, part_stock=part_stock,part_cost=part_cost)
-event_handler = EventHandler(initial_path_problem=initial_path_problem, current_layout_solution=None)
+#todo: use change_grid_states function to create a mounting wall with obstacles
+#todo: create a solution with a* and extract path and parts to define a static solution
 
-try:
-    change_grid_states(s, [((1,1),2),((1,2),2),((1,3),2),((1,4),2)])
-except:
-    traceback.print_exc()
+from rendering import object_rendering, group_rendering
+from grid import grid_functions, randomizer
 
-async def event_scheduler():
-    """coroutine to schedule a random capture event"""
-    path=[]
-    part_used = []
-    for index, node in enumerate(Solution.path):
-        await asyncio.sleep(1)
-        #captured input
-        path.append(node)
-        part_used.append(Solution.parts[index])
-        #todo: change state_grid according to path
-        state_grid = change_grid_states(s, [((1,1),2),((1,2),2),((1,3),2),((1,4),2)])
-        # check if anything has changed
-        new_solution = event_handler.grid_check(path=path, captured_state_grid=state_grid, parts_used=part_used)
+x=20
+y=20
 
-        return new_solution
+r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x,y)
+solution = None
+while solution is None:
+    state_grid = grid_functions.get_empty_stategrid(x, y)
+    state_grid = randomizer.set_random_obstacles(0.1, state_grid)
+    start_node = (0,0)
+    goal_node = (17,19)
+    state_grid[start_node] = 0
+    state_grid[goal_node] = 0
 
+    pipe_stock = {0: 100, 1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100}
 
-print(asyncio.run(event_scheduler()))
+    part_cost = {0: 5.32, 1: 3.00, 2: 3.00, 3: 3.00, 4: 3.00, 5: 3.00, 6: 00}
+
+    weights = Weights(path_length=1, cost=0, distance_to_obstacles=0)
+
+    path_problem = PathProblem(state_grid=state_grid, start_node=start_node, goal_node=goal_node, start_direction=(1, 0),
+                               goal_direction=(0, 1), goal_is_transition=False, part_cost=part_cost,
+                               starting_part=None, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
 
 
 
+    solution = find_path(path_problem=path_problem)
 
+print(path_problem)
+print(solution)
+
+#rendering
+
+scene = object_rendering.create_new_scene()
+mounting_wall, dot_object = \
+    object_rendering.render_mounting_wall(scene=scene, rendering_grid=r_grid, mounting_wall_data=mounting_wall_data)
+
+obstacles = group_rendering.render_obstacles_from_state_grid(state_grid=state_grid, rendering_grid=r_grid, scene=scene)
+
+solution_layout = group_rendering.render_pipe_layout(solution.parts, solution.path, r_grid, scene)
+
+from EventHandler import get_trails_from_state_grid
+
+state_grid = np.array([[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 1, 0, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+       [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+       [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2],
+       [0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2],
+       [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+       [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0]])
+
+print(get_trails_from_state_grid(state_grid))
