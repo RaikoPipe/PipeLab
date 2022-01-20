@@ -12,7 +12,7 @@ from path_finding.restriction_functions import get_direction
     -1: Error: more than 1 action occurred in one interval, or sensors failed
     0: Error: No action occurred (No change)
     1: A part was removed from the mounting wall
-    2: A part picked was placed"""
+    2: A part previously picked was placed"""
 
 def check_action_event(picked_parts:list, placed_parts:list, latest_state_grid, captured_state_grid):
 
@@ -144,13 +144,44 @@ def correct_path_start(path:Path, part_stock:dict[int:int]):
     b = path[1]
     length = abs(b[0]-a[0])+abs(b[1]-a[1])
     part = part_stock.get(length)
+    corrected = False
     if part is None or part == 0:
         direction = get_direction(diff_pos(a,b))
         path.insert(0, a)
         path[1] = sum_pos(a,direction)
         part_stock[length-1] -= 1
         part_stock[0] -= 1
-    return path, part_stock
+        corrected = True
+    return path, part_stock, corrected
+
+def get_definite_path_from_path(path:Path, part_stock:dict[int:int]) -> DefinitePath:
+    """Returns a DefinitePath from a list of paths. (End of a path is identified by None)"""
+    definite_path = []
+    path, _, corrected = correct_path_start(path, part_stock=part_stock)
+    a = path[0]
+    if corrected:
+        definite_path.append((a, 0))
+        start = 1
+    else:
+        start = 0
+
+    for idx, a in enumerate(path, start=start):
+        if idx == len(path):
+            definite_path.append((a, None))
+            break
+        b = path[idx+1]
+        part_id = abs(b[0]-a[0])+abs(b[1]-a[1])
+        definite_path.append((a, part_id))
+
+    return definite_path
+
+
+
+
+
+
+
+
 
 def event_part_removed(part_id,part_stock):
     part_stock[part_id] -= 1

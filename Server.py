@@ -36,7 +36,7 @@ class someServerEnv:
 
     def __init__(self):
         self.current_instruction = ""
-        self.process_planer = ProcessPlanner(initial_path_problem=path_problem, current_layout_solution=None)
+        self.process_planer = ProcessPlanner(initial_path_problem=path_problem, initial_state=None)
 
     def get_instructions(self):
         #todo: give process_planner new data, receive instructions, give instructions to clients

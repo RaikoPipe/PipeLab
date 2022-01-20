@@ -6,7 +6,7 @@ from path_finding.common_types import *
 @dataclass
 class Solution:
     """Data class that contains information about a solution and the problem it refers to."""
-    definitePath: DefinitePath # solution path
+    definite_path: DefinitePath # solution path
     state_grid : any # state grid with inserted solution layout
     score: Optional[float] # how good the solution is -> lower is better; Score can be None, if solution not provided by algorithm for example
     algorithm: Optional[str] # what algorithm has been used to search; Can be None, if provided by other means
