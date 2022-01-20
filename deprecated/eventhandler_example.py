@@ -1,6 +1,6 @@
 import asyncio
 import time
-from EventHandler import EventHandler
+from ProcessPlanner import ProcessPlanner
 from grid.grid_functions import get_empty_stategrid, change_grid_states
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
@@ -12,7 +12,7 @@ part_cost = {0:5,1:2,2:2.5,3:2.5,4:3}
 initial_path_problem = PathProblem(state_grid=s, start_node=(1,1), goal_node=(9,9), start_direction=(0,1), goal_direction=(0,-1),
                                    #upwards (0,1), downwards(0,-1), right(1,0), left(-1,0)
                                    starting_part=None, goal_is_transition=False, part_stock=part_stock,part_cost=part_cost)
-event_handler = EventHandler(initial_path_problem=initial_path_problem, current_layout_solution=None)
+event_handler = ProcessPlanner(initial_path_problem=initial_path_problem, current_layout_solution=None)
 
 try:
     change_grid_states(s, [((1,1),2),((1,2),2),((1,3),2),((1,4),2)])

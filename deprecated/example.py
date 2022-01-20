@@ -50,7 +50,7 @@ obstacles = group_rendering.render_obstacles_from_state_grid(state_grid=state_gr
 
 solution_layout = group_rendering.render_pipe_layout(solution.parts, solution.path, r_grid, scene)
 
-from EventHandler import get_trails_from_state_grid
+from ProcessPlanner import get_trails_from_state_grid
 
 state_grid = np.array([[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
        [2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

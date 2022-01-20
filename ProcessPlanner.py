@@ -11,135 +11,30 @@ from path_finding.restriction_functions import get_direction, get_worst_move_cos
 from path_finding.p_math import diff_pos
 from path_finding.search_algorithm import find_path
 from typing import Optional
-from path_finding.p_math import get_adjacency, sum_pos
+import event_interpreting
+
 from path_finding.common_types import *
 
-from constants import directions
-
 # todo: finish later
-# todo: Questions: What information can we get? Only the current state of the grid? If a part has been placed?
 
 standard_weights = Weights(1,1,1)
 standard_algorithm = "mcsa*"
 
 
-def is_outgoing_node(pos, pos_list):
-    count = 0
-    neighbor = get_neighbor(pos, pos_list)
-    if neighbor:
-            count += 1
-    if count < 2:
-        return True
-
-def get_neighbor(pos, pos_list) -> Optional[Pos]:
-    neighbor_positions = directions
-    for neigh_pos in neighbor_positions:
-        neighbor = sum_pos(pos, neigh_pos)
-        if neighbor in pos_list:
-            return neighbor
-
-
-
-
-def get_trails_from_state_grid(state_grid: np.ndarray) -> list[Trail]:
-    trail_pos_list = []
-
-    # sort nodes
-    for pos, state in np.ndenumerate(state_grid):
-        if state == 2:
-            trail_pos_list.append(pos)
-
-    trail_list = []
-    for trail_pos in trail_pos_list:
-        if is_outgoing_node(trail_pos, trail_pos_list):
-            # new trail!
-            trail = []
-            trail_pos_list.remove(trail_pos)
-            trail.append(trail_pos)
-            next_pos = trail_pos
-
-            while get_neighbor(next_pos, trail_pos_list):
-                neighbor = get_neighbor(next_pos, trail_pos_list)
-                next_pos = neighbor
-                trail_pos_list.remove(neighbor)
-                trail.append(neighbor)
-
-
-
-
-            trail_list.append(trail)
-
-    return trail_list
-
-#todo: interpret trail as path, parts_used
-
-# def get_path_from_trail(trail:Trail, part_stock: dict[int:int]):
-#     # todo: go through trail; get length of one direction; at first, we assume there are no straight pipes with len=1
-#     path = []
-#     current_direction = None
-#     length = 0
-#     for idx, pos in enumerate(trail):
-#         previous_direction = current_direction
-#         a = pos
-#         b = trail[idx+1]
-#         current_direction = diff_pos(a,b) # diff of two adjacent trail pos is direction
-#
-#         if current_direction == previous_direction or previous_direction is None:
-#             length += 1
-#         else:
-#             path.append()
-
-def get_path_from_trail(trail: Trail):
-    # todo: go through trail; get length of one direction; at first, we assume there are no straight pipes with len=1
-    path = []
-
-    while trail:
-        pos = trail[0]
-        path.append(pos)
-
-        next_pos = trail[1]
-
-        direction = diff_pos(pos, next_pos)
-        while sum_pos(pos, direction) in trail:
-            trail.pop(0)
-            pos = trail[0]
-        else:
-            path.append(pos)
-            trail.pop(0)
-
-    return path
-
-def correct_path_start(path:Path, part_stock:dict[int:int]):
-    """Corrects the beginning of path if the part isn't available in the stock by adding a corner."""
-    a = path[0]
-    b = path[1]
-    length = abs(b[0]-a[0])+abs(b[1]-a[1])
-    part = part_stock.get(length)
-    if part is None or part == 0:
-        direction = get_direction(diff_pos(a,b))
-        path.insert(0, a)
-        path[1] = sum_pos(a,direction)
-        part_stock[length-1] -= 1
-        part_stock[0] -= 1
-    return path, part_stock
-
-def event_part_removed(part_id,part_stock):
-    part_stock[part_id] -= 1
-    return part_stock
+#todo: create comparison function for comparing optimal solution to current solution
+# create new data type list[tuple] with tuple = (pos, part_id)
 
 def event_part_placed():
+    """"""
     # todo: check where part has been placed and if it is adjacent to a current layout and valid -> expand this path
     # todo: check if paths have been connected: fuse into one path
-    # todo: check if current_state_grid overlaps with optimal_solution_state_grid
+    # todo: check if current path overlaps with optimal solution
 
 def event_part_removed():
+    """"""
     #todo: check where part was removed and if path was split or just reduced
 
-def grid_changed(captured_state_grid:np.ndarray , state_grid:np.ndarray):
-    """Compares captured state_grid to another."""
-    comparison = captured_state_grid == state_grid
-    if not comparison.all():
-        return True
+
 
 def get_current_part_stock(part_stock: dict, parts_used:list) -> dict:
     """Returns the part stock sans the parts already used."""
@@ -161,30 +56,73 @@ def check_solution_stack(completed_solutions_stack: dict, current_path_problem: 
 
 
 
-class EventHandler:
-    """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events."""
+class ProcessPlanner:
+    """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events. Returns instructions."""
     def __init__(self, initial_path_problem: PathProblem, current_layout_solution: Optional[Solution], optimization_weights: Weights = standard_weights,
                  algorithm : str = standard_algorithm):
 
         self.completed_solutions_stack = {} # PathProblem: Solution
 
         self._initial_path_problem = initial_path_problem # original path problem
-        self.optimal_solution = find_path(standard_weights, algorithm, self._initial_path_problem)
+        self.optimal_solution = find_path(self._initial_path_problem)
 
-        self.latest_path_problem = deepcopy(initial_path_problem)
+        self.previous_states = []
 
-        self.current_layout_solution = current_layout_solution
+        self.latest_state = current_layout_solution
 
         self.weights = optimization_weights
         self.algorithm = algorithm
 
-    def grid_check(self, captured_state_grid: np.ndarray, parts_used : list, path: list) -> Optional[Solution]:
+        self.picked_parts = []
+        self.placed_parts = []
+
+    #todo: received_events must be handled at the same time (like routes on a flask server)
+
+    def return_to_previous_state(self):
+        """Returns to the last valid state"""
+        if self.previous_states:
+            self.latest_state = self.previous_states.pop(0)
+        else:
+            print("There is no last state to return to!")
+
+    def event_received_robot_state(self, state_id):
+        # todo: determine next step
+        print("not implemented")
+
+    def event_captured_state_grid(self, captured_state_grid):
+        #todo: interpret new data, exec actions as needed, update latest path problem, update current_layout_solution
+        if event_interpreting.grid_changed(latest_state_grid=self.latest_state.state_grid, captured_state_grid=captured_state_grid):
+
+            event = event_interpreting.check_action_event(picked_parts=self.picked_parts, placed_parts=self.placed_parts, latest_state_grid=self.latest_path_problem.state_grid,
+                                                          captured_state_grid=captured_state_grid)
+            if event["code"] == -2:
+                print("Unkown Error occurred!")
+            elif event["code"] == -1:
+                #todo: recalculate current path
+            elif event["code"] == 1:
+                # todo:
+
+            self.latest_path_problem.state_grid = captured_state_grid
+
+
+
+    def event_part_id_picked(self, part_id_picked):
+        self.picked_parts.append(part_id_picked)
+        # todo: highlight placement options in visualization
+
+
+
+
+
+
+
+    def grid_check(self, captured_state_grid: np.ndarray, parts_used : list, path: Path) -> Optional[Solution]:
         """Checks for changes in the captured grid and returns a solution on change (if solvable)."""
         if grid_changed(captured_state_grid, self.latest_path_problem.state_grid):
             self.latest_path_problem = self.get_new_path_problem(state_grid=captured_state_grid, parts_used=parts_used, path=path)
             # todo: check if problem is solved/layout completed (last entry in path = goal)
             #  -> no new solution needed
-            self.current_layout_solution = self.get_current_layout_solution(captured_state_grid,parts_used, path)
+            self.latest_state = self.get_current_layout_solution(captured_state_grid, parts_used, path)
 
             solution = check_solution_stack(self.completed_solutions_stack, self.latest_path_problem)
             if solution is None:
