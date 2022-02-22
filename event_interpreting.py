@@ -7,10 +7,10 @@ from path_finding.restriction_functions import get_direction
 
 """Gets data (state_grids, part stock...), interprets it and returns events"""
 
-"""Event Codes
+"""Construction Event Codes
     -2: Error: Unknown Error
-    -1: Error: more than 1 action occurred in one interval, or sensors failed
-    0: Error: No action occurred (No change)
+    -1: Error: more than 1 construction change occurred in state grid
+    0: No construction event occurred.
     1: A part was removed from the mounting wall
     2: A part previously picked was placed"""
 
