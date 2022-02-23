@@ -46,6 +46,34 @@ def get_new_solution(path_problem, weights):
     return find_path(path_problem=path_problem, weights=weights, algorithm=standard_algorithm)
 
 
+example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will probably never be bigger than 1
+
+
+def register_motion_events(motion_dict: dict, debug_grid: Optional[np.ndarray], open_pos: dict):
+
+    """add to current motion dict"""
+
+    """
+        position codes: 
+        -1: removal
+        0: fitting placed
+        1: pipe placed
+        2: attachment placed
+    """
+
+    for pos, event in motion_dict.items():
+        if pos == -1 and pos in open_pos:
+            open_pos.pop(pos)
+        elif pos == 0:
+            # check if
+
+        else:
+            open_pos[pos] = event
+
+
+
+
+
 # todo: it is assumed that the sensor detects changes on the grid and the layout (current path and currently used parts)
 
 def check_solution_stack(completed_solutions_stack: dict, current_path_problem: PathProblem) -> Optional[Solution]:

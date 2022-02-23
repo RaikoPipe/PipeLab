@@ -1,5 +1,7 @@
 import numpy as np
 import vpython as vpy
+from typing import Tuple
+
 from rendering.object_data_classes import mounting_wall_data
 
 """contains grid class and all functions concerning manipulating its contents"""
@@ -37,7 +39,7 @@ dot_dist_default = 105
 
 def get_rendering_grid(x_length:int, y_length:int, x_start:float = x_start_default,
                        y_start:float = y_start_default, z_start:float = z_start_default, dot_dist:float = dot_dist_default) -> \
-tuple[np.ndarray, mounting_wall_data]:
+Tuple[np.ndarray, mounting_wall_data]:
     """create a grid that contains 2D-coordinates for each position"""
     rendering_grid = np.zeros((x_length, y_length), dtype=vpy.vector)
 

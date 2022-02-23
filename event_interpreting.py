@@ -14,6 +14,12 @@ from path_finding.restriction_functions import get_direction
     1: A part was removed from the mounting wall
     2: A part previously picked was placed"""
 
+
+
+
+
+
+
 def check_action_event(picked_parts:list, placed_parts:list, latest_state_grid, captured_state_grid):
 
     #todo: get difference between both state_grids
