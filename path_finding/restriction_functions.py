@@ -54,14 +54,13 @@ def get_diagonal_direction(pos:tuple) -> tuple:
 
 def get_direction(pos:tuple) -> tuple:
     """Returns the direction of a relative position."""
-    if pos[0]==0:
-        x = 0
-        y = pos[1]**0
-    else:
-        x= pos[0]**0
-        y=0
+
+    x = pos[0]**0
+    y = pos[1]**0
+
     x= int(copysign(x,pos[0]))
     y= int(copysign(y,pos[1]))
+
     return x,y
 
 

@@ -27,6 +27,32 @@ def diff_absolute_a_b(a:int, b:int) -> int:
     b = abs(b)
     return a - b
 
+def get_length_same_axis(a:Pos, b:Pos) -> int:
+    """return length and of a and b if row xor column are the same"""
+
+    if a[0] == b[0]:
+        length = abs(a[1]-b[1])
+    elif a[1] == b[1]:
+        length = abs(a[0]-b[0])
+    else:
+        return -1
+
+    return length
+
+def get_rel_dist_same_axis(a:Pos, b:Pos) -> tuple:
+    """return relative distance of a to b if row xor column are the same"""
+
+    if a[0] == b[0]:
+        distance = a[1] - b[1]
+        rel_dist = (distance, 0)
+    elif a[1] == b[1]:
+        distance = a[0] - b[0]
+        rel_dist = (0, distance)
+    else:
+        return -1, -1
+
+    return rel_dist
+
 def get_adjacency(a:Pos, b:Pos)-> dict[str:bool,str: Pos]:
     """Checks if two pos are adjacent and the direction b is from a."""
     for rel_pos in directions:

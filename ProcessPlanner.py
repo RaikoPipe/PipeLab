@@ -13,6 +13,7 @@ from path_finding.p_math import diff_pos
 from path_finding.search_algorithm import find_path
 from typing import Optional
 import event_interpreting
+from path_finding import p_math
 
 from path_finding.common_types import *
 
@@ -47,31 +48,6 @@ def get_new_solution(path_problem, weights):
 
 
 example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will probably never be bigger than 1
-
-
-def register_motion_events(motion_dict: dict, debug_grid: Optional[np.ndarray], open_pos: dict):
-
-    """add to current motion dict"""
-
-    """
-        position codes: 
-        -1: removal
-        0: fitting placed
-        1: pipe placed
-        2: attachment placed
-    """
-
-    for pos, event in motion_dict.items():
-        if pos == -1 and pos in open_pos:
-            open_pos.pop(pos)
-        elif pos == 0:
-            # check if
-
-        else:
-            open_pos[pos] = event
-
-
-
 
 
 # todo: it is assumed that the sensor detects changes on the grid and the layout (current path and currently used parts)
@@ -119,7 +95,89 @@ class ProcessPlanner:
         self.picked_parts = []
         self.placed_parts = []
 
+        self.motion_dict = {}
+        self.fittings_pos = set() # assumption: contains fittings with connections < 2
+
+        self.connected_fittings = set()
+        self.attachment_pos = set()
+        self.pipe_pos = set()
+        self.debug_motion_grid = self._initial_path_problem.state_grid
+
+
+
     # todo: received_events must be handled at the same time (like routes on a flask server)
+
+    def register_motion_events(self, new_pos:dict, debug_grid: Optional[np.ndarray]):
+
+        """add to current motion dict"""
+
+        """
+            position codes
+            0 -> removal
+            1 -> fitting placed
+            2 -> pipe placed
+            3 -> attachment placed
+
+            fittings dict
+            pos : number of connections
+        """
+
+        # todo: error handling:
+        #   Possible errors:
+        #   - motion event on confirmed occupied spot (by obstacle or construction)
+        
+        # update motion dict
+
+        for pos, event in new_pos.items():
+            if pos == 0 and pos in self.motion_dict:
+                self.motion_dict.pop(pos)
+            else:
+                self.motion_dict[pos] = event
+
+        # interpret new motion events
+
+        for new_pos, event in new_pos.items():
+            if event == 1:
+
+                for pos in self.fittings_pos:
+                    # check if conditions for construction event are met
+                    fit_diff = p_math.get_length_same_axis(pos, new_pos) # distance between fittings -> length of needed part
+
+                    fittings_in_proximity = fit_diff in self.latest_state.part_stock.keys() # fittings are connectable by available parts
+                    
+                    if not fittings_in_proximity:
+                        continue
+
+                    fit_dir = get_direction(diff_pos(new_pos, pos))
+
+                    pipe_attachment_is_between = False
+
+
+
+                    for att_pos in self.attachment_pos:
+                        if att_pos not in self.pipe_pos: # if no pipe has been attached to
+                            continue
+                        att_dir = get_direction(diff_pos(new_pos, att_pos))
+                        pipe_attachment_is_between = att_dir == fit_dir # An attachment is in between considered fittings
+
+                    if not pipe_attachment_is_between:
+                        continue
+
+                    # construction confirmed
+                    # todo: remove picked part
+                    #   save fitting connections
+                    #   remove pos from fittings_pos if connections > 1
+                    #   update latest_state
+
+
+
+
+
+
+
+
+
+
 
     def return_to_previous_state(self):
         """Returns to the last valid state"""
