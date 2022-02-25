@@ -61,7 +61,8 @@ def grid_changed(captured_state_grid: np.ndarray, latest_state_grid: np.ndarray)
     if not comparison.all():
         return True
 
-def is_outgoing_node(pos, pos_list):
+def is_outgoing_node(pos, pos_list) -> bool:
+    """Checks if pos is an outgoing node"""
     count = 0
     neighbor = get_neighbor(pos, pos_list)
     if neighbor:
@@ -70,6 +71,7 @@ def is_outgoing_node(pos, pos_list):
         return True
 
 def get_neighbor(pos, pos_list) -> Optional[Pos]:
+    """Returns neighbor of pos if in pos_list else None."""
     neighbor_positions = directions
     for neigh_pos in neighbor_positions:
         neighbor = sum_pos(pos, neigh_pos)

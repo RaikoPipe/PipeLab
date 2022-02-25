@@ -73,7 +73,7 @@ def get_current_path(state_grid, part_stock):
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events. Returns instructions."""
 
-    def __init__(self, initial_path_problem: PathProblem, initial_state: Optional[State],
+    def __init__(self, initial_path_problem: PathProblem, initial_state: State,
                  optimization_weights: Weights = standard_weights,
                  algorithm: str = standard_algorithm):
 
@@ -124,7 +124,8 @@ class ProcessPlanner:
 
         # todo: error handling:
         #   Possible errors:
-        #   - motion event on confirmed occupied spot (by obstacle or construction)
+        #   - motion event on confirmed occupied spot (check state_grid)
+        #
         
         # update motion dict
 
@@ -155,13 +156,34 @@ class ProcessPlanner:
 
 
                     for att_pos in self.attachment_pos:
-                        if att_pos not in self.pipe_pos: # if no pipe has been attached to
+                        if att_pos not in self.pipe_pos: # if no pipe has been attached
                             continue
                         att_dir = get_direction(diff_pos(new_pos, att_pos))
                         pipe_attachment_is_between = att_dir == fit_dir # An attachment is in between considered fittings
 
                     if not pipe_attachment_is_between:
                         continue
+
+                    print("New construction confirmed")
+
+                    # create new state
+                    new_state = deepcopy(self.latest_state)
+                    new_state.part_stock[fit_diff] -= 1
+                    new_state.connections.add(new_pos, pos)
+
+                    # todo: Q: why do we need definite_path? A: To create partial solutions in case of a deviation
+                    #todo: how to determine definite_path:
+                    #        1. go through connections starting at start, use manhattan distance to determine order (more efficient)
+                    #        2. go trough state_grid (add state 3:fitting)
+
+                    for i in range(fit_diff+1):
+                        state_pos = (pos[0]+fit_dir[0]*i, pos[1] + fit_dir[1]*i)
+                        new_state.state_grid[state_pos] = 2
+
+
+
+
+
 
                     # construction confirmed
                     # todo: remove picked part

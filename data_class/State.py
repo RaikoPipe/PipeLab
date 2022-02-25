@@ -6,6 +6,7 @@ from path_finding.common_types import *
 @dataclass
 class State:
     """Data class that contains information about a process state"""
-    definite_paths: list[DefinitePath] # A list of DefinitePaths -> represents current build state
+    connections: set[Connection] # A set of Connections -> represents current build state
     state_grid : any # state grid with build layout
     part_stock: dict  # parts left
+    definite_path: DefinitePath
