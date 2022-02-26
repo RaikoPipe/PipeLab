@@ -9,3 +9,4 @@ Path = list[Pos] # ordered list of Pos of Nodes that mark the placement position
 DefinitePath = list[(Pos,int)] # path that assigns each pos a part_id, or None if ambiguous
 Trail = list[Pos] # an extension of a path, that contains each node visited by a path in order (in horizontal/vertical direction)
 Connection = (Pos, Pos) # Two pos with a relationship
+Layouts = set(DefinitePath) # a set containing multiple DefinitePaths

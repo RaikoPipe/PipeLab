@@ -61,6 +61,7 @@ def check_solution_stack(completed_solutions_stack: dict, current_path_problem: 
 
 
 def get_current_path(state_grid, part_stock):
+    """Returns the current paths from a state_grid"""
     trail_list = event_interpreting.get_trails_from_state_grid(state_grid=state_grid, searched_state=2)
     path_list = []
     for trail in trail_list:
@@ -96,18 +97,16 @@ class ProcessPlanner:
         self.placed_parts = []
 
         self.motion_dict = {}
-        self.fittings_pos = set() # assumption: contains fittings with connections < 2
+        self.fittings_pos = set()  # assumption: contains fittings with connections < 2
 
         self.connected_fittings = set()
         self.attachment_pos = set()
         self.pipe_pos = set()
         self.debug_motion_grid = self._initial_path_problem.state_grid
 
-
-
     # todo: received_events must be handled at the same time (like routes on a flask server)
 
-    def register_motion_events(self, new_pos:dict, debug_grid: Optional[np.ndarray]):
+    def register_motion_events(self, new_pos: dict, debug_grid: Optional[np.ndarray]):
 
         """add to current motion dict"""
 
@@ -125,8 +124,8 @@ class ProcessPlanner:
         # todo: error handling:
         #   Possible errors:
         #   - motion event on confirmed occupied spot (check state_grid)
-        #
-        
+        #  todo: consider adding options to disable certain conditions (for testing)
+
         # update motion dict
 
         for pos, event in new_pos.items():
@@ -142,10 +141,11 @@ class ProcessPlanner:
 
                 for pos in self.fittings_pos:
                     # check if conditions for construction event are met
-                    fit_diff = p_math.get_length_same_axis(pos, new_pos) # distance between fittings -> length of needed part
+                    fit_diff = p_math.get_length_same_axis(pos,
+                                                           new_pos)  # distance between fittings -> length of needed part
 
-                    fittings_in_proximity = fit_diff in self.latest_state.part_stock.keys() # fittings are connectable by available parts
-                    
+                    fittings_in_proximity = fit_diff in self.latest_state.part_stock.keys()  # fittings are connectable by available parts
+
                     if not fittings_in_proximity:
                         continue
 
@@ -153,34 +153,67 @@ class ProcessPlanner:
 
                     pipe_attachment_is_between = False
 
-
-
                     for att_pos in self.attachment_pos:
-                        if att_pos not in self.pipe_pos: # if no pipe has been attached
+                        if att_pos not in self.pipe_pos:  # if no pipe has been attached
                             continue
                         att_dir = get_direction(diff_pos(new_pos, att_pos))
-                        pipe_attachment_is_between = att_dir == fit_dir # An attachment is in between considered fittings
+                        pipe_attachment_is_between = att_dir == fit_dir  # An attachment is in between considered fittings
 
                     if not pipe_attachment_is_between:
                         continue
+
+                    # todo: add condition: if fitting and part has been taken out
 
                     print("New construction confirmed")
 
                     # create new state
                     new_state = deepcopy(self.latest_state)
-                    new_state.part_stock[fit_diff] -= 1
+
+                    # update part stock
+
+                    new_state.part_stock[fit_diff] -= 1  # reduce pipe stock
+                    new_state.part_stock[0] -= 1  # reduce fitting stock
+
+                    # add new fitting connection
+                    #fixme: do i even need connections!?
                     new_state.connections.add(new_pos, pos)
 
                     # todo: Q: why do we need definite_path? A: To create partial solutions in case of a deviation
-                    #todo: how to determine definite_path:
+                    # todo: how to determine definite_path:
                     #        1. go through connections starting at start, use manhattan distance to determine order (more efficient)
                     #        2. go trough state_grid (add state 3:fitting)
 
-                    for i in range(fit_diff+1):
-                        state_pos = (pos[0]+fit_dir[0]*i, pos[1] + fit_dir[1]*i)
+                    # update latest_state
+
+                    # if any of the following pos is None, there was an error
+                    pipe_start_pos = None
+                    pipe_end_pos = None
+
+                    # update state grid
+                    for i in range(fit_diff + 1):
+                        state_pos = (pos[0] + fit_dir[0] * i, pos[1] + fit_dir[1] * i)
                         new_state.state_grid[state_pos] = 2
 
+                        # save info about pipes for later
+                        if i == 1:
+                            pipe_start_pos = state_pos
+                        elif i == fit_diff:
+                            pipe_end_pos = state_pos
 
+                    if pipe_start_pos is None or pipe_end_pos is None:
+                        print("Error Code XX")
+
+                    # update definite path
+
+                    # add to definite path
+                    # determine positions between pos and new_pos
+
+                    new_state.definite_path.append((new_pos, None))
+                    new_state.definite_path.append(pipe_start_pos, 0)
+                    new_state.definite_path.append(pipe_end_pos, fit_diff)
+                    new_state.definite_path.append(pos, 0)
+
+                    # done
 
 
 
@@ -190,16 +223,6 @@ class ProcessPlanner:
                     #   save fitting connections
                     #   remove pos from fittings_pos if connections > 1
                     #   update latest_state
-
-
-
-
-
-
-
-
-
-
 
     def return_to_previous_state(self):
         """Returns to the last valid state"""
