@@ -6,8 +6,14 @@ from path_finding.common_types import *
 @dataclass
 class State:
     """Data class that contains information about a process state"""
-    connections: Set[Connection] # A set of Connections -> represents current build state
-    state_grid : any # state grid with build layout
+    state_grid : any # state grid with currently occupied spots
     part_stock: dict  # parts left
-    definite_path: DefinitePath # only used when deviation detected to create partial solutions
-    layouts: Layouts
+    definite_path: Optional[DefinitePath]  # only used when deviation detected to create partial solutions
+    layouts: Layouts # contains instances of definite_path; represents current build state
+    picked_parts: dict[int:int] # counts parts that have been picked. Counter reduces when parts are confirmed in a construction event
+    fitting_connections: dict[Pos:int] # used for checking how many times a fitting has already been connected
+
+    motion_dict : dict
+    fitting_pos : list
+    attachment_pos : list
+    pipe_pos : list
