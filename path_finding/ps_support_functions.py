@@ -38,8 +38,8 @@ def get_outgoing_pos(paths: list[Path], first_pos: Pos, last_pos: Pos) -> set[tu
     pos_id_set.add((last_pos, layout_id))
     return pos_id_set
 
-def get_best_connections(pos_id_set:set[tuple[Pos, int]], exclusion_list: set[Connection])\
-        -> list[Connection]:
+def get_best_connections(pos_id_set:set[tuple[Pos, int]], exclusion_list: set[DirectedConnection])\
+        -> list[DirectedConnection]:
     """
     Generates a connection for each two nodes according to the lowest manhattan distance.
     :param pos_id_set: List containing position of nodes and corresponding layout ids.

@@ -81,6 +81,71 @@ def get_updated_motion_dict(new_pos, motion_dict):
     return motion_dict
 
 
+def deviated_from_optimal_path(current_state: State, optimal_solution: Solution):
+
+    #todo: redo. Use Connections this time
+    # put pos, part_id into separate sets
+
+    for connection in current_state.fc_set:
+        if connection not in optimal_solution.fc_set:
+            return True
+    else:
+        return False
+
+def get_updated_state_on_construction_event(tentative_state : State, fit_diff, fit_dir, new_pos, pos) -> State:
+    # create new state
+
+    # update fitting_connections
+    tentative_state.connection_count[new_pos] = 1
+    tentative_state.connection_count[pos] += 1
+
+    # update fitting_pos
+    tentative_state.fitting_pos = new_pos
+
+    # update part stock
+    tentative_state.part_stock[fit_diff] -= 1  # reduce pipe stock
+    tentative_state.part_stock[0] -= 1  # reduce fitting stock
+
+    # if any of the following pos is None, there was an error
+    pipe_start_pos = None
+    pipe_end_pos = None
+
+    # update state grid
+    for i in range(fit_diff + 1):
+        state_pos = (pos[0] + fit_dir[0] * i, pos[1] + fit_dir[1] * i)
+        tentative_state.state_grid[state_pos] = 2
+
+        # save info about pipes for later
+        if i == 1:
+            pipe_start_pos = state_pos
+        elif i == fit_diff:
+            pipe_end_pos = state_pos
+    if pipe_start_pos is None or pipe_end_pos is None:
+        print("Error Code XX")
+
+    # reduce picked parts counter
+    tentative_state.picked_parts[0] -= 1
+    tentative_state.picked_parts[fit_diff] -= 1
+
+    # create new layout
+
+    new_construction_path = DefinitePath()
+
+    new_construction_path.append((new_pos, None))
+    new_construction_path.append(pipe_start_pos, 0)
+    new_construction_path.append(pipe_end_pos, fit_diff)
+    new_construction_path.append(pos, 0)
+
+    new_connection =  (new_pos, pos)
+
+    #add to layouts
+    tentative_state.layouts.add(new_construction_path)
+    #add to connections
+    tentative_state.fc_set.add(new_connection)
+
+    return tentative_state
+
+
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events. Returns instructions."""
 
@@ -88,7 +153,7 @@ class ProcessPlanner:
                  optimization_weights: Weights = standard_weights,
                  algorithm: str = standard_algorithm):
 
-        self.completed_solutions_stack = {}  # PathProblem: Solution
+        self.completed_solutions_stack = {}  # PathProblem: Solution #fixme: should be in optimizer
 
         self._initial_path_problem = initial_path_problem  # original path problem
         self.optimal_solution = find_path(self._initial_path_problem)  # optimal solution for the initial path problem
@@ -129,14 +194,12 @@ class ProcessPlanner:
             #todo: check for removals, update tentative state
 
             if self.construction_event_confirmed(motion_events=motion_events, tentative_state=tentative_state):
-
+                deviated_from_optimal_path
                 # todo: check for deviations
 
 
         if pick_events or motion_events:
             self.update_latest_state(old_state=self.latest_state, new_state=tentative_state)
-
-
 
     def construction_event_confirmed(self, motion_events: dict, tentative_state: State, debug_grid: Optional[np.ndarray]) -> bool:
 
@@ -194,7 +257,7 @@ class ProcessPlanner:
 
                     print("Construction confirmed")
 
-                    self.get_updated_state_on_construction_event(tentative_state, fit_diff, fit_dir, new_pos, pos)
+                    get_updated_state_on_construction_event(tentative_state, fit_diff, fit_dir, new_pos, pos)
 
                     return True
 
@@ -203,55 +266,6 @@ class ProcessPlanner:
         self.previous_states.insert(0, old_state)
 
         self.latest_state = new_state
-
-    def get_updated_state_on_construction_event(self, tentative_state : State, fit_diff, fit_dir, new_pos, pos) -> State:
-        # create new state
-
-        # update fitting_connections
-        tentative_state.fitting_connections[new_pos] = 1
-        tentative_state.fitting_connections[pos] += 1
-
-        # update fitting_pos
-        tentative_state.fitting_pos = new_pos
-
-        # update part stock
-        tentative_state.part_stock[fit_diff] -= 1  # reduce pipe stock
-        tentative_state.part_stock[0] -= 1  # reduce fitting stock
-
-        # if any of the following pos is None, there was an error
-        pipe_start_pos = None
-        pipe_end_pos = None
-
-        # update state grid
-        for i in range(fit_diff + 1):
-            state_pos = (pos[0] + fit_dir[0] * i, pos[1] + fit_dir[1] * i)
-            tentative_state.state_grid[state_pos] = 2
-
-            # save info about pipes for later
-            if i == 1:
-                pipe_start_pos = state_pos
-            elif i == fit_diff:
-                pipe_end_pos = state_pos
-        if pipe_start_pos is None or pipe_end_pos is None:
-            print("Error Code XX")
-
-        # reduce picked parts counter
-        tentative_state.picked_parts[0] -= 1
-        tentative_state.picked_parts[fit_diff] -= 1
-
-        # create new layout
-
-        new_construction_layout = DefinitePath()
-
-        new_construction_layout.append((new_pos, None))
-        new_construction_layout.append(pipe_start_pos, 0)
-        new_construction_layout.append(pipe_end_pos, fit_diff)
-        new_construction_layout.append(pos, 0)
-
-        #add to layouts
-        tentative_state.add(new_construction_layout)
-
-        return tentative_state
 
     def return_to_previous_state(self):
         """Returns to the last valid state"""

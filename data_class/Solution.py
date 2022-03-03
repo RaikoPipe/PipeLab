@@ -12,3 +12,5 @@ class Solution:
     algorithm: Optional[str] # what algorithm has been used to search; Can be None, if provided by other means
     problem_solved: bool # if the solution has solved the path problem (last entry in path == goal)
     path_problem: PathProblem # The path problem it refers to
+
+    fc_set: set[UndirectedConnection]

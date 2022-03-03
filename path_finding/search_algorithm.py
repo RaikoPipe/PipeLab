@@ -75,6 +75,8 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
 
         if current_node == goal_node:
             # search is finished!
+            # todo: create fc_set
+
             overall_score = total_score[current_node]
             solution_parts = []
 
