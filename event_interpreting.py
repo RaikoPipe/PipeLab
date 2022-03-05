@@ -3,7 +3,7 @@ from typing import Optional
 from constants import directions
 from path_finding.common_types import *
 from path_finding.p_math import get_adjacency, sum_pos, diff_pos
-from path_finding.restriction_functions import get_direction
+from path_finding.path_utilities import get_direction
 
 """Gets data (state_grids, part stock...), interprets it and returns events"""
 

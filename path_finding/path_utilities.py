@@ -1,3 +1,5 @@
+from math import copysign
+
 from path_finding.restriction_functions import manhattan_distance
 from common_types import *
 
@@ -32,8 +34,8 @@ def get_outgoing_pos(paths: list[Path], first_pos: Pos, last_pos: Pos) -> set[tu
     pos_id_set.add((first_pos, layout_id))
     for layout_path in paths:
         layout_id += 1
-        pos_id_set.add((layout_path[0], layout_id))
-        pos_id_set.add((layout_path[-1], layout_id))
+        pos_id_set.add((layout_path[0][0], layout_id))
+        pos_id_set.add((layout_path[-1][0], layout_id))
     layout_id += 1
     pos_id_set.add((last_pos, layout_id))
     return pos_id_set
@@ -69,8 +71,22 @@ def get_best_connections(pos_id_set:set[tuple[Pos, int]], exclusion_list: set[Di
     return connecting_path
 
 
+def get_diagonal_direction(pos:tuple) -> tuple:
+    """Returns the direction of a relative position."""
+    x = pos[0]
+    y = pos[1]
+    x= int(copysign(x,pos[0]))
+    y= int(copysign(y,pos[1]))
+    return x,y
 
 
+def get_direction(pos:tuple) -> tuple:
+    """Returns the direction of a relative position."""
 
+    x = pos[0]**0
+    y = pos[1]**0
 
+    x= int(copysign(x,pos[0]))
+    y= int(copysign(y,pos[1]))
 
+    return x,y

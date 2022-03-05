@@ -2,7 +2,7 @@ from rendering.object_rendering import render_obstacle, render_pipe, render_corn
 import vpython as vpy
 import numpy as np
 from path_finding.p_math import diff_pos, sum_pos
-from path_finding.restriction_functions import get_direction, get_diagonal_direction
+from path_finding.path_utilities import get_diagonal_direction, get_direction
 from data_class.Solution import Solution
 from typing import Optional
 

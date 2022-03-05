@@ -1,12 +1,12 @@
 import numpy as np
 
 from data_class.Weights import Weights
-from data_class.PredecessorData import PredecessorData
 from path_finding.p_math import sum_absolute_a_b, sum_pos, diff_pos
-from math import copysign
 from copy import deepcopy
 
 # todo: put non restriction functions into support functions
+from path_finding.path_utilities import get_direction
+
 
 def get_available_parts(pipe_stock: dict) -> list:
     """Returns available parts as list."""
@@ -43,25 +43,6 @@ def pipe_stock_check(current_path:list, pipe_stock:dict, used_parts:dict) -> lis
         available_parts = get_available_parts(pipe_stock_copy)
 
     return available_parts
-
-def get_diagonal_direction(pos:tuple) -> tuple:
-    """Returns the direction of a relative position."""
-    x = pos[0]
-    y = pos[1]
-    x= int(copysign(x,pos[0]))
-    y= int(copysign(y,pos[1]))
-    return x,y
-
-def get_direction(pos:tuple) -> tuple:
-    """Returns the direction of a relative position."""
-
-    x = pos[0]**0
-    y = pos[1]**0
-
-    x= int(copysign(x,pos[0]))
-    y= int(copysign(y,pos[1]))
-
-    return x,y
 
 
 def get_current_state_grid(current_path, state_grid):

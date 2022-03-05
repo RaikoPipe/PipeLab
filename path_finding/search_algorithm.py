@@ -1,5 +1,6 @@
 import heapq
 
+import path_finding.path_utilities
 from path_finding import restriction_functions as rest
 from data_class.PredecessorData import PredecessorData
 from data_class.Solution import Solution
@@ -75,7 +76,6 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
 
         if current_node == goal_node:
             # search is finished!
-            # todo: create fc_set
 
             overall_score = total_score[current_node]
             solution_parts = []
@@ -109,7 +109,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
                                                                                                          in
                                                                                                          open_list]:
                 predecessor[neighbor_node] = PredecessorData(node=current_node, part_used=part_id,
-                                                             direction=rest.get_direction(pos), path=current_path,
+                                                             direction=path_finding.path_utilities.get_direction(pos), path=current_path,
                                                              state_grid=current_state_grid, part_stock=pipe_stock)
 
                 used_part[neighbor_node] = part_id

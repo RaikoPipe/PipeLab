@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy as np
 
 from data_class.PathProblem import PathProblem
-from path_finding.ps_support_functions import get_outgoing_pos, get_best_connections
+from path_finding.path_utilities import get_outgoing_pos, get_best_connections
 import heapq
 from path_finding.search_algorithm import find_path
 
