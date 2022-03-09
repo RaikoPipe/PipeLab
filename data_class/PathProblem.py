@@ -6,6 +6,7 @@ from data_class.Weights import Weights
 class PathProblem:
     """Data class that contains detailed information about the path problem."""
     state_grid: any
+    #todo: change type to Node
     start_node: tuple
     goal_node: tuple
 

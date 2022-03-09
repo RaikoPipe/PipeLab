@@ -1,6 +1,6 @@
 from path_finding.restriction_functions import diff_pos
 from path_finding.path_utilities import get_direction
-from path_finding.p_math import get_length_same_axis
+from path_finding.path_math import get_length_same_axis
 from path_finding.common_types import *
 
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 from data_class.Weights import Weights
-from path_finding.p_math import sum_absolute_a_b, sum_pos, diff_pos
+from path_finding.path_math import sum_absolute_a_b, sum_pos, diff_pos
 from copy import deepcopy
 
 # todo: put non restriction functions into support functions

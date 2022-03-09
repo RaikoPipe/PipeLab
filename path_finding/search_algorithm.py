@@ -8,7 +8,7 @@ from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
 from path_finding.restriction_functions import manhattan_distance, neighbor_restricted, get_m_score, get_e_score, \
     determine_neighbor_pos, get_f_score, get_worst_move_cost
-from path_finding.p_math import *
+from path_finding.path_math import *
 from typing import Optional
 from copy import copy
 from grid.grid_functions import change_grid_states
@@ -76,6 +76,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
 
         if current_node == goal_node:
             # search is finished!
+            # todo: save definite path, total definite trail, layouts
 
             overall_score = total_score[current_node]
             solution_parts = []
