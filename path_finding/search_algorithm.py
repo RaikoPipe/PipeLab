@@ -12,13 +12,14 @@ from path_finding.path_math import *
 from typing import Optional
 from copy import copy
 from grid.grid_functions import change_grid_states
+from path_utilities import construct_solution
 
 # idea: make a separate function for search showcase
 # optimization idea: save pipe stock in each node, save state grid in each node (reduce pipe stock, occupy path from current node to neighbor node on state grid)
 # todo: assign current pipe stock to predecessor, use pipe stock of predecessor to determine current pipe stock
 # todo: allow start_axis/goal_axis as None to signify that start/goal direction restriction can be ignored
 
-# fixme: solution should always start and end with a pipe ( as if start and end are pipes that need to be connected to)
+# fixme: solution should always start and end with a pipe ( as if start and end are fittings that need to be connected to)
 
 def find_path(path_problem: PathProblem) -> Optional[Solution]:
     """Searches for a solution for the given path problem."""
@@ -40,7 +41,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
     closed_list = set()
     open_list = []
 
-    predecessor = {
+    predecessors = {
         start_node: PredecessorData(state_grid=state_grid, direction=None, path=[], part_used=starting_part,
                                          node=None, part_stock=path_problem.part_stock)}
 
@@ -54,7 +55,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
 
     while open_list:
         current_node = heapq.heappop(open_list)[1]  # pops the node with the smallest score from open_list
-        current_path = copy(predecessor.get(current_node).path)
+        current_path = copy(predecessors.get(current_node).path)
         current_path.append(current_node)
 
         if current_node == start_node:
@@ -66,11 +67,11 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
                                                           current_path=current_path,
                                                           pipe_stock=pipe_stock, used_parts=used_part)
         else:
-            current_state_grid = change_grid_states(state_grid=copy(predecessor.get(current_node).state_grid),
+            current_state_grid = change_grid_states(state_grid=copy(predecessors.get(current_node).state_grid),
                                                     node_states=rest.get_changed_nodes(
-                                                        predecessor.get(current_node).node, current_node))
+                                                        predecessors.get(current_node).pos, current_node))
 
-            verifiable_neighbors = determine_neighbor_pos(direction=predecessor.get(current_node).direction,
+            verifiable_neighbors = determine_neighbor_pos(direction=predecessors.get(current_node).direction,
                                                           goal_node=goal_node, goal_direction=goal_axis,
                                                           current_node=current_node,
                                                           current_path=current_path,
@@ -79,19 +80,11 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
 
         if current_node == goal_node:
             # search is finished!
-            # todo: save definite path, total definite trail, layouts
 
-            overall_score = total_score[current_node]
-            solution_parts = []
+            end_score = total_score[current_node]
 
-            while current_node in predecessor:
-                solution_parts.append(predecessor.get(current_node).part_used)
-                current_node = predecessor.get(current_node).node
-            solution_parts = solution_parts[::-1] # reverse order
-            solution = Solution(path=current_path, parts=solution_parts, solution_grid=current_state_grid, score=overall_score,
-                                algorithm = algorithm, path_problem=path_problem, problem_solved=True)
-
-            return solution
+            return construct_solution(predecessors=predecessors, current_node=current_node, state_grid=state_grid,score=end_score,
+                                      algorithm=algorithm, path_problem=path_problem)
 
         closed_list.add(current_node)
 
@@ -112,7 +105,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
             if current_score_start_distance < score_start.get(neighbor_node, 0) or neighbor_node not in [p[1] for p
                                                                                                          in
                                                                                                          open_list]:
-                predecessor[neighbor_node] = PredecessorData(node=current_node, part_used=part_id,
+                predecessors[neighbor_node] = PredecessorData(node=current_node, part_used=part_id,
                                                              direction=path_finding.path_utilities.get_direction(pos), path=current_path,
                                                              state_grid=current_state_grid, part_stock=pipe_stock)
 

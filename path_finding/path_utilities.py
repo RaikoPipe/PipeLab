@@ -1,5 +1,7 @@
 from math import copysign
 
+from data_class.Solution import Solution
+from path_finding.path_math import diff_pos
 from path_finding.restriction_functions import manhattan_distance
 from common_types import *
 
@@ -90,3 +92,46 @@ def get_direction(pos:tuple) -> tuple:
     y= int(copysign(y,pos[1]))
 
     return x,y
+
+def construct_solution(predecessors, current_node, state_grid, score,
+                       algorithm, path_problem):
+    definite_path = []
+    while current_node in predecessors:
+        definite_path.append((current_node, predecessors.get(current_node).part_used))
+        current_node = predecessors.get(current_node).pos
+
+    definite_path = definite_path[::-1]  # reverse order
+
+    total_definite_trail = {}
+    layouts = []
+    fc_set = set()
+    fit_start_pos = None
+    i = 0
+    while i < len(definite_path):
+        start_node = definite_path[i]
+
+        if start_node[1] == 0 or start_node[1] is None:
+            trail = []
+            total_definite_trail[start_node[0]] = start_node[1]
+            trail.append(start_node[0])
+            #get id of straight pipe
+            pipe_node = definite_path[i+1]
+            end_node = definite_path[i+2]
+            direction = get_direction(diff_pos(start_node, end_node))
+
+            pos = start_node[0]
+            while pos != end_node:
+                pos = (pos[0]+1*direction[0], pos[1]+1*direction[1])
+                total_definite_trail[pos] = pipe_node[1]
+                trail.append(pos)
+            total_definite_trail[end_node[0]] = end_node[1]
+            trail.append(end_node)
+            layouts.append(trail)
+            fc_set.add((start_node[0], end_node[0]))
+
+        else:
+            # definite path must start with None or 0
+            raise Exception
+
+    return Solution(definite_path = definite_path, fc_set=fc_set, total_definite_trail=total_definite_trail,
+                    layouts=layouts, state_grid = state_grid, score=score, algorithm=algorithm, path_problem=path_problem)
