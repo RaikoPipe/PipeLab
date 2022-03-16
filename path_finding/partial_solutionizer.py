@@ -6,6 +6,49 @@ from data_class.PathProblem import PathProblem
 from path_finding.path_utilities import get_outgoing_pos, get_best_connections
 import heapq
 from path_finding.search_algorithm import find_path
+from path_finding.path_utilities import get_direction
+from path_finding.path_math import diff_pos
+from path_finding.common_types import Layouts
+
+def find_partial_solution_ls(layouts: Layouts, state_grid: np.ndarray,
+                                 initial_path_problem: PathProblem, completed_set:set):
+
+
+    tentative_path_problem = deepcopy(initial_path_problem)
+    tentative_path_problem.state_grid = state_grid
+    partial_solutions = []
+
+
+    node_dict = {}
+    layout_id = 0
+
+    for connection in completed_set:
+        # add fit_pos, get direction of the layout (horizontal/vertical)
+        layout_dir = get_direction(diff_pos(connection[0], connection[1]))
+        node_dict[(connection[0],layout_id)] = layout_dir
+        node_dict[(connection[1], layout_id)] = layout_dir
+        layout_id += 1
+
+    exclusion_list = set() # for keeping track of connections with no valid path
+
+    while True:
+        connections = get_best_connections(node_dict=node_dict, exclusion_list=exclusion_list)
+        for connection in connections:
+            tentative_path_problem.start_node = connection[0]
+            tentative_path_problem.goal_node = connection[1]
+            #fixme: also add start_direction, goal_directions depending on trail direction
+            solution = find_path(tentative_path_problem)
+            if solution is None:
+                # no connection found, add connection to exclusion list, start over
+                exclusion_list.add(connection)
+                break
+
+            partial_solutions.append(solution)
+
+        if connections == exclusion_list:
+            return None
+
+        return partial_solutions
 
 def find_partial_solution_simple(layout_paths: list, captured_state_grid: np.ndarray,
                                  initial_path_problem: PathProblem):
@@ -19,7 +62,7 @@ def find_partial_solution_simple(layout_paths: list, captured_state_grid: np.nda
     exclusion_list = set()
 
     while True:
-        connections = get_best_connections(pos_id_set=node_set, exclusion_list=exclusion_list)
+        connections = get_best_connections(node_dict=node_set, exclusion_list=exclusion_list)
         for connection in connections:
             tentative_path_problem.start_node = connection[0]
             tentative_path_problem.goal_node = connection[1]

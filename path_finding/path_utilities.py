@@ -40,20 +40,20 @@ def get_outgoing_pos(paths: list[Path], first_pos: Pos, last_pos: Pos) -> set[tu
     pos_id_set.add((last_pos, layout_id))
     return pos_id_set
 
-def get_best_connections(pos_id_set:set[tuple[Pos, int]], exclusion_list: set[DirectedConnection])\
+def get_best_connections(node_dict: dict[tuple[Pos, int]:Pos], exclusion_list: set[DirectedConnection])\
         -> list[DirectedConnection]:
     """
     Generates a connection for each two nodes according to the lowest manhattan distance.
-    :param pos_id_set: List containing position of nodes and corresponding layout ids.
+    :param node_dict: List containing position of nodes and corresponding layout ids.
     :param exclusion_list: List with connections that are excluded (for example because there is no feasible path in a connection).
-    :return: List of connections
+    :return: Set of connections
     """
 
     connecting_path = []
-    for idx, (current_pos,current_id) in enumerate(pos_id_set):
-        pos_id_set.remove((current_pos, current_id)) #remove current node
+    for (current_pos,current_id) in node_dict.keys():
+        node_dict.remove((current_pos, current_id)) #remove current node
         open_list = []
-        for (connecting_pos,connecting_id) in pos_id_set:
+        for (connecting_pos,connecting_id) in node_dict:
             #prevent layouts from connecting to themselves
             if current_id == connecting_id:
                 continue
@@ -65,7 +65,7 @@ def get_best_connections(pos_id_set:set[tuple[Pos, int]], exclusion_list: set[Di
         # get connecting node with best score, then remove it
         best_node, best_node_id = heapq.heappop(open_list)
         connection = (current_pos, best_node)
-        pos_id_set.remove((best_node, best_node_id))
+        node_dict.remove((best_node, best_node_id))
         connecting_path.append(connection)
 
     return connecting_path

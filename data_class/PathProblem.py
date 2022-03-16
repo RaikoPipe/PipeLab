@@ -1,13 +1,16 @@
 from dataclasses import dataclass, field
 from typing import Optional
 from data_class.Weights import Weights
+from path_finding.common_types import Node
+
+#todo: documentation
 
 @dataclass
 class PathProblem:
     """Data class that contains detailed information about the path problem."""
     state_grid: any
     #todo: change type to Node
-    start_node: tuple
+    start_node: Node
     goal_node: tuple
 
     start_direction: tuple # direction that start is restricted to

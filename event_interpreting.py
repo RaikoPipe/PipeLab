@@ -185,12 +185,6 @@ def get_definite_path_from_path(path:Path, part_stock:dict[int:int]) -> Definite
 
 
 
-
-
-
-
-
-
 def event_part_removed(part_id,part_stock):
     part_stock[part_id] -= 1
     return part_stock

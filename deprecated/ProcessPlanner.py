@@ -39,3 +39,64 @@ def get_current_layout_solution(self, captured_state_grid: np.ndarray, parts_use
 def get_invalid_solutions(self, remove: bool = True) -> list:
     """Gets invalid solutions and returns them. Optionally also removes them. Should be called after modifying the
      path problem."""
+
+
+def handle_new_input(self, worker_event: tuple[Optional[int], Pos], pick_events: list) -> bool:
+    """evaluates worker event (and event pos on the mounting wall) to determine the current construction layout.
+    :returns deviation occurrence"""
+    # fixme: deepcopy might be slow, consider alternative
+
+
+
+    deviation_occurred = False
+
+    if pick_events:
+        for part_id in pick_events:
+            self.tentative_state.picked_parts[part_id] += 1
+
+    event_code = worker_event[0]
+    event_pos = worker_event[1]
+
+    if worker_event[0]:
+
+        if event_code == 2:
+            self.tentative_state.motion_pipe_pos.add(event_pos)
+        elif event_code == 3:
+            self.tentative_state.motion_attachment_pos.add(event_pos)
+
+        #todo: check for removals, update tentative state
+
+        if self.deviation_event(motion_events=worker_event, tentative_state=self.tentative_state):
+            if self.tentative_state.deviated_from_opt_sol:
+
+                if not deviated_from_path(current_state=self.tentative_state, optimal_solution=self.optimal_solution):
+                    self.tentative_state.deviated_from_opt_sol = False
+                    # todo: notify worker?
+                #todo: check if deviated from latest deviation solution
+                elif deviated_from_path(current_state=self.tentative_state, optimal_solution=self.latest_deviation_solution):
+                    deviation_occurred = True
+                    # todo: create new partial solution
+                    self.latest_deviation_solution = partial_solutionizer.find_partial_solution_simple(self.tentative_state.layouts,
+                                                                                                       self.tentative_state.state_grid,
+                                                                                                       self._initial_path_problem)
+                    self.tentative_state.aimed_solution = self.latest_deviation_solution
+            else:
+                if deviated_from_path(current_state=self.tentative_state, optimal_solution=self.optimal_solution):
+                    deviation_occurred = True
+                    self.tentative_state.deviated_from_opt_sol = True
+                    self.latest_deviation_solution = partial_solutionizer.find_partial_solution_simple(
+                        self.tentative_state.layouts,
+                        self.tentative_state.state_grid,
+                        self._initial_path_problem)
+
+        if deconstruction_event
+
+
+    #todo: recognize pick events
+    # detect if part was picked by worker: if picking event occurs outside robot state pick part
+
+
+    if pick_events or worker_event:
+        self.update_latest_state(old_state=self.latest_state, new_state=self.tentative_state)
+
+    return deviation_occurred
