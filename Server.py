@@ -26,18 +26,7 @@ while solution is None:
 
     weights = Weights(path_length=1, cost=0, distance_to_obstacles=0)
 
-    path_problem = PathProblem(state_grid=state_grid, start_node=start_node, goal_node=goal_node, start_direction=(1, 0),
-                               goal_direction=(0, 1), goal_is_transition=False, part_cost=part_cost,
+    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node, start_direction={(1, 0)},
+                               goal_direction={(0, 1)}, part_cost=part_cost,
                                starting_part=None, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
 """Debug ends here"""
-
-class someServerEnv:
-    """Server Class. Waits for new input, gets instructions from process planner"""
-
-    def __init__(self):
-        self.current_instruction = ""
-        self.process_planer = ProcessPlanner(initial_path_problem=path_problem, initial_state=None)
-
-    def get_instructions(self):
-        #todo: give process_planner new data, receive instructions, give instructions to clients
-        process_planer.event_captured_state_grid()

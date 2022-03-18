@@ -1,3 +1,7 @@
+from math import copysign
+
+import numpy as np
+
 from path_finding.common_types import *
 from constants import *
 
@@ -64,4 +68,33 @@ def get_adjacency(a:Pos, b:Pos)-> dict[str:bool,str: Pos]:
 
     return False
 
-    
+
+def manhattan_distance(a:tuple[int,int], b:tuple[int,int]):
+    """Calculates the distance between to nodes in horizontal/vertical steps required."""
+    distance = np.abs(b[0] - a[0]) + np.abs(b[1] - a[1])
+    return distance
+
+
+def get_diagonal_direction(pos:tuple) -> tuple:
+    """Returns the direction of a relative position."""
+    x = pos[0]
+    y = pos[1]
+    x= int(copysign(x,pos[0]))
+    y= int(copysign(y,pos[1]))
+    return x,y
+
+
+def get_direction(pos:Pos) -> Pos:
+    """Returns the direction of a relative position."""
+    x =pos[0]
+    y= pos[1]
+
+    if x == 0:
+        y = y**0
+    elif y == 0:
+        x = x**0
+
+    x= int(copysign(x,pos[0]))
+    y= int(copysign(y,pos[1]))
+
+    return x,y

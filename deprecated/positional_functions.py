@@ -2,6 +2,7 @@ import numpy as np
 from vpython import *
 import weakref
 
+import path_finding.path_math
 import path_finding.path_utilities
 import path_finding.restriction_functions
 from path_finding import search_algorithm as agt, restriction_functions as pint
@@ -185,7 +186,7 @@ def determineSecondPipePlacement(pipe_axis, pipe_coord, secondPipeLength):
 def determineClampPlacement(Matrix, a, n, type):
     if type == 3:
         print("here")
-    axis = path_finding.path_utilities.get_direction(n)
+    axis = path_finding.path_math.get_direction(n)
     nLength = abs(n[0] - n[1])
     if nLength != type:
         nLength = nLength -1

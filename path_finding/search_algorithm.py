@@ -1,130 +1,157 @@
 import heapq
 
+from path_finding.path_math import *
 import path_finding.path_utilities
-from path_finding import restriction_functions as rest
 from data_class.PredecessorData import PredecessorData
 from data_class.Solution import Solution
 from data_class.PathProblem import PathProblem
-from data_class.Weights import Weights
-from path_finding.restriction_functions import manhattan_distance, neighbor_restricted, get_m_score, get_e_score, \
-    determine_neighbor_pos, get_f_score, get_worst_move_cost
+from path_finding.restriction_functions import neighbor_restricted, determine_neighbor_pos
+from path_finding.score_calculation import get_worst_move_cost, get_f_score, get_m_score, \
+    get_e_score
 from path_finding.path_math import *
 from typing import Optional
 from copy import copy
 from grid.grid_functions import change_grid_states
-from path_utilities import construct_solution
+from path_finding.path_utilities import construct_solution
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib
+
 
 # idea: make a separate function for search showcase
 # optimization idea: save pipe stock in each node, save state grid in each node (reduce pipe stock, occupy path from current node to neighbor node on state grid)
 # todo: assign current pipe stock to predecessor, use pipe stock of predecessor to determine current pipe stock
 # todo: allow start_axis/goal_axis as None to signify that start/goal direction restriction can be ignored
 
-# fixme: solution should always start and end with a pipe ( as if start and end are fittings that need to be connected to)
+# fixme: solution should always start and end with a pipe (as if start and end are fittings that need to be connected to)
+
+# todo: test where pipes start/end at start/goal
+
+possible_directions = {(0,1),(1,0),(-1,0),(0,-1)}
 
 def find_path(path_problem: PathProblem) -> Optional[Solution]:
     """Searches for a solution for the given path problem."""
     starting_part = path_problem.starting_part
     state_grid = path_problem.state_grid
-    start_node = path_problem.start_node
-    goal_node = path_problem.goal_node
-    start_axis = path_problem.start_direction
-    goal_axis = path_problem.goal_direction
+    start_pos = path_problem.start_pos
+    goal_pos = path_problem.goal_pos
+    start_directions = path_problem.start_direction
+    goal_directions = path_problem.goal_direction
     pipe_stock = path_problem.part_stock
-    goal_is_transition = path_problem.goal_is_transition
     part_cost = path_problem.part_cost
     worst_move_cost, worst_moves = get_worst_move_cost(part_cost)
     weights = path_problem.weights
     algorithm = path_problem.algorithm
 
+    # set all possible goal positions
+    goal_set = set()
+    goal_dict = {}
+    for direction in possible_directions:
+        g_pos = (goal_pos[0]+direction[0], goal_pos[1] + direction[1])
+        goal_set.add(g_pos)
+        goal_dict[g_pos] = (-direction[0],-direction[1])
 
+
+    #todo: restrict start and goal: only connectable by pipe
 
     closed_list = set()
     open_list = []
 
     predecessors = {
-        start_node: PredecessorData(state_grid=state_grid, direction=None, path=[], part_used=starting_part,
-                                         node=None, part_stock=path_problem.part_stock)}
+        start_pos: PredecessorData(state_grid=state_grid, direction=None, path=[], part_used=starting_part,
+                                          part_stock=path_problem.part_stock, pos= None)}
+    current_state_grid = state_grid
+    current_state_grid[start_pos] = 2
 
-    score_start = {start_node: 0}  # G
-    upper_bound_distance = manhattan_distance(start_node,
-                                              goal_node)  # artificial upper bound for distance
-    total_score = {start_node: upper_bound_distance}  # F
-    heapq.heappush(open_list, (total_score[start_node], start_node))
+    score_start = {start_pos: 0}  # G
+    upper_bound_distance = manhattan_distance(start_pos,
+                                              goal_pos)  # artificial upper bound for distance
+    total_score = {start_pos: upper_bound_distance}  # F
+    heapq.heappush(open_list, (total_score[start_pos], start_pos))
 
     used_part = {}
 
     while open_list:
-        current_node = heapq.heappop(open_list)[1]  # pops the node with the smallest score from open_list
-        current_path = copy(predecessors.get(current_node).path)
-        current_path.append(current_node)
+        current_pos = heapq.heappop(open_list)[1]  # pops the pos with the smallest score from open_list
+        current_path = copy(predecessors.get(current_pos).path)
+        current_path.append(current_pos)
 
-        if current_node == start_node:
-            current_state_grid = state_grid
+        if current_pos == start_pos:
 
-            verifiable_neighbors = determine_neighbor_pos(direction=start_axis,
-                                                          goal_node=goal_node, goal_direction=goal_axis,
-                                                          current_node=current_node,
+
+            verifiable_neighbors = determine_neighbor_pos(directions=start_directions,
+                                                          goal_dict=goal_dict,
+                                                          current_pos=current_pos,
                                                           current_path=current_path,
                                                           pipe_stock=pipe_stock, used_parts=used_part)
         else:
-            current_state_grid = change_grid_states(state_grid=copy(predecessors.get(current_node).state_grid),
-                                                    node_states=rest.get_changed_nodes(
-                                                        predecessors.get(current_node).pos, current_node))
+            current_state_grid = change_grid_states(state_grid=copy(predecessors.get(current_pos).state_grid),
+                                                    node_states=path_finding.path_utilities.get_changed_nodes(
+                                                        predecessors.get(current_pos).pos, current_pos))
+            # data = current_state_grid.tolist()
+            # plt.imshow(data)
+            # plt.show()
+            # print(current_path)
 
-            verifiable_neighbors = determine_neighbor_pos(direction=predecessors.get(current_node).direction,
-                                                          goal_node=goal_node, goal_direction=goal_axis,
-                                                          current_node=current_node,
+            verifiable_neighbors = determine_neighbor_pos(directions={predecessors.get(current_pos).direction},
+                                                          goal_dict=goal_dict,
+                                                          current_pos=current_pos,
                                                           current_path=current_path,
                                                           pipe_stock=pipe_stock, used_parts=used_part)
 
 
-        if current_node == goal_node:
+        if current_pos in goal_set:
             # search is finished!
+            current_path.append(goal_pos)
+            current_state_grid[goal_pos] = 2
+            predecessors[goal_pos] = PredecessorData(pos=current_pos, part_used=0,
+                                                         direction=get_direction(diff_pos(current_pos, goal_pos)), path=current_path,
+                                                         state_grid=current_state_grid, part_stock=pipe_stock)
+            end_score = total_score[current_pos]
+            current_pos = goal_pos
 
-            end_score = total_score[current_node]
-
-            return construct_solution(predecessors=predecessors, current_node=current_node, state_grid=state_grid,score=end_score,
+            return construct_solution(predecessors=predecessors, current_pos=current_pos, state_grid=state_grid, score=end_score,
                                       algorithm=algorithm, path_problem=path_problem)
 
-        closed_list.add(current_node)
+        closed_list.add(current_pos)
 
         for (pos, part_id) in verifiable_neighbors:
-            neighbor_node = sum_pos(current_node, pos)
+            neighbor_pos = sum_pos(current_pos, pos)
 
-            current_score_start_distance = score_start[current_node] + \
-                                           manhattan_distance(current_node, neighbor_node) / total_score[
-                                               start_node]
+            current_score_start_distance = score_start[current_pos] + \
+                                           manhattan_distance(current_pos, neighbor_pos) / total_score[
+                                               start_pos]
 
-            if neighbor_node in closed_list:  # and current_score_start >= score_start.get(neighbor_node, 0):
+            if neighbor_pos in closed_list:  # and current_score_start >= score_start.get(neighbor_pos, 0):
                 continue
 
-            if neighbor_restricted(current_node=current_node, neighbor_node=neighbor_node, pos=pos,
+            if neighbor_restricted(current_node=current_pos, neighbor_node=neighbor_pos, pos=pos,
                                    current_state_grid=current_state_grid):
                 continue
 
-            if current_score_start_distance < score_start.get(neighbor_node, 0) or neighbor_node not in [p[1] for p
+            if current_score_start_distance < score_start.get(neighbor_pos, 0) or neighbor_pos not in [p[1] for p
                                                                                                          in
                                                                                                          open_list]:
-                predecessors[neighbor_node] = PredecessorData(node=current_node, part_used=part_id,
-                                                             direction=path_finding.path_utilities.get_direction(pos), path=current_path,
+                predecessors[neighbor_pos] = PredecessorData(pos=current_pos, part_used=part_id,
+                                                             direction= get_direction(pos), path=current_path,
                                                              state_grid=current_state_grid, part_stock=pipe_stock)
 
-                used_part[neighbor_node] = part_id
+                used_part[neighbor_pos] = part_id
 
-                score_start[neighbor_node] = current_score_start_distance
+                score_start[neighbor_pos] = current_score_start_distance
 
-                current_score_goal_distance = get_m_score(algorithm=algorithm, goal_node=goal_node,
-                                                          neighbor_node=neighbor_node,
-                                                          weights=weights, upper_bound=total_score[start_node])
+                current_score_goal_distance = get_m_score(algorithm=algorithm, goal_pos=goal_pos,
+                                                          neighbor_pos=neighbor_pos,
+                                                          weights=weights, upper_bound=total_score[start_pos])
 
-                current_score_extra = get_e_score(algorithm=algorithm, weights=weights, current_node=current_node,
+                current_score_extra = get_e_score(algorithm=algorithm, weights=weights, current_pos=current_pos,
                                                   neighbor_pos=pos,
                                                   part_cost=part_cost, worst_move_cost=worst_move_cost,
                                                   current_state_grid=current_state_grid, part_id=part_id)
 
-                total_score[neighbor_node] = get_f_score(current_score_start_distance, current_score_goal_distance,
-                                                         current_score_extra, total_score[current_node], algorithm)
-                heapq.heappush(open_list, (total_score[neighbor_node], neighbor_node))
+                total_score[neighbor_pos] = get_f_score(current_score_start_distance, current_score_goal_distance,
+                                                         current_score_extra, total_score[current_pos], algorithm)
+                heapq.heappush(open_list, (total_score[neighbor_pos], neighbor_pos))
     else:
         # no solution found!
         return None

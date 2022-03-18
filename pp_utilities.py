@@ -4,11 +4,6 @@ from data_class.Solution import Solution
 from data_class.State import State
 from path_finding.common_types import Pos, Trail, DefinitePath
 
-
-def picking_robot_has_wrong_part(layout_state: LayoutState, carried_part_id):
-    """Check if the currently carried part can be used to assist in the current layout"""
-    if layout_state.pipe_id == carried_part_id and not layout_state.pipe_set:
-
 def determine_next_part(layout_state:LayoutState):
     next_part_id = None
 

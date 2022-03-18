@@ -6,8 +6,7 @@ from data_class.PathProblem import PathProblem
 from path_finding.path_utilities import get_outgoing_pos, get_best_connections
 import heapq
 from path_finding.search_algorithm import find_path
-from path_finding.path_utilities import get_direction
-from path_finding.path_math import diff_pos
+from path_finding.path_math import diff_pos, get_direction
 from path_finding.common_types import Layouts
 
 def find_partial_solution_ls(layouts: Layouts, state_grid: np.ndarray,
@@ -34,7 +33,7 @@ def find_partial_solution_ls(layouts: Layouts, state_grid: np.ndarray,
     while True:
         connections = get_best_connections(node_dict=node_dict, exclusion_list=exclusion_list)
         for connection in connections:
-            tentative_path_problem.start_node = connection[0]
+            tentative_path_problem.start_pos = connection[0]
             tentative_path_problem.goal_node = connection[1]
             #fixme: also add start_direction, goal_directions depending on trail direction
             solution = find_path(tentative_path_problem)
@@ -56,7 +55,7 @@ def find_partial_solution_simple(layout_paths: list, captured_state_grid: np.nda
     tentative_path_problem.state_grid = captured_state_grid
     partial_solutions = []
 
-    node_set = get_outgoing_pos(paths=layout_paths, first_pos=tentative_path_problem.start_node,
+    node_set = get_outgoing_pos(paths=layout_paths, first_pos=tentative_path_problem.start_pos,
                                 last_pos=tentative_path_problem.goal_node)
 
     exclusion_list = set()
@@ -64,7 +63,7 @@ def find_partial_solution_simple(layout_paths: list, captured_state_grid: np.nda
     while True:
         connections = get_best_connections(node_dict=node_set, exclusion_list=exclusion_list)
         for connection in connections:
-            tentative_path_problem.start_node = connection[0]
+            tentative_path_problem.start_pos = connection[0]
             tentative_path_problem.goal_node = connection[1]
             solution = find_path(tentative_path_problem)
             if solution is None:

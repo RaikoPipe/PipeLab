@@ -1,7 +1,6 @@
 import numpy as np
 from data_class.State import State
 from data_class.PathProblem import PathProblem
-from data_class.Solution import Solution
 from data_class.Weights import Weights
 from copy import deepcopy
 from path_finding.search_algorithm import find_path

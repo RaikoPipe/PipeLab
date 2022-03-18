@@ -22,7 +22,7 @@ def get_new_path_problem(self, state_grid: np.ndarray, parts_used: list, path: l
     current_pipe_stock = get_current_part_stock(copy(self._initial_path_problem.part_stock), parts_used)
     new_path_problem.part_stock = current_pipe_stock
     new_path_problem.state_grid = state_grid
-    new_path_problem.start_node = path[-1]  # last entry is new start pos
+    new_path_problem.start_pos = path[-1]  # last entry is new start pos
     new_path_problem.start_direction = get_direction(
         diff_pos(path[-2], path[-1]))  # direction from second last entry to last entry is start direction
     # goal parameters stay the same

@@ -25,5 +25,5 @@ DirectedConnection = tuple[Pos, Pos]
 UndirectedConnection = frozenset()
 """two pos with an unordered relationship"""
 
-Layouts = list(Trail)
+Layouts = list[Trail]
 """a list containing trails in path order"""

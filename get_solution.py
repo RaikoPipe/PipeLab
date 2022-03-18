@@ -8,7 +8,7 @@ completed_solutions_stack = {}  # PathProblem: Solution #fixme: should be in opt
 def check_solution_stack(path_problem: PathProblem) -> Optional[Solution]:
     for solved_path_problem in completed_solutions_stack:
         if path_problem == path_problem:
-            return completed_solutions_stack[path_problem]
+            return solved_path_problem
         else:
             return None
 

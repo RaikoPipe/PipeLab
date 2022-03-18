@@ -1,10 +1,10 @@
-from rendering.object_rendering import render_obstacle, render_pipe, render_corner
+from rendering.object_rendering import render_obstacle, render_pipe, render_corner, render_marker
 import vpython as vpy
 import numpy as np
-from path_finding.path_math import diff_pos, sum_pos
-from path_finding.path_utilities import get_diagonal_direction, get_direction
+from path_finding.path_math import diff_pos, sum_pos, get_diagonal_direction, get_direction
 from data_class.Solution import Solution
 from typing import Optional
+from path_finding.common_types import *
 
 """functions for rendering a group of objects"""
 
@@ -24,31 +24,38 @@ def render_obstacles_from_state_grid(state_grid: np.ndarray, rendering_grid:np.n
 
 
 # todo: get directions from solution data class
-def render_pipe_layout(parts_used:list, path:list, rendering_grid: np.ndarray, scene: vpy.canvas) -> list[vpy.cylinder]:
+def render_pipe_layout(definite_path: DefinitePath, rendering_grid: np.ndarray, scene: vpy.canvas) -> list[vpy.cylinder]:
     """Renders pipe objects on a VPython canvas according to the given list of parts used."""
     solution_layout = []
-    for index, part_id in enumerate(parts_used):
+    for index, (pos, part_id) in enumerate(definite_path):
         # skip the first entry
         if index == 0:
             continue
         elif part_id == 0:
             # create corner
-            from_dir = get_direction(diff_pos(path[index - 1], path[index]))
-            to_dir = get_direction(diff_pos(path[index], path[index + 1]))
+            from_dir = get_direction(diff_pos(definite_path[index - 1][0], definite_path[index][0]))
+            to_dir = get_direction(diff_pos(definite_path[index][0], definite_path[index + 1][0]))
 
-            pos = rendering_grid[path[index]]
+            pos = rendering_grid[definite_path[index][0]]
             corner = render_corner(scene=scene, pos=pos, course=(from_dir, to_dir))
             solution_layout.append(corner)
 
         else:
-            direction = get_direction(diff_pos(path[index - 1], path[index]))
-            pos = rendering_grid[path[index-1]]
+            direction = get_direction(diff_pos(definite_path[index - 1][0], definite_path[index][0]))
+            pos = rendering_grid[definite_path[index-1][0]]
             pipe = render_pipe(scene=scene, pos=pos,
                         direction=direction, pipe_data=None,
                         part_id=part_id)
             solution_layout.append(pipe)
 
     return solution_layout
+
+def render_start_goal_markers(scene:vpy.canvas, start_pos:Pos, goal_pos:Pos, rendering_grid: np.ndarray):
+    start_coord = rendering_grid[start_pos]
+    goal_coord = rendering_grid[goal_pos]
+    start_marker = render_marker(scene=scene, pos=start_coord,marker_color=vpy.color.green)
+    goal_marker = render_marker(scene=scene, pos=goal_coord, marker_color=vpy.color.red)
+    return start_marker, goal_marker
 
 
 

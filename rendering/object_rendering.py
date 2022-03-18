@@ -125,6 +125,10 @@ def render_pipe(scene : vpy.canvas, pos: vpy.vector, direction: tuple[int,int], 
 
     return pipe
 
+def render_marker(scene: vpy.canvas, pos: vpy.vector, marker_color: vpy.color):
+    marker = vpy.sphere(scene=scene, pos=pos, color=marker_color, radius = 50)
+    return marker
+
 
 
 

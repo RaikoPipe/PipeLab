@@ -1,27 +1,10 @@
-from math import copysign
+from copy import deepcopy
 
 from data_class.Solution import Solution
-from path_finding.path_math import diff_pos
-from path_finding.restriction_functions import manhattan_distance
-from common_types import *
+from path_finding.path_math import diff_pos, manhattan_distance, get_direction
+from path_finding.common_types import *
 
 import heapq
-
-# def get_best_solution_from_nodes(path_problem, connecting_nodes):
-#     """Returns best solution for each node in connecting_node as goal."""
-#     # get scores for connecting to start
-#     solutions = []
-#     for connecting_node in connecting_nodes:
-#         path_problem.goal_node = connecting_node
-#         solution = find_path(path_problem)
-#         solutions.append(solution)
-#         # todo: get axis of connecting node somehow
-#
-#
-#     # todo: get solution with lowest score; use heapq
-#     best_solution = Solution() #todo: see line 71
-#
-#     return best_solution
 
 def get_outgoing_pos(paths: list[Path], first_pos: Pos, last_pos: Pos) -> set[tuple[Pos, int]]:
     """
@@ -73,32 +56,12 @@ def get_best_connections(node_dict: dict[tuple[Pos, int]:Pos], exclusion_list: s
     return connecting_path
 
 
-def get_diagonal_direction(pos:tuple) -> tuple:
-    """Returns the direction of a relative position."""
-    x = pos[0]
-    y = pos[1]
-    x= int(copysign(x,pos[0]))
-    y= int(copysign(y,pos[1]))
-    return x,y
-
-
-def get_direction(pos:tuple) -> tuple:
-    """Returns the direction of a relative position."""
-
-    x = pos[0]**0
-    y = pos[1]**0
-
-    x= int(copysign(x,pos[0]))
-    y= int(copysign(y,pos[1]))
-
-    return x,y
-
-def construct_solution(predecessors, current_node, state_grid, score,
+def construct_solution(predecessors, current_pos, state_grid, score,
                        algorithm, path_problem):
     definite_path = []
-    while current_node in predecessors:
-        definite_path.append((current_node, predecessors.get(current_node).part_used))
-        current_node = predecessors.get(current_node).pos
+    while current_pos in predecessors:
+        definite_path.append((current_pos, predecessors.get(current_pos).part_used))
+        current_pos = predecessors.get(current_pos).pos
 
     definite_path = definite_path[::-1]  # reverse order
 
@@ -107,7 +70,7 @@ def construct_solution(predecessors, current_node, state_grid, score,
     fc_set = set()
     fit_start_pos = None
     i = 0
-    while i < len(definite_path):
+    while i < len(definite_path)-1:
         start_node = definite_path[i]
 
         if start_node[1] == 0 or start_node[1] is None:
@@ -117,17 +80,20 @@ def construct_solution(predecessors, current_node, state_grid, score,
             #get id of straight pipe
             pipe_node = definite_path[i+1]
             end_node = definite_path[i+2]
-            direction = get_direction(diff_pos(start_node, end_node))
+            direction = get_direction(diff_pos(start_node[0], end_node[0]))
 
             pos = start_node[0]
-            while pos != end_node:
+            while pos != end_node[0]:
                 pos = (pos[0]+1*direction[0], pos[1]+1*direction[1])
                 total_definite_trail[pos] = pipe_node[1]
                 trail.append(pos)
+
             total_definite_trail[end_node[0]] = end_node[1]
             trail.append(end_node)
             layouts.append(trail)
             fc_set.add((start_node[0], end_node[0]))
+
+            i+=2
 
         else:
             # definite path must start with None or 0
@@ -135,3 +101,117 @@ def construct_solution(predecessors, current_node, state_grid, score,
 
     return Solution(definite_path = definite_path, fc_set=fc_set, total_definite_trail=total_definite_trail,
                     layouts=layouts, state_grid = state_grid, score=score, algorithm=algorithm, path_problem=path_problem)
+
+
+def get_corner_neighbors(axis: tuple, available_parts: list) -> set:
+    """Returns all the neighbors that are allowed as the next move by the currently available corner parts."""
+
+    # corner moves can ONLY go in one direction
+    neighbors = set()
+    if 0 in available_parts:
+        neighbors.add((axis, 0))
+
+    return neighbors
+
+
+def get_pipe_neighbors(axis, available_parts, at_start) -> set:
+    """Returns all neighbors that are allowed as the next move by the currently available pipe parts"""
+
+    # pipe moves have two variants, depending on the current axis
+
+    neighbors = set()
+    for part_id in available_parts:
+        # for all part IDs except corner the point length matches the id
+        if part_id == 0:
+            continue
+        if at_start:
+            # only allow neighbors that meet start condition
+            neighbors.add(((part_id * axis[0], part_id * axis[1]), part_id))
+        else:
+            # only allow neighbors that meet corner condition
+            neighbors.add(((part_id * axis[1], part_id * axis[0]), part_id))
+            neighbors.add(((part_id * -axis[1], part_id * -axis[0]), part_id))
+
+    return neighbors
+
+
+def get_changed_nodes(predecessor_pos, current_pos):
+    pos = diff_pos(predecessor_pos, current_pos)
+
+    direction = get_direction(pos)
+    length = abs(pos[0] - pos[1])
+
+    occupied_nodes = []
+
+    for i in range(1, length + 1):
+        pos = (predecessor_pos[0] + direction[0] * i, predecessor_pos[1] + direction[1] * i)
+        occupied_nodes.append((pos, 2))
+
+    return occupied_nodes
+
+
+def build_path(current_node: tuple, predecessor: dict, start_node: tuple) -> list:
+    """Constructs a path from start to the current node."""
+
+    path = []
+
+    while current_node in predecessor:
+        path.append(current_node)
+        current_node = predecessor.get(current_node).predecessor_node
+    path.append(start_node)
+    path = path[::-1]  # reverses the path to correct order (from start to goal)
+    return path
+
+
+def get_current_state_grid(current_path, state_grid):
+    """Returns the current state grid according to the current path."""
+    current_state_grid = deepcopy(state_grid)
+    for index, v in enumerate(current_path):
+        if index == len(current_path) - 1:
+            break
+        a = current_path[index]
+        b = current_path[index + 1]
+        pos = (b[0] - a[0],b[1] - a[1])
+        direction = get_direction(pos)
+        length = abs(pos[0] - pos[1])
+        for i in range(1, length + 1):
+            pos = (a[0] + direction[0] * i, a[1] + direction[1] * i)
+            current_state_grid[pos] = 2 # 2: occupied by pipe
+    return current_state_grid
+
+
+def pipe_stock_check(current_path:list, pipe_stock:dict, used_parts:dict) -> list:
+    """Checks how many parts are available."""
+    available_parts = []
+    pipe_stock_copy = deepcopy(pipe_stock)
+    if not used_parts:
+        #no parts used, no need to check current path
+        available_parts = get_available_parts(pipe_stock_copy)
+        return available_parts
+
+
+    for idx, _ in enumerate(current_path):
+
+        #dont check next point if last point has been reached
+        if idx == len(current_path)-1:
+            break
+
+        b = current_path[idx + 1]
+        og_part = used_parts.get(b)
+
+        pipe_stock_copy[og_part] = pipe_stock_copy[og_part] - 1
+        available_parts = get_available_parts(pipe_stock_copy)
+
+    return available_parts
+
+
+def get_available_parts(pipe_stock: dict) -> list:
+    """Returns available parts as list."""
+    available_parts = []
+    for _, (part_id, amount) in enumerate(pipe_stock.items()):
+        if amount > 0:
+            if part_id in available_parts:
+                continue
+            else:
+                available_parts.append(part_id)
+    return available_parts
