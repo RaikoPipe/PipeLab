@@ -100,3 +100,47 @@ def handle_new_input(self, worker_event: tuple[Optional[int], Pos], pick_events:
         self.update_latest_state(old_state=self.latest_state, new_state=self.tentative_state)
 
     return deviation_occurred
+
+def event_received_robot_state(self, state_id):
+    # todo: determine next step
+    print("not implemented")
+
+def event_captured_state_grid(self, captured_state_grid):
+    # todo: interpret new data, exec actions as needed, update latest path problem, update current_layout_solution
+    if event_interpreting.grid_changed(latest_state_grid=self.latest_state.state_grid,
+                                       captured_state_grid=captured_state_grid):
+
+        event = event_interpreting.check_action_event(picked_parts=self.picked_parts,
+                                                      placed_parts=self.placed_parts,
+                                                      latest_state_grid=self.latest_path_problem.state_grid,
+                                                      captured_state_grid=captured_state_grid)
+        # todo: on event 1: check if path of current state overlaps with optimal solution ->
+        if event["code"] == -1:
+            # recalculate path of current state
+            trail_list = event_interpreting.get_trails_from_state_grid(state_grid=captured_state_grid,
+                                                                       searched_state=2)
+            for trail in trail_list:
+                path = event_interpreting.get_path_from_trail(trail)
+                definite_path = event_interpreting.get_definite_path_from_path(path=path,
+                                                                               part_stock=self._initial_path_problem.part_stock)
+
+            pass
+        elif event["code"] == 1:
+            # todo: check where part was removed, change latest_state.definite_path, check if we are back on optimal solution
+
+            pass
+        elif event["code"] == 2:
+            # todo: check where part has been placed and if it is adjacent to a current layout and valid -> expand this path
+            # todo: check if paths have been connected: fuse into one path
+            # todo: check if current path overlaps with optimal solution
+            pass
+        else:
+            print("Unknown Error occurred!")
+
+def update_current_state(self, state_grid: np.ndarray, path: DefinitePath):
+    self.latest_state.state_grid = state_grid
+    self.latest_state.definite_path = path
+
+def event_part_id_picked(self, part_id_picked):
+    self.picked_parts.append(part_id_picked)
+    # todo: highlight placement options in visualization

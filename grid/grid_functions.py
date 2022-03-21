@@ -27,7 +27,7 @@ def change_grid_states(state_grid: np.ndarray, node_states: list): # [((0,0),1),
     """modify grid states according to items in position_states"""
 
     for item in node_states:
-        state_grid[item[0]] = item[1] # 0: node, 1: state
+        state_grid[item[0]] = item[1] # 0: pos, 1: state
 
     return state_grid
 

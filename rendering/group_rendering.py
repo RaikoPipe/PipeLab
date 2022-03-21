@@ -5,6 +5,8 @@ from path_finding.path_math import diff_pos, sum_pos, get_diagonal_direction, ge
 from data_class.Solution import Solution
 from typing import Optional
 from path_finding.common_types import *
+from rendering import object_data_classes as odc
+from rendering.default_data import *
 
 """functions for rendering a group of objects"""
 
@@ -24,7 +26,7 @@ def render_obstacles_from_state_grid(state_grid: np.ndarray, rendering_grid:np.n
 
 
 # todo: get directions from solution data class
-def render_pipe_layout(definite_path: DefinitePath, rendering_grid: np.ndarray, scene: vpy.canvas) -> list[vpy.cylinder]:
+def render_pipe_layout(definite_path: DefinitePath, rendering_grid: np.ndarray, scene: vpy.canvas, opacity:float) -> list[vpy.cylinder]:
     """Renders pipe objects on a VPython canvas according to the given list of parts used."""
     solution_layout = []
     for index, (pos, part_id) in enumerate(definite_path):
@@ -34,18 +36,23 @@ def render_pipe_layout(definite_path: DefinitePath, rendering_grid: np.ndarray, 
         elif part_id == 0:
             # create corner
             from_dir = get_direction(diff_pos(definite_path[index - 1][0], definite_path[index][0]))
-            to_dir = get_direction(diff_pos(definite_path[index][0], definite_path[index + 1][0]))
+            try:
+                to_dir = get_direction(diff_pos(definite_path[index][0], definite_path[index + 1][0]))
+            except IndexError:
+                print("Vpython rendering: No next object in list, finished rendering.")
+                break
+
 
             pos = rendering_grid[definite_path[index][0]]
-            corner = render_corner(scene=scene, pos=pos, course=(from_dir, to_dir))
+            corner = render_corner(scene=scene, pos=pos, course=(from_dir, to_dir), opacity=opacity)
             solution_layout.append(corner)
 
         else:
             direction = get_direction(diff_pos(definite_path[index - 1][0], definite_path[index][0]))
             pos = rendering_grid[definite_path[index-1][0]]
             pipe = render_pipe(scene=scene, pos=pos,
-                        direction=direction, pipe_data=None,
-                        part_id=part_id)
+                        direction=direction,
+                        part_id=part_id, opacity=opacity)
             solution_layout.append(pipe)
 
     return solution_layout

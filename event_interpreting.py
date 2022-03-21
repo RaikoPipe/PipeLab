@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Optional
-from constants import directions
+from constants import valid_directions
 from path_finding.common_types import *
 from path_finding.path_math import get_adjacency, sum_pos, diff_pos, get_direction
 
@@ -71,7 +71,7 @@ def is_outgoing_node(pos, pos_list) -> bool:
 
 def get_neighbor(pos, pos_list) -> Optional[Pos]:
     """Returns neighbor of pos if in pos_list else None."""
-    neighbor_positions = directions
+    neighbor_positions = valid_directions
     for neigh_pos in neighbor_positions:
         neighbor = sum_pos(pos, neigh_pos)
         if neighbor in pos_list:

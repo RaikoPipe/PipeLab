@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 from data_class.Solution import Solution
+from path_finding.common_types import Pos
 from path_finding.path_math import diff_pos, manhattan_distance, get_direction
 from path_finding.common_types import *
 
@@ -89,7 +90,6 @@ def construct_solution(predecessors, current_pos, state_grid, score,
                 trail.append(pos)
 
             total_definite_trail[end_node[0]] = end_node[1]
-            trail.append(end_node)
             layouts.append(trail)
             fc_set.add((start_node[0], end_node[0]))
 
@@ -215,3 +215,12 @@ def get_available_parts(pipe_stock: dict) -> list:
             else:
                 available_parts.append(part_id)
     return available_parts
+
+
+def is_between(a:Pos, b: Pos, pos:Pos) -> bool:
+    #todo: change frozenset to tuple, because iterating through frozenset might be slow
+
+    fit_dir = get_direction(diff_pos(a,b))
+    con_dir = get_direction(diff_pos(pos, a))
+
+    return fit_dir == con_dir

@@ -1,8 +1,10 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from data_class import PathProblem, LayoutState
 from typing import Optional, Set
 from path_finding.common_types import *
 from data_class.Solution import Solution
+import numpy as np
+
 
 #todo: documentation
 
@@ -10,37 +12,38 @@ from data_class.Solution import Solution
 class State:
     """Data class that contains information about a process state"""
 
-    state_grid : any
+    state_grid : np.ndarray
     """state grid with currently occupied spots"""
 
     part_stock: dict
     """parts left in stock"""
 
-    definite_path: Optional[DefinitePath]  # only used when deviation detected to create partial solutions
-    construction_layouts: dict[Trail:LayoutState] # Assigns Positions of a layout to a layout state -> current build state
+    aimed_solution: Solution
 
-    construction_parts: dict[Pos:int]  # signifies which pos are occupied by what part id
-    picked_parts: dict[int:int] # counts parts that have been picked. Counter reduces when parts are confirmed in a construction event
+    construction_layouts: dict[Trail:LayoutState] = field(default_factory=dict) # Assigns Positions of a layout to a layout state -> current build state
+
+    picked_parts: dict[int:int]  = field(default_factory=dict) # counts parts that have been picked. Counter reduces when parts are confirmed in a construction event
 
     # variables used for deviation detection/handling
-    connection_count: dict[Pos:int] # used for checking how many times a fitting has already been connected
-    deviated: bool
-    fc_set: set[DirectedConnection] # set of fitting connections that have been confirmed by a construction event
-    removed_fc_set: set[UndirectedConnection] # set remembers fitting connections that have previously
+    deviated: bool = False
+    fc_set: set[DirectedConnection] = field(default_factory=set) # set of fitting connections that have been confirmed by a construction event
+    removed_fc_set: set[UndirectedConnection] = field(default_factory=set) # set remembers fitting connections that have previously
     # existed before deconstruction until two removal events have occurred.
-    deviated_motion_pos_fitting : set # list of placed fitting motions at pos
-    deviated_motion_pos_attachment : set # list of placed attachment motions at pos
-    deviated_motion_pos_pipe : set # list of placed pipe motions at pos
-    remove_parts : dict[Pos: int] # dictionary that contains information about unnecessary parts according to the aimed solution
-    error_dict : dict[Pos: int]
+    deviated_motion_pos_fitting : set = field(default_factory=set) # list of placed fitting motions at pos
+    deviated_motion_pos_attachment : set = field(default_factory=set) # list of placed attachment motions at pos
+    deviated_motion_pos_pipe : set = field(default_factory=set) # list of placed pipe motions at pos
+    remove_parts : dict[Pos: int] = field(default_factory=dict) # dictionary that contains information about unnecessary parts according to the aimed solution
+    error_dict : dict[Pos: int] = field(default_factory=dict)
+
+
+    latest_layout : Trail = field(default_factory=list)# a layout of the solution that is currently being build
 
     # latest commands
-    pick_robot_commands = list[int]
-    screw_robot_commands = list[int]
-    obsolete_attachment_pos = set(Pos)
+    pick_robot_commands : list[int] = field(default_factory=list)
+    screw_robot_commands : list[int] = field(default_factory=list)
+    obsolete_attachment_pos : set[Pos] = field(default_factory=set)
 
-    aimed_solution = Solution
-    latest_layout = Trail # a layout of the solution that is currently being build
+
 
 
 

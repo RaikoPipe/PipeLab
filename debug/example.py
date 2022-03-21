@@ -1,3 +1,4 @@
+from function_test_gui import function_test_app
 from path_finding.search_algorithm import find_path
 from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
@@ -7,7 +8,7 @@ import numpy as np
 #todo: use change_grid_states function to create a mounting wall with obstacles
 #todo: create a solution with a* and extract path and parts to define a static solution
 
-from rendering import object_rendering, group_rendering
+from rendering import object_rendering, group_rendering, debug_rendering
 from grid import grid_functions, randomizer
 
 x=20
@@ -16,8 +17,9 @@ y=20
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x,y)
 solution = None
 while solution is None:
+
     state_grid = grid_functions.get_empty_stategrid(x, y)
-    state_grid = randomizer.set_random_obstacles(0.1, state_grid)
+    state_grid = randomizer.set_random_obstacles(0, state_grid)
     start_node = (0,0)
     goal_node = (17,10)
     state_grid[start_node] = 0
@@ -36,19 +38,28 @@ while solution is None:
 
 
     solution = find_path(path_problem=path_problem)
-    print(solution)
+
+    if solution is None:
+        print("No solution found")
+    else:
+        "Solution found!"
 
 # print(path_problem)
 # print(solution)
 
 #rendering
 
-scene = object_rendering.create_new_scene()
-mounting_wall, dot_object = \
-    object_rendering.render_mounting_wall(scene=scene, rendering_grid=r_grid, mounting_wall_data=mounting_wall_data)
+# scene = object_rendering.create_new_scene()
+# mounting_wall, dot_object = \
+#     object_rendering.render_mounting_wall(scene=scene, rendering_grid=r_grid, mounting_wall_data=mounting_wall_data)
+#
+# obstacles = group_rendering.render_obstacles_from_state_grid(state_grid=state_grid, rendering_grid=r_grid, scene=scene)
+# start_marker, goal_marker = group_rendering.render_start_goal_markers(scene=scene,start_pos=start_node, goal_pos=goal_node,rendering_grid=r_grid)
+#
+# solution_layout = group_rendering.render_pipe_layout(solution.definite_path, r_grid, scene, opacity=.5)
+#
+# print(solution.definite_path[-2])
 
-obstacles = group_rendering.render_obstacles_from_state_grid(state_grid=state_grid, rendering_grid=r_grid, scene=scene)
-start_marker, goal_marker = group_rendering.render_start_goal_markers(scene=scene,start_pos=start_node, goal_pos=goal_node,rendering_grid=r_grid)
+#positions = debug_rendering.display_pos(rendering_grid=r_grid, scene=scene)
 
-solution_layout = group_rendering.render_pipe_layout(solution.definite_path, r_grid, scene)
-
+app = function_test_app(state_grid=solution.state_grid, path_problem=path_problem, initial_state=None)

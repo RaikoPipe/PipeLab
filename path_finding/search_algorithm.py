@@ -10,9 +10,10 @@ from path_finding.score_calculation import get_worst_move_cost, get_f_score, get
     get_e_score
 from path_finding.path_math import *
 from typing import Optional
-from copy import copy
+from copy import copy, deepcopy
 from grid.grid_functions import change_grid_states
 from path_finding.path_utilities import construct_solution
+import constants
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -21,23 +22,18 @@ import matplotlib
 # idea: make a separate function for search showcase
 # optimization idea: save pipe stock in each node, save state grid in each node (reduce pipe stock, occupy path from current node to neighbor node on state grid)
 # todo: assign current pipe stock to predecessor, use pipe stock of predecessor to determine current pipe stock
-# todo: allow start_axis/goal_axis as None to signify that start/goal direction restriction can be ignored
 
-# fixme: solution should always start and end with a pipe (as if start and end are fittings that need to be connected to)
 
-# todo: test where pipes start/end at start/goal
 
-possible_directions = {(0,1),(1,0),(-1,0),(0,-1)}
-
+#fixme: mca* doesn't work, mcsa* doesn't include extra score
 def find_path(path_problem: PathProblem) -> Optional[Solution]:
     """Searches for a solution for the given path problem."""
     starting_part = path_problem.starting_part
-    state_grid = path_problem.state_grid
+    state_grid = deepcopy(path_problem.state_grid)
     start_pos = path_problem.start_pos
     goal_pos = path_problem.goal_pos
     start_directions = path_problem.start_direction
-    goal_directions = path_problem.goal_direction
-    pipe_stock = path_problem.part_stock
+    pipe_stock = deepcopy(path_problem.part_stock)
     part_cost = path_problem.part_cost
     worst_move_cost, worst_moves = get_worst_move_cost(part_cost)
     weights = path_problem.weights
@@ -46,7 +42,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
     # set all possible goal positions
     goal_set = set()
     goal_dict = {}
-    for direction in possible_directions:
+    for direction in constants.valid_directions:
         g_pos = (goal_pos[0]+direction[0], goal_pos[1] + direction[1])
         goal_set.add(g_pos)
         goal_dict[g_pos] = (-direction[0],-direction[1])
@@ -62,6 +58,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
                                           part_stock=path_problem.part_stock, pos= None)}
     current_state_grid = state_grid
     current_state_grid[start_pos] = 2
+    current_state_grid[goal_pos] = 2
 
     score_start = {start_pos: 0}  # G
     upper_bound_distance = manhattan_distance(start_pos,
@@ -110,7 +107,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
             end_score = total_score[current_pos]
             current_pos = goal_pos
 
-            return construct_solution(predecessors=predecessors, current_pos=current_pos, state_grid=state_grid, score=end_score,
+            return construct_solution(predecessors=predecessors, current_pos=current_pos, state_grid=current_state_grid, score=end_score,
                                       algorithm=algorithm, path_problem=path_problem)
 
         closed_list.add(current_pos)

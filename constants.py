@@ -6,7 +6,7 @@ down = (0,-1)
 right = (1,0)
 left = (-1,0)
 
-directions = {up,down,left,right}
+valid_directions = {up, down, left, right}
 
 # vpy.vector directions
 v_up = vector(0,1,0)

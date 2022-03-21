@@ -59,7 +59,7 @@ def get_rel_dist_same_axis(a:Pos, b:Pos) -> tuple:
 
 def get_adjacency(a:Pos, b:Pos)-> dict[str:bool,str: Pos]:
     """Checks if two pos are adjacent and the direction b is from a."""
-    for rel_pos in directions:
+    for rel_pos in valid_directions:
         b_check = sum_pos(b,rel_pos)
         adjacent = a == b_check
         if adjacent:

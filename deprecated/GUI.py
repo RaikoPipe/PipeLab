@@ -6,6 +6,7 @@ from win32api import GetSystemMetrics
 import path_finding.path_utilities
 import path_finding.restriction_functions
 import path_finding.score_calculation
+import pp_utilities
 from path_finding import search_algorithm as agt
 import tkinter as tk
 from tkinter import ttk
@@ -939,7 +940,7 @@ def pipeBuilder(cRoute, parts, pipeVisible, start, startAxis, goal, goalAxis, wa
 
                 # if corner_axis == lvf.totop:
                 #     corner.corner.rotate(angle=-0.5 * pi)  # rotate object
-        clampCoord = lvf.determineClampPlacement(Matrix, pipe_coords, diff, partValue)
+        clampCoord = pp_utilities.get_optimal_attachment_pos(Matrix, pipe_coords, diff, partValue)
         clampDict.append((clampCoord, axis))
     buildVpipes(pipeBuildDict, clampDict)
 

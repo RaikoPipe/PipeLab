@@ -4,12 +4,13 @@ from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
 from copy import deepcopy
 from path_finding.search_algorithm import find_path
+from path_finding.path_math import diff_pos, get_direction
 from typing import Optional
 from path_finding import path_math, partial_solutionizer
-import pp_utilities
+from pp_utilities import *
+from path_finding.common_types import *
 
 from pp_utilities import get_deviation_trail, get_deviation_state
-from utilities import *
 
 standard_weights = Weights(1, 1, 1)
 standard_algorithm = "mcsa*"
@@ -71,29 +72,31 @@ def deconstruction_event(motion_events: dict, tentative_state: State, debug_grid
 
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events. Returns instructions."""
-    #todo: Tasks
-    #   - Use robot events and worker events to plan next step, give robot commands
-    def __init__(self, initial_path_problem: PathProblem, initial_state: State,
+    def __init__(self, initial_path_problem: PathProblem, initial_state: Optional[State],
                  optimization_weights: Weights = standard_weights,
                  algorithm: str = standard_algorithm):
 
 
         self._initial_path_problem = initial_path_problem  # original path problem
         self.optimal_solution = find_path(self._initial_path_problem)  # optimal solution for the initial path problem
+        if self.optimal_solution is None:
+            print("ProcessPlanner Error: No optimal solution found!")
+            if initial_state.aimed_solution:
+                self.optimal_solution = initial_state.aimed_solution
+                print("ProcessPlanner: Assuming aimed solution from initial state as optimal solution.")
         self.latest_deviation_solution = None
 
         self.previous_states = []  # contains all previous valid states
 
+        if initial_state is None or initial_state.aimed_solution is None:
+            initial_state = prepare_initial_state(solution=self.optimal_solution)
+
+
         self.latest_state = initial_state  # latest valid state
-        self.latest_state.aimed_solution = self.optimal_solution
-        # add layouts of aimed solution if not already there
-        for layouts in self.latest_state.aimed_solution.layouts:
-            if self.latest_state.construction_layouts.get(layouts) is None:
-                #todo: add layout states from optimal solution
-                pass
+
         self.tentative_state = deepcopy(initial_state)
         self.is_optimal = True  # if path of current state is on optimal solution
-        self.tentative_state.latest_layout = self.optimal_solution.layouts[0] # layout that is currently being built. Initial layout is at start.
+        self.tentative_state.latest_layout = self.latest_state.aimed_solution.layouts[0] # layout that is currently being built. Initial layout is at start.
 
 
         self.weights = optimization_weights
@@ -112,16 +115,18 @@ class ProcessPlanner:
         if removal:
             motion_type = "removal"
 
-        print(str.format(f"Registered {motion_type} for object {object_name} at Position {event_pos}"))
+        print(str.format(f"ProcessPlanner: Registered {motion_type} for object {object_name} at Position {event_pos}"))
 
-    def make_special_message(self, message:str, event_pos):
-        print(str.format(f"Position {event_pos}: {message} "))
+    def make_special_message(self, message:str, event_pos:Pos):
+        print(str.format(f"ProcessPlanner: Position {event_pos}: {message} "))
 
+    def make_error_message(self, event_pos:Pos, additional_message:str):
+        print(str.format(f"ProcessPlanner: Possible detection error at Position {event_pos}: {additional_message}"))
 
-    def make_error_message(self, event_pos, additional_message:str):
-        print(str.format(f"Possible detection error at Position {event_pos}: {additional_message}"))
+    def new_pick_event(self, part_id:int):
+        self.tentative_state.picked_parts[part_id] += 1
+        print(str.format(f"ProcessPlanner: Picked part with id {part_id}"))
 
-        # todo: use removal list to highlight objects that need to be removed
     def new_construction_check(self, worker_event: tuple[Optional[int], Pos]):
 
 
@@ -161,8 +166,8 @@ class ProcessPlanner:
 
             current_layout_state = self.tentative_state.construction_layouts[current_layout]
 
-            #todo: handle more special situations in 3: placement either in correct_fitting_pos or
 
+            #todo: check recommended att pos
             if worker_event_code == 3:
                 self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code, removal=False)
                 if not current_layout_state.att_set:
@@ -329,7 +334,7 @@ class ProcessPlanner:
         fastening_robot_commands = []
         picking_robot_commands = []
 
-        next_part_id = pp_utilities.determine_next_part(layout_state=current_layout_state)
+        next_part_id = determine_next_part(layout_state=current_layout_state)
 
         # make picking robot commands
 
@@ -441,49 +446,7 @@ class ProcessPlanner:
         else:
             print("There is no last state to return to!")
 
-    # def event_received_robot_state(self, state_id):
-    #     # todo: determine next step
-    #     print("not implemented")
-    #
-    # def event_captured_state_grid(self, captured_state_grid):
-    #     # todo: interpret new data, exec actions as needed, update latest path problem, update current_layout_solution
-    #     if event_interpreting.grid_changed(latest_state_grid=self.latest_state.state_grid,
-    #                                        captured_state_grid=captured_state_grid):
-    #
-    #         event = event_interpreting.check_action_event(picked_parts=self.picked_parts,
-    #                                                       placed_parts=self.placed_parts,
-    #                                                       latest_state_grid=self.latest_path_problem.state_grid,
-    #                                                       captured_state_grid=captured_state_grid)
-    #         # todo: on event 1: check if path of current state overlaps with optimal solution ->
-    #         if event["code"] == -1:
-    #             # recalculate path of current state
-    #             trail_list = event_interpreting.get_trails_from_state_grid(state_grid=captured_state_grid,
-    #                                                                        searched_state=2)
-    #             for trail in trail_list:
-    #                 path = event_interpreting.get_path_from_trail(trail)
-    #                 definite_path = event_interpreting.get_definite_path_from_path(path=path,
-    #                                                                                part_stock=self._initial_path_problem.part_stock)
-    #
-    #             pass
-    #         elif event["code"] == 1:
-    #             # todo: check where part was removed, change latest_state.definite_path, check if we are back on optimal solution
-    #
-    #             pass
-    #         elif event["code"] == 2:
-    #             # todo: check where part has been placed and if it is adjacent to a current layout and valid -> expand this path
-    #             # todo: check if paths have been connected: fuse into one path
-    #             # todo: check if current path overlaps with optimal solution
-    #             pass
-    #         else:
-    #             print("Unknown Error occurred!")
-    #
-    # def update_current_state(self, state_grid: np.ndarray, path: DefinitePath):
-    #     self.latest_state.state_grid = state_grid
-    #     self.latest_state.definite_path = path
-    #
-    # def event_part_id_picked(self, part_id_picked):
-    #     self.picked_parts.append(part_id_picked)
-    #     # todo: highlight placement options in visualization
+
 
 
 
