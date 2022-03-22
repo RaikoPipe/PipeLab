@@ -32,6 +32,8 @@ class State:
     deviated_motion_pos_fitting : set = field(default_factory=set) # list of placed fitting motions at pos
     deviated_motion_pos_attachment : set = field(default_factory=set) # list of placed attachment motions at pos
     deviated_motion_pos_pipe : set = field(default_factory=set) # list of placed pipe motions at pos
+
+
     remove_parts : dict[Pos: int] = field(default_factory=dict) # dictionary that contains information about unnecessary parts according to the aimed solution
     error_dict : dict[Pos: int] = field(default_factory=dict)
 

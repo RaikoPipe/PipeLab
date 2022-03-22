@@ -1,5 +1,5 @@
 import numpy as np
-from data_class.State import State
+from data_class.ConstructionState import State
 from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
 from copy import deepcopy
@@ -69,7 +69,7 @@ def deconstruction_event(motion_events: dict, tentative_state: State, debug_grid
 
             return True
 
-
+# todo: multiple walls: multiple states, but they reference the same parts
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events. Returns instructions."""
     def __init__(self, initial_path_problem: PathProblem, initial_state: Optional[State],
@@ -90,6 +90,9 @@ class ProcessPlanner:
 
         if initial_state is None or initial_state.aimed_solution is None:
             initial_state = prepare_initial_state(solution=self.optimal_solution)
+            # todo: add as debug feature (infinite picked parts)
+            # for part_id in initial_state.picked_parts.keys():
+            #     initial_state.picked_parts[part_id] = 999
 
 
         self.latest_state = initial_state  # latest valid state
@@ -109,29 +112,36 @@ class ProcessPlanner:
         # picking robot state
         self.picking_robot_carries_part_id = None
 
-    def make_registration_message(self, event_pos:Pos, event_code:int, removal: bool):
+    def make_registration_message(self, event_pos:Pos, event_code:int, removal: bool) -> str:
         object_name = message_dict[event_code]
         motion_type = "placement"
         if removal:
             motion_type = "removal"
 
-        print(str.format(f"ProcessPlanner: Registered {motion_type} for object {object_name} at Position {event_pos}"))
+        message = str.format(f"ProcessPlanner: Registered {motion_type} for object {object_name} at Position {event_pos}")
+
+        return message
 
     def make_special_message(self, message:str, event_pos:Pos):
-        print(str.format(f"ProcessPlanner: Position {event_pos}: {message} "))
+        message = str.format(f"ProcessPlanner: Position {event_pos}: {message} ")
+        return message
 
     def make_error_message(self, event_pos:Pos, additional_message:str):
-        print(str.format(f"ProcessPlanner: Possible detection error at Position {event_pos}: {additional_message}"))
+        message = str.format(f"ProcessPlanner: Possible detection error at Position {event_pos}: {additional_message}")
+        return message
 
-    def new_pick_event(self, part_id:int):
+    def new_pick_event(self, part_id:int) -> str:
         self.tentative_state.picked_parts[part_id] += 1
-        print(str.format(f"ProcessPlanner: Picked part with id {part_id}"))
+        self.tentative_state.part_stock[part_id] -= 1
+        message = str.format(f"ProcessPlanner: Picked part with id {part_id}")
+        print(message)
+        return message
 
-    def new_construction_check(self, worker_event: tuple[Optional[int], Pos]):
+    def new_construction_check(self, worker_event: tuple[Pos, int]):
 
 
-        worker_event_pos = worker_event[1]
-        worker_event_code = worker_event[0]
+        worker_event_pos = worker_event[0]
+        worker_event_code = worker_event[1]
 
         pipe_id = None
         current_layout = None
@@ -140,6 +150,13 @@ class ProcessPlanner:
         deviation_code = None
         obsolete_parts = {}
         removal = False
+        deviation = None
+        message = None
+        special_message = None
+        error_message = None
+
+        special_note = None
+        error_note = None
 
         """deviation code
         -1: detection error: part was placed on an occupied spot
@@ -148,19 +165,27 @@ class ProcessPlanner:
         2: process deviation: part was placed outside solution
         3: process deviation: part was placed, but never picked prior"""
 
+        # event evaluation
 
+        current_layout = self.tentative_state.latest_layout
+        current_layout_state = self.tentative_state.construction_layouts[current_layout]
 
-        if worker_event_code == 4:
-            #todo: add rendering instruction: highlight placement positions
-            pass
+        #todo: check if obstacle is at worker_event_pos
 
+        if self.tentative_state.remove_parts.get(worker_event_pos) == worker_event_code:
+            special_note = str.format(f"Removed unnecessary {message_dict[worker_event_code]}")
+            removal = True
+            self.tentative_state.remove_parts.pop(worker_event_pos)
 
-        # todo: don't forget to clean up all the other detected motions + finished layouts outside!
-        if worker_event_pos in self.tentative_state.aimed_solution.total_definite_trail.keys():
+        elif worker_event_pos in self.tentative_state.aimed_solution.total_definite_trail.keys():
             # get information about the current layout
-            for trail in self.tentative_state.construction_layouts.keys():
-                if worker_event_pos in trail:
-                    current_layout = trail
+
+            if worker_event_pos in self.tentative_state.latest_layout:
+                current_layout = self.tentative_state.latest_layout
+            else:
+                for trail in self.tentative_state.construction_layouts.keys():
+                    if worker_event_pos in trail:
+                        current_layout = trail
 
             layout_changed = current_layout != self.tentative_state.latest_layout
 
@@ -169,7 +194,6 @@ class ProcessPlanner:
 
             #todo: check recommended att pos
             if worker_event_code == 3:
-                self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code, removal=False)
                 if not current_layout_state.att_set:
                     # successful placement
                     current_layout_state.att_set.add(worker_event_pos)
@@ -178,17 +202,15 @@ class ProcessPlanner:
                     if not worker_event_pos in current_layout_state.att_set:
                         # attachment is unnecessary
                         deviation_code = 2
-                        self.make_special_message(message="Unnecessary attachment detected at: ", event_pos=worker_event_pos)
-                        self.tentative_state.remove_parts[worker_event_pos] = -1
+                        special_note = str.format(f"Unnecessary {message_dict[worker_event_code]} detected!")
+                        self.tentative_state.remove_parts[worker_event_pos] = 3
 
                     else:
                         # removed attachment
                         removal = True
-                        self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code, removal=True)
                         current_layout_state.att_set.remove(worker_event_pos)
 
             elif worker_event_code == 2:
-                self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code, removal=False)
                 pipe_id = current_layout_state.pipe_id
                 if not current_layout_state.pipe_set:
                     # check if part was actually picked
@@ -199,22 +221,18 @@ class ProcessPlanner:
                     else:
                         # part was not picked!
                         deviation_code = 3
-                        self.make_error_message(event_pos=worker_event_pos,
-                                                additional_message=
-                                                str.format(f"Part with id {current_layout_state.pipe_set} "
-                                                           f"was placed, but not picked!"))
+                        error_note = str.format(f"Part with id {current_layout_state.pipe_set} "
+                                                           f"was placed, but not picked!")
                         self.tentative_state.error_dict[worker_event_pos] = current_layout_state.pipe_id
                 else:
                     # removed pipe
                     removal = True
-                    self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code,
-                                                   removal=True)
                     current_layout_state.pipe_set.clear()
 
             elif worker_event_code == 1:
+                #fixme: add special conditions to start and goal (is it a transition point?)
                 pipe_id = 0
-                self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code, removal=False)
-                if current_layout_state.fit_set < 2 and worker_event_pos in current_layout_state.correct_fitting_pos:
+                if len(current_layout_state.fit_set) < 2 and worker_event_pos in current_layout_state.correct_fitting_pos:
                     if self.tentative_state.picked_parts[0] > 0:
                         # successful placement on correct pos
                         self.tentative_state.picked_parts[0] -= 1
@@ -228,30 +246,30 @@ class ProcessPlanner:
                     else:
                         # part was not picked!
                         deviation_code = 3
-                        self.make_error_message(event_pos=worker_event_pos,
-                                                additional_message=
-                                                str.format(f"Part with id {0} "
-                                                           f"was placed, but not picked!"))
+                        error_note = str.format(f"Part with id {0} "
+                                                           f"was placed, but not picked!")
+
 
 
 
                 else:
-                    # Unneeded fitting detected!
-                    if not worker_event_pos in current_layout_state.att_set:
-                        # fitting is unnecessary
+                    if not worker_event_pos in current_layout_state.fit_set:
+                        # Unneeded fitting detected!
                         deviation_code = 1
-                        self.make_special_message(message="Unnecessary fitting detected at: ", event_pos=worker_event_pos)
-                        self.tentative_state.remove_parts[worker_event_pos] = 0
+                        special_note = str.format(f"Unnecessary {message_dict[worker_event_code]} detected!")
+                        self.tentative_state.remove_parts[worker_event_pos] = 1
                     else:
                         # removed fitting
                         removal = True
-                        self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code, removal=True)
                         current_layout_state.fit_set.remove(worker_event_pos)
 
-            self.set_completion_state(current_layout, removal)
+            self.set_completion_state(current_layout, self.tentative_state.construction_layouts, removal)
 
             #update layout states of construction layouts
-            self.tentative_state.construction_layouts[current_layout] = current_layout_state
+            #self.tentative_state.construction_layouts[current_layout] = current_layout_state
+
+
+        # deviation evaluation
 
         else:
             # motion event occurred outside optimal solution
@@ -259,43 +277,76 @@ class ProcessPlanner:
             if worker_event_code == 3:
                 if worker_event_pos not in self.tentative_state.deviated_motion_pos_attachment:
                     self.tentative_state.deviated_motion_pos_attachment.add(worker_event_pos)
-                else: self.tentative_state.deviated_motion_pos_attachment.remove(worker_event_pos)
+                    special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
+                else:
+                    self.tentative_state.deviated_motion_pos_attachment.remove(worker_event_pos)
+                    special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
+                    removal = True
             elif worker_event_code == 2:
                 if worker_event_pos not in self.tentative_state.deviated_motion_pos_pipe:
                     self.tentative_state.deviated_motion_pos_pipe.add(worker_event_pos)
+                    special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
                 else:
                     self.tentative_state.deviated_motion_pos_pipe.remove(worker_event_pos)
+                    special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
+                    removal = True
             elif worker_event_code == 1:
+                special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
                 # check for deviation events
-                deviation = self.deviation_event(worker_event, self.tentative_state, None)
-                if deviation:
-                    self.tentative_state.construction_layouts.update(deviation)
-                    obsolete_fittings = set()
-                    obsolete_attachments = set()
-                    obsolete_pipes = set()
-                    current_state_grid = self.tentative_state.state_grid #fixme: get current state_grid
-                    self.latest_deviation_solution = partial_solutionizer.find_partial_solution_simple()
-                    # todo: check which layouts are now obsolete and mark obsolete parts
-                    difference = self.latest_deviation_solution.layouts.difference(self.tentative_state.aimed_solution.layouts)
-                    for trail in difference:
-                        obsolete_layout = self.tentative_state.construction_layouts.get(trail)
-                        obsolete_fittings = obsolete_layout.fit_set
-                        obsolete_attachments = obsolete_layout.att_set
-                        obsolete_pipes = obsolete_layout.pipe_set
+                if worker_event_pos not in self.tentative_state.deviated_motion_pos_fitting:
+                    self.tentative_state.deviated_motion_pos_fitting.add(worker_event_pos)
+                    deviation = self.deviation_event(worker_event, self.tentative_state, None)
+                    if deviation:
+                        self.tentative_state.construction_layouts.update(deviation)
+                        obsolete_fittings = set()
+                        obsolete_attachments = set()
+                        obsolete_pipes = set()
+                        current_state_grid = self.tentative_state.state_grid #fixme: get current state_grid
+                        self.latest_deviation_solution = partial_solutionizer.find_partial_solution_simple()
+                        # todo: check which layouts are now obsolete and mark obsolete parts
+                        difference = self.latest_deviation_solution.layouts.difference(self.tentative_state.aimed_solution.layouts)
+                        for trail in difference:
+                            obsolete_layout = self.tentative_state.construction_layouts.get(trail)
+                            obsolete_fittings = obsolete_layout.fit_set
+                            obsolete_attachments = obsolete_layout.att_set
+                            obsolete_pipes = obsolete_layout.pipe_set
 
-                    obsolete_parts = {"fittings": obsolete_fittings, "attachments": obsolete_attachments,
-                                      "pipes": obsolete_pipes}
+                        obsolete_parts = {"fittings": obsolete_fittings, "attachments": obsolete_attachments,
+                                          "pipes": obsolete_pipes}
+                else:
+                    self.tentative_state.deviated_motion_pos_fitting.remove(worker_event_pos)
+                    special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
+                    removal = True
 
                     #todo: for rendering: visualization code should keep a reference of rendered objects pointing to the pos
 
 
+        message = self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code,
+                                                 removal=removal)
+
+        if special_note:
+            special_message = self.make_special_message(message=special_note, event_pos=worker_event_pos)
+
+        if error_note:
+            error_message = self.make_error_message(event_pos=worker_event_pos,
+                                                    additional_message=error_note)
 
 
+        # print messages
+        if message:
+            print(message)
+        if special_message:
+            print(special_message)
+        if error_message:
+            print(error_message)
 
-
+        # generate output
         info_dict = {"current_layout": current_layout, "layout_changed": layout_changed,
                      "deviation_code": deviation_code, "pipe_id" : pipe_id, "layout_state": current_layout_state,
-                     "deviation":deviation, "obsolete_parts": obsolete_parts}
+                     "deviation":deviation, "obsolete_parts": obsolete_parts, "removal": removal, "message":message,
+                     "special_message": special_message,
+                     "error_message":error_message}
+
         return info_dict
 
     def set_completion_state(self, current_layout, construction_layouts, removal):
@@ -315,7 +366,7 @@ class ProcessPlanner:
                     layout_state.completed = False
                     self.tentative_state.fc_set.remove((current_layout[0], current_layout[-1]))
 
-    def determine_robot_commands(self, worker_event: tuple[Optional[int], Pos], info_dict:dict) -> tuple[list, list]:
+    def determine_robot_commands(self, worker_event: tuple[Pos, int], info_dict:dict) -> tuple[list, list]:
         """Evaluates the current process state and issues robot commands"""
 
         deviation_code = info_dict["deviation_code"]

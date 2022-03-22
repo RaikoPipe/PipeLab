@@ -75,9 +75,9 @@ def construct_solution(predecessors, current_pos, state_grid, score,
         start_node = definite_path[i]
 
         if start_node[1] == 0 or start_node[1] is None:
-            trail = []
+            trail_list = []
             total_definite_trail[start_node[0]] = start_node[1]
-            trail.append(start_node[0])
+            trail_list.append(start_node[0])
             #get id of straight pipe
             pipe_node = definite_path[i+1]
             end_node = definite_path[i+2]
@@ -87,10 +87,10 @@ def construct_solution(predecessors, current_pos, state_grid, score,
             while pos != end_node[0]:
                 pos = (pos[0]+1*direction[0], pos[1]+1*direction[1])
                 total_definite_trail[pos] = pipe_node[1]
-                trail.append(pos)
+                trail_list.append(pos)
 
             total_definite_trail[end_node[0]] = end_node[1]
-            layouts.append(trail)
+            layouts.append(tuple(trail_list))
             fc_set.add((start_node[0], end_node[0]))
 
             i+=2
