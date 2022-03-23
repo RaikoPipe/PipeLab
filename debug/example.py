@@ -11,7 +11,7 @@ import numpy as np
 from rendering import object_rendering, group_rendering, debug_rendering
 from grid import grid_functions, randomizer
 
-x=20
+x=10
 y=20
 
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x,y)
@@ -21,7 +21,7 @@ while solution is None:
     state_grid = grid_functions.get_empty_stategrid(x, y)
     state_grid = randomizer.set_random_obstacles(0, state_grid)
     start_node = (0,0)
-    goal_node = (17,10)
+    goal_node = (9,17)
     state_grid[start_node] = 0
     state_grid[goal_node] = 0
 

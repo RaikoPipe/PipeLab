@@ -29,13 +29,16 @@ def get_current_part_stock(part_stock: dict, parts_used: list) -> dict:
 example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will probably never be bigger than 1
 
 
-def get_neighboring_layouts(current_layout: Trail, layouts: Layouts):
-
+def get_neighboring_layouts(current_layout: Trail, layouts: Layouts) -> list[Trail]:
+    neighboring_layouts = []
     idx = layouts.index(current_layout)
 
-    return {layouts[idx + 1] if idx + 1 < len(
-        layouts) else None,
-            layouts[idx - 1] if idx - 1 < 0 else None}
+    if idx+1 < len(layouts):
+        neighboring_layouts.append(layouts[idx + 1])
+    if idx-1>=0:
+        neighboring_layouts.append(layouts[idx-1])
+
+    return neighboring_layouts
 
 
 def deconstruction_event(motion_events: dict, tentative_state: State, debug_grid: Optional[np.ndarray]) -> bool:
@@ -69,7 +72,7 @@ def deconstruction_event(motion_events: dict, tentative_state: State, debug_grid
 
             return True
 
-# todo: multiple walls: multiple states, but they reference the same parts
+# todo: multiple walls: one state --> need to reintroduce features to path finding
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events. Returns instructions."""
     def __init__(self, initial_path_problem: PathProblem, initial_state: Optional[State],
@@ -135,10 +138,12 @@ class ProcessPlanner:
         self.tentative_state.part_stock[part_id] -= 1
         message = str.format(f"ProcessPlanner: Picked part with id {part_id}")
         print(message)
+        self.previous_states.insert(0,deepcopy(self.tentative_state))
         return message
 
     def new_construction_check(self, worker_event: tuple[Pos, int]):
 
+        self.previous_states.insert(0,deepcopy(self.tentative_state))
 
         worker_event_pos = worker_event[0]
         worker_event_code = worker_event[1]
@@ -172,10 +177,16 @@ class ProcessPlanner:
 
         #todo: check if obstacle is at worker_event_pos
 
-        if self.tentative_state.remove_parts.get(worker_event_pos) == worker_event_code:
+        if self.tentative_state.unnecessary_parts.get(worker_event_pos) == worker_event_code:
             special_note = str.format(f"Removed unnecessary {message_dict[worker_event_code]}")
             removal = True
-            self.tentative_state.remove_parts.pop(worker_event_pos)
+            self.tentative_state.unnecessary_parts.pop(worker_event_pos)
+
+        if self.tentative_state.misplaced_parts.get(worker_event_pos) == worker_event_code:
+            special_note = str.format(f"Removed misplaced {message_dict[worker_event_code]}")
+            removal = True
+            self.tentative_state.misplaced_parts.pop(worker_event_pos)
+
 
         elif worker_event_pos in self.tentative_state.aimed_solution.total_definite_trail.keys():
             # get information about the current layout
@@ -184,8 +195,12 @@ class ProcessPlanner:
                 current_layout = self.tentative_state.latest_layout
             else:
                 for trail in self.tentative_state.construction_layouts.keys():
+                    #find the current layout
                     if worker_event_pos in trail:
                         current_layout = trail
+                        self.tentative_state.latest_layout = current_layout
+
+                        break
 
             layout_changed = current_layout != self.tentative_state.latest_layout
 
@@ -194,27 +209,36 @@ class ProcessPlanner:
 
             #todo: check recommended att pos
             if worker_event_code == 3:
-                if not current_layout_state.att_set:
-                    # successful placement
-                    current_layout_state.att_set.add(worker_event_pos)
-                else:
-                    # Unneeded attachment detected!
-                    if not worker_event_pos in current_layout_state.att_set:
-                        # attachment is unnecessary
-                        deviation_code = 2
-                        special_note = str.format(f"Unnecessary {message_dict[worker_event_code]} detected!")
-                        self.tentative_state.remove_parts[worker_event_pos] = 3
-
+                if worker_event_pos not in current_layout_state.correct_fitting_pos:
+                    if not current_layout_state.att_set:
+                        # successful placement
+                        current_layout_state.att_set.add(worker_event_pos)
                     else:
-                        # removed attachment
-                        removal = True
-                        current_layout_state.att_set.remove(worker_event_pos)
+                        # Unneeded attachment detected!
+                        if not worker_event_pos in current_layout_state.att_set:
+                            # attachment is unnecessary
+                            deviation_code = 2
+                            special_note = str.format(f"Unnecessary {message_dict[worker_event_code]} detected!")
+                            self.tentative_state.unnecessary_parts[worker_event_pos] = 3
+
+                        else:
+                            # removed attachment
+                            removal = True
+                            current_layout_state.att_set.remove(worker_event_pos)
+                else:
+                    deviation_code = 1
+                    special_note = str.format(f"Misplaced {message_dict[worker_event_code]} detected!")
+                    self.tentative_state.misplaced_parts[worker_event_pos] = worker_event_code
+
 
             elif worker_event_code == 2:
                 pipe_id = current_layout_state.pipe_id
                 if not current_layout_state.pipe_set:
                     # check if part was actually picked
                     if self.tentative_state.picked_parts[pipe_id] > 0:
+                        if worker_event_pos in current_layout_state.correct_fitting_pos:
+                            special_note = str.format(f"Misplaced {message_dict[worker_event_code]} detected!")
+                            self.tentative_state.misplaced_parts[worker_event_pos] = worker_event_code
                         # successful placement
                         self.tentative_state.picked_parts[pipe_id] -= 1
                         current_layout_state.pipe_set.add(worker_event_pos)
@@ -241,27 +265,30 @@ class ProcessPlanner:
 
                         for layout in neighboring_layouts:
                             if worker_event_pos in layout:
-                                self.tentative_state.construction_layouts[layout].fitting_pos = worker_event_pos
+                                self.tentative_state.construction_layouts[layout].fit_set.add(worker_event_pos)
 
                     else:
                         # part was not picked!
                         deviation_code = 3
                         error_note = str.format(f"Part with id {0} "
                                                            f"was placed, but not picked!")
-
-
-
-
                 else:
                     if not worker_event_pos in current_layout_state.fit_set:
-                        # Unneeded fitting detected!
+                        # Misplaced fitting detected!
                         deviation_code = 1
-                        special_note = str.format(f"Unnecessary {message_dict[worker_event_code]} detected!")
-                        self.tentative_state.remove_parts[worker_event_pos] = 1
+                        special_note = str.format(f"Misplaced {message_dict[worker_event_code]} detected!")
+                        self.tentative_state.misplaced_parts[worker_event_pos] = worker_event_code
                     else:
                         # removed fitting
                         removal = True
+                        self.tentative_state.picked_parts[0] += 1
                         current_layout_state.fit_set.remove(worker_event_pos)
+                        neighboring_layouts = get_neighboring_layouts(current_layout,
+                                                                      self.tentative_state.aimed_solution.layouts)
+
+                        for layout in neighboring_layouts:
+                            if worker_event_pos in layout:
+                                self.tentative_state.construction_layouts[layout].fit_set.remove(worker_event_pos)
 
             self.set_completion_state(current_layout, self.tentative_state.construction_layouts, removal)
 
@@ -321,9 +348,19 @@ class ProcessPlanner:
                     #todo: for rendering: visualization code should keep a reference of rendered objects pointing to the pos
 
 
+
+
+        # return removed parts
+        if removal:
+            if worker_event_code == 1:
+                self.tentative_state.picked_parts[0] +=1
+            elif worker_event_code == 2:
+                self.tentative_state.picked_parts[pipe_id] +=1
+
+
+        # make messages
         message = self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code,
                                                  removal=removal)
-
         if special_note:
             special_message = self.make_special_message(message=special_note, event_pos=worker_event_pos)
 
@@ -341,21 +378,30 @@ class ProcessPlanner:
             print(error_message)
 
         # generate output
-        info_dict = {"current_layout": current_layout, "layout_changed": layout_changed,
+        action_info = {"current_layout": current_layout, "layout_changed": layout_changed,
                      "deviation_code": deviation_code, "pipe_id" : pipe_id, "layout_state": current_layout_state,
                      "deviation":deviation, "obsolete_parts": obsolete_parts, "removal": removal, "message":message,
                      "special_message": special_message,
                      "error_message":error_message}
 
-        return info_dict
+        self.tentative_state.action_info = action_info
+
+        self.latest_state = self.tentative_state
+
+        return action_info
 
     def set_completion_state(self, current_layout, construction_layouts, removal):
         # check completion state
         neighboring_layouts = get_neighboring_layouts(current_layout, self.tentative_state.aimed_solution.layouts)
-        neighboring_layouts.add(current_layout)
+        neighboring_layouts.append(current_layout)
+
+        #todo: debug printing
+        print(neighboring_layouts)
+        print(current_layout)
+        print(construction_layouts.get(current_layout))
 
         for layout in neighboring_layouts:
-            layout_state = construction_layouts[layout]
+            layout_state = construction_layouts.get(layout)
             if not layout_state.completed:
                 if len(layout_state.fit_set) >= 2 and layout_state.pipe_set and layout_state.att_set:
                     # layout was completed
@@ -493,7 +539,8 @@ class ProcessPlanner:
     def return_to_previous_state(self):
         """Returns to the last valid state"""
         if self.previous_states:
-            self.latest_state = self.previous_states.pop(0)
+            print("Latest action was undone!")
+            self.tentative_state = self.latest_state = self.previous_states.pop(0)
         else:
             print("There is no last state to return to!")
 

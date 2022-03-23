@@ -34,7 +34,8 @@ class State:
     deviated_motion_pos_pipe : set = field(default_factory=set) # list of placed pipe motions at pos
 
 
-    remove_parts : dict[Pos: int] = field(default_factory=dict) # dictionary that contains information about unnecessary parts according to the aimed solution
+    unnecessary_parts : dict[Pos: int] = field(default_factory=dict) # dictionary that contains information about unnecessary parts according to the aimed solution
+    misplaced_parts : dict[Pos: int]= field(default_factory=dict)
     error_dict : dict[Pos: int] = field(default_factory=dict)
 
 
@@ -44,6 +45,8 @@ class State:
     pick_robot_commands : list[int] = field(default_factory=list)
     screw_robot_commands : list[int] = field(default_factory=list)
     obsolete_attachment_pos : set[Pos] = field(default_factory=set)
+
+    action_info : dict = None
 
 
 
