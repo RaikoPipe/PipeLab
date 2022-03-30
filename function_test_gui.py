@@ -32,7 +32,7 @@ pipe_warn_style = "PIPEWARN.TButton"
 
 button_dict = {}
 
-def update_button_grid(info_dict, button_grid, process_planner, style_grid, previous_style_grids):
+def update_button_grid(info_dict, button_grid, process_planner, style_grid,initial_style_grid, previous_style_grids):
     current_layout:Trail = info_dict["current_layout"]
     layout_state: LayoutState = info_dict["layout_state"]
 
@@ -79,15 +79,15 @@ def update_button_grid(info_dict, button_grid, process_planner, style_grid, prev
         style_grid[pos] = fit_caution_style
     for pos in process_planner.tentative_state.deviated_motion_pos_pipe:
         pos_list.append(pos)
-        style_grid[pos] = pipe_warn_style
+        style_grid[pos] = pipe_caution_style
     for pos in process_planner.tentative_state.deviated_motion_pos_attachment:
         pos_list.append(pos)
         style_grid[pos] = att_caution_style
 
-    for pos,style in np.ndenumerate(style_grid):
+    for pos,style in np.ndenumerate(initial_style_grid):
         if pos not in pos_list and pos not in process_planner.tentative_state.unnecessary_parts.keys() and pos not in process_planner.tentative_state.misplaced_parts.keys():
             if style_grid[pos] in (fit_caution_style, pipe_warn_style, att_caution_style):
-                style_grid[pos] = free_style
+                style_grid[pos] = initial_style_grid[pos]
 
     style_grid[process_planner.tentative_state.aimed_solution.path_problem.start_pos] = start_style
     style_grid[process_planner.tentative_state.aimed_solution.path_problem.goal_pos] = goal_style
@@ -105,28 +105,29 @@ def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previ
 
     part_id =0
     for item in part_stock_tree.get_children():
-        part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts[part_id],
+
+        part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts.count(part_id),
                                            process_planner.tentative_state.part_stock[part_id]))
         part_id +=1
 
 
 
-def send_new_placement_event(pos, event_code, process_planner:ProcessPlanner, button_grid, tree, style_grid, part_stock_tree, previous_style_grids):
+def send_new_placement_event(pos, event_code, process_planner:ProcessPlanner, button_grid, tree, style_grid,initial_style_grid, part_stock_tree, previous_style_grids):
     info_dict = process_planner.new_construction_check((pos, event_code))
-    update_button_grid(info_dict, button_grid, process_planner, style_grid, previous_style_grids)
+    update_button_grid(info_dict, button_grid, process_planner, style_grid,initial_style_grid, previous_style_grids)
     if info_dict["message"]:
-        tree.insert("", index=tk.END, values=(info_dict["message"],))
+        tree.insert("", index=tk.END, values=(info_dict["message"].replace("ProcessPlanner: ",""),))
     if info_dict["special_message"]:
-        tree.insert("", index=tk.END, values=(info_dict["special_message"],))
+        tree.insert("", index=tk.END, values=(info_dict["special_message"].replace("ProcessPlanner: ",""),))
     if info_dict["error_message"]:
-        tree.insert("", index=tk.END, values=(info_dict["error_message"],))
+        tree.insert("", index=tk.END, values=(info_dict["error_message"].replace("ProcessPlanner: ",""),))
 
     part_id = info_dict.get("pipe_id")
 
     if part_id:
 
         item = part_stock_tree.get_children()[part_id]
-        part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts[part_id],
+        part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts.count(part_id),
                                 process_planner.tentative_state.part_stock[part_id]))
     tree.yview_moveto(1)
 
@@ -135,7 +136,7 @@ def send_new_pick_event(part_id, process_planner:ProcessPlanner, tree, part_stoc
     message = process_planner.new_pick_event(part_id)
     tree.insert("", index=tk.END, values=(message,))
     item = part_stock_tree.get_children()[part_id]
-    part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts[part_id],
+    part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts.count(part_id),
                                                        process_planner.tentative_state.part_stock[part_id]))
     previous_style_grids.insert(0,deepcopy(style_grid))
     tree.yview_moveto(1)
@@ -171,15 +172,16 @@ def get_button_grid(state_grid: np.ndarray, total_definite_trail, start, goal, b
             style_grid[pos] = start_style
             style = goal_style
 
+        initial_style_grid = deepcopy(style_grid)
+
         if process_planner:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
-            command = lambda t=pos: send_new_placement_event(t, part_select_option.get(), process_planner, button_grid, tree, style_grid, previous_style_grids=previous_style_grids, part_stock_tree=part_stock_tree)
+            command = lambda t=pos: send_new_placement_event(t, part_select_option.get(), process_planner, button_grid, tree, style_grid,initial_style_grid, previous_style_grids=previous_style_grids, part_stock_tree=part_stock_tree)
             button.config(command=command)
         else:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
         button.grid(row=pos[0], column=pos[1])
         button_grid[pos] = button
-        style_grid[pos] = free_style
 
     previous_style_grids.insert(0,deepcopy(style_grid))
 
@@ -301,7 +303,7 @@ class function_test_app:
                                         command = lambda t=part_id: send_new_pick_event(t, process_planner=self.process_planner, tree=process_message_tree, part_stock_tree=part_stock_tree,
                                                                                         style_grid=style_grid, previous_style_grids=previous_style_grids))
             return_to_previous_state.pack(anchor=tk.W)
-            part_stock_tree.insert("", tk.END, values=(part_id, self.process_planner.tentative_state.picked_parts[part_id],
+            part_stock_tree.insert("", tk.END, values=(part_id, self.process_planner.tentative_state.picked_parts.count(part_id),
                                                        self.process_planner.tentative_state.part_stock[part_id]))
 
         #todo: Construction Build Information Frame with picked_parts, current stock, deviation, solution scores etc.
@@ -328,12 +330,7 @@ class function_test_app:
         # setting title
         root.title("Pipe Lab")
         # setting window size
-        width = GetSystemMetrics(0) -200
-        height = GetSystemMetrics(1) -100
-        screenwidth = root.winfo_screenwidth()
-        screenheight = root.winfo_screenheight()
-        alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
-        root.geometry(alignstr)
+
 
 
 

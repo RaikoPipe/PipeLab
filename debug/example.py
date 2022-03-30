@@ -19,7 +19,7 @@ solution = None
 while solution is None:
 
     state_grid = grid_functions.get_empty_stategrid(x, y)
-    state_grid = randomizer.set_random_obstacles(0, state_grid)
+    state_grid = randomizer.set_random_obstacles(0.2, state_grid)
     start_node = (0,0)
     goal_node = (9,17)
     state_grid[start_node] = 0

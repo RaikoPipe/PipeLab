@@ -22,7 +22,7 @@ class State:
 
     construction_layouts: dict[Trail:LayoutState] = field(default_factory=dict) # Assigns Positions of a layout to a layout state -> current build state
 
-    picked_parts: dict[int:int]  = field(default_factory=dict) # counts parts that have been picked. Counter reduces when parts are confirmed in a construction event
+    picked_parts: list[int]  = field(default_factory=list) # counts parts that have been picked. Counter reduces when parts are confirmed in a construction event
 
     # variables used for deviation detection/handling
     deviated: bool = False
@@ -31,12 +31,12 @@ class State:
     # existed before deconstruction until two removal events have occurred.
     deviated_motion_pos_fitting : set = field(default_factory=set) # list of placed fitting motions at pos
     deviated_motion_pos_attachment : set = field(default_factory=set) # list of placed attachment motions at pos
-    deviated_motion_pos_pipe : set = field(default_factory=set) # list of placed pipe motions at pos
+    deviated_motion_pos_pipe : dict = field(default_factory=dict) # list of placed pipe motions at pos
 
 
     unnecessary_parts : dict[Pos: int] = field(default_factory=dict) # dictionary that contains information about unnecessary parts according to the aimed solution
     misplaced_parts : dict[Pos: int]= field(default_factory=dict)
-    error_dict : dict[Pos: int] = field(default_factory=dict)
+    #error_dict : dict[Pos: int] = field(default_factory=dict)
 
 
     latest_layout : Trail = field(default_factory=list)# a layout of the solution that is currently being build

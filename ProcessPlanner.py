@@ -134,7 +134,7 @@ class ProcessPlanner:
         return message
 
     def new_pick_event(self, part_id:int) -> str:
-        self.tentative_state.picked_parts[part_id] += 1
+        self.tentative_state.picked_parts.append(part_id)
         self.tentative_state.part_stock[part_id] -= 1
         message = str.format(f"ProcessPlanner: Picked part with id {part_id}")
         print(message)
@@ -156,6 +156,7 @@ class ProcessPlanner:
         obsolete_parts = {}
         removal = False
         deviation = None
+        deviated_motion = False
         message = None
         special_message = None
         error_message = None
@@ -235,31 +236,31 @@ class ProcessPlanner:
                 pipe_id = current_layout_state.pipe_id
                 if not current_layout_state.pipe_set:
                     # check if part was actually picked
-                    if self.tentative_state.picked_parts[pipe_id] > 0:
+                    if pipe_id in self.tentative_state.picked_parts:
                         if worker_event_pos in current_layout_state.correct_fitting_pos:
                             special_note = str.format(f"Misplaced {message_dict[worker_event_code]} detected!")
                             self.tentative_state.misplaced_parts[worker_event_pos] = worker_event_code
                         # successful placement
-                        self.tentative_state.picked_parts[pipe_id] -= 1
+                        self.tentative_state.picked_parts.remove(pipe_id)
                         current_layout_state.pipe_set.add(worker_event_pos)
                     else:
                         # part was not picked!
                         deviation_code = 3
-                        error_note = str.format(f"Part with id {current_layout_state.pipe_set} "
+                        error_note = str.format(f"Part with id {pipe_id} "
                                                            f"was placed, but not picked!")
-                        self.tentative_state.error_dict[worker_event_pos] = current_layout_state.pipe_id
+                        #self.tentative_state.error_dict[worker_event_pos] = current_layout_state.pipe_id
                 else:
                     # removed pipe
                     removal = True
-                    current_layout_state.pipe_set.clear()
+                    current_layout_state.pipe_set.remove(worker_event_pos)
 
             elif worker_event_code == 1:
                 #fixme: add special conditions to start and goal (is it a transition point?)
                 pipe_id = 0
                 if len(current_layout_state.fit_set) < 2 and worker_event_pos in current_layout_state.correct_fitting_pos:
-                    if self.tentative_state.picked_parts[0] > 0:
+                    if 0 in self.tentative_state.picked_parts:
                         # successful placement on correct pos
-                        self.tentative_state.picked_parts[0] -= 1
+                        self.tentative_state.picked_parts.remove(0)
                         current_layout_state.fit_set.add(worker_event_pos)
                         neighboring_layouts = get_neighboring_layouts(current_layout, self.tentative_state.aimed_solution.layouts)
 
@@ -273,6 +274,7 @@ class ProcessPlanner:
                         error_note = str.format(f"Part with id {0} "
                                                            f"was placed, but not picked!")
                 else:
+
                     if not worker_event_pos in current_layout_state.fit_set:
                         # Misplaced fitting detected!
                         deviation_code = 1
@@ -281,7 +283,7 @@ class ProcessPlanner:
                     else:
                         # removed fitting
                         removal = True
-                        self.tentative_state.picked_parts[0] += 1
+                        self.tentative_state.picked_parts.append(0)
                         current_layout_state.fit_set.remove(worker_event_pos)
                         neighboring_layouts = get_neighboring_layouts(current_layout,
                                                                       self.tentative_state.aimed_solution.layouts)
@@ -300,6 +302,7 @@ class ProcessPlanner:
 
         else:
             # motion event occurred outside optimal solution
+            deviated_motion = True
             deviation_code = 2
             if worker_event_code == 3:
                 if worker_event_pos not in self.tentative_state.deviated_motion_pos_attachment:
@@ -310,13 +313,29 @@ class ProcessPlanner:
                     special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
                     removal = True
             elif worker_event_code == 2:
-                if worker_event_pos not in self.tentative_state.deviated_motion_pos_pipe:
-                    self.tentative_state.deviated_motion_pos_pipe.add(worker_event_pos)
-                    special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
-                else:
-                    self.tentative_state.deviated_motion_pos_pipe.remove(worker_event_pos)
-                    special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
-                    removal = True
+                    if worker_event_pos not in self.tentative_state.deviated_motion_pos_pipe:
+                        picked_parts = self.tentative_state.picked_parts
+                        if len(picked_parts) == 1 and 0 not in picked_parts:
+                            # if there is a single part picked and it's not a fitting, we know which id was placed
+                            self.tentative_state.deviated_motion_pos_pipe[worker_event_pos] = picked_parts.pop(0)
+                            special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
+                        elif not all(picked_parts) and picked_parts:
+                            # if anything other than 0 is in parts picked
+                            self.tentative_state.deviated_motion_pos_pipe[worker_event_pos] = -1
+                            special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
+                        else:
+                            # part was not picked!
+                            deviation_code = 3
+                            #special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
+                            error_note = str.format(f"Part with unknown ID "
+                                                    f"was placed, but not picked!")
+                            #self.tentative_state.error_dict[worker_event_pos] = current_layout_state.pipe_id
+
+                    else:
+                        self.tentative_state.deviated_motion_pos_pipe.pop(worker_event_pos)
+                        special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
+                        removal = True
+
             elif worker_event_code == 1:
                 special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
                 # check for deviation events
@@ -353,9 +372,15 @@ class ProcessPlanner:
         # return removed parts
         if removal:
             if worker_event_code == 1:
-                self.tentative_state.picked_parts[0] +=1
+                self.tentative_state.picked_parts.append(0)
             elif worker_event_code == 2:
-                self.tentative_state.picked_parts[pipe_id] +=1
+                # fixme: if deviated pipe gets removed, then we don't know what id it had!
+                if not deviated_motion:
+                    self.tentative_state.picked_parts.append(pipe_id)
+                else:
+                    deviated_pipe_id = self.tentative_state.deviated_motion_pos_pipe.get(worker_event_pos)
+                    if deviated_pipe_id != -1:
+                        self.tentative_state.picked_parts.append(pipe_id)
 
 
         # make messages

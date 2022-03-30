@@ -162,12 +162,10 @@ def get_initial_construction_layouts(solution):
 
 def prepare_initial_state(solution:Solution) -> State:
     construction_layouts = get_initial_construction_layouts(solution)
-    picked_parts = {}
-    for part_id in solution.path_problem.part_stock:
-        picked_parts[part_id] = 0
+
     state = State(state_grid=solution.path_problem.state_grid,part_stock=solution.path_problem.part_stock,
                   aimed_solution=solution,latest_layout=solution.layouts[0] # starting with first layout
-                  ,construction_layouts=construction_layouts, picked_parts=picked_parts)
+                  ,construction_layouts=construction_layouts)
     return state
 
 def get_total_definite_trail_from_construction_layouts(construction_layouts: dict[Trail:LayoutState]) -> dict:
