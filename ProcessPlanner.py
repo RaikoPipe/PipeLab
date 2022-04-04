@@ -116,14 +116,18 @@ class ProcessPlanner:
         # picking robot state
         self.picking_robot_carries_part_id = None
 
-    def make_registration_message(self, event_pos: Pos, event_code: int, removal: bool) -> str:
+    def make_registration_message(self, event_pos: Pos, event_code: int, removal: bool, pipe_id:int) -> str:
         object_name = message_dict[event_code]
         motion_type = "placement"
         if removal:
             motion_type = "removal"
 
-        message = str.format(
-            f"ProcessPlanner: Registered {motion_type} for object {object_name} at Position {event_pos}")
+        if pipe_id not in (0,-1, None):
+            message = str.format(
+                f"ProcessPlanner: Registered {motion_type} for object {object_name} (ID {pipe_id}) at Position {event_pos}")
+        else:
+            message = str.format(
+                f"ProcessPlanner: Registered {motion_type} for object {object_name} at Position {event_pos}")
 
         return message
 
@@ -223,7 +227,7 @@ class ProcessPlanner:
                                                             additional_message=error_note)
                     return {"error_message": error_message}
 
-        # first check if worker event was to remove misplaced/unnecessary parts
+        # check if worker event was to remove misplaced/unnecessary parts
         if self.tentative_state.unnecessary_parts.get(worker_event_pos) == worker_event_code:
             special_note = str.format(f"Removed unnecessary {message_dict[worker_event_code]}")
             removal = True
@@ -356,9 +360,7 @@ class ProcessPlanner:
 
             self.set_completion_state(current_layout, self.tentative_state.construction_layouts, removal)
 
-
         # worker event evaluation outside optimal solution
-
         elif check_for_deviation_events:
             # motion event occurred outside optimal solution
             deviated_motion = True
@@ -403,8 +405,8 @@ class ProcessPlanner:
                     special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
                     # check for deviation events
                     if worker_event_pos not in self.tentative_state.deviated_motion_set_fitting:
-                        self.tentative_state.deviated_motion_set_fitting.add(worker_event_pos)
                         deviation = self.deviation_event(worker_event, self.tentative_state, None)
+                        self.tentative_state.deviated_motion_set_fitting.add(worker_event_pos)
                         if deviation:
                             self.tentative_state.construction_layouts.update(deviation)
                             obsolete_fittings = set()
@@ -455,7 +457,7 @@ class ProcessPlanner:
 
         # make messages
         message = self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code,
-                                                 removal=removal)
+                                                 removal=removal, pipe_id = pipe_id)
         if special_note:
             special_message = self.make_special_message(message=special_note, event_pos=worker_event_pos)
 
@@ -545,67 +547,68 @@ class ProcessPlanner:
         #   - motion event on confirmed occupied spot (check state_grid)
         #  todo: consider adding options to disable certain conditions (for testing)
 
-        event_code = worker_event[0]
-        event_pos = worker_event[1]
+        event_code = worker_event[1]
+        event_pos = worker_event[0]
+
+        check_fit_set = self.tentative_state.deviated_motion_set_fitting.union(self.tentative_state.motion_set_fitting)
 
         if event_code == 1:
 
-            for pos in self.latest_state.deviated_motion_set_fitting:
+            for pos in check_fit_set:
 
                 # check if conditions for a deviation event are met
 
                 fit_diff = path_math.get_length_same_axis(pos,
                                                           event_pos)  # distance between fittings
-                pipe_id = fit_diff - 2  # length of needed part
+                pipe_id = fit_diff - 1  # length of needed part
 
-                fittings_in_proximity = fit_diff in self.latest_state.part_stock.keys()  # fittings are connectable by available parts
+                if pipe_id == 0:
+                    #fittings are directly next to each other
+                    break
+
+                fittings_in_proximity = pipe_id in self.tentative_state.part_stock.keys()  # fittings are connectable by available parts
 
                 if not fittings_in_proximity:
                     continue
 
-                fit_dir = get_direction(diff_pos(event_pos, pos))
+                fit_dir = get_direction(diff_pos(pos, event_pos))
+                fit_tup = (pos, event_pos)
+                deviation_trail = get_deviation_trail(length=fit_diff, direction=fit_dir, fit_pos=fit_tup)
 
                 attachment_is_between = False
 
                 att_set = set()
                 pipe_set = set()
 
+                pipe_trail = [i for i in deviation_trail if i not in fit_tup]
                 for att_pos in tentative_state.deviated_motion_set_attachment:
-                    att_dir = get_direction(diff_pos(event_pos, att_pos))
-                    if att_dir == fit_dir:
+                    if att_pos in pipe_trail:
                         att_set.add(att_pos)
 
                 if not att_set:
                     # no attachments in between
                     continue
 
-                for pipe_pos in tentative_state.deviated_motion_set_attachment:
-                    pipe_dir = get_direction(diff_pos(event_pos, pipe_pos))
-                    if pipe_dir == fit_dir:
+
+                for pipe_pos in tentative_state.deviated_motion_set_pipe:
+                    if pipe_pos in pipe_trail:
                         pipe_set.add(pipe_pos)
 
                 if not pipe_set:
                     # no pipes in between
                     continue
 
-                # check if necessary parts have been picked
-                if 0 in tentative_state.picked_parts and pipe_id in tentative_state.picked_parts:
-                    # necessary parts have not been picked!
-                    continue
-
                 print("Deviation confirmed")
 
-                fit_tup = (pos, event_pos)
+                first_pipe_pos = ()
                 # get_updated_state_on_construction_event(tentative_state, fit_diff, fit_dir, event_pos, pos)
-                deviation_trail = get_deviation_trail(length=fit_diff, direction=fit_dir, fit_pos=fit_tup)
+
                 deviation_state = get_deviation_state(length=fit_diff, att_set=att_set, pipe_set=pipe_set,
-                                                      fit_tup=fit_tup)
+                                                      fit_tup=fit_tup, state_grid = self._initial_path_problem.state_grid)
 
                 tentative_state.fc_set.add(fit_tup)
 
                 return {deviation_trail: deviation_state}
-            # just update fitting pos
-            tentative_state.deviated_motion_set_fitting.add(event_pos)
 
     def update_latest_state(self, old_state, new_state):
         self.previous_states.insert(0, old_state)
