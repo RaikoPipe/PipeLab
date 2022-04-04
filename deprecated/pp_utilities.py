@@ -6,7 +6,7 @@ def get_updated_state_on_construction_event(tentative_state : State, fit_diff, f
     tentative_state.connection_count[pos] += 1
 
     # update fitting_pos
-    tentative_state.deviated_motion_pos_fitting = new_pos
+    tentative_state.deviated_motion_set_fitting = new_pos
 
     # update part stock
     tentative_state.part_stock[fit_diff] -= 1  # reduce pipe stock

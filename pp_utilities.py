@@ -137,9 +137,10 @@ def get_initial_construction_layouts(solution):
     construction_layout = {}
     start = solution.path_problem.start_pos
     goal = solution.path_problem.goal_pos
-    add_fit = set()
+
 
     for layout_trail in solution.layouts:
+        add_fit = set()
         pipe_id = solution.total_definite_trail[layout_trail[1]]
         rec_att_pos = get_optimal_attachment_pos(state_grid=solution.path_problem.state_grid,
                                                  direction=get_direction(diff_pos(layout_trail[0],layout_trail[1])),
@@ -149,12 +150,10 @@ def get_initial_construction_layouts(solution):
             add_fit.add(start)
         elif layout_trail[-1] == goal:
             add_fit.add(goal)
-        else:
-            add_fit = set()
 
         construction_layout[tuple(layout_trail)] = LayoutState(att_set=set(),pipe_set=set(),
                                                             fit_set=add_fit, pipe_id=pipe_id,
-                                                            correct_fitting_pos=(layout_trail[0],layout_trail[-1]),
+                                                            required_fit_positions=(layout_trail[0],layout_trail[-1]),
                                                             recommended_attachment_pos=rec_att_pos)
 
 
