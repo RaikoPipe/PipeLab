@@ -3,11 +3,39 @@ from copy import deepcopy
 import numpy as np
 
 from data_class.PathProblem import PathProblem
-from path_finding.path_utilities import get_outgoing_pos, get_best_connections
+from path_finding.path_utilities import get_outgoing_pos, get_best_connections, get_connections
 import heapq
 from path_finding.search_algorithm import find_path
 from path_finding.path_math import diff_pos, get_direction
 from path_finding.common_types import Layouts
+
+def find_solution_from_partial_construction(state_grid:np.ndarray, layout_directions: dict, outgoing_connections_set: set, initial_path_problem):
+    exclusion_list = set()
+
+    tentative_path_problem = deepcopy(initial_path_problem)
+    tentative_path_problem.state_grid = state_grid
+
+
+
+
+    while True:
+        connections = get_connections(exclusion_list=exclusion_list, outgoing_connections_set=outgoing_connections_set)
+        for connection in connections:
+            tentative_path_problem.start_pos = connection[0]
+            tentative_path_problem.goal_node = connection[1]
+            #fixme: also add start_direction, goal_directions depending on trail direction
+            solution = find_path(tentative_path_problem)
+            if solution is None:
+                # no connection found, add connection to exclusion list, start over
+                exclusion_list.add(connection)
+                break
+
+            partial_solutions.append(solution)
+
+        if connections == exclusion_list:
+            return None
+
+        return partial_solutions
 
 def find_partial_solution_ls(layouts: Layouts, state_grid: np.ndarray,
                                  initial_path_problem: PathProblem, completed_set:set):

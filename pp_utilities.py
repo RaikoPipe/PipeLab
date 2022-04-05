@@ -39,24 +39,24 @@ def get_deviation_trail(length:int, direction:Pos, fit_pos:tuple) -> Trail:
         state_pos = (fit_pos[0][0] + direction[0] * i, fit_pos[0][1] + direction[1] * i)
         construction_trail.append(state_pos)
 
-    return construction_trail
+    return tuple(construction_trail)
 
 
 def get_deviation_state(length:int, att_set:set, pipe_set:set, fit_tup:tuple, state_grid:np.ndarray):
     pipe_id = length - 1
+    direction = get_direction(diff_pos(fit_tup[0], fit_tup[1]))
+    first_pipe_pos = (fit_tup[0][0] * direction[0], fit_tup[0][1] * direction[1])
 
     rec_att_pos = get_optimal_attachment_pos(state_grid=state_grid,
-                                             direction=get_direction(diff_pos(fit_tup[0], fit_tup[1])),
+                                             direction=direction,
                                              part_id=pipe_id,
-                                             pos=layout_trail[1])
+                                             pos=first_pipe_pos)
 
     layout_state = LayoutState(att_set=att_set, pipe_set=pipe_set, fit_set={fit_tup[0], fit_tup[1]},
                                pipe_id=pipe_id, required_fit_positions=(fit_tup[0], fit_tup[1]), recommended_attachment_pos=rec_att_pos,
                                completed = True)
 
     return layout_state
-
-
 
 
 def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id:int, direction:Pos):
@@ -186,5 +186,60 @@ def get_total_definite_trail_from_construction_layouts(construction_layouts: dic
     return total_definite_trail
 
 
+def get_completed_layouts(construction_layouts):
+    """returns all completed layouts"""
+    completed_layouts = {}
+    for layout_trail in construction_layouts.keys():
+        layout_state = construction_layouts[layout_trail]
+        if layout_state.completed:
+            completed_layouts[layout_trail] = layout_state
 
+    return completed_layouts
+
+def get_outgoing_connections(layouts):
+    # todo: check if two completed layouts are connected
+    outgoing_connections_set = set()
+    for layout_state in layouts.items():
+        outgoing_connections_set.add(layout_state.required_fit_positions)
+
+    layout_state_list = list(layouts.items())
+
+    layout_state = layout_state_list.pop(0)
+
+    while layouts:
+        for other_layout_state in layouts.items():
+            fit_positions = set(layout_state.required_fit_positions)
+            other_fit_positions = set(other_layout_state.required_fit_positions)
+            intersection = fit_positions.intersection(other_fit_positions)
+            if intersection:
+                outgoing_connections_set.discard(layout_state.required_fit_positions)
+                outgoing_connections_set.discard(other_layout_state.required_fit_positions)
+
+                fit_positions.discard(intersection)
+                other_fit_positions.discard(intersection)
+                new_end_points = (fit_positions.pop, other_fit_positions.pop)
+
+                outgoing_connections_set.add(new_end_points)
+        layout_state = layout_state_list.pop()
+
+    return outgoing_connections_set
+
+
+def get_outgoing_directions(layouts):
+    """returns the connecting directions the fittings of each layout requires"""
+    horizontal_directions = {(1,0),(-1,0)}
+    vertical_directions = {(0,1),(-1,0)}
+
+    direction_dict = {}
+
+    for layout_trail in layouts.keys():
+        fit_pos = layout_trail.required_fit_positions
+        direction = get_direction(diff_pos(fit_pos[0], fit_pos[1]))
+        if direction in horizontal_directions:
+            direction_dict[fit_pos[0]] = direction_dict[fit_pos[1]] = vertical_directions
+
+        elif direction_dict in vertical_directions:
+            direction_dict[fit_pos[0]] = direction_dict[fit_pos[1]] = horizontal_directions
+
+    return direction_dict
 

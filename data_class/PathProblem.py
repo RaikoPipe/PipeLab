@@ -14,8 +14,8 @@ class PathProblem:
     start_pos: Pos
     goal_pos: Pos
 
-    start_direction: Positions # directions that start is restricted to
-    goal_direction: Positions # directions that goal is restricted to (i.e. last part that is linked to the goal)
+    start_directions: Positions # directions that start is restricted to
+    goal_directions: Positions # directions that goal is restricted to (i.e. last part that is linked to the goal)
 
     starting_part: Optional[int] # signifies if there is a starting part; None: No part; 0: Corner; 1: Pipe
 

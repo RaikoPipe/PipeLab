@@ -73,6 +73,14 @@ def deconstruction_event(motion_events: dict, tentative_state: State, debug_grid
 
             return True
 
+def update_state_grid(state_grid, layout, completed):
+    if completed:
+        for pos in layout:
+            state_grid[pos] = 2
+    elif not completed:
+        for pos in layout:
+            state_grid[pos] = 0
+
 
 # todo: multiple walls: one state --> need to reintroduce features to path finding
 class ProcessPlanner:
@@ -167,7 +175,19 @@ class ProcessPlanner:
         if error_message:
             print(error_message)
 
+        if event_info["deviation"]:
+            #handle deviation event
+            # todo: gather completed layouts, add first and last pos as well as directions
+            #       calculate partial solutions
+            #       change aimed solution if solution
+            #       reevaluate all motion events so far
+            completed_layouts = get_completed_layouts
+            layout_outgoing_connections_set = get_outgoing_connections(completed_layouts)
+            layout_outgoing_connections_dict = get_outgoing_directions(completed_layouts)
 
+
+            # get new solution
+            solution = partial_solutionizer.find_partial_solution_ls()
 
     def evaluate_worker_event(self, worker_event: tuple[Pos, int], check_for_deviation_events: bool = True, ignore_errors:bool = False, allow_stacking:bool = False):
 
@@ -193,6 +213,8 @@ class ProcessPlanner:
 
         special_note = None
         error_note = None
+
+        completed = None
 
         """deviation code
         -1: detection error: part was placed on an occupied spot
@@ -358,7 +380,7 @@ class ProcessPlanner:
                             if worker_event_pos in layout:
                                 self.tentative_state.construction_layouts[layout].fit_set.discard(worker_event_pos)
 
-            self.set_completion_state(current_layout, self.tentative_state.construction_layouts, removal)
+            completed = self.set_completion_state(current_layout, self.tentative_state.construction_layouts, removal)
 
         # worker event evaluation outside optimal solution
         elif check_for_deviation_events:
@@ -409,22 +431,10 @@ class ProcessPlanner:
                         self.tentative_state.deviated_motion_set_fitting.add(worker_event_pos)
                         if deviation:
                             self.tentative_state.construction_layouts.update(deviation)
-                            obsolete_fittings = set()
-                            obsolete_attachments = set()
-                            obsolete_pipes = set()
-                            current_state_grid = self.tentative_state.state_grid  # fixme: get current state_grid
-                            self.latest_deviation_solution = partial_solutionizer.find_partial_solution_simple()
-                            # todo: check which layouts are now obsolete and mark obsolete parts
-                            difference = self.latest_deviation_solution.layouts.difference(
-                                self.tentative_state.aimed_solution.layouts)
-                            for trail in difference:
-                                obsolete_layout = self.tentative_state.construction_layouts.get(trail)
-                                obsolete_fittings = obsolete_layout.fit_set
-                                obsolete_attachments = obsolete_layout.att_set
-                                obsolete_pipes = obsolete_layout.pipe_set
+                            # update state grid
+                            for pos in list(deviation.keys())[0]:
+                                self.tentative_state.state_grid[pos] = 2
 
-                            obsolete_parts = {"fittings": obsolete_fittings, "attachments": obsolete_attachments,
-                                              "pipes": obsolete_pipes}
                     else:
                         self.tentative_state.deviated_motion_set_fitting.remove(worker_event_pos)
                         special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
@@ -455,6 +465,7 @@ class ProcessPlanner:
             else:
                 motion_dict[worker_event_code].add(worker_event_pos)
 
+
         # make messages
         message = self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code,
                                                  removal=removal, pipe_id = pipe_id)
@@ -479,7 +490,7 @@ class ProcessPlanner:
         return event_info
 
     def set_completion_state(self, current_layout, construction_layouts, removal):
-        # check completion state
+        """sets completion state of current layout and neighboring layouts. Updates state grid."""
         neighboring_layouts = get_neighboring_layouts(current_layout, self.tentative_state.aimed_solution.layouts)
         neighboring_layouts.append(current_layout)
 
@@ -490,10 +501,16 @@ class ProcessPlanner:
                     # layout was completed
                     layout_state.completed = True
                     self.tentative_state.fc_set.add((current_layout[0], current_layout[-1]))
+                    for pos in layout:
+                        self.tentative_state.state_grid[pos] = 2
+
             else:
                 if removal:
                     layout_state.completed = False
                     self.tentative_state.fc_set.remove((current_layout[0], current_layout[-1]))
+                    for pos in layout:
+                        self.tentative_state.state_grid[pos] = 0
+
 
     def determine_robot_commands(self, worker_event: tuple[Pos, int], info_dict: dict) -> tuple[list, list]:
         """Evaluates the current process state and issues robot commands"""

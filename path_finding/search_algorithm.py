@@ -32,7 +32,7 @@ def find_path(path_problem: PathProblem) -> Optional[Solution]:
     state_grid = deepcopy(path_problem.state_grid)
     start_pos = path_problem.start_pos
     goal_pos = path_problem.goal_pos
-    start_directions = path_problem.start_direction
+    start_directions = path_problem.start_directions
     pipe_stock = deepcopy(path_problem.part_stock)
     part_cost = path_problem.part_cost
     worst_move_cost, worst_moves = get_worst_move_cost(part_cost)
