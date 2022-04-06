@@ -3,11 +3,14 @@ from copy import deepcopy
 import numpy as np
 
 from data_class.PathProblem import PathProblem
+from data_class.Solution import Solution
 from path_finding.path_utilities import get_outgoing_pos, get_best_connections, get_connections
 import heapq
 from path_finding.search_algorithm import find_path
 from path_finding.path_math import diff_pos, get_direction
-from path_finding.common_types import Layouts
+from path_finding.common_types import Layouts, DirectedConnection
+from path_finding.solution_manager import get_solution
+
 
 def find_solution_from_partial_construction(state_grid:np.ndarray, layout_directions: dict, outgoing_connections_set: set, initial_path_problem):
     exclusion_list = set()
@@ -200,3 +203,66 @@ def find_partial_solution_simple(layout_paths: list, captured_state_grid: np.nda
 #
 #
 #     if len(layout_paths) == 1:
+
+
+def get_partial_solutions(outgoing_connections_set: set, exclusion_list: set[DirectedConnection],
+                          outgoing_directions_dict:dict, state_grid, part_stock,part_cost, algorithm, weights,
+                           ) \
+        -> dict:
+    """
+    Generates a connection for each two nodes according to the lowest manhattan distance.
+    :param node_dict: List containing position of nodes and corresponding layout ids.
+    :param exclusion_list: List with connections that are excluded (for example because there is no feasible path in a connection).
+    :return: Set of connections
+    """
+    #todo: add start and goal
+    #   get current state grid
+    #   get current part stock (from outside this func with completed layouts)
+    start = (0,0)
+    goal = (0,0)
+
+    partial_solutions = {}
+
+    all_points = {}
+
+    for end_points in outgoing_connections_set:
+        if end_points in exclusion_list:
+            continue
+        for point in end_points:
+            all_points[point] = end_points
+
+    if start not in all_points.keys():
+        all_points[start] = ()
+
+    if goal not in all_points.keys():
+        all_points[goal] = ()
+
+
+    while all_points:
+        open_list = []
+        point = all_points.popitem()
+        solution = None
+        for other_point in all_points.keys():
+            if other_point in point[1]:
+                continue
+
+            path_problem = PathProblem(algorithm=algorithm,weights=weights,
+                                       start_pos=point, start_directions=outgoing_directions_dict[point],
+                                       goal_pos=other_point, goal_directions=outgoing_directions_dict[other_point],
+                                       part_cost=part_cost, part_stock=part_stock,
+                                       starting_part=0,
+                                       state_grid=state_grid)
+            solution = get_solution(path_problem=path_problem)
+
+            heapq.heappush(open_list, (solution.score, other_point))
+        # get connecting node with best score, then remove it
+        best_point = heapq.heappop(open_list)
+        connection = (point, best_point)
+        all_points.pop(best_point)
+        partial_solutions[connection] = solution
+
+    return partial_solutions
+
+def fuse_partial_solutions(partial_solutions: list[Solution]):
+    #todo: make this func
+    pass

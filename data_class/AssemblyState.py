@@ -56,4 +56,6 @@ class State:
     screw_robot_commands: list[int] = field(default_factory=list)
     obsolete_attachment_pos: set[Pos] = field(default_factory=set)
 
-    action_info: dict = None
+    event_info: dict = field(default_factory=dict)
+
+

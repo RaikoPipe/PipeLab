@@ -1,12 +1,12 @@
 import numpy as np
-from data_class.ConstructionState import State
+from data_class.AssemblyState import State
 from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
 from copy import deepcopy
 from path_finding.search_algorithm import find_path
 from path_finding.path_math import diff_pos, get_direction
 from typing import Optional
-from path_finding import path_math, partial_solutionizer
+from path_finding import path_math, partial_solver
 from pp_utilities import *
 from path_finding.common_types import *
 
@@ -156,11 +156,13 @@ class ProcessPlanner:
         return message
 
     def main_func(self, worker_event: tuple[Pos, int], check_for_deviations:bool = True, ignore_errors:bool=True):
-        event_info = self.evaluate_worker_event(worker_event=worker_event, check_for_deviation_events=check_for_deviations, ignore_errors=ignore_errors)
+        process_state = self.evaluate_worker_event(worker_event=worker_event, check_for_deviation_events=check_for_deviations, ignore_errors=ignore_errors)
 
         #todo: if a deviation event occurred, use new_construction_check to evaluate already built layouts
         #   --> scan through layouts/built parts and extract worker_event_pos and worker_event code from them
         #   --> put them in a list and iterate them through new_construction_check
+
+        event_info = process_state.event_info
 
         # extract messages
         message = event_info["message"]
@@ -177,17 +179,47 @@ class ProcessPlanner:
 
         if event_info["deviation"]:
             #handle deviation event
-            # todo: gather completed layouts, add first and last pos as well as directions
-            #       calculate partial solutions
-            #       change aimed solution if solution
-            #       reevaluate all motion events so far
-            completed_layouts = get_completed_layouts
+
+
+            completed_layouts = get_completed_layouts(self.tentative_state.construction_layouts)
+
+            # get state grid of completed layouts
+            current_state_grid = deepcopy(self._initial_path_problem.state_grid)
+
+            for layout_state in completed_layouts.keys():
+                for pos in layout_state:
+                    current_state_grid[pos] = 2
+
+            # get part stock (assuming only completed layouts)
+            current_part_stock = deepcopy(self._initial_path_problem.part_stock)
+
+            for layout_state in completed_layouts.items():
+                current_part_stock[0] -= len(layout_state.fit_set)
+                current_part_stock[layout_state.pipe_id] -= len(layout_state.pipe_set)
+
+
+
             layout_outgoing_connections_set = get_outgoing_connections(completed_layouts)
             layout_outgoing_connections_dict = get_outgoing_directions(completed_layouts)
 
 
+            exclusion_list = set()
             # get new solution
-            solution = partial_solutionizer.find_partial_solution_ls()
+            partial_solutions = partial_solver.get_partial_solutions(outgoing_connections_set=layout_outgoing_connections_set,
+                                                                     outgoing_directions_dict=layout_outgoing_connections_dict,
+                                                                     exclusion_list=exclusion_list,
+                                                                     algorithm=self._initial_path_problem.algorithm,
+                                                                     weights=self._initial_path_problem.weights,
+                                                                     part_cost=self._initial_path_problem.part_cost,
+                                                                     part_stock=current_part_stock,
+                                                                     state_grid=current_state_grid)
+
+            solution = partial_solver.fuse_partial_solutions(partial_solutions)
+
+            self.tentative_state.aimed_solution = solution
+
+            # todo: reevaluate motions -> inside solution, outside solution
+        return self.tentative_state
 
     def evaluate_worker_event(self, worker_event: tuple[Pos, int], check_for_deviation_events: bool = True, ignore_errors:bool = False, allow_stacking:bool = False):
 
@@ -483,11 +515,10 @@ class ProcessPlanner:
                        "special_message": special_message,
                        "error_message": error_message}
 
-        self.tentative_state.action_info = event_info
 
-        self.latest_state = self.tentative_state
+        self.tentative_state.event_info = event_info
 
-        return event_info
+        return self.tentative_state
 
     def set_completion_state(self, current_layout, construction_layouts, removal):
         """sets completion state of current layout and neighboring layouts. Updates state grid."""

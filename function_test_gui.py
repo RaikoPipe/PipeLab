@@ -8,7 +8,7 @@ from ProcessPlanner import ProcessPlanner
 from data_class.LayoutState import LayoutState
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
-from data_class.ConstructionState import State
+from data_class.AssemblyState import State
 from grid import grid_functions
 from path_finding.common_types import *
 from typing import Optional
@@ -114,7 +114,8 @@ def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previ
 message_count = 0
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
                              initial_style_grid, part_stock_tree, previous_style_grids):
-    event_info = process_planner.evaluate_worker_event((pos, event_code))
+    tentative_state = process_planner.main_func((pos, event_code), check_for_deviations=True, ignore_errors=False)
+    event_info = tentative_state.event_info
     update_button_grid(event_info, button_grid, process_planner, style_grid, initial_style_grid, previous_style_grids)
     global message_count
     if event_info.get("message"):

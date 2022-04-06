@@ -18,6 +18,6 @@ class LayoutState:
     pipe_set:set[Pos] # positions where pipe attaching motions where detected inside this layout.
     fit_set: set[Pos]  # position where fittings have been placed inside this layout
     pipe_id: int # ID of pipe that needs to be
-    correct_fitting_pos: DirectedConnection # Position where fittings need to be placed
+    required_fit_positions: DirectedConnection # Position where fittings need to be placed
     recommended_attachment_pos: Pos # recommended placement position of attachment, determined by an algorithm
     completed : bool = False # if the layout is completed

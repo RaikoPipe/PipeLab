@@ -5,7 +5,7 @@ import path_finding.path_math
 import path_finding.restriction_functions
 from data_class.LayoutState import LayoutState
 from data_class.Solution import Solution
-from data_class.ConstructionState import State
+from data_class.AssemblyState import State
 from path_finding.common_types import Pos, Trail, DefinitePath
 from path_finding.path_math import get_direction, diff_pos, manhattan_distance
 
