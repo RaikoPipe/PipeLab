@@ -8,6 +8,7 @@ from data_class.Solution import Solution
 from data_class.AssemblyState import State
 from path_finding.common_types import Pos, Trail, DefinitePath
 from path_finding.path_math import get_direction, diff_pos, manhattan_distance
+from constants import horizontal_directions, vertical_directions
 
 def determine_next_part(layout_state:LayoutState):
     next_part_id = None
@@ -197,27 +198,33 @@ def get_completed_layouts(construction_layouts):
     return completed_layouts
 
 def get_outgoing_connections(layouts):
-    # todo: check if two completed layouts are connected
+    """Returns all outgoing points in a layout as a connection. Interpolates layouts that are connected."""
+
     outgoing_connections_set = set()
-    for layout_state in layouts.items():
+    for layout_state in layouts.values():
         outgoing_connections_set.add(layout_state.required_fit_positions)
 
-    layout_state_list = list(layouts.items())
+    layout_state_list = [i for i in layouts.values()]
 
     layout_state = layout_state_list.pop(0)
 
-    while layouts:
-        for other_layout_state in layouts.items():
-            fit_positions = set(layout_state.required_fit_positions)
-            other_fit_positions = set(other_layout_state.required_fit_positions)
-            intersection = fit_positions.intersection(other_fit_positions)
+    while layout_state_list:
+        for other_layout_state in layout_state_list:
+            fit_positions = layout_state.required_fit_positions
+            other_fit_positions = other_layout_state.required_fit_positions
+            fit_positions_set = set(fit_positions)
+            other_fit_positions_set = set(other_fit_positions)
+            intersection = fit_positions_set.intersection(other_fit_positions_set)
             if intersection:
-                outgoing_connections_set.discard(layout_state.required_fit_positions)
-                outgoing_connections_set.discard(other_layout_state.required_fit_positions)
+                outgoing_connections_set.discard(fit_positions)
+                outgoing_connections_set.discard(other_fit_positions)
 
-                fit_positions.discard(intersection)
-                other_fit_positions.discard(intersection)
-                new_end_points = (fit_positions.pop, other_fit_positions.pop)
+                intersected_pos = intersection.pop()
+                fit_positions_set.discard(intersected_pos)
+                other_fit_positions_set.discard(intersected_pos)
+
+                fits_left = (fit_positions_set.pop(), other_fit_positions_set.pop())
+                new_end_points = (fits_left[0], fits_left[1])
 
                 outgoing_connections_set.add(new_end_points)
         layout_state = layout_state_list.pop()
@@ -227,18 +234,16 @@ def get_outgoing_connections(layouts):
 
 def get_outgoing_directions(layouts):
     """returns the connecting directions the fittings of each layout requires"""
-    horizontal_directions = {(1,0),(-1,0)}
-    vertical_directions = {(0,1),(-1,0)}
 
     direction_dict = {}
 
     for layout_trail in layouts.keys():
-        fit_pos = layout_trail.required_fit_positions
+        fit_pos = layouts[layout_trail].required_fit_positions
         direction = get_direction(diff_pos(fit_pos[0], fit_pos[1]))
         if direction in horizontal_directions:
             direction_dict[fit_pos[0]] = direction_dict[fit_pos[1]] = vertical_directions
 
-        elif direction_dict in vertical_directions:
+        elif direction in vertical_directions:
             direction_dict[fit_pos[0]] = direction_dict[fit_pos[1]] = horizontal_directions
 
     return direction_dict

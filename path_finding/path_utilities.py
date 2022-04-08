@@ -96,11 +96,16 @@ def get_best_connections(node_dict: dict[tuple[Pos, int]:Pos], exclusion_list: s
 def construct_solution(predecessors, current_pos, state_grid, score,
                        algorithm, path_problem):
     definite_path = []
+    part_stock = deepcopy(path_problem.part_stock)
     while current_pos in predecessors:
         definite_path.append((current_pos, predecessors.get(current_pos).part_used))
         current_pos = predecessors.get(current_pos).pos
+        part_id = predecessors.get(current_pos).part_used
+        part_stock[part_id] -= 1
 
     definite_path = definite_path[::-1]  # reverse order
+
+
 
     total_definite_trail = {}
     layouts = []
@@ -135,8 +140,9 @@ def construct_solution(predecessors, current_pos, state_grid, score,
             # definite path must start with None or 0
             raise Exception
 
+
     return Solution(definite_path = definite_path, fc_set=fc_set, total_definite_trail=total_definite_trail,
-                    layouts=layouts, state_grid = state_grid, score=score, algorithm=algorithm, path_problem=path_problem)
+                    layouts=layouts, state_grid = state_grid, score=score, algorithm=algorithm, path_problem=path_problem, part_stock=part_stock)
 
 
 def get_corner_neighbors(axis: tuple, available_parts: list) -> set:

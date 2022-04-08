@@ -192,7 +192,7 @@ def get_button_grid(state_grid: np.ndarray, total_definite_trail, start, goal, b
             button.config(command=command)
         else:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
-        button.grid(row=pos[0], column=pos[1])
+        button.grid(row=pos[0], column=pos[1], ipady=6, ipadx=3)
         button_grid[pos] = button
 
     previous_style_grids.insert(0, deepcopy(style_grid))
@@ -214,7 +214,7 @@ class function_test_app:
         pos_hovered = start
 
         style = ttk.Style()
-        button_width = 6
+        button_width = 5
         button_height = 5
         font= ('Tahoma', 7)
         style.configure(free_style, background="white", width=button_width, height=button_height, font=font)

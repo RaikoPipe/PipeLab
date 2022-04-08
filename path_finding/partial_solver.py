@@ -4,50 +4,50 @@ import numpy as np
 
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
-from path_finding.path_utilities import get_outgoing_pos, get_best_connections, get_connections
+from data_class.LayoutState import LayoutState
+from path_finding.path_utilities import get_outgoing_pos, get_best_connections, get_connections, construct_solution
 import heapq
 from path_finding.search_algorithm import find_path
-from path_finding.path_math import diff_pos, get_direction
+from path_finding.path_math import diff_pos, get_direction, manhattan_distance
 from path_finding.common_types import Layouts, DirectedConnection
 from path_finding.solution_manager import get_solution
-
-
-def find_solution_from_partial_construction(state_grid:np.ndarray, layout_directions: dict, outgoing_connections_set: set, initial_path_problem):
-    exclusion_list = set()
-
-    tentative_path_problem = deepcopy(initial_path_problem)
-    tentative_path_problem.state_grid = state_grid
+from path_finding.common_types import Trail
 
 
 
-
-    while True:
-        connections = get_connections(exclusion_list=exclusion_list, outgoing_connections_set=outgoing_connections_set)
-        for connection in connections:
-            tentative_path_problem.start_pos = connection[0]
-            tentative_path_problem.goal_node = connection[1]
-            #fixme: also add start_direction, goal_directions depending on trail direction
-            solution = find_path(tentative_path_problem)
-            if solution is None:
-                # no connection found, add connection to exclusion list, start over
-                exclusion_list.add(connection)
-                break
-
-            partial_solutions.append(solution)
-
-        if connections == exclusion_list:
-            return None
-
-        return partial_solutions
+# def find_solution_from_partial_construction(state_grid:np.ndarray, layout_directions: dict, outgoing_connections_set: set, initial_path_problem):
+#     exclusion_list = set()
+#
+#     tentative_path_problem = deepcopy(initial_path_problem)
+#     tentative_path_problem.state_grid = state_grid
+#
+#
+#
+#
+#     while True:
+#         connections = get_connections(exclusion_list=exclusion_list, outgoing_connections_set=outgoing_connections_set)
+#         for connection in connections:
+#             tentative_path_problem.start_pos = connection[0]
+#             tentative_path_problem.goal_node = connection[1]
+#             #fixme: also add start_direction, goal_directions depending on trail direction
+#             solution = find_path(tentative_path_problem)
+#             if solution is None:
+#                 # no connection found, add connection to exclusion list, start over
+#                 exclusion_list.add(connection)
+#                 break
+#
+#             partial_solutions.append(solution)
+#
+#         if connections == exclusion_list:
+#             return None
+#
+#         return partial_solutions
 
 def find_partial_solution_ls(layouts: Layouts, state_grid: np.ndarray,
-                                 initial_path_problem: PathProblem, completed_set:set):
-
-
+                             initial_path_problem: PathProblem, completed_set: set):
     tentative_path_problem = deepcopy(initial_path_problem)
     tentative_path_problem.state_grid = state_grid
     partial_solutions = []
-
 
     node_dict = {}
     layout_id = 0
@@ -55,18 +55,18 @@ def find_partial_solution_ls(layouts: Layouts, state_grid: np.ndarray,
     for connection in completed_set:
         # add fit_pos, get direction of the layout (horizontal/vertical)
         layout_dir = get_direction(diff_pos(connection[0], connection[1]))
-        node_dict[(connection[0],layout_id)] = layout_dir
+        node_dict[(connection[0], layout_id)] = layout_dir
         node_dict[(connection[1], layout_id)] = layout_dir
         layout_id += 1
 
-    exclusion_list = set() # for keeping track of connections with no valid path
+    exclusion_list = set()  # for keeping track of connections with no valid path
 
     while True:
         connections = get_best_connections(node_dict=node_dict, exclusion_list=exclusion_list)
         for connection in connections:
             tentative_path_problem.start_pos = connection[0]
             tentative_path_problem.goal_node = connection[1]
-            #fixme: also add start_direction, goal_directions depending on trail direction
+            # fixme: also add start_direction, goal_directions depending on trail direction
             solution = find_path(tentative_path_problem)
             if solution is None:
                 # no connection found, add connection to exclusion list, start over
@@ -79,6 +79,7 @@ def find_partial_solution_ls(layouts: Layouts, state_grid: np.ndarray,
             return None
 
         return partial_solutions
+
 
 def find_partial_solution_simple(layout_paths: list, captured_state_grid: np.ndarray,
                                  initial_path_problem: PathProblem):
@@ -109,43 +110,44 @@ def find_partial_solution_simple(layout_paths: list, captured_state_grid: np.nda
 
         return partial_solutions
 
+
 # thoughts:
 
-    # todo: - put random parts on grid
-    #       - identify parts on grid (with path?)
-    #       - determine goal/start point of each part
-    #       - try to create solution for each possible combination
-    #       - solution with lowest score wins
+# todo: - put random parts on grid
+#       - identify parts on grid (with path?)
+#       - determine goal/start point of each part
+#       - try to create solution for each possible combination
+#       - solution with lowest score wins
 
-    # todo: need function to detect if worker follows optimal solution
+# todo: need function to detect if worker follows optimal solution
 
-    # here we try to help with whatever the worker is trying to build if he deviates from optimal solution
-    # todo: how do we know the worker deviated from the path?
-    #  1. still on optimal path, but different part used
-    #  2. part he placed is outside optimal path
-    #  -> function for identifying deviation is needed (get path from state_grid)
-    #   in both cases he deviated completely and we need to figure out what he is trying to do
-    #  try to connect each part by searching for the shortest path from node to node
-    #  If goal cant be reached from current part, try to reach goal from each previous part
-    #  might be useful: checking if goal can be reached from any part (what information can we get with this?)
-    #  possible use cases: identifying which part should be last
-    #  idea: identify first part, then last, then try to connect parts in between.
+# here we try to help with whatever the worker is trying to build if he deviates from optimal solution
+# todo: how do we know the worker deviated from the path?
+#  1. still on optimal path, but different part used
+#  2. part he placed is outside optimal path
+#  -> function for identifying deviation is needed (get path from state_grid)
+#   in both cases he deviated completely and we need to figure out what he is trying to do
+#  try to connect each part by searching for the shortest path from node to node
+#  If goal cant be reached from current part, try to reach goal from each previous part
+#  might be useful: checking if goal can be reached from any part (what information can we get with this?)
+#  possible use cases: identifying which part should be last
+#  idea: identify first part, then last, then try to connect parts in between.
 
-    # todo: Implement easier way to determine which outgoing layout nodes to connect to each other
+# todo: Implement easier way to determine which outgoing layout nodes to connect to each other
 
-    # start_best_solution = get_best_solution_from_nodes(tentative_path_problem, connecting_nodes)
-    # connecting_nodes.discard(start_best_solution.path_problem.goal_node)
-    # partial_solutions["start"] = start_best_solution
-    #
-    # tentative_path_problem.goal_node = initial_path_problem.start_node
-    # #todo: reverse path, parts used in following solution
-    # goal_best_solution = get_best_solution_from_nodes(tentative_path_problem, connecting_nodes)
-    # connecting_nodes.discard(goal_best_solution.path_problem.goal_node)
-    # partial_solutions["goal"] = goal_best_solution
+# start_best_solution = get_best_solution_from_nodes(tentative_path_problem, connecting_nodes)
+# connecting_nodes.discard(start_best_solution.path_problem.goal_node)
+# partial_solutions["start"] = start_best_solution
+#
+# tentative_path_problem.goal_node = initial_path_problem.start_node
+# #todo: reverse path, parts used in following solution
+# goal_best_solution = get_best_solution_from_nodes(tentative_path_problem, connecting_nodes)
+# connecting_nodes.discard(goal_best_solution.path_problem.goal_node)
+# partial_solutions["goal"] = goal_best_solution
 
-    # todo: can we do something with all the solutions we get connecting to start/goal?
-    # todo: instead of finding solutions to connecting each start/goal/layout to each other, simply determine all outgoing nodes (two for each layout),
-    #   then try to connect them with solution paths-> much more efficient, but lower solution quality
+# todo: can we do something with all the solutions we get connecting to start/goal?
+# todo: instead of finding solutions to connecting each start/goal/layout to each other, simply determine all outgoing nodes (two for each layout),
+#   then try to connect them with solution paths-> much more efficient, but lower solution quality
 
 # def find_partial_solution_complex(layout_paths: list, captured_state_grid: np.ndarray, initial_path_problem: PathProblem):
 #
@@ -205,64 +207,124 @@ def find_partial_solution_simple(layout_paths: list, captured_state_grid: np.nda
 #     if len(layout_paths) == 1:
 
 
-def get_partial_solutions(outgoing_connections_set: set, exclusion_list: set[DirectedConnection],
-                          outgoing_directions_dict:dict, state_grid, part_stock,part_cost, algorithm, weights,
-                           ) \
-        -> dict:
+def get_partial_solutions(outgoing_connections_set: set, exclusion_list: list[set],
+                          outgoing_directions_dict: dict, state_grid, part_stock, path_problem,
+                          ) -> list[Solution]:
     """
     Generates a connection for each two nodes according to the lowest manhattan distance.
     :param node_dict: List containing position of nodes and corresponding layout ids.
     :param exclusion_list: List with connections that are excluded (for example because there is no feasible path in a connection).
     :return: Set of connections
     """
-    #todo: add start and goal
+    # todo: add start and goal
     #   get current state grid
     #   get current part stock (from outside this func with completed layouts)
-    start = (0,0)
-    goal = (0,0)
+    start = path_problem.start_pos
+    goal = path_problem.goal_pos
 
-    partial_solutions = {}
 
-    all_points = {}
+    partial_solutions = []
 
+    all_points_dict = {} # reference of outgoing position to its connection
+
+    # get dictionary of all outgoing positions referencing their connection
     for end_points in outgoing_connections_set:
-        if end_points in exclusion_list:
-            continue
-        for point in end_points:
-            all_points[point] = end_points
+        for point_tuple in end_points:
+            if point_tuple == ():
+                continue
+            all_points_dict[point_tuple] = end_points
 
-    if start not in all_points.keys():
-        all_points[start] = ()
+    #todo: sort all_points by manhattan distance to start
+    # sort all
+    all_points_list = sorted(all_points_dict.keys(), key=lambda x: manhattan_distance(start, x))
 
-    if goal not in all_points.keys():
-        all_points[goal] = ()
-
-
-    while all_points:
+    while all_points_list:
         open_list = []
-        point = all_points.popitem()
+        point_pos = all_points_list.pop(0)
+        point_outgoing_connections_ref = all_points_dict[point_pos]
         solution = None
-        for other_point in all_points.keys():
-            if other_point in point[1]:
+        for other_point_pos in all_points_list:
+            if other_point_pos in point_outgoing_connections_ref:
+                continue
+            if {point_pos, other_point_pos} in exclusion_list:
                 continue
 
-            path_problem = PathProblem(algorithm=algorithm,weights=weights,
-                                       start_pos=point, start_directions=outgoing_directions_dict[point],
-                                       goal_pos=other_point, goal_directions=outgoing_directions_dict[other_point],
-                                       part_cost=part_cost, part_stock=part_stock,
+            partial_path_problem = PathProblem(algorithm=path_problem.algorithm, weights=path_problem.weights,
+                                       start_pos=point_pos, start_directions=outgoing_directions_dict[point_pos],
+                                       goal_pos=other_point_pos, goal_directions=outgoing_directions_dict[other_point_pos],
+                                       part_cost=path_problem.part_cost, part_stock=part_stock,
                                        starting_part=0,
                                        state_grid=state_grid)
-            solution = get_solution(path_problem=path_problem)
 
-            heapq.heappush(open_list, (solution.score, other_point))
+            solution = get_solution(path_problem=partial_path_problem, draw_debug = False)
+            if not solution:
+                # try again, but exclude this connection combination
+                exclusion_list.append({point_pos, other_point_pos})
+                return get_partial_solutions(outgoing_connections_set=outgoing_connections_set,
+                                             outgoing_directions_dict= outgoing_directions_dict,
+                                             exclusion_list=exclusion_list,
+                                             part_stock=part_stock,
+                                             path_problem=path_problem,
+                                             state_grid=state_grid
+                                             )
+            heapq.heappush(open_list, (solution.score, other_point_pos))
         # get connecting node with best score, then remove it
-        best_point = heapq.heappop(open_list)
-        connection = (point, best_point)
-        all_points.pop(best_point)
-        partial_solutions[connection] = solution
+        if open_list:
+            best_point = heapq.heappop(open_list)[1]
+            all_points_list.remove(best_point)
+            partial_solutions.append(solution)
+            part_stock = solution.part_stock # adjust part stock for next iteration
 
     return partial_solutions
 
-def fuse_partial_solutions(partial_solutions: list[Solution]):
-    #todo: make this func
+
+def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail:LayoutState], initial_path_problem):
+    # todo: make this func
+    total_definite_trail = {}
+
+    layouts = {}
+    rendering_dict = {}
+
+    layouts.update(completed_layouts)
+
+    for layout in completed_layouts:
+        layout_trail : Trail = layout[0]
+        layout_state : LayoutState = layout[1]
+
+        fit_first = layout_state.required_fit_positions[0]
+        fit_last = layout_state.required_fit_positions[1]
+
+        rendering_dict[fit_first] = 0
+        rendering_dict[layout_trail[1]] = layout_state.pipe_id
+        rendering_dict[fit_last] = 0
+
+
+
+
+    # get information from last partial solution iteration
+    last_partial_solution = partial_solutions[0]
+    part_stock = last_partial_solution.part_stock
+    algorithm = last_partial_solution.algorithm
+    state_grid = last_partial_solution.state_grid
+
+    # todo: add missing information from partial solutions
+
+
+
+
+
+    #todo: if needed, recalculate score#
+    score = last_partial_solution.score
+    fused_solution = Solution(part_stock=part_stock, path_problem=initial_path_problem, rendering_dict=rendering_dict,
+                              algorithm=algorithm, state_grid=state_grid, score=score, layouts = layouts, )
+
+
+
+
+
+
+
+    fused_solution = Solution()
+
+
     pass

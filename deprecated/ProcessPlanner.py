@@ -6,7 +6,7 @@ def grid_check(self, captured_state_grid: np.ndarray, parts_used: list, path: Pa
 
         self.latest_state = self.get_current_layout_solution(captured_state_grid, parts_used, path)
 
-        solution = check_solution_stack(self.completed_solutions_stack, self.latest_path_problem)
+        solution = check_solution_stack(self.completed_solutions_set, self.latest_path_problem)
         if solution is None:
             solution = get_new_solution(path_problem=self.latest_path_problem, weights=self.weights)
         return solution
