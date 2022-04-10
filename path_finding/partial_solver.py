@@ -9,10 +9,10 @@ from path_finding.path_utilities import get_outgoing_pos, get_best_connections, 
 import heapq
 from path_finding.search_algorithm import find_path
 from path_finding.path_math import diff_pos, get_direction, manhattan_distance
-from path_finding.common_types import Layouts, DirectedConnection
+from path_finding.common_types import Layouts
 from path_finding.solution_manager import get_solution
 from path_finding.common_types import Trail
-
+import constants as const
 
 
 # def find_solution_from_partial_construction(state_grid:np.ndarray, layout_directions: dict, outgoing_connections_set: set, initial_path_problem):
@@ -222,10 +222,9 @@ def get_partial_solutions(outgoing_connections_set: set, exclusion_list: list[se
     start = path_problem.start_pos
     goal = path_problem.goal_pos
 
-
     partial_solutions = []
 
-    all_points_dict = {} # reference of outgoing position to its connection
+    all_points_dict = {}  # reference of outgoing position to its connection
 
     # get dictionary of all outgoing positions referencing their connection
     for end_points in outgoing_connections_set:
@@ -234,7 +233,7 @@ def get_partial_solutions(outgoing_connections_set: set, exclusion_list: list[se
                 continue
             all_points_dict[point_tuple] = end_points
 
-    #todo: sort all_points by manhattan distance to start
+    # todo: sort all_points by manhattan distance to start
     # sort all
     all_points_list = sorted(all_points_dict.keys(), key=lambda x: manhattan_distance(start, x))
 
@@ -250,18 +249,20 @@ def get_partial_solutions(outgoing_connections_set: set, exclusion_list: list[se
                 continue
 
             partial_path_problem = PathProblem(algorithm=path_problem.algorithm, weights=path_problem.weights,
-                                       start_pos=point_pos, start_directions=outgoing_directions_dict[point_pos],
-                                       goal_pos=other_point_pos, goal_directions=outgoing_directions_dict[other_point_pos],
-                                       part_cost=path_problem.part_cost, part_stock=part_stock,
-                                       starting_part=0,
-                                       state_grid=state_grid)
+                                               start_pos=point_pos,
+                                               start_directions=outgoing_directions_dict[point_pos],
+                                               goal_pos=other_point_pos,
+                                               goal_directions=outgoing_directions_dict[other_point_pos],
+                                               part_cost=path_problem.part_cost, part_stock=part_stock,
+                                               starting_part=0,
+                                               state_grid=state_grid)
 
-            solution = get_solution(path_problem=partial_path_problem, draw_debug = False)
+            solution = get_solution(path_problem=partial_path_problem, draw_debug=False)
             if not solution:
                 # try again, but exclude this connection combination
                 exclusion_list.append({point_pos, other_point_pos})
                 return get_partial_solutions(outgoing_connections_set=outgoing_connections_set,
-                                             outgoing_directions_dict= outgoing_directions_dict,
+                                             outgoing_directions_dict=outgoing_directions_dict,
                                              exclusion_list=exclusion_list,
                                              part_stock=part_stock,
                                              path_problem=path_problem,
@@ -273,33 +274,42 @@ def get_partial_solutions(outgoing_connections_set: set, exclusion_list: list[se
             best_point = heapq.heappop(open_list)[1]
             all_points_list.remove(best_point)
             partial_solutions.append(solution)
-            part_stock = solution.part_stock # adjust part stock for next iteration
+            part_stock = solution.part_stock  # adjust part stock for next iteration
 
     return partial_solutions
 
 
-def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail:LayoutState], initial_path_problem):
-    # todo: make this func
+def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail:LayoutState],
+                           initial_path_problem: PathProblem):
+    """Fuses partial solutions and completed layouts into a complete solution from start to goal of the initial path problem.
+    Only partially checks the validity of the complete solution. Partial solutions and completed layouts must therefore
+    be compatible and equal to a valid assembly layout."""
     total_definite_trail = {}
 
-    layouts = {}
+    unordered_layouts = set()
     rendering_dict = {}
 
-    layouts.update(completed_layouts)
+    # add solution information from already completed layouts
+    for layout_trail, layout_state in completed_layouts.items():
 
-    for layout in completed_layouts:
-        layout_trail : Trail = layout[0]
-        layout_state : LayoutState = layout[1]
+        unordered_layouts.add(layout_trail)  # add for use later
 
         fit_first = layout_state.required_fit_positions[0]
         fit_last = layout_state.required_fit_positions[1]
 
-        rendering_dict[fit_first] = 0
+        rendering_dict[fit_first] = const.fitting_id
         rendering_dict[layout_trail[1]] = layout_state.pipe_id
-        rendering_dict[fit_last] = 0
+        rendering_dict[fit_last] = const.fitting_id
 
+        for pos in layout_trail:
+            if pos in layout_state.required_fit_positions:
+                total_definite_trail[pos] = const.fitting_id
+            else:
+                total_definite_trail[pos] = layout_state.pipe_id
 
-
+    # also update total definite trail from partial solutions
+    for partial_solution in partial_solutions:
+        total_definite_trail.update(partial_solution.total_definite_trail)
 
     # get information from last partial solution iteration
     last_partial_solution = partial_solutions[0]
@@ -307,24 +317,32 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
     algorithm = last_partial_solution.algorithm
     state_grid = last_partial_solution.state_grid
 
-    # todo: add missing information from partial solutions
+    # add partial solution layout_trails to unordered layouts, too
+    for partial_solution in partial_solutions:
+        for layout_trail in partial_solution.layouts:
+            unordered_layouts.add(layout_trail)
 
+    # sort unordered layouts
+    ordered_layouts = []
 
+    # search for the first layout
+    add_layout = ()
+    for layout_trail in unordered_layouts:
+        if initial_path_problem.start_pos in layout_trail:
+            add_layout = layout_trail
+            break
 
+    while add_layout in unordered_layouts:
+        unordered_layouts.remove(add_layout)
+        ordered_layouts.append(add_layout)
+        for other_layout in unordered_layouts:
+            if add_layout[-1] == other_layout[0]:
+                add_layout = other_layout
+                break
 
-
-    #todo: if needed, recalculate score#
+    # todo: if needed, recalculate score
     score = last_partial_solution.score
     fused_solution = Solution(part_stock=part_stock, path_problem=initial_path_problem, rendering_dict=rendering_dict,
-                              algorithm=algorithm, state_grid=state_grid, score=score, layouts = layouts, )
-
-
-
-
-
-
-
-    fused_solution = Solution()
-
-
-    pass
+                              algorithm=algorithm, state_grid=state_grid, score=score, layouts=ordered_layouts,
+                              total_definite_trail=total_definite_trail)
+    return fused_solution

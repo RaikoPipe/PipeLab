@@ -23,3 +23,5 @@ to_vpy_vec = {up:v_up, down:v_down, right:v_right,left:v_left}
 rot_90 = pi/2
 rot_180 = pi
 rot_270 = -pi/2
+
+fitting_id = 0

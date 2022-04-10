@@ -33,7 +33,7 @@ while solution is None:
 
     path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node, start_directions={(0, 1), (1,0), (-1,0), (0,-1)},
                                goal_directions={(0, 1), (1,0), (-1,0), (0,-1)}, part_cost=part_cost,
-                               starting_part=None, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
+                               starting_part=0, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
 
 
 

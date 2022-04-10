@@ -306,6 +306,16 @@ class ProcessPlanner:
         motion_dict = {1: self.tentative_state.motion_set_fitting, 2: self.tentative_state.motion_set_pipe,
                        3: self.tentative_state.motion_set_attachment}
 
+        # todo:
+        #  checks should go in this order:
+        #   1. was the part picked for this action? (fittings and pipes can be checked immediately, pipe more detailed depending on pos) -> refactor
+        #   2. Was something obstructed?
+        #   3. Did the motion event occur inside the aimed solution?
+        #   - > yes: check if placement was on correct position
+        #   - > no: mark as deviated, check for deviation events (on fitting placement)
+        #  turn checks into functions, find overlaps between functions
+
+
         if not allow_stacking:
 
             if self.tentative_state.state_grid[worker_event_pos] == 1:
@@ -553,7 +563,7 @@ class ProcessPlanner:
             error_message = self.make_error_message(event_pos=worker_event_pos,
                                                     additional_message=error_note)
 
-        # todo: output tentative state together with message instead of event_info
+
         # generate output
         event_info = {"current_layout": current_layout, "layout_changed": layout_changed,
                       "deviation_code": deviation_code, "pipe_id": pipe_id, "layout_state": current_layout_state,
