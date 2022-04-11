@@ -9,7 +9,7 @@ import numpy as np
 # todo: documentation
 
 @dataclass
-class State:
+class AssemblyState:
     """Data class that contains information about a process state"""
 
     state_grid: np.ndarray
@@ -26,10 +26,15 @@ class State:
     picked_parts: list[int] = field(
         default_factory=list)  # counts parts that have been picked. Counter reduces when parts are confirmed in a construction event
 
-    # variables used for tracking all placed parts
+    #todo: unionize all sets into one dict -> pipes can have a trail as key instead of pos
+    # variables used for tracking placed parts on solution
     motion_set_fitting: set = field(default_factory=set)
     motion_set_pipe: set = field(default_factory=set)
     motion_set_attachment: set = field(default_factory=set)
+
+    motion_pipe_ids:  dict = field(default_factory=dict)
+
+    motion_dict:  dict = field(default_factory=dict)
 
     # variables used for deviation detection/handling
     deviated: bool = False
@@ -42,7 +47,7 @@ class State:
     # variables used for tracking deviated parts
     deviated_motion_set_fitting: set = field(default_factory=set)
     deviated_motion_set_attachment: set = field(default_factory=set)
-    deviated_motion_set_pipe: dict = field(default_factory=dict)
+    deviated_motion_dict_pipe: dict = field(default_factory=dict)
 
     unnecessary_parts: dict[Pos: int] = field(
         default_factory=dict)  # dictionary that contains information about unnecessary parts according to the aimed solution
@@ -57,5 +62,8 @@ class State:
     obsolete_attachment_pos: set[Pos] = field(default_factory=set)
 
     event_info: dict = field(default_factory=dict)
+
+    # todo: improve event history in process planner
+    event_history: list[(Pos, int, int)] = field(default_factory=list)
 
 

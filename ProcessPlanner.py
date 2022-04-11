@@ -1,5 +1,5 @@
 import numpy as np
-from data_class.AssemblyState import State
+from data_class.AssemblyState import AssemblyState
 from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
 from copy import deepcopy
@@ -44,7 +44,7 @@ def get_neighboring_layouts(current_layout: Trail, layouts: Layouts) -> list[Tra
     return neighboring_layouts
 
 
-def deconstruction_event(motion_events: dict, tentative_state: State, debug_grid: Optional[np.ndarray]) -> bool:
+def deconstruction_event(motion_events: dict, tentative_state: AssemblyState, debug_grid: Optional[np.ndarray]) -> bool:
     """Checks for deconstruction events on captured motion events and updates tentative state."""
 
     for event_pos, event in motion_events.items():
@@ -153,7 +153,7 @@ def get_solution_on_deviation(initial_path_problem, process_state) -> Optional[S
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events. Returns instructions."""
 
-    def __init__(self, initial_path_problem: PathProblem, initial_state: Optional[State],
+    def __init__(self, initial_path_problem: PathProblem, initial_state: Optional[AssemblyState],
                  optimization_weights: Weights = standard_weights,
                  algorithm: str = standard_algorithm):
 
@@ -227,10 +227,6 @@ class ProcessPlanner:
                                                    check_for_deviation_events=check_for_deviations,
                                                    ignore_errors=ignore_errors)
 
-        # todo: if a deviation event occurred, use new_construction_check to evaluate already built layouts
-        #   --> scan through layouts/built parts and extract worker_event_pos and worker_event code from them
-        #   --> put them in a list and iterate them through new_construction_check
-
         event_info = process_state.event_info
 
         # extract messages
@@ -246,20 +242,66 @@ class ProcessPlanner:
         if error_message:
             print(error_message)
 
-        if event_info.get("deviation"):
+        deviation = event_info.get("deviation")
+
+        if deviation:
             # handle deviation event
 
             solution = get_solution_on_deviation(initial_path_problem=self._initial_path_problem,
                                                  process_state=self.tentative_state)
 
+            self.tentative_state.aimed_solution = solution
+
             if solution:
-                # todo: reevaluate motions -> inside solution, outside solution
-                pass
+                # todo: redo this, causes too many errors
+
+                # copy all motion events
+                motion_set_fitting = deepcopy(self.tentative_state.motion_set_fitting)
+                motion_set_pipe = deepcopy(self.tentative_state.motion_set_pipe)
+                motion_set_attachment = deepcopy(self.tentative_state.motion_set_attachment)
+                motion_pipe_ids = deepcopy(self.tentative_state.motion_pipe_ids)
+
+                # copy picked parts
+                picked_parts = deepcopy(self.tentative_state.picked_parts)
+
+                # reset state
+                self.tentative_state = prepare_initial_state(solution=solution)
+
+                # add all checked events into a list
+                checked_worker_events = []
+                for event_pos in motion_set_attachment:
+                    checked_worker_events.append((event_pos, 3))
+                for event_pos in motion_set_pipe:
+                    checked_worker_events.append((event_pos, 2))
+                for event_pos in motion_set_fitting:
+                    checked_worker_events.append((event_pos, 1))
+
+                # reevaluate all events
+                for event in checked_worker_events:
+                    event_pos = event[0]
+                    event_code = event[1]
+                    # pick pipe
+                    if event_code == 1:
+                        self.new_pick_event(0)
+                    elif event_code == 2:
+                        part_id = motion_pipe_ids[event_pos]
+                        if part_id is not None or part_id != -1:
+                            self.new_pick_event(part_id)
+
+                    self.evaluate_worker_event(worker_event=event, check_for_deviation_events=False, ignore_errors=True,
+                                               allow_stacking=False)
+                # adjust part stock and set picked parts
+                for picked_part in picked_parts:
+                    self.tentative_state.part_stock[picked_part] -= 1
+                self.tentative_state.picked_parts = picked_parts
+
             else:
                 # todo: return error message
                 pass
 
             self.tentative_state.aimed_solution = solution
+
+            self.tentative_state.event_info["deviation"] = deviation
 
         return self.tentative_state
 
@@ -485,18 +527,18 @@ class ProcessPlanner:
                     special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
                     removal = True
             elif worker_event_code == 2:
-                if worker_event_pos not in self.tentative_state.deviated_motion_set_pipe.keys():
+                if worker_event_pos not in self.tentative_state.deviated_motion_dict_pipe.keys():
                     picked_parts = self.tentative_state.picked_parts
                     picked_pipes = [i for i in picked_parts if i != 0]
                     if len(set(picked_pipes)) == 1:
                         # if there is only one of a kind of pipe in picked_parts, then we know which id was placed
                         pipe_id = picked_pipes[0]
                         picked_parts.remove(pipe_id)
-                        self.tentative_state.deviated_motion_set_pipe[worker_event_pos] = pipe_id
+                        self.tentative_state.deviated_motion_dict_pipe[worker_event_pos] = pipe_id
                         special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
                     elif len(set(picked_parts)) > 1:
                         # if there are multiple kinds of pipe picked
-                        self.tentative_state.deviated_motion_set_pipe[worker_event_pos] = -1
+                        self.tentative_state.deviated_motion_dict_pipe[worker_event_pos] = -1
                         special_note = str.format(f"Deviated {message_dict[worker_event_code]} detected!")
                     else:
                         # ERROR : part was not picked!
@@ -508,7 +550,7 @@ class ProcessPlanner:
 
                 else:
                     # removal
-                    pipe_id = self.tentative_state.deviated_motion_set_pipe.pop(worker_event_pos)
+                    pipe_id = self.tentative_state.deviated_motion_dict_pipe.pop(worker_event_pos)
                     special_note = str.format(f"Removed deviated {message_dict[worker_event_code]}")
                     removal = True
 
@@ -537,14 +579,17 @@ class ProcessPlanner:
 
                     # todo: for rendering: visualization code should keep a reference of rendered objects pointing to the pos
 
-        # return removed parts, update motion sets
+        # return removed parts, update motion sets, update event history
         if not error_note:
             if removal:
                 motion_dict[worker_event_code].remove(worker_event_pos)
+
+                self.tentative_state.event_history.append((worker_event_pos, -worker_event_code, pipe_id))
                 if worker_event_code == 1:
                     self.tentative_state.picked_parts.append(0)
                     pipe_id = 0
                 elif worker_event_code == 2:
+                    self.tentative_state.motion_pipe_ids.pop(worker_event_pos)
                     if not deviated_motion:
                         self.tentative_state.picked_parts.append(pipe_id)
                     else:
@@ -552,6 +597,9 @@ class ProcessPlanner:
                             self.tentative_state.picked_parts.append(pipe_id)
             else:
                 motion_dict[worker_event_code].add(worker_event_pos)
+                self.tentative_state.event_history.append((worker_event_pos, worker_event_code, pipe_id))
+                if worker_event_code == 2:
+                    self.tentative_state.motion_pipe_ids[worker_event_pos] = pipe_id
 
         # make messages
         message = self.make_registration_message(event_pos=worker_event_pos, event_code=worker_event_code,
@@ -641,7 +689,7 @@ class ProcessPlanner:
 
         return fastening_robot_commands, picking_robot_commands
 
-    def deviation_event(self, worker_event, tentative_state: State, debug_grid: Optional[np.ndarray]) -> dict:
+    def deviation_event(self, worker_event, tentative_state: AssemblyState, debug_grid: Optional[np.ndarray]) -> dict:
 
         """Checks for deviating layouts on captured motion events and updates tentative state."""
 
@@ -688,9 +736,9 @@ class ProcessPlanner:
                         continue
 
                     for pipe_pos in pipe_trail:
-                        if tentative_state.deviated_motion_set_pipe.get(pipe_pos) == pipe_id:
+                        if tentative_state.deviated_motion_dict_pipe.get(pipe_pos) == pipe_id:
                             pipe_set.add(pipe_pos)
-                        elif tentative_state.deviated_motion_set_pipe.get(pipe_pos) == -1:
+                        elif tentative_state.deviated_motion_dict_pipe.get(pipe_pos) == -1:
                             pipe_set.add(pipe_pos)
 
                     if not pipe_set:

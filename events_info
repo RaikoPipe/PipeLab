@@ -1,6 +1,5 @@
 
 worker motion event codes
-None -> sensors didnt recognize any finished motion
 1 -> fitting placed
 2 -> pipe placed
 3 -> attachment placed

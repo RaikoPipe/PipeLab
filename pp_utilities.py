@@ -5,7 +5,7 @@ import path_finding.path_math
 import path_finding.restriction_functions
 from data_class.LayoutState import LayoutState
 from data_class.Solution import Solution
-from data_class.AssemblyState import State
+from data_class.AssemblyState import AssemblyState
 from path_finding.common_types import Pos, Trail, DefinitePath
 from path_finding.path_math import get_direction, diff_pos, manhattan_distance
 from constants import horizontal_directions, vertical_directions
@@ -127,7 +127,7 @@ def get_updated_motion_dict(new_pos, motion_dict):
 
     return motion_dict
 
-def deviated_from_path(current_state: State, optimal_solution: Solution):
+def deviated_from_path(current_state: AssemblyState, optimal_solution: Solution):
 
     for connection in current_state.fc_set:
         if connection not in optimal_solution.fc_set:
@@ -163,12 +163,12 @@ def get_initial_construction_layouts(solution):
 
     return construction_layout
 
-def prepare_initial_state(solution:Solution) -> State:
+def prepare_initial_state(solution:Solution) -> AssemblyState:
     construction_layouts = get_initial_construction_layouts(solution)
 
-    state = State(state_grid=solution.path_problem.state_grid,part_stock=solution.path_problem.part_stock,
-                  aimed_solution=solution,latest_layout=solution.layouts[0] # starting with first layout
-                  ,construction_layouts=construction_layouts)
+    state = AssemblyState(state_grid=solution.path_problem.state_grid, part_stock=solution.path_problem.part_stock,
+                          aimed_solution=solution, latest_layout=solution.layouts[0]  # starting with first layout
+                          , construction_layouts=construction_layouts)
     return state
 
 def get_total_definite_trail_from_construction_layouts(construction_layouts: dict[Trail:LayoutState]) -> dict:
