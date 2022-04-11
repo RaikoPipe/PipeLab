@@ -4,7 +4,7 @@ import numpy as np
 
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
-from data_class.LayoutState import LayoutState
+from data_class.BuildingInstruction import BuildingInstruction
 from path_finding.path_utilities import get_outgoing_pos, get_best_connections, get_connections, construct_solution
 import heapq
 from path_finding.search_algorithm import find_path
@@ -279,7 +279,7 @@ def get_partial_solutions(outgoing_connections_set: set, exclusion_list: list[se
     return partial_solutions
 
 
-def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail:LayoutState],
+def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail:BuildingInstruction],
                            initial_path_problem: PathProblem):
     """Fuses partial solutions and completed layouts into a complete solution from start to goal of the initial path problem.
     Only partially checks the validity of the complete solution. Partial solutions and completed layouts must therefore
@@ -298,14 +298,14 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
         fit_last = layout_state.required_fit_positions[1]
 
         rendering_dict[fit_first] = const.fitting_id
-        rendering_dict[layout_trail[1]] = layout_state.pipe_id
+        rendering_dict[layout_trail[1]] = layout_state.part_id
         rendering_dict[fit_last] = const.fitting_id
 
         for pos in layout_trail:
             if pos in layout_state.required_fit_positions:
                 total_definite_trail[pos] = const.fitting_id
             else:
-                total_definite_trail[pos] = layout_state.pipe_id
+                total_definite_trail[pos] = layout_state.part_id
 
     # also update total definite trail from partial solutions
     for partial_solution in partial_solutions:

@@ -5,11 +5,11 @@ import numpy as np
 from win32api import GetSystemMetrics
 
 from ProcessPlanner import ProcessPlanner
-from data_class.LayoutState import LayoutState
+from data_class.BuildingInstruction import BuildingInstruction
 from data_class.PathProblem import PathProblem
-from data_class.AssemblyState import AssemblyState
+from data_class.ProcessState import ProcessState
 from data_class.Solution import Solution
-from data_class.AssemblyState import AssemblyState
+from data_class.ProcessState import ProcessState
 from grid import grid_functions
 from path_finding.common_types import *
 from typing import Optional
@@ -36,7 +36,7 @@ button_dict = {}
 def update_button_grid(event_info, button_grid, process_planner, style_grid, initial_style_grid, previous_style_grids):
     # todo simplify: just update everything with each input
     current_layout: Trail = event_info.get("current_layout")
-    layout_state: LayoutState = event_info.get("layout_state")
+    layout_state: BuildingInstruction = event_info.get("layout_state")
 
     previous_style_grids.insert(0, deepcopy(style_grid))
 
@@ -59,14 +59,14 @@ def update_button_grid(event_info, button_grid, process_planner, style_grid, ini
                 if pos not in layout_state.required_fit_positions:
                     style_grid[pos] = pipe_style
 
-        for (pos, event_code) in process_planner.tentative_state.unnecessary_parts.items():
+        for (pos, event_code) in process_planner.tentative_process_state.unnecessary_parts.items():
             if event_code == 1:
                 style_grid[pos] = fit_caution_style
 
             if event_code == 3:
                 style_grid[pos] = att_caution_style
 
-        for (pos, event_code) in process_planner.tentative_state.misplaced_parts.items():
+        for (pos, event_code) in process_planner.tentative_process_state.misplaced_parts.items():
             if event_code == 1:
                 style_grid[pos] = fit_warn_style
 
@@ -77,24 +77,24 @@ def update_button_grid(event_info, button_grid, process_planner, style_grid, ini
                 style_grid[pos] = att_warn_style
 
         pos_list = []
-        for pos in process_planner.tentative_state.deviated_motion_set_fitting:
+        for pos in process_planner.tentative_process_state.deviated_motion_set_fitting:
             pos_list.append(pos)
             style_grid[pos] = fit_caution_style
-        for pos in process_planner.tentative_state.deviated_motion_set_attachment:
+        for pos in process_planner.tentative_process_state.deviated_motion_set_attachment:
             pos_list.append(pos)
             style_grid[pos] = att_caution_style
-        for pos in process_planner.tentative_state.deviated_motion_dict_pipe.keys():
+        for pos in process_planner.tentative_process_state.deviated_motion_dict_pipe.keys():
             pos_list.append(pos)
             style_grid[pos] = pipe_caution_style
 
 
         for pos, style in np.ndenumerate(initial_style_grid):
-            if pos not in pos_list and pos not in process_planner.tentative_state.unnecessary_parts.keys() and pos not in process_planner.tentative_state.misplaced_parts.keys():
+            if pos not in pos_list and pos not in process_planner.tentative_process_state.unnecessary_parts.keys() and pos not in process_planner.tentative_process_state.misplaced_parts.keys():
                 if style_grid[pos] in (fit_caution_style, pipe_caution_style, att_caution_style):
                     style_grid[pos] = initial_style_grid[pos]
 
-        style_grid[process_planner.tentative_state.aimed_solution.path_problem.start_pos] = start_style
-        style_grid[process_planner.tentative_state.aimed_solution.path_problem.goal_pos] = goal_style
+        style_grid[process_planner.tentative_process_state.aimed_solution.path_problem.start_pos] = start_style
+        style_grid[process_planner.tentative_process_state.aimed_solution.path_problem.goal_pos] = goal_style
 
         for pos, style in np.ndenumerate(style_grid):
             button_grid[pos].configure(style=style)
@@ -109,13 +109,13 @@ def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previ
 
     part_id = 0
     for item in part_stock_tree.get_children():
-        part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts.count(part_id),
-                                           process_planner.tentative_state.part_stock[part_id]))
+        part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
+                                           process_planner.tentative_process_state.part_stock[part_id]))
         part_id += 1
 
 message_count = 0
 
-def update_solution_grid(tentative_state: AssemblyState, button_grid):
+def update_solution_grid(tentative_state: ProcessState, button_grid):
     # clear everything
     for pos, state in np.ndenumerate(tentative_state.state_grid):
         button_grid[pos].configure(style=free_style)
@@ -152,8 +152,8 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
     if part_id is not None:
         item = part_stock_tree.get_children()[part_id]
-        part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts.count(part_id),
-                                           process_planner.tentative_state.part_stock[part_id]))
+        part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
+                                           process_planner.tentative_process_state.part_stock[part_id]))
     tree.yview_moveto(1)
 
 
@@ -162,8 +162,8 @@ def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_sto
     message = process_planner.new_pick_event(part_id)
     tree.insert("", index=tk.END, values=(message,))
     item = part_stock_tree.get_children()[part_id]
-    part_stock_tree.item(item, values=(part_id, process_planner.tentative_state.picked_parts.count(part_id),
-                                       process_planner.tentative_state.part_stock[part_id]))
+    part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
+                                       process_planner.tentative_process_state.part_stock[part_id]))
     previous_style_grids.insert(0, deepcopy(style_grid))
     tree.yview_moveto(1)
 
@@ -219,10 +219,10 @@ def get_button_grid(state_grid: np.ndarray, total_definite_trail, start, goal, b
 
 
 class function_test_app:
-    def __init__(self, state_grid: np.ndarray, path_problem: PathProblem, initial_state: Optional[AssemblyState]):
+    def __init__(self, state_grid: np.ndarray, path_problem: PathProblem, initial_state: Optional[ProcessState]):
         root = tk.Tk()
 
-        self.process_planner = ProcessPlanner(initial_path_problem=path_problem, initial_state=initial_state)
+        self.process_planner = ProcessPlanner(initial_path_problem=path_problem, initial_assembly_state=initial_state)
 
 
         start = path_problem.start_pos
@@ -340,16 +340,16 @@ class function_test_app:
                                                                                                 previous_style_grids=previous_style_grids))
             return_to_previous_state.pack(anchor=tk.W)
             part_stock_tree.insert("", tk.END,
-                                   values=(part_id, self.process_planner.tentative_state.picked_parts.count(part_id),
-                                           self.process_planner.tentative_state.part_stock[part_id]))
+                                   values=(part_id, self.process_planner.tentative_process_state.picked_parts.count(part_id),
+                                           self.process_planner.tentative_process_state.part_stock[part_id]))
 
         # todo: Construction Build Information Frame with picked_parts, current stock, deviation, solution scores etc.
 
         construction_definite_trail = get_total_definite_trail_from_construction_layouts(
-            self.process_planner.latest_state.construction_layouts)
+            self.process_planner.latest_assembly_state.building_instructions)
 
         construction_button_grid, style_grid, previous_style_grids = get_button_grid(
-            state_grid=self.process_planner.latest_state.state_grid, start=start,
+            state_grid=self.process_planner.latest_assembly_state.state_grid, start=start,
             goal=goal, button_grid_frame=construction_button_grid_frame,
             total_definite_trail=construction_definite_trail,
             process_planner=self.process_planner,

@@ -1,5 +1,5 @@
-seti = {1,2}
-tuplei = (1,2)
+i = (1,1)
+j = (1,1)
 
-if seti == set(tuplei):
-    print("set is truple")
+if i in j:
+    print("true")

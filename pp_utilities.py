@@ -3,14 +3,14 @@ import numpy as np
 import event_interpreting
 import path_finding.path_math
 import path_finding.restriction_functions
-from data_class.LayoutState import LayoutState
+from data_class.BuildingInstruction import BuildingInstruction
 from data_class.Solution import Solution
-from data_class.AssemblyState import AssemblyState
+from data_class.ProcessState import ProcessState
 from path_finding.common_types import Pos, Trail, DefinitePath
 from path_finding.path_math import get_direction, diff_pos, manhattan_distance
 from constants import horizontal_directions, vertical_directions
 
-def determine_next_part(layout_state:LayoutState):
+def determine_next_part(layout_state:BuildingInstruction):
     next_part_id = None
 
     if not layout_state.att_set:
@@ -53,9 +53,9 @@ def get_deviation_state(length:int, att_set:set, pipe_set:set, fit_tup:tuple, st
                                              part_id=pipe_id,
                                              pos=first_pipe_pos)
 
-    layout_state = LayoutState(att_set=att_set, pipe_set=pipe_set, fit_set={fit_tup[0], fit_tup[1]},
-                               pipe_id=pipe_id, required_fit_positions=(fit_tup[0], fit_tup[1]), recommended_attachment_pos=rec_att_pos,
-                               completed = True)
+    layout_state = BuildingInstruction(att_set=att_set, pipe_set=pipe_set, fit_set={fit_tup[0], fit_tup[1]},
+                                       pipe_id=pipe_id, required_fit_positions=(fit_tup[0], fit_tup[1]), recommended_attachment_pos=rec_att_pos,
+                                       completed = True)
 
     return layout_state
 
@@ -127,7 +127,7 @@ def get_updated_motion_dict(new_pos, motion_dict):
 
     return motion_dict
 
-def deviated_from_path(current_state: AssemblyState, optimal_solution: Solution):
+def deviated_from_path(current_state: ProcessState, optimal_solution: Solution):
 
     for connection in current_state.fc_set:
         if connection not in optimal_solution.fc_set:
@@ -155,23 +155,23 @@ def get_initial_construction_layouts(solution):
         elif layout_trail[-1] == goal:
             add_fit.add(goal)
 
-        construction_layout[tuple(layout_trail)] = LayoutState(att_set=set(),pipe_set=set(),
-                                                            fit_set=add_fit, pipe_id=pipe_id,
-                                                            required_fit_positions=(layout_trail[0],layout_trail[-1]),
-                                                            recommended_attachment_pos=rec_att_pos)
+        construction_layout[tuple(layout_trail)] = BuildingInstruction(att_set=set(), pipe_set=set(),
+                                                                       fit_set=add_fit, pipe_id=pipe_id,
+                                                                       required_fit_positions=(layout_trail[0],layout_trail[-1]),
+                                                                       recommended_attachment_pos=rec_att_pos)
 
 
     return construction_layout
 
-def prepare_initial_state(solution:Solution) -> AssemblyState:
+def prepare_initial_state(solution:Solution) -> ProcessState:
     construction_layouts = get_initial_construction_layouts(solution)
 
-    state = AssemblyState(state_grid=solution.path_problem.state_grid, part_stock=solution.path_problem.part_stock,
-                          aimed_solution=solution, latest_layout=solution.layouts[0]  # starting with first layout
-                          , construction_layouts=construction_layouts)
+    state = ProcessState(state_grid=solution.path_problem.state_grid, part_stock=solution.path_problem.part_stock,
+                         aimed_solution=solution, latest_layout=solution.layouts[0]  # starting with first layout
+                         , construction_layouts=construction_layouts)
     return state
 
-def get_total_definite_trail_from_construction_layouts(construction_layouts: dict[Trail:LayoutState]) -> dict:
+def get_total_definite_trail_from_construction_layouts(construction_layouts: dict[Trail:BuildingInstruction]) -> dict:
     total_definite_trail = {}
     for trail in construction_layouts.keys():
         layout_state = construction_layouts[trail]
@@ -182,7 +182,7 @@ def get_total_definite_trail_from_construction_layouts(construction_layouts: dic
             for idx, pos in enumerate(trail, start=1):
                 if idx >= len(trail)-1:
                     break
-                total_definite_trail[pos] = layout_state.pipe_id
+                total_definite_trail[pos] = layout_state.part_id
 
     return total_definite_trail
 
