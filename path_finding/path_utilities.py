@@ -1,7 +1,6 @@
 from copy import deepcopy
 
 from data_class.Solution import Solution
-from path_finding.common_types import Pos
 from path_finding.path_math import diff_pos, manhattan_distance, get_direction
 from path_finding.common_types import *
 
@@ -25,6 +24,43 @@ def get_outgoing_pos(paths: list[Path], first_pos: Pos, last_pos: Pos) -> set[tu
     layout_id += 1
     pos_id_set.add((last_pos, layout_id))
     return pos_id_set
+
+
+def get_connections(outgoing_connections_set : set, exclusion_list: set[DirectedConnection]) \
+        -> list[DirectedConnection]:
+    """
+    Generates a connection for each two nodes according to the lowest manhattan distance.
+    :param node_dict: List containing position of nodes and corresponding layout ids.
+    :param exclusion_list: List with connections that are excluded (for example because there is no feasible path in a connection).
+    :return: Set of connections
+    """
+
+    connections = []
+
+    all_points = {}
+
+    for end_points in outgoing_connections_set:
+        if end_points in exclusion_list:
+            continue
+        for point in end_points:
+            all_points[point] = end_points
+
+    while all_points:
+        open_list = []
+        point = all_points.popitem()
+        for other_point in all_points.keys():
+            if other_point in point[1]:
+                continue
+            score = manhattan_distance(point[0], other_point)
+            heapq.heappush(open_list, (score, other_point))
+        # get connecting node with best score, then remove it
+        best_point = heapq.heappop(open_list)
+        connection = (point, best_point)
+        all_points.pop(best_point)
+        connections.append(connection)
+
+    return connections
+
 
 def get_best_connections(node_dict: dict[tuple[Pos, int]:Pos], exclusion_list: set[DirectedConnection])\
         -> list[DirectedConnection]:
@@ -60,11 +96,22 @@ def get_best_connections(node_dict: dict[tuple[Pos, int]:Pos], exclusion_list: s
 def construct_solution(predecessors, current_pos, state_grid, score,
                        algorithm, path_problem):
     definite_path = []
+    rendering_dict = {}
+    part_stock = deepcopy(path_problem.part_stock)
     while current_pos in predecessors:
-        definite_path.append((current_pos, predecessors.get(current_pos).part_used))
+        part_id = predecessors.get(current_pos).part_used
+        definite_path.append((current_pos, part_id))
+        rendering_dict[current_pos] = part_id
+
+        part_stock[part_id] -= 1
         current_pos = predecessors.get(current_pos).pos
+        if current_pos is None:
+            break
+
 
     definite_path = definite_path[::-1]  # reverse order
+
+
 
     total_definite_trail = {}
     layouts = []
@@ -99,8 +146,10 @@ def construct_solution(predecessors, current_pos, state_grid, score,
             # definite path must start with None or 0
             raise Exception
 
+
     return Solution(definite_path = definite_path, fc_set=fc_set, total_definite_trail=total_definite_trail,
-                    layouts=layouts, state_grid = state_grid, score=score, algorithm=algorithm, path_problem=path_problem)
+                    layouts=layouts, state_grid = state_grid, score=score, algorithm=algorithm, path_problem=path_problem, part_stock=part_stock,
+                    rendering_dict=rendering_dict)
 
 
 def get_corner_neighbors(axis: tuple, available_parts: list) -> set:

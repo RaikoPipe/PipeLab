@@ -19,7 +19,7 @@ solution = None
 while solution is None:
 
     state_grid = grid_functions.get_empty_stategrid(x, y)
-    state_grid = randomizer.set_random_obstacles(0.2, state_grid)
+    state_grid = randomizer.set_random_obstacles(0., state_grid)
     start_node = (0,0)
     goal_node = (9,17)
     state_grid[start_node] = 0
@@ -27,13 +27,13 @@ while solution is None:
 
     pipe_stock = {0: 100, 1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100}
 
-    part_cost = {0: 5.32, 1: 3.00, 2: 3.00, 3: 3.00, 4: 3.00, 5: 3.00, 6: 00}
+    part_cost = {0: 5.32, 1: 3.00, 2: 3.00, 3: 3.00, 4: 3.00, 5: 3.00, 6: 3.00}
 
     weights = Weights(path_length=1, cost=1, distance_to_obstacles=0)
 
-    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node, start_direction={(0, 1), (1,0), (-1,0), (0,-1)},
-                               goal_direction={(0, 1), (1,0), (-1,0), (0,-1)}, part_cost=part_cost,
-                               starting_part=None, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
+    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node, start_directions={(0, 1), (1,0), (-1,0), (0,-1)},
+                               goal_directions={(0, 1), (1,0), (-1,0), (0,-1)}, part_cost=part_cost,
+                               starting_part=0, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
 
 
 

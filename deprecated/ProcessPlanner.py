@@ -6,7 +6,7 @@ def grid_check(self, captured_state_grid: np.ndarray, parts_used: list, path: Pa
 
         self.latest_state = self.get_current_layout_solution(captured_state_grid, parts_used, path)
 
-        solution = check_solution_stack(self.completed_solutions_stack, self.latest_path_problem)
+        solution = check_solution_stack(self.completed_solutions_list, self.latest_path_problem)
         if solution is None:
             solution = get_new_solution(path_problem=self.latest_path_problem, weights=self.weights)
         return solution
@@ -23,7 +23,7 @@ def get_new_path_problem(self, state_grid: np.ndarray, parts_used: list, path: l
     new_path_problem.part_stock = current_pipe_stock
     new_path_problem.state_grid = state_grid
     new_path_problem.start_pos = path[-1]  # last entry is new start pos
-    new_path_problem.start_direction = get_direction(
+    new_path_problem.start_directions = get_direction(
         diff_pos(path[-2], path[-1]))  # direction from second last entry to last entry is start direction
     # goal parameters stay the same
 
