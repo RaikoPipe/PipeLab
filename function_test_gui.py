@@ -1,21 +1,16 @@
 import tkinter as tk
 from copy import deepcopy
 from tkinter import ttk
-import numpy as np
-from win32api import GetSystemMetrics
-
-from ProcessPlanner import ProcessPlanner
-from data_class.BuildingInstruction import BuildingInstruction
-from data_class.PathProblem import PathProblem
-from data_class.ProcessState import ProcessState
-from data_class.Solution import Solution
-from data_class.ProcessState import ProcessState
-from grid import grid_functions
-from path_finding.common_types import *
 from typing import Optional
-from datetime import datetime
 
-from pp_utilities import get_total_definite_trail_from_construction_layouts
+import numpy as np
+
+from data_class.ConstructionState import ConstructionState
+from data_class.PathProblem import PathProblem
+from data_class.EventInfo import EventInfo
+from process_planning.ProcessPlanner import ProcessPlanner
+from process_planning.ProcessState import ProcessState
+from process_planning.pp_utilities import get_total_definite_trail_from_construction_layouts
 
 free_style = "FREE.TButton"
 pipe_style = "PIPE.TButton"
@@ -33,71 +28,122 @@ pipe_warn_style = "PIPEWARN.TButton"
 
 button_dict = {}
 
-def update_button_grid(event_info, button_grid, process_planner, style_grid, initial_style_grid, previous_style_grids):
+
+def get_style_from_construction_state(construction_state: Optional[ConstructionState]):
+    style = free_style
+    if construction_state:
+        if construction_state.event_code == 3:
+            if construction_state.unnecessary or construction_state.deviated:
+                style = att_caution_style
+            elif construction_state.misplaced:
+                style = att_warn_style
+            else:
+                style = att_style
+        elif construction_state.event_code == 2:
+            if construction_state.unnecessary or construction_state.deviated:
+                style = pipe_caution_style
+            elif construction_state.misplaced:
+                style = pipe_warn_style
+            else:
+                style = pipe_style
+        elif construction_state.event_code == 1:
+            if construction_state.unnecessary or construction_state.deviated:
+                style = fit_caution_style
+            elif construction_state.misplaced:
+                style = fit_warn_style
+            else:
+                style = fit_style
+
+    return style
+
+
+def get_style_grid(process_planner, style_grid):
+    for pos, state in np.ndenumerate(process_planner.tentative_process_state.aimed_solution.path_problem.state_grid):
+        if state == 0:
+            style_grid[pos] = free_style
+        elif state == 1:
+            style_grid[pos] = obs_style
+        else:
+            style_grid[pos] = free_style
+    for motion_pos, construction_state in process_planner.tentative_process_state.motion_dict.items():
+        if construction_state.event_code == 2:
+            for pos in motion_pos:
+                style = get_style_from_construction_state(construction_state)
+                style_grid[pos] = style
+        else:
+            style = get_style_from_construction_state(construction_state)
+            style_grid[motion_pos] = style
+
+    return style_grid
+
+
+def update_button_grid(button_grid, process_planner, style_grid, previous_style_grids):
     # todo simplify: just update everything with each input
-    current_layout: Trail = event_info.get("current_layout")
-    layout_state: BuildingInstruction = event_info.get("layout_state")
 
     previous_style_grids.insert(0, deepcopy(style_grid))
 
-    if current_layout:
-        for pos in current_layout:
-            style_grid[pos] = free_style
+    style_grid = get_style_grid(process_planner, style_grid)
 
-        # set fittings
-        for pos in layout_state.fit_set:
-            if pos in layout_state.required_fit_positions:
-                style_grid[pos] = fit_style
+    style_grid[process_planner.tentative_process_state.aimed_solution.path_problem.start_pos] = start_style
+    style_grid[process_planner.tentative_process_state.aimed_solution.path_problem.goal_pos] = goal_style
 
-        # set attachment
-        for pos in layout_state.att_set:
-            style_grid[pos] = att_style
+    for pos, style in np.ndenumerate(style_grid):
+        button_grid[pos].configure(style=style)
 
-        # set pipe
-        if layout_state.pipe_set:
-            for pos in current_layout:
-                if pos not in layout_state.required_fit_positions:
-                    style_grid[pos] = pipe_style
+    # if current_layout:
+    #     for pos in current_layout:
+    #         style_grid[pos] = free_style
+    #
+    #     # set fittings
+    #     for pos in layout_state.fit_set:
+    #         if pos in layout_state.required_fit_positions:
+    #             style_grid[pos] = fit_style
+    #
+    #     # set attachment
+    #     for pos in layout_state.att_set:
+    #         style_grid[pos] = att_style
+    #
+    #     # set pipe
+    #     if layout_state.pipe_set:
+    #         for pos in current_layout:
+    #             if pos not in layout_state.required_fit_positions:
+    #                 style_grid[pos] = pipe_style
+    #
+    #     for (pos, event_code) in process_planner.tentative_process_state.unnecessary_parts.items():
+    #         if event_code == 1:
+    #             style_grid[pos] = fit_caution_style
+    #
+    #         if event_code == 3:
+    #             style_grid[pos] = att_caution_style
+    #
+    #     for (pos, event_code) in process_planner.tentative_process_state.misplaced_parts.items():
+    #         if event_code == 1:
+    #             style_grid[pos] = fit_warn_style
+    #
+    #         if event_code == 2:
+    #             style_grid[pos] = pipe_warn_style
+    #
+    #         if event_code == 3:
+    #             style_grid[pos] = att_warn_style
+    #
+    #     pos_list = []
+    #     for pos in process_planner.tentative_process_state.deviated_motion_set_fitting:
+    #         pos_list.append(pos)
+    #         style_grid[pos] = fit_caution_style
+    #     for pos in process_planner.tentative_process_state.deviated_motion_set_attachment:
+    #         pos_list.append(pos)
+    #         style_grid[pos] = att_caution_style
+    #     for pos in process_planner.tentative_process_state.deviated_motion_dict_pipe.keys():
+    #         pos_list.append(pos)
+    #         style_grid[pos] = pipe_caution_style
+    #
+    #
+    #     for pos, style in np.ndenumerate(initial_style_grid):
+    #         if pos not in pos_list and pos not in process_planner.tentative_process_state.unnecessary_parts.keys() and pos not in process_planner.tentative_process_state.misplaced_parts.keys():
+    #             if style_grid[pos] in (fit_caution_style, pipe_caution_style, att_caution_style):
+    #                 style_grid[pos] = initial_style_grid[pos]
 
-        for (pos, event_code) in process_planner.tentative_process_state.unnecessary_parts.items():
-            if event_code == 1:
-                style_grid[pos] = fit_caution_style
 
-            if event_code == 3:
-                style_grid[pos] = att_caution_style
-
-        for (pos, event_code) in process_planner.tentative_process_state.misplaced_parts.items():
-            if event_code == 1:
-                style_grid[pos] = fit_warn_style
-
-            if event_code == 2:
-                style_grid[pos] = pipe_warn_style
-
-            if event_code == 3:
-                style_grid[pos] = att_warn_style
-
-        pos_list = []
-        for pos in process_planner.tentative_process_state.deviated_motion_set_fitting:
-            pos_list.append(pos)
-            style_grid[pos] = fit_caution_style
-        for pos in process_planner.tentative_process_state.deviated_motion_set_attachment:
-            pos_list.append(pos)
-            style_grid[pos] = att_caution_style
-        for pos in process_planner.tentative_process_state.deviated_motion_dict_pipe.keys():
-            pos_list.append(pos)
-            style_grid[pos] = pipe_caution_style
-
-
-        for pos, style in np.ndenumerate(initial_style_grid):
-            if pos not in pos_list and pos not in process_planner.tentative_process_state.unnecessary_parts.keys() and pos not in process_planner.tentative_process_state.misplaced_parts.keys():
-                if style_grid[pos] in (fit_caution_style, pipe_caution_style, att_caution_style):
-                    style_grid[pos] = initial_style_grid[pos]
-
-        style_grid[process_planner.tentative_process_state.aimed_solution.path_problem.start_pos] = start_style
-        style_grid[process_planner.tentative_process_state.aimed_solution.path_problem.goal_pos] = goal_style
-
-        for pos, style in np.ndenumerate(style_grid):
-            button_grid[pos].configure(style=style)
 
 
 def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previous_style_grids):
@@ -129,28 +175,33 @@ def update_solution_grid(tentative_state: ProcessState, button_grid):
 
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
                              initial_style_grid, part_stock_tree, previous_style_grids, solution_button_grid):
-    tentative_state = process_planner.main_func((pos, event_code), check_for_deviations=True, ignore_errors=False)
-    event_info = tentative_state.event_info
-    update_button_grid(event_info, button_grid, process_planner, style_grid, initial_style_grid, previous_style_grids)
-    if event_info.get("deviation"):
-        update_solution_grid(tentative_state=tentative_state, button_grid=solution_button_grid)
+    process_state, messages = process_planner.main_func((pos, event_code), check_for_deviations=True, ignore_errors=False)
+    event_info: EventInfo = process_state.last_event_info
+    update_button_grid(button_grid, process_planner, style_grid, previous_style_grids)
+
+    if event_info.rerouting_event:
+        update_solution_grid(tentative_state=process_state, button_grid=solution_button_grid)
+
+    message = messages[0]
+    special_message = messages[1]
+    error_message = messages[2]
 
     global message_count
-    if event_info.get("message"):
-        tree.insert("", index=tk.END, tag=message_count, values=(event_info["message"].replace("ProcessPlanner: ", ""),))
+    if message:
+        tree.insert("", index=tk.END, tag=message_count, values=(message.replace("process_planning: ", ""),))
         message_count += 1
-    if event_info.get("special_message"):
-        tree.insert("", index=tk.END, tag=message_count, values=(event_info["special_message"].replace("ProcessPlanner: ", ""),))
+    if special_message:
+        tree.insert("", index=tk.END, tag=message_count, values=(special_message.replace("process_planning: ", ""),))
         tree.tag_configure(tagname=message_count, background="yellow")
         message_count += 1
-    if event_info.get("error_message"):
-        tree.insert("", index=tk.END, tag=message_count, values=(event_info["error_message"].replace("ProcessPlanner: ", ""),))
+    if error_message:
+        tree.insert("", index=tk.END, tag=message_count, values=(error_message.replace("process_planning: ", ""),))
         tree.tag_configure(tagname=message_count, background="red")
         message_count += 1
 
-    part_id = event_info.get("pipe_id")
+    part_id = event_info.part_id
 
-    if part_id is not None:
+    if part_id is not None and part_id != -1 and part_id != -2 and part_id != -99:
         item = part_stock_tree.get_children()[part_id]
         part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
                                            process_planner.tentative_process_state.part_stock[part_id]))
@@ -222,7 +273,7 @@ class function_test_app:
     def __init__(self, state_grid: np.ndarray, path_problem: PathProblem, initial_state: Optional[ProcessState]):
         root = tk.Tk()
 
-        self.process_planner = ProcessPlanner(initial_path_problem=path_problem, initial_assembly_state=initial_state)
+        self.process_planner = ProcessPlanner(initial_path_problem=path_problem, initial_process_state=initial_state)
 
 
         start = path_problem.start_pos

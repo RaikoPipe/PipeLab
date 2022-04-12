@@ -11,4 +11,4 @@ class Predecessor:
     direction: tuple  # direction the predecessor is facing
     state_grid: np.ndarray = None  # state of state grid when predecessor was created
     part_stock: dict = field(default_factory=dict)  # state of the part_stock when predecessor was created
-    path: list = field(default_factory=list)  # path from start until predecessor
+    path: tuple = field(default_factory=tuple)  # path from start until predecessor

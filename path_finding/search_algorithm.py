@@ -1,7 +1,7 @@
 import heapq
 
 from path_finding.path_math import *
-import path_finding.path_utilities
+from path_finding.path_util import *
 from data_class.Predecessor import Predecessor
 from data_class.Solution import Solution
 from data_class.PathProblem import PathProblem
@@ -12,7 +12,6 @@ from path_finding.path_math import *
 from typing import Optional
 from copy import copy, deepcopy
 from grid.grid_functions import change_grid_states
-from path_finding.path_utilities import construct_solution
 import constants
 import numpy as np
 import matplotlib.pyplot as plt
@@ -74,6 +73,11 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False) -> Optional[S
         current_node = heapq.heappop(open_list)[1] # pops the pos with the smallest score from open_list
         current_pos = current_node[0]
         current_part_id = current_node[1]
+        predecessor_pos = predecessors.get(current_pos).pos
+        current_direction = None
+        if predecessor_pos:
+            current_direction = get_direction(diff_pos(predecessor_pos, current_pos))
+
         current_path = copy(predecessors.get(current_pos).path)
         current_path.append(current_pos)
 
@@ -87,7 +91,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False) -> Optional[S
                                                          pipe_stock=pipe_stock, used_parts=used_part)
         else:
             current_state_grid = change_grid_states(state_grid=copy(predecessors.get(current_pos).state_grid),
-                                                    node_states=path_finding.path_utilities.get_changed_nodes(
+                                                    node_states=get_changed_nodes(
                                                         predecessors.get(current_pos).pos, current_pos))
 
             verifiable_neighbors = restrict_neighbor_pos(directions={predecessors.get(current_pos).direction},
@@ -117,7 +121,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False) -> Optional[S
             return construct_solution(predecessors=predecessors, current_pos=current_pos, state_grid=current_state_grid, score=end_score,
                                       algorithm=algorithm, path_problem=path_problem)
 
-        closed_list.add(current_pos)
+        closed_list.add((current_pos, current_part_id, current_direction))
 
         for (pos, part_id) in verifiable_neighbors:
             neighbor_pos = sum_pos(current_pos, pos)
@@ -131,8 +135,8 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False) -> Optional[S
             if neighbor_restricted(current_node=current_pos, neighbor_node=neighbor_pos, pos=pos,
                                    current_state_grid=current_state_grid):
                 continue
-            # todo: consider removing open list check, since there are multiple ways to get to the same position
-            if current_score_start_distance < score_start.get(neighbor_pos, 0) or (neighbor_pos,part_id) not in [p[1] for p in open_list]:
+            if current_score_start_distance < score_start.get(neighbor_pos, 0) or (neighbor_pos,part_id,current_direction) not in [p[1] for p in open_list]:
+                # todo: make predecessors get pos, part id and direction as key (prevents infinite loop)
                 predecessors[neighbor_pos] = Predecessor(pos=current_pos, part_used=part_id,
                                                          direction= get_direction(pos), path=current_path,
                                                          state_grid=current_state_grid, part_stock=pipe_stock)
@@ -152,7 +156,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False) -> Optional[S
 
                 total_score[neighbor_pos] = get_f_score(current_score_start_distance, current_score_goal_distance,
                                                          current_score_extra, total_score[current_pos], algorithm)
-                heapq.heappush(open_list, (total_score[neighbor_pos], (neighbor_pos,part_id)))
+                heapq.heappush(open_list, (total_score[neighbor_pos], (neighbor_pos,part_id, current_direction)))
     else:
         # no solution found!
         return None

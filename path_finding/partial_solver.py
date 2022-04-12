@@ -5,7 +5,7 @@ import numpy as np
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
 from data_class.BuildingInstruction import BuildingInstruction
-from path_finding.path_utilities import get_outgoing_pos, get_best_connections, get_connections, construct_solution
+from path_finding.path_util import get_outgoing_pos, get_best_connections, get_connections, construct_solution
 import heapq
 from path_finding.search_algorithm import find_path
 from path_finding.path_math import diff_pos, get_direction, manhattan_distance
@@ -236,17 +236,24 @@ def get_partial_solutions(outgoing_connections_set: set, exclusion_list: list[se
     # todo: sort all_points by manhattan distance to start
     # sort all
     all_points_list = sorted(all_points_dict.keys(), key=lambda x: manhattan_distance(start, x))
+    other_points = deepcopy(all_points_list)
 
     while all_points_list:
         open_list = []
         point_pos = all_points_list.pop(0)
         point_outgoing_connections_ref = all_points_dict[point_pos]
         solution = None
-        for other_point_pos in all_points_list:
+        for other_point_pos in other_points:
             if other_point_pos in point_outgoing_connections_ref:
                 continue
             if {point_pos, other_point_pos} in exclusion_list:
                 continue
+
+            #todo: remove debug
+            draw_debug= False
+            if (point_pos, other_point_pos) == ((6,7),(9,17)):
+                print("here")
+                draw_debug = True
 
             partial_path_problem = PathProblem(algorithm=path_problem.algorithm, weights=path_problem.weights,
                                                start_pos=point_pos,
@@ -255,26 +262,28 @@ def get_partial_solutions(outgoing_connections_set: set, exclusion_list: list[se
                                                goal_directions=outgoing_directions_dict[other_point_pos],
                                                part_cost=path_problem.part_cost, part_stock=part_stock,
                                                starting_part=0,
-                                               state_grid=state_grid)
+                                               state_grid=deepcopy(state_grid))
 
-            solution = get_solution(path_problem=partial_path_problem, draw_debug=False)
+            solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
+
             if not solution:
                 # try again, but exclude this connection combination
                 exclusion_list.append({point_pos, other_point_pos})
-                return get_partial_solutions(outgoing_connections_set=outgoing_connections_set,
-                                             outgoing_directions_dict=outgoing_directions_dict,
-                                             exclusion_list=exclusion_list,
-                                             part_stock=part_stock,
-                                             path_problem=path_problem,
-                                             state_grid=state_grid
-                                             )
-            heapq.heappush(open_list, (solution.score, other_point_pos))
+                continue
+            else:
+                print(point_pos, other_point_pos, solution.definite_path)
+
+            heapq.heappush(open_list, (solution.score, other_point_pos, solution))
         # get connecting node with best score, then remove it
         if open_list:
-            best_point = heapq.heappop(open_list)[1]
+            best = heapq.heappop(open_list)
+            best_point = best[1]
+            best_solution = best[2]
+            exclusion_list.append({point_pos, best_point})
             all_points_list.remove(best_point)
-            partial_solutions.append(solution)
+            partial_solutions.append(best_solution)
             part_stock = solution.part_stock  # adjust part stock for next iteration
+            #state_grid = solution.state_grid
 
     return partial_solutions
 

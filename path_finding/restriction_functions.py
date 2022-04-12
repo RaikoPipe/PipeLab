@@ -1,7 +1,7 @@
 from path_finding.path_math import sum_pos, get_direction, sum_absolute_a_b
 
 # todo: put non restriction functions into support functions
-from path_finding.path_utilities import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check
+from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check
 from path_finding.common_types import Pos
 import matplotlib.pyplot as plt
 
