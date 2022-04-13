@@ -8,12 +8,12 @@ from data_class.Solution import Solution
 
 @dataclass
 class EventInfo:
-
+    """Dataclass containing information about a placement/removal/error event."""
     event_pos: Pos
     event_code: int
     removal: bool
     current_layout: Optional[Trail]
-    part_id: Optional[int] # placed part id
+    part_id: Optional[int]
     deviated: bool
     rerouting_event: dict
     misplaced: bool

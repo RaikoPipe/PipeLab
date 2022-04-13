@@ -10,7 +10,7 @@ from path_finding import path_math, partial_solver
 import numpy as np
 
 from path_finding.common_types import *
-from process_planning.pp_utilities import get_completed_layouts, get_outgoing_connections, get_outgoing_directions, \
+from process_planning.pp_util import get_completed_layouts, get_outgoing_connections, get_outgoing_directions, \
     determine_next_part
 
 standard_weights = Weights(1, 1, 1)
@@ -152,7 +152,7 @@ class ProcessPlanner:
                 self.initial_process_state = ProcessState(self.optimal_solution)
                 self.initial_process_state.aimed_solution = self.optimal_solution
                 # set initial layout at start
-                self.initial_process_state.last_event_layout = self.initial_process_state.aimed_solution.layouts[0]
+                self.initial_process_state.last_event_trail = self.initial_process_state.aimed_solution.layouts[0]
 
 
 

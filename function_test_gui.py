@@ -10,7 +10,7 @@ from data_class.PathProblem import PathProblem
 from data_class.EventInfo import EventInfo
 from process_planning.ProcessPlanner import ProcessPlanner
 from process_planning.ProcessState import ProcessState
-from process_planning.pp_utilities import get_total_definite_trail_from_construction_layouts
+from process_planning.pp_util import get_total_definite_trail_from_construction_layouts
 
 free_style = "FREE.TButton"
 pipe_style = "PIPE.TButton"
