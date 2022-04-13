@@ -103,6 +103,7 @@ def get_solution_on_rerouting_event(initial_path_problem, process_state, rerouti
 
 
 def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pipe_id: int) -> str:
+    """Returns a message as string, confirming a placement or removal event."""
     object_name = message_dict[event_code]
     motion_type = "placement"
     if removal:
@@ -119,17 +120,21 @@ def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pi
 
 
 def make_special_message(message: str, event_pos: Pos):
+    """Returns a special message as string, usually used in case of deviated placements/removals."""
     message = str.format(f"process_planning: Position {event_pos}: {message} ")
     return message
 
 
-def make_error_message(event_pos: Pos, additional_message: str):
+def make_error_message(event_pos: Pos, additional_message: str):#
+    """Returns error messages as string containing the position where the error occurred as well as additional
+    information regarding the reason for the error."""
     message = str.format(f"process_planning: Process error at Position {event_pos}: {additional_message}")
     return message
 
 
 class ProcessPlanner:
-    """Acts as an interface for handling events. Keeps track of the building process and provides new solutions on events. Returns instructions."""
+    """Acts as an interface for handling events. Keeps track of the building process with ProcessState and provides robot
+     commands. Handles calculation of a new solution in case of a rerouting event."""
 
     def __init__(self, initial_path_problem: PathProblem, initial_process_state: Optional[ProcessState],
                  optimization_weights: Weights = standard_weights,
@@ -168,13 +173,20 @@ class ProcessPlanner:
         self.weights = optimization_weights
         self.algorithm = algorithm
 
-    def new_pick_event(self, part_id: int) -> str:
+    def send_new_pick_event(self, part_id: int) -> str:
+        """Sends a new pick event to current ProcessState."""
         message = self.tentative_process_state.pick_part(part_id)
         print(message)
         self.previous_states.insert(0, deepcopy(self.tentative_process_state))
         return message
 
-    def main_func(self, worker_event: tuple[Pos, int], check_for_deviations: bool = True, ignore_errors: bool = True):
+    def main(self, worker_event: tuple[Union[Pos,int], int], check_for_deviations: bool = True, ignore_errors: bool = True):
+        """Main method of ProcessPlanner. Takes worker_event as input and sends information about the event to
+        ProcessState. Prints message output of ProcessState and handles possible rerouting events.
+        Args:
+            worker_event: A tuple containing event position and event code. Contains part ID instead of position in case
+            of a pick event.
+            """
         messages = self.new_placement_event(worker_event=worker_event,
                                                    check_for_deviation_events=check_for_deviations,
                                                    ignore_errors=ignore_errors)

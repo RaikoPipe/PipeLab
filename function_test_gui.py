@@ -175,7 +175,7 @@ def update_solution_grid(tentative_state: ProcessState, button_grid):
 
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
                              initial_style_grid, part_stock_tree, previous_style_grids, solution_button_grid):
-    process_state, messages = process_planner.main_func((pos, event_code), check_for_deviations=True, ignore_errors=False)
+    process_state, messages = process_planner.main((pos, event_code), check_for_deviations=True, ignore_errors=False)
     event_info: EventInfo = process_state.last_event_info
     update_button_grid(button_grid, process_planner, style_grid, previous_style_grids)
 
@@ -210,7 +210,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
 def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree, style_grid,
                         previous_style_grids):
-    message = process_planner.new_pick_event(part_id)
+    message = process_planner.send_new_pick_event(part_id)
     tree.insert("", index=tk.END, values=(message,))
     item = part_stock_tree.get_children()[part_id]
     part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
