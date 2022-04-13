@@ -174,7 +174,7 @@ class ProcessPlanner:
         self.algorithm = algorithm
 
     def send_new_pick_event(self, part_id: int) -> str:
-        """Sends a new pick event to current ProcessState."""
+        """Sends a new pick event to be evaluated and registered in current ProcessState."""
         message = self.tentative_process_state.pick_part(part_id)
         print(message)
         self.previous_states.insert(0, deepcopy(self.tentative_process_state))
@@ -182,14 +182,15 @@ class ProcessPlanner:
 
     def main(self, worker_event: tuple[Union[Pos,int], int], check_for_deviations: bool = True, ignore_errors: bool = True):
         """Main method of ProcessPlanner. Takes worker_event as input and sends information about the event to
-        ProcessState. Prints message output of ProcessState and handles possible rerouting events.
+        ProcessState. Prints message output of ProcessState and handles possible rerouting events. Returns current
+         ProcessState, messages and robot commands to the picking robot and the fastening robot.
         Args:
             worker_event: A tuple containing event position and event code. Contains part ID instead of position in case
             of a pick event.
             """
-        messages = self.new_placement_event(worker_event=worker_event,
-                                                   check_for_deviation_events=check_for_deviations,
-                                                   ignore_errors=ignore_errors)
+        messages = self.send_placement_event(worker_event=worker_event,
+                                             check_for_deviation_events=check_for_deviations,
+                                             ignore_errors=ignore_errors)
 
         # extract messages
         message = messages[0]
@@ -223,8 +224,9 @@ class ProcessPlanner:
 
 
 
-    def new_placement_event(self, worker_event: tuple[Pos, int], check_for_deviation_events: bool = True,
-                              ignore_errors: bool = False, allow_stacking: bool = False):
+    def send_placement_event(self, worker_event: tuple[Pos, int], check_for_deviation_events: bool = True,
+                             ignore_errors: bool = False, allow_stacking: bool = False):
+        """Sends a new placement/removal event to be evaluated and registered in current ProcessState."""
 
         self.previous_states.insert(0, deepcopy(self.tentative_process_state))
 
@@ -288,9 +290,8 @@ class ProcessPlanner:
 
         return message, special_message, error_message
 
-
     def determine_robot_commands(self, worker_event: tuple[Pos, int], info_dict: dict) -> tuple[list, list]:
-        """Evaluates the current process state and issues robot commands"""
+        """Evaluates the current process state and issues robot commands."""
 
         deviation_code = info_dict["deviation_code"]
         current_layout = info_dict["current_layout"]
