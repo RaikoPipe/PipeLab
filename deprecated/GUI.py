@@ -3,7 +3,7 @@ from copy import deepcopy
 from vpython import *
 from win32api import GetSystemMetrics
 
-import path_finding.path_utilities
+import path_finding.path_util
 import path_finding.restriction_functions
 import path_finding.score_calculation
 import pp_utilities

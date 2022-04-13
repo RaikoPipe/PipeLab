@@ -45,7 +45,7 @@ def get_updated_state_on_construction_event(tentative_state : State, fit_diff, f
     tentative_state.picked_parts[fit_diff] -= 1
 
     # add to construction trails
-    tentative_state.construction_layouts[construction_trail] = 2
+    tentative_state.building_instructions[construction_trail] = 2
     #todo: use construction trail to remove all motion sets
 
     # create new layout

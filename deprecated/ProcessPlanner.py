@@ -4,7 +4,7 @@ def grid_check(self, captured_state_grid: np.ndarray, parts_used: list, path: Pa
         self.latest_path_problem = self.get_new_path_problem(state_grid=captured_state_grid, parts_used=parts_used,
                                                              path=path)
 
-        self.latest_state = self.get_current_layout_solution(captured_state_grid, parts_used, path)
+        self.latest_assembly_state = self.get_current_layout_solution(captured_state_grid, parts_used, path)
 
         solution = check_solution_stack(self.completed_solutions_list, self.latest_path_problem)
         if solution is None:
@@ -52,7 +52,7 @@ def handle_new_input(self, worker_event: tuple[Optional[int], Pos], pick_events:
 
     if pick_events:
         for part_id in pick_events:
-            self.tentative_state.picked_parts[part_id] += 1
+            self.tentative_process_state.picked_parts[part_id] += 1
 
     event_code = worker_event[0]
     event_pos = worker_event[1]
@@ -60,33 +60,33 @@ def handle_new_input(self, worker_event: tuple[Optional[int], Pos], pick_events:
     if worker_event[0]:
 
         if event_code == 2:
-            self.tentative_state.motion_pipe_pos.add(event_pos)
+            self.tentative_process_state.motion_pipe_pos.add(event_pos)
         elif event_code == 3:
-            self.tentative_state.motion_attachment_pos.add(event_pos)
+            self.tentative_process_state.motion_attachment_pos.add(event_pos)
 
         #todo: check for removals, update tentative state
 
-        if self.deviation_event(motion_events=worker_event, tentative_state=self.tentative_state):
-            if self.tentative_state.deviated_from_opt_sol:
+        if self.rerouting_event(motion_events=worker_event, tentative_state=self.tentative_process_state):
+            if self.tentative_process_state.deviated_from_opt_sol:
 
-                if not deviated_from_path(current_state=self.tentative_state, optimal_solution=self.optimal_solution):
-                    self.tentative_state.deviated_from_opt_sol = False
+                if not deviated_from_path(current_state=self.tentative_process_state, optimal_solution=self.optimal_solution):
+                    self.tentative_process_state.deviated_from_opt_sol = False
                     # todo: notify worker?
                 #todo: check if deviated from latest deviation solution
-                elif deviated_from_path(current_state=self.tentative_state, optimal_solution=self.latest_deviation_solution):
+                elif deviated_from_path(current_state=self.tentative_process_state, optimal_solution=self.latest_deviation_solution):
                     deviation_occurred = True
                     # todo: create new partial solution
-                    self.latest_deviation_solution = partial_solutionizer.find_partial_solution_simple(self.tentative_state.layouts,
-                                                                                                       self.tentative_state.state_grid,
+                    self.latest_deviation_solution = partial_solutionizer.find_partial_solution_simple(self.tentative_process_state.layouts,
+                                                                                                       self.tentative_process_state.state_grid,
                                                                                                        self._initial_path_problem)
-                    self.tentative_state.aimed_solution = self.latest_deviation_solution
+                    self.tentative_process_state.aimed_solution = self.latest_deviation_solution
             else:
-                if deviated_from_path(current_state=self.tentative_state, optimal_solution=self.optimal_solution):
+                if deviated_from_path(current_state=self.tentative_process_state, optimal_solution=self.optimal_solution):
                     deviation_occurred = True
-                    self.tentative_state.deviated_from_opt_sol = True
+                    self.tentative_process_state.deviated_from_opt_sol = True
                     self.latest_deviation_solution = partial_solutionizer.find_partial_solution_simple(
-                        self.tentative_state.layouts,
-                        self.tentative_state.state_grid,
+                        self.tentative_process_state.layouts,
+                        self.tentative_process_state.state_grid,
                         self._initial_path_problem)
 
         if deconstruction_event
@@ -97,7 +97,7 @@ def handle_new_input(self, worker_event: tuple[Optional[int], Pos], pick_events:
 
 
     if pick_events or worker_event:
-        self.update_latest_state(old_state=self.latest_state, new_state=self.tentative_state)
+        self.update_latest_state(old_state=self.latest_assembly_state, new_state=self.tentative_process_state)
 
     return deviation_occurred
 
@@ -107,7 +107,7 @@ def event_received_robot_state(self, state_id):
 
 def event_captured_state_grid(self, captured_state_grid):
     # todo: interpret new data, exec actions as needed, update latest path problem, update current_layout_solution
-    if event_interpreting.grid_changed(latest_state_grid=self.latest_state.state_grid,
+    if event_interpreting.grid_changed(latest_state_grid=self.latest_assembly_state.state_grid,
                                        captured_state_grid=captured_state_grid):
 
         event = event_interpreting.check_action_event(picked_parts=self.picked_parts,
@@ -138,8 +138,8 @@ def event_captured_state_grid(self, captured_state_grid):
             print("Unknown Error occurred!")
 
 def update_current_state(self, state_grid: np.ndarray, path: DefinitePath):
-    self.latest_state.state_grid = state_grid
-    self.latest_state.definite_path = path
+    self.latest_assembly_state.state_grid = state_grid
+    self.latest_assembly_state.definite_path = path
 
 def event_part_id_picked(self, part_id_picked):
     self.picked_parts.append(part_id_picked)
