@@ -5,7 +5,7 @@ import numpy as np
 
 @dataclass
 class Predecessor:
-    """Data class that contains information about the predecessor of a node"""
+    """Dataclass that contains information about the predecessor of a node"""
     pos: tuple  # Coordinates of the predecessor
     part_used: int  # part used at predecessor_node to get to successor
     direction: tuple  # direction the predecessor is facing

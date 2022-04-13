@@ -333,82 +333,8 @@ class ProcessPlanner:
 
         return fastening_robot_commands, picking_robot_commands
 
-    # def deviation_event(self, worker_event, tentative_state: ProcessState, debug_grid: Optional[np.ndarray]) -> dict:
-    #
-    #     """Checks for deviating layouts on captured motion events and updates tentative state."""
-    #
-    #     event_code = worker_event[1]
-    #     event_pos = worker_event[0]
-    #
-    #     check_order = [self.tentative_process_state.deviated_motion_set_fitting, self.tentative_process_state.motion_set_fitting]
-    #
-    #     if event_code == 1:
-    #         for check_fit_set in check_order:
-    #             for pos in check_fit_set:
-    #
-    #                 # check if conditions for a deviation event are met
-    #
-    #                 fit_diff = path_math.get_length_same_axis(pos,
-    #                                                           event_pos)  # distance between fittings
-    #                 pipe_id = fit_diff - 1  # length of needed part
-    #
-    #                 if pipe_id == 0:
-    #                     # fittings are directly next to each other
-    #                     break
-    #
-    #                 fittings_in_proximity = pipe_id in self.tentative_process_state.part_stock.keys()  # fittings are connectable by available parts
-    #
-    #                 if not fittings_in_proximity:
-    #                     continue
-    #
-    #                 fit_dir = get_direction(diff_pos(pos, event_pos))
-    #                 fit_tup = (pos, event_pos)
-    #                 deviation_trail = get_deviation_trail(length=fit_diff, direction=fit_dir, fit_pos=fit_tup)
-    #
-    #                 attachment_is_between = False
-    #
-    #                 att_set = set()
-    #                 pipe_set = set()
-    #
-    #                 pipe_trail = [i for i in deviation_trail if i not in fit_tup]
-    #                 for att_pos in tentative_state.deviated_motion_set_attachment:
-    #                     if att_pos in pipe_trail:
-    #                         att_set.add(att_pos)
-    #
-    #                 if not att_set:
-    #                     # no attachments in between
-    #                     continue
-    #
-    #                 for pipe_pos in pipe_trail:
-    #                     if tentative_state.deviated_motion_dict_pipe.get(pipe_pos) == pipe_id:
-    #                         pipe_set.add(pipe_pos)
-    #                     elif tentative_state.deviated_motion_dict_pipe.get(pipe_pos) == -1:
-    #                         pipe_set.add(pipe_pos)
-    #
-    #                 if not pipe_set:
-    #                     # no pipes in between
-    #                     continue
-    #
-    #                 print("Deviation confirmed")
-    #
-    #                 first_pipe_pos = ()
-    #                 # get_updated_state_on_construction_event(tentative_state, fit_diff, fit_dir, event_pos, pos)
-    #
-    #                 deviation_state = get_deviation_state(length=fit_diff, att_set=att_set, pipe_set=pipe_set,
-    #                                                       fit_tup=fit_tup,
-    #                                                       state_grid=self._initial_path_problem.state_grid)
-    #
-    #                 tentative_state.fc_set.add(fit_tup)
-    #
-    #                 return {deviation_trail: deviation_state}
-
-    def update_latest_state(self, old_state, new_state):
-        self.previous_states.insert(0, old_state)
-
-        self.latest_assembly_state = new_state
-
     def return_to_previous_state(self):
-        """Returns to the last valid state"""
+        """Returns to previous state."""
         if self.previous_states:
             print("Latest action was undone!")
             self.tentative_process_state = self.latest_assembly_state = self.previous_states.pop(0)

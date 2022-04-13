@@ -6,7 +6,7 @@ from path_finding.common_types import *
 
 @dataclass
 class Solution:
-    """Data class that contains information about a path problem solution. Contains a copy of the path problem"""
+    """Dataclass that contains information about the solution to a path problem. Contains a copy of the path problem."""
 
     rendering_dict: dict[Pos:int] # similar to definite_path, but in a dict for easy access to part positions
     total_definite_trail: dict[Pos:int]  # contains a trail where each position refers to an ID it is occupied by

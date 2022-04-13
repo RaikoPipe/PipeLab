@@ -9,7 +9,7 @@ import numpy as np
 
 @dataclass
 class PathProblem:
-    """Data class that contains detailed information about the path problem."""
+    """Dataclass that contains detailed information about the path problem."""
     state_grid: np.ndarray
     start_pos: Pos
     goal_pos: Pos
