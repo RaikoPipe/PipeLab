@@ -65,13 +65,13 @@ def goal_restricted(part_id:int, neighbor_pos: Pos, direction, goal_dict:dict[Po
     return restricted
 
 
-def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], current_pos: tuple, current_path,
-                          pipe_stock, used_parts) -> set:
+def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], current_pos: tuple,
+                          pipe_stock, predecessors, fast_mode, key, current_part_id) -> set:
     """Determines what neighbors are reachable from the current position and with the available parts."""
 
-    available_parts = pipe_stock_check(current_path, pipe_stock, used_parts)
+    available_parts = pipe_stock_check(pipe_stock, predecessors, fast_mode, key)
     neighbor_relative_positions = set()
-    previous_part = used_parts.get(current_pos)
+    previous_part = current_part_id
     remove = set()
 
     for direction in directions:

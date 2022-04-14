@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 from data_class.Solution import Solution
+from data_class.Predecessor import Predecessor
 from path_finding.path_math import diff_pos, manhattan_distance, get_direction
 from path_finding.common_types import *
 
@@ -93,19 +94,27 @@ def get_best_connections(node_dict: dict[tuple[Pos, int]:Pos], exclusion_list: s
     return connecting_path
 
 
-def construct_solution(predecessors, current_pos, state_grid, score,
-                       algorithm, path_problem):
+def construct_solution(predecessors, current_node, state_grid, score,
+                       algorithm, path_problem, fast_mode):
+
     definite_path = []
     rendering_dict = {}
     part_stock = deepcopy(path_problem.part_stock)
-    while current_pos in predecessors:
-        part_id = predecessors.get(current_pos).part_used
-        definite_path.append((current_pos, part_id))
-        rendering_dict[current_pos] = part_id
+    while current_node in predecessors:
+        part_id = predecessors.get(current_node).part_used
+        if current_node == Pos:
+            definite_path.append((current_node, part_id))
+        else:
+            definite_path.append((current_node[0], part_id))
+        rendering_dict[current_node] = part_id
 
         part_stock[part_id] -= 1
-        current_pos = predecessors.get(current_pos).pos
-        if current_pos is None:
+        predecessor_node: Predecessor = predecessors.get(current_node)
+        if fast_mode:
+            current_node = predecessor_node.pos
+        else:
+            current_node = (predecessor_node.pos, predecessor_node.part_used, predecessor_node.direction)
+        if current_node is None:
             break
 
 
@@ -229,26 +238,29 @@ def get_current_state_grid(current_path, state_grid):
     return current_state_grid
 
 
-def pipe_stock_check(current_path:list, pipe_stock:dict, used_parts:dict) -> list:
+def pipe_stock_check(pipe_stock:dict, predecessors:dict, fast_mode, key) -> list:
     """Checks how many parts are available."""
     available_parts = []
     pipe_stock_copy = deepcopy(pipe_stock)
-    if not used_parts:
+    if not predecessors:
         #no parts used, no need to check current path
         available_parts = get_available_parts(pipe_stock_copy)
         return available_parts
 
 
-    for idx, _ in enumerate(current_path):
+    while key in predecessors:
+        part_id = predecessors.get(key).part_used
 
-        #dont check next point if last point has been reached
-        if idx == len(current_path)-1:
-            break
+        predecessor_node: Predecessor = predecessors.get(key)
 
-        b = current_path[idx + 1]
-        og_part = used_parts.get(b)
+        if fast_mode:
+            key = predecessor_node.pos
+        else:
+            key = (predecessor_node.pos, predecessor_node.part_used, predecessor_node.direction)
 
-        pipe_stock_copy[og_part] = pipe_stock_copy[og_part] - 1
+
+        pipe_stock_copy[part_id] -= 1
+
         available_parts = get_available_parts(pipe_stock_copy)
 
     return available_parts

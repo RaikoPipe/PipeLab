@@ -5,7 +5,7 @@ from data_class.EventInfo import EventInfo
 from data_class.Solution import Solution
 from copy import deepcopy
 from path_finding.search_algorithm import find_path
-from typing import Optional
+from typing import Optional, Union
 from path_finding import path_math, partial_solver
 import numpy as np
 
