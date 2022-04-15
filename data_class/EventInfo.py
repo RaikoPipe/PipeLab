@@ -1,8 +1,8 @@
 from dataclasses import dataclass
-from data_class import PathProblem
-from typing import Optional, Set
+from typing import Optional
+
 from path_finding.common_types import *
-from data_class.Solution import Solution
+
 
 # todo: documentation
 
@@ -15,7 +15,7 @@ class EventInfo:
     current_layout: Optional[Trail]
     part_id: Optional[int]
     deviated: bool
-    rerouting_event: dict
+    detour_event: dict
     misplaced: bool
     unnecessary: bool
     obstructed_obstacle: bool
@@ -25,4 +25,3 @@ class EventInfo:
     part_not_picked: bool
 
     error: bool
-

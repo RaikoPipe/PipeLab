@@ -41,7 +41,7 @@ def calculate_distance_to_obstacles(state_grid, current_node: tuple, neighbor_po
     return min_o / upper_bound  # warning: only python 3 produces a float by dividing two integers
 
 
-def get_worst_move_cost(part_cost: dict) -> (float,list):
+def get_worst_move_cost(part_cost: dict) -> (float, list):
     """Calculates the cost of the worst move."""
     # is there a more efficient way of doing this?
     worst_move_cost = 0
@@ -89,7 +89,7 @@ def get_e_score(algorithm: str, weights: Weights, current_pos: tuple, neighbor_p
             length = 1
         else:
             length = part_id
-        cost = ((part_cost[part_id]/length) / worst_move_cost) * weights.cost  # calculates cost per passed nodes
+        cost = ((part_cost[part_id] / length) / worst_move_cost) * weights.cost  # calculates cost per passed nodes
 
         distance_to_obstacles = calculate_distance_to_obstacles(current_state_grid, current_pos,
                                                                 neighbor_pos) * weights.distance_to_obstacles

@@ -1,9 +1,7 @@
-from path_finding.path_math import sum_pos, get_direction, sum_absolute_a_b
-
+from path_finding.common_types import Pos
+from path_finding.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
 from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check
-from path_finding.common_types import Pos
-import matplotlib.pyplot as plt
 
 
 def out_of_bounds(neighbor_node: tuple, state_grid):
@@ -40,10 +38,8 @@ def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid) ->
     return False
 
 
-def goal_restricted(part_id:int, neighbor_pos: Pos, direction, goal_dict:dict[Pos,Pos]) -> bool:
-    """Checks if the axis restriction of the goal is violated."""
-
-
+def goal_restricted(part_id: int, neighbor_pos: Pos, direction, goal_dict: dict[Pos, Pos]) -> bool:
+    """Checks if the direction restriction of the goal is violated."""
 
     restricted = True
 
@@ -76,7 +72,7 @@ def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], curren
 
     for direction in directions:
         if previous_part is None:
-            #neighbor_pos.extend(get_corner_neighbors(direction, available_parts))
+            # neighbor_pos.extend(get_corner_neighbors(direction, available_parts))
             neighbor_relative_positions.update(get_pipe_neighbors(direction, available_parts, True))
         elif previous_part == 0:
             # previous move was corner -> only pipes allowed
@@ -84,7 +80,6 @@ def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], curren
         else:
             # previous mode was pipe -> only corners allowed
             neighbor_relative_positions.update(get_corner_neighbors(direction, available_parts))
-
 
         for relative_pos in neighbor_relative_positions:
             neighbor_pos = sum_pos(current_pos, relative_pos[0])
@@ -95,7 +90,4 @@ def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], curren
                     # disallow any neighbors that violate goal condition
                     remove.add(relative_pos)
 
-
     return neighbor_relative_positions.difference(remove)
-
-

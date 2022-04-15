@@ -1,16 +1,14 @@
 from copy import deepcopy
-from dataclasses import dataclass, field
-from data_class.PathProblem import PathProblem
+from typing import Optional, Union
+
+import numpy as np
+
 from data_class.BuildingInstruction import BuildingInstruction
 from data_class.ConstructionState import ConstructionState
 from data_class.EventInfo import EventInfo
-from typing import Optional, Set, Union
-
+from data_class.Solution import Solution
 from path_finding import path_math
 from path_finding.common_types import *
-from data_class.Solution import Solution
-import numpy as np
-
 # todo: documentation
 from path_finding.common_types import Pos, Trail
 from path_finding.path_math import get_direction, diff_pos, manhattan_distance
@@ -24,14 +22,14 @@ class ProcessState:
 
         state_grid: Numpy array that shows where obstacles and completed layouts occupy nodes
         aimed_solution: Solution that contains information of the desired construction./
-        Is recalculated after a rerouting event.
+        Is recalculated after a detour event.
         last_event_trail: Layout trail at which the last non deviated event occurred.
 
         part_stock: Dictionary containing the number of available parts in stock.
         picked_parts: List containing parts picked from stock. Parts will be removed upon usage.
 
         building_instructions: Dictionary containing information about the required placements and IDs of parts to
-        complete the construction process. Is recalculated after a rerouting event.
+        complete the construction process. Is recalculated after a detour event.
 
         motion_dict: Dictionary containing all registered motion events that are valid (non-error) that point to
         a ConstructionState. The keys for pipe events are of the type Trail, while other events are of the type Pos.
@@ -45,7 +43,7 @@ class ProcessState:
     def __init__(self, solution: Solution):
         self.state_grid = solution.path_problem.state_grid
         self.aimed_solution = solution
-        self.last_event_trail = solution.layouts[0]
+        self.last_event_trail = solution.ordered_trails[0]
 
         self.part_stock = solution.path_problem.part_stock
         self.picked_parts: list[int] = []
@@ -101,13 +99,13 @@ class ProcessState:
         unnecessary = False
         error = False
         part_not_picked = False
-        rerouting_event = {}
+        detour_event = {}
 
         event_info = EventInfo(event_pos=worker_event_pos, event_code=worker_event_code, part_id=part_id,
                                obstructed_part=obstructed_part, obstructed_obstacle=obstructed_obstacle,
                                deviated=deviated, misplaced=misplaced, unnecessary=unnecessary, completed=completed,
                                current_layout=current_layout, removal=removal, part_not_picked=part_not_picked,
-                               rerouting_event=rerouting_event, error=error)
+                               detour_event=detour_event, error=error)
 
         construction_state = ConstructionState(event_code=worker_event_code, part_id=part_id, deviated=deviated,
                                                misplaced=misplaced, unnecessary=unnecessary)
@@ -151,13 +149,13 @@ class ProcessState:
                 event_info.completed = self.set_completion_state(current_layout, event_info)
             else:
                 if worker_event_code == 1 and check_for_deviation_events:
-                    # check for rerouting events
-                    rerouting_event = self.rerouting_event(event_pos=worker_event_pos, event_code=worker_event_code)
-                    if rerouting_event:
-                        self.building_instructions.update(rerouting_event)
-                        event_info.rerouting_event = rerouting_event
+                    # check for detour events
+                    detour_event = self.detour_event(event_pos=worker_event_pos, event_code=worker_event_code)
+                    if detour_event:
+                        self.building_instructions.update(detour_event)
+                        event_info.detour_event = detour_event
                         # update state grid
-                        for pos in list(rerouting_event.keys())[0]:
+                        for pos in list(detour_event.keys())[0]:
                             self.state_grid[pos] = 2
 
             # register placement
@@ -178,7 +176,7 @@ class ProcessState:
         current_layout = self.last_event_trail
         building_instruction = self.building_instructions.get(current_layout)
 
-        if event_pos in self.aimed_solution.total_definite_trail.keys():
+        if event_pos in self.aimed_solution.absolute_trail.keys():
 
             # get information about layout where event occurred
             if event_pos not in self.last_event_trail:
@@ -244,7 +242,7 @@ class ProcessState:
     def attachment_placed(self, event_pos, event_code, building_instruction, event_info):
         """Evaluates the placement of an attachment. Notes findings into event_info."""
         # todo: check recommended att_pos
-        if event_pos in self.aimed_solution.total_definite_trail.keys():
+        if event_pos in self.aimed_solution.absolute_trail.keys():
             if event_pos not in building_instruction.required_fit_positions:
                 if event_pos in building_instruction.possible_att_pipe_positions:
                     for pos in building_instruction.possible_att_pipe_positions:
@@ -260,7 +258,7 @@ class ProcessState:
 
     def pipe_placed(self, event_pos, building_instruction: BuildingInstruction, event_info):
         """Evaluates the placement of a pipe. Notes findings in event_info."""
-        if event_pos in self.aimed_solution.total_definite_trail.keys():
+        if event_pos in self.aimed_solution.absolute_trail.keys():
             # if pipe placement occurred somewhere inside the trail of building instruction, then it's valid
             part_id = building_instruction.pipe_id
             # check if part was actually picked
@@ -289,7 +287,7 @@ class ProcessState:
         """Evaluates the placement of a fitting. Notes findings in event_info. If picked_parts is set to None, part restrictions will be ignored"""
         if 0 in self.picked_parts or ignore_part_restriction:
             event_info.part_id = 0
-            if event_pos in self.aimed_solution.total_definite_trail.keys():
+            if event_pos in self.aimed_solution.absolute_trail.keys():
                 if event_pos not in building_instruction.required_fit_positions:
                     event_info.misplaced = True
             else:
@@ -300,9 +298,13 @@ class ProcessState:
             event_info.error = True
             event_info.part_id = -99
 
-    def rerouting_event(self, event_pos, event_code) -> dict:
+    def detour_event(self, event_pos, event_code) -> dict:
 
-        """Checks for deviating layouts on captured motion events and updates tentative state."""
+        """Checks if conditions for a detour event are met (after placement of a fitting).
+        Detour event occurrs if:
+        - 2 fittings in proximity (connectable by available parts)
+        - 1 attachment in between those 2 fittings
+        - 1 pipe (with correct id) in between those fittings"""
 
         check_fit_set = self.get_all_fit_positions()
 
@@ -325,14 +327,14 @@ class ProcessState:
 
                 fit_dir = get_direction(diff_pos(pos, event_pos))
                 fit_tup = (pos, event_pos)
-                reroute_trail = get_reroute_trail(length=fit_diff, direction=fit_dir, fit_pos=fit_tup)
+                detour_trail = get_detour_trail(length=fit_diff, direction=fit_dir, fit_pos=fit_tup)
 
                 attachment_is_between = False
 
                 att_set = set()
                 pipe_set = set()
 
-                pipe_trail = [i for i in reroute_trail if i not in fit_tup]
+                pipe_trail = [i for i in detour_trail if i not in fit_tup]
                 for att_pos in self.get_all_att_positions():
                     if att_pos in pipe_trail:
                         att_set.add(att_pos)
@@ -351,20 +353,16 @@ class ProcessState:
                 if not pipe_set:
                     # no pipes in between
                     continue
-
-                print("Rerouting event confirmed")
-
-                first_pipe_pos = ()
                 # get_updated_state_on_construction_event(tentative_state, fit_diff, fit_dir, event_pos, pos)
 
-                reroute_state = get_reroute_state(length=fit_diff, att_set=att_set, pipe_set=pipe_set,
-                                                  fit_tup=fit_tup,
-                                                  state_grid=self.aimed_solution.path_problem.state_grid,
-                                                  possible_att_pipe_positions=tuple(pipe_trail))
+                detour_state = get_detour_state(length=fit_diff, att_set=att_set, pipe_set=pipe_set,
+                                                fit_tup=fit_tup,
+                                                state_grid=self.aimed_solution.path_problem.state_grid,
+                                                possible_att_pipe_positions=tuple(pipe_trail))
 
-                return {reroute_trail: reroute_state}
+                return {detour_trail: detour_state}
 
-    def handle_rerouting_event(self, rerouting_event: dict, solution: Solution):
+    def handle_detour_event(self, detour_event: dict, solution: Solution):
 
         self.aimed_solution = solution
         self.building_instructions = get_building_instructions_from_solution(solution)
@@ -378,13 +376,13 @@ class ProcessState:
         self.picked_parts = None
 
         # reevaluate motion dict according to new building instructions
-        self.last_event_trail = self.aimed_solution.layouts[0]
+        self.last_event_trail = self.aimed_solution.ordered_trails[0]
         for pos, construction_state in motion_dict.items():
             building_instruction, current_layout = self.get_building_instruction(
                 event_pos=construction_state.event_pos, event_code=construction_state.event_code)
             event_info = EventInfo(event_pos=construction_state.event_pos, event_code=construction_state.event_code,
                                    removal=False, current_layout=None,
-                                   part_id=None, deviated=False, rerouting_event={}, misplaced=False, unnecessary=False,
+                                   part_id=None, deviated=False, detour_event={}, misplaced=False, unnecessary=False,
                                    obstructed_part=False, completed=False, part_not_picked=False, error=False,
                                    obstructed_obstacle=False)
             if construction_state.event_code == 3:
@@ -393,15 +391,15 @@ class ProcessState:
                                        building_instruction=building_instruction)
 
             elif construction_state.event_code == 2:
-                self.pipe_placed_on_rerouting_event(event_pos=construction_state.event_pos, event_info=event_info,
-                                                    building_instruction=building_instruction,
-                                                    pipe_id=construction_state.part_id)
+                self.pipe_placed_detour_event(event_pos=construction_state.event_pos, event_info=event_info,
+                                              building_instruction=building_instruction,
+                                              pipe_id=construction_state.part_id)
 
             elif construction_state.event_code == 1:
                 self.fitting_placed(event_pos=construction_state.event_pos, building_instruction=building_instruction,
                                     event_info=event_info, ignore_part_restriction=True)
 
-        self.last_event_trail = rerouting_event.popitem()[0]
+        self.last_event_trail = detour_event.popitem()[0]
 
     # restriction checks
 
@@ -434,7 +432,7 @@ class ProcessState:
     # utilities
     def set_completion_state(self, current_layout, event_info):
         """sets completion state of current layout and neighboring layouts. Updates state grid."""
-        neighboring_layouts = get_neighboring_layouts(current_layout, self.aimed_solution.layouts)
+        neighboring_layouts = get_neighboring_layouts(current_layout, self.aimed_solution.ordered_trails)
         neighboring_layouts.append(current_layout)
 
         for layout in neighboring_layouts:
@@ -482,8 +480,8 @@ class ProcessState:
                 pipe_set.add(pos)
         return pipe_set
 
-    def pipe_placed_on_rerouting_event(self, event_pos, event_info, building_instruction, pipe_id):
-        if event_pos in self.aimed_solution.total_definite_trail.keys():
+    def pipe_placed_detour_event(self, event_pos, event_info, building_instruction, pipe_id):
+        if event_pos in self.aimed_solution.absolute_trail.keys():
             # if pipe placement occurred somewhere inside the trail of building instruction, then it's valid
             part_id = building_instruction.pipe_id
             # check if part was actually picked
@@ -503,9 +501,9 @@ def get_building_instructions_from_solution(solution):
     start = solution.path_problem.start_pos
     goal = solution.path_problem.goal_pos
 
-    for layout_trail in solution.layouts:
+    for layout_trail in solution.ordered_trails:
         add_fit = set()
-        pipe_id = solution.total_definite_trail[layout_trail[1]]
+        pipe_id = solution.absolute_trail[layout_trail[1]]
         rec_att_pos = get_optimal_attachment_pos(state_grid=solution.path_problem.state_grid,
                                                  direction=get_direction(diff_pos(layout_trail[0], layout_trail[1])),
                                                  part_id=manhattan_distance(layout_trail[1], layout_trail[-1]),
@@ -519,7 +517,7 @@ def get_building_instructions_from_solution(solution):
 
         construction_layout[tuple(layout_trail)] = BuildingInstruction(pipe_id=pipe_id,
                                                                        required_fit_positions=(
-                                                                       layout_trail[0], layout_trail[-1]),
+                                                                           layout_trail[0], layout_trail[-1]),
                                                                        recommended_attachment_pos=rec_att_pos,
                                                                        possible_att_pipe_positions=tuple(
                                                                            possible_att_pipe_positions))
@@ -539,7 +537,7 @@ def get_neighboring_layouts(current_layout: Trail, layouts: Layouts) -> list[Tra
     return neighboring_layouts
 
 
-def get_reroute_trail(length: int, direction: Pos, fit_pos: tuple) -> Trail:
+def get_detour_trail(length: int, direction: Pos, fit_pos: tuple) -> Trail:
     # create new state
 
     # if any of the following pos is None, there was an error
@@ -559,8 +557,8 @@ def get_reroute_trail(length: int, direction: Pos, fit_pos: tuple) -> Trail:
     return tuple(construction_trail)
 
 
-def get_reroute_state(length: int, att_set: set, pipe_set: set, fit_tup: tuple, state_grid: np.ndarray,
-                      possible_att_pipe_positions: Trail):
+def get_detour_state(length: int, att_set: set, pipe_set: set, fit_tup: tuple, state_grid: np.ndarray,
+                     possible_att_pipe_positions: Trail):
     pipe_id = length - 1
     direction = get_direction(diff_pos(fit_tup[0], fit_tup[1]))
     first_pipe_pos = (fit_tup[0][0] * direction[0], fit_tup[0][1] * direction[1])

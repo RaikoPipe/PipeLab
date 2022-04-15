@@ -1,27 +1,23 @@
-from function_test_gui import function_test_app
-from path_finding.search_algorithm import find_path
 from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
-from grid.grid_functions import get_empty_stategrid, change_grid_states
-import numpy as np
-
-#todo: use change_grid_states function to create a mounting wall with obstacles
-#todo: create a solution with a* and extract path and parts to define a static solution
-
-from rendering import object_rendering, group_rendering, debug_rendering
+from function_test_gui import function_test_app
 from grid import grid_functions, randomizer
+from path_finding.search_algorithm import find_path
 
-x=10
-y=20
+# todo: use change_grid_states function to create a mounting wall with obstacles
+# todo: create a solution with a* and extract path and parts to define a static solution
 
-r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x,y)
+x = 10
+y = 20
+
+r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
 solution = None
 while solution is None:
 
     state_grid = grid_functions.get_empty_stategrid(x, y)
     state_grid = randomizer.set_random_obstacles(0., state_grid)
-    start_node = (0,0)
-    goal_node = (9,17)
+    start_node = (0, 0)
+    goal_node = (9, 17)
     state_grid[start_node] = 0
     state_grid[goal_node] = 0
 
@@ -31,11 +27,10 @@ while solution is None:
 
     weights = Weights(path_length=1, cost=1, distance_to_obstacles=0)
 
-    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node, start_directions={(0, 1), (1,0), (-1,0), (0,-1)},
-                               goal_directions={(0, 1), (1,0), (-1,0), (0,-1)}, part_cost=part_cost,
+    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node,
+                               start_directions={(0, 1), (1, 0), (-1, 0), (0, -1)},
+                               goal_directions={(0, 1), (1, 0), (-1, 0), (0, -1)}, part_cost=part_cost,
                                starting_part=0, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
-
-
 
     solution = find_path(path_problem=path_problem)
 
@@ -47,7 +42,7 @@ while solution is None:
 # print(path_problem)
 # print(solution)
 
-#rendering
+# rendering
 
 # scene = object_rendering.create_new_scene()
 # mounting_wall, dot_object = \
@@ -60,6 +55,6 @@ while solution is None:
 #
 # print(solution.definite_path[-2])
 
-#positions = debug_rendering.display_pos(rendering_grid=r_grid, scene=scene)
+# positions = debug_rendering.display_pos(rendering_grid=r_grid, scene=scene)
 
 app = function_test_app(state_grid=solution.state_grid, path_problem=path_problem, initial_state=None)
