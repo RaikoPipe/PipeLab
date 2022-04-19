@@ -6,7 +6,7 @@ from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
 from data_class.Weights import Weights
 from path_finding import partial_solver
-from path_finding.common_types import *
+from types.type_dictionary import *
 from path_finding.search_algorithm import find_path
 from process_planning.ProcessState import ProcessState
 from process_planning.pp_util import get_completed_instructions, get_outgoing_node_pairs, get_outgoing_node_directions, \
@@ -18,19 +18,6 @@ standard_algorithm = "mcsa*"
 message_dict = {1: "fitting", 2: "pipe", 3: "attachment"}
 
 example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will probably never be bigger than 1
-
-
-def get_neighboring_layouts(current_layout: Trail, layouts: Layouts) -> list[Trail]:
-    """Returns neighboring trails."""
-    neighboring_layouts = []
-    idx = layouts.index(current_layout)
-
-    if idx + 1 < len(layouts):
-        neighboring_layouts.append(layouts[idx + 1])
-    if idx - 1 >= 0:
-        neighboring_layouts.append(layouts[idx - 1])
-
-    return neighboring_layouts
 
 
 # todo: multiple walls: one state --> need to reintroduce features to path finding
@@ -285,7 +272,7 @@ class ProcessPlanner:
 
         self.tentative_process_state.last_event_info = event_info
 
-        # todo: remove debug
+        # todo: remove function_test
         print(self.tentative_process_state.motion_dict)
 
         return message, special_message, error_message

@@ -1,8 +1,7 @@
-import event_interpreting
 from constants import horizontal_directions, vertical_directions
 from data_class.BuildingInstruction import BuildingInstruction
 from data_class.Solution import Solution
-from path_finding.common_types import Trail
+from types.type_dictionary import Trail, Pos
 from path_finding.path_math import get_direction, diff_pos, manhattan_distance
 from process_planning.ProcessState import ProcessState
 from process_planning.ps_util import get_optimal_attachment_pos
@@ -49,7 +48,7 @@ def get_building_instructions_from_solution(solution: Solution) -> dict[Trail:Bu
 
 
 def get_initial_process_state_from_solution(solution: Solution) -> ProcessState:
-    """Creates a new process state from a solution."""
+    """Creates and returns a new process state from a solution."""
     construction_layouts = get_building_instructions_from_solution(solution)
 
     state = ProcessState(state_grid=solution.path_problem.state_grid, part_stock=solution.path_problem.part_stock,
@@ -58,20 +57,20 @@ def get_initial_process_state_from_solution(solution: Solution) -> ProcessState:
     return state
 
 
-def get_absolute_trail_from_building_instructions(building_instructions: dict[Trail:BuildingInstruction]) -> dict:
-    total_definite_trail = {}
+def get_absolute_trail_from_building_instructions(building_instructions: dict[Trail:BuildingInstruction]) -> dict[Pos:int]:
+    absolute_trail = {}
     for trail in building_instructions.keys():
         layout_state = building_instructions[trail]
         if layout_state.completed:
             for pos in layout_state.fit_set:
-                total_definite_trail[pos] = 0
+                absolute_trail[pos] = 0
 
             for idx, pos in enumerate(trail, start=1):
                 if idx >= len(trail) - 1:
                     break
-                total_definite_trail[pos] = layout_state.part_id
+                absolute_trail[pos] = layout_state.part_id
 
-    return total_definite_trail
+    return absolute_trail
 
 
 def get_completed_instructions(building_instructions) -> dict[Trail:BuildingInstruction]:

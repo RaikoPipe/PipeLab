@@ -5,7 +5,7 @@ import constants as const
 from data_class.BuildingInstruction import BuildingInstruction
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
-from path_finding.common_types import Trail
+from types.type_dictionary import Trail
 from path_finding.path_math import manhattan_distance
 from path_finding.solution_manager import get_solution
 
@@ -14,10 +14,15 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
                           outgoing_node_directions_dict: dict, state_grid, part_stock, path_problem,
                           ) -> list[Solution]:
     """
-    Generates a connection for each two nodes according to the lowest manhattan distance.
-    :param node_dict: List containing position of nodes and corresponding layout ids.
-    :param exclusion_list: List with node_pairs that are excluded (for example because there is no feasible path in a connection).
-    :return: Set of node_pairs
+    Tries to generate partial solutions with the given node pairs. Node pairs may be excluded if
+    no solution to any other node is found. Node pairs in the same tuple are prevented from connecting.
+
+    :param outgoing_node_pairs_set: Set of node pairs that represent the end points of a layout
+    :param exclusion_list: List of node pairs that are excluded from connecting.
+    :param outgoing_node_directions_dict: Dictionary containing the directions each node can be connected to.
+    :param state_grid: #todo: reference
+    :param part_stock: todo: reference
+    :param path_problem: todo: reference
     """
 
     start = path_problem.start_pos
@@ -87,7 +92,7 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
     """Fuses partial solutions and completed layouts into a complete solution from start to goal of the initial path problem.
     Only partially checks the validity of the complete solution. Partial solutions and completed layouts must therefore
     be compatible and equal to a valid assembly layout."""
-    total_definite_trail = {}
+    absolute_trail = {}
 
     unordered_layouts = set()
     rendering_dict = {}
@@ -106,13 +111,13 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
 
         for pos in layout_trail:
             if pos in layout_state.required_fit_positions:
-                total_definite_trail[pos] = const.fitting_id
+                absolute_trail[pos] = const.fitting_id
             else:
-                total_definite_trail[pos] = layout_state.part_id
+                absolute_trail[pos] = layout_state.part_id
 
     # also update total definite trail from partial solutions
     for partial_solution in partial_solutions:
-        total_definite_trail.update(partial_solution.absolute_trail)
+        absolute_trail.update(partial_solution.absolute_trail)
 
     # get information from last partial solution iteration
     last_partial_solution = partial_solutions[0]
@@ -147,5 +152,5 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
     score = last_partial_solution.score
     fused_solution = Solution(part_stock=part_stock, path_problem=initial_path_problem, rendering_dict=rendering_dict,
                               algorithm=algorithm, state_grid=state_grid, score=score, layouts=ordered_layouts,
-                              total_definite_trail=total_definite_trail)
+                              absolute_trail=absolute_trail)
     return fused_solution

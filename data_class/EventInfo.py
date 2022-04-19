@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from path_finding.common_types import *
+from types.type_dictionary import *
 
 
 # todo: documentation

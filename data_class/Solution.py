@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from data_class import PathProblem
-from path_finding.common_types import *
+from types.type_dictionary import *
 
 
 @dataclass

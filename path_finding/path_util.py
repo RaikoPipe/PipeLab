@@ -1,10 +1,9 @@
-import heapq
 from copy import deepcopy
 
 from data_class.Predecessor import Predecessor
 from data_class.Solution import Solution
-from path_finding.common_types import *
-from path_finding.path_math import diff_pos, manhattan_distance, get_direction
+from types.type_dictionary import *
+from path_finding.path_math import diff_pos, get_direction
 
 def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_grid, score,
                        algorithm, path_problem, fast_mode) -> Solution:

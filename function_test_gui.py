@@ -219,7 +219,7 @@ def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_sto
     tree.yview_moveto(1)
 
 
-def get_button_grid(state_grid: np.ndarray, total_definite_trail, start, goal, button_grid_frame,
+def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_grid_frame,
                     process_planner: Optional[ProcessPlanner],
                     part_select_option: Optional[tk.IntVar], tree, part_stock_tree, solution_button_grid):
     previous_style_grids = []
@@ -236,7 +236,7 @@ def get_button_grid(state_grid: np.ndarray, total_definite_trail, start, goal, b
             style_grid[pos] = obs_style
         elif state == 2:
             # what part?
-            if total_definite_trail[pos] == 0:
+            if absolute_trail[pos] == 0:
                 style = fit_style
                 style_grid[pos] = fit_style
             else:
@@ -323,7 +323,7 @@ class function_test_app:
         solution_button_grid, _, _ = get_button_grid(state_grid=state_grid,
                                                      button_grid_frame=solution_button_grid_frame,
                                                      start=start, goal=goal,
-                                                     total_definite_trail=self.process_planner.optimal_solution.absolute_trail,
+                                                     absolute_trail=self.process_planner.optimal_solution.absolute_trail,
                                                      process_planner=None,
                                                      part_select_option=None, tree=None, part_stock_tree=None,
                                                      solution_button_grid=None)
@@ -409,7 +409,7 @@ class function_test_app:
         construction_button_grid, style_grid, previous_style_grids = get_button_grid(
             state_grid=self.process_planner.latest_assembly_state.state_grid, start=start,
             goal=goal, button_grid_frame=construction_button_grid_frame,
-            total_definite_trail=construction_definite_trail,
+            absolute_trail=construction_definite_trail,
             process_planner=self.process_planner,
             part_select_option=part_select_option,
             tree=process_message_tree, part_stock_tree=part_stock_tree, solution_button_grid=solution_button_grid)

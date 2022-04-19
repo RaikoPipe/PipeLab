@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 import vpython as vpy
 
-from path_finding.common_types import *
+from data_class.type_dictionary import *
 from rendering.object_data_classes import mounting_wall_data
 
 
@@ -43,8 +43,8 @@ def get_rendering_grid(x_nodes: int, y_nodes: int, x_start: float = x_start_defa
         Tuple[np.ndarray, mounting_wall_data]:
     """create a grid that contains 2D-coordinates for each position
     Args:
-        x_nodes:
-        y_nodes:
+        x_nodes: number of nodes on the x-axis
+        y_nodes: number of nodes on the y-axis
         x_start: x coordinate value that signifies position of the first node on the x axis
         y_start: y coordinate value that signifies position of the first node on the y axis
         z_start: z coordinate value of spacing of nodes to the x-y-plane

@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 
-from path_finding.common_types import *
+from types.type_dictionary import *
 
-
-# todo: documentation
+#todo: documentation
 
 @dataclass
 class BuildingInstruction:

@@ -1,4 +1,4 @@
-from path_finding.common_types import Pos
+from types.type_dictionary import Pos
 from path_finding.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
 from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check

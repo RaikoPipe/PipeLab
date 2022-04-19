@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 
 from data_class.Weights import Weights
-from path_finding.common_types import *  #
+from types.type_dictionary import *  #
 
 
 # todo: documentation

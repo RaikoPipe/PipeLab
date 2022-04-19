@@ -5,6 +5,8 @@ from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
 from grid import grid_functions, randomizer
 
+# todo: make server environment
+
 x = 20
 y = 20
 
