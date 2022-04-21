@@ -5,7 +5,7 @@ import constants as const
 from data_class.BuildingInstruction import BuildingInstruction
 from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
-from types.type_dictionary import Trail
+from type_dictionary.common_types import Trail
 from path_finding.path_math import manhattan_distance
 from path_finding.solution_manager import get_solution
 
@@ -17,12 +17,15 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
     Tries to generate partial solutions with the given node pairs. Node pairs may be excluded if
     no solution to any other node is found. Node pairs in the same tuple are prevented from connecting.
 
-    :param outgoing_node_pairs_set: Set of node pairs that represent the end points of a layout
-    :param exclusion_list: List of node pairs that are excluded from connecting.
-    :param outgoing_node_directions_dict: Dictionary containing the directions each node can be connected to.
-    :param state_grid: #todo: reference
-    :param part_stock: todo: reference
-    :param path_problem: todo: reference
+    Args:
+
+        outgoing_node_pairs_set: Set of node pairs that represent the end points of a layout
+        exclusion_list: List of node pairs that are excluded from connecting.
+        outgoing_node_directions_dict: Dictionary containing the directions each node can be connected to.
+        state_grid: #todo: reference
+        part_stock: todo: reference
+        path_problem: :class: 'data_class.PathProblem.PathProblem'
+
     """
 
     start = path_problem.start_pos
@@ -63,6 +66,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
                                                starting_part=0,
                                                state_grid=deepcopy(state_grid))
 
+            draw_debug = False
             solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
 
             if not solution:
@@ -70,7 +74,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
                 exclusion_list.append({point_pos, other_point_pos})
                 continue
             else:
-                print(point_pos, other_point_pos, solution.definite_path)
+                print(point_pos, other_point_pos, solution.absolute_path)
 
             heapq.heappush(open_list, (solution.score, other_point_pos, solution))
         # get connecting node with best score, then remove it
@@ -80,6 +84,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
             best_solution = best[2]
             exclusion_list.append({point_pos, best_point})
             all_points_list.remove(best_point)
+            other_points.remove(point_pos)
             partial_solutions.append(best_solution)
             part_stock = solution.part_stock  # adjust part stock for next iteration
             # state_grid = solution.state_grid
@@ -98,22 +103,24 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
     rendering_dict = {}
 
     # add solution information from already completed layouts
-    for layout_trail, layout_state in completed_layouts.items():
+    for layout_trail, building_instruction in completed_layouts.items():
+        building_instruction: BuildingInstruction
+        layout_trail:Trail
 
         unordered_layouts.add(layout_trail)  # add for use later
 
-        fit_first = layout_state.required_fit_positions[0]
-        fit_last = layout_state.required_fit_positions[1]
+        fit_first = building_instruction.required_fit_positions[0]
+        fit_last = building_instruction.required_fit_positions[1]
 
         rendering_dict[fit_first] = const.fitting_id
-        rendering_dict[layout_trail[1]] = layout_state.part_id
+        rendering_dict[layout_trail[1]] = building_instruction.pipe_id
         rendering_dict[fit_last] = const.fitting_id
 
         for pos in layout_trail:
-            if pos in layout_state.required_fit_positions:
+            if pos in building_instruction.required_fit_positions:
                 absolute_trail[pos] = const.fitting_id
             else:
-                absolute_trail[pos] = layout_state.part_id
+                absolute_trail[pos] = building_instruction.pipe_id
 
     # also update total definite trail from partial solutions
     for partial_solution in partial_solutions:
@@ -151,6 +158,6 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
     # todo: if needed, recalculate score
     score = last_partial_solution.score
     fused_solution = Solution(part_stock=part_stock, path_problem=initial_path_problem, rendering_dict=rendering_dict,
-                              algorithm=algorithm, state_grid=state_grid, score=score, layouts=ordered_layouts,
+                              algorithm=algorithm, state_grid=state_grid, score=score, ordered_trails=ordered_layouts,
                               absolute_trail=absolute_trail)
     return fused_solution

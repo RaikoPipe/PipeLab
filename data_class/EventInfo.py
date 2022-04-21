@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Optional
 
-from types.type_dictionary import *
+from type_dictionary.common_types import *
 
 
 # todo: documentation

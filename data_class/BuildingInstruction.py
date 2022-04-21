@@ -1,15 +1,12 @@
 from dataclasses import dataclass
 
-from types.type_dictionary import *
+from type_dictionary.common_types import *
 
 #todo: documentation
 
 @dataclass
 class BuildingInstruction:
     """Contains instructions for a construction layout.
-    :param pipe_id:
-    Args:
-        pipe_id:
         """
 
     pipe_id: int  # ID of pipe that needs to be

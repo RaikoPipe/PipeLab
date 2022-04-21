@@ -1,7 +1,7 @@
 import numpy as np
 
 import path_finding.restriction_functions
-from types.type_dictionary import Pos
+from type_dictionary.common_types import Pos, Trail, Layouts
 
 from data_class.BuildingInstruction import BuildingInstruction
 from path_finding.path_math import get_direction, diff_pos, manhattan_distance

@@ -6,7 +6,7 @@ from data_class.PathProblem import PathProblem
 from data_class.Solution import Solution
 from data_class.Weights import Weights
 from path_finding import partial_solver
-from types.type_dictionary import *
+from type_dictionary.common_types import *
 from path_finding.search_algorithm import find_path
 from process_planning.ProcessState import ProcessState
 from process_planning.pp_util import get_completed_instructions, get_outgoing_node_pairs, get_outgoing_node_directions, \
@@ -84,10 +84,12 @@ def get_solution_on_detour_event(initial_path_problem, process_state, detour_eve
     detour_trail = list(detour_event)[0][0]
 
     for partial_solution in partial_solutions:
-        if detour_trail in partial_solution.ordered_trails:
-            solution = partial_solver.fuse_partial_solutions(partial_solutions, completed_instructions,
-                                                             initial_path_problem)
-            break
+        for trail in partial_solution.ordered_trails:
+
+            if detour_trail in trail:
+                solution = partial_solver.fuse_partial_solutions(partial_solutions, completed_instructions,
+                                                                 initial_path_problem)
+                break
 
     return solution
 
@@ -115,12 +117,19 @@ def make_special_message(message: str, event_pos: Pos):
     return message
 
 
-def make_error_message(event_pos: Pos, additional_message: str):  #
+def make_error_message(event_pos: Pos, additional_message: str):
     """Returns error messages as string containing the position where the error occurred as well as additional
     information regarding the reason for the error."""
     message = str.format(f"process_planning: Process error at Position {event_pos}: {additional_message}")
     return message
 
+# Todo:
+#   Known Issues:
+#   - detour event not triggered if deviated fitting and fitting on solution in proximity
+#   - Can't return to optimal solution (Fix: Track detour trail, if removed, go back to optimal solution)
+#   - Pipes with deviating IDs can't be placed on solution nodes
+#   - missing intelligence: if unknown pipe id in between two fittings (in a detour event), check if distance between two fittings
+#       exists as a picked part, then assign and continue detour event
 
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process with ProcessState and provides robot
@@ -271,9 +280,6 @@ class ProcessPlanner:
                                                additional_message=error_note)
 
         self.tentative_process_state.last_event_info = event_info
-
-        # todo: remove function_test
-        print(self.tentative_process_state.motion_dict)
 
         return message, special_message, error_message
 

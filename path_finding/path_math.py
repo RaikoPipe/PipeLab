@@ -3,7 +3,7 @@ from math import copysign
 import numpy as np
 
 from constants import *
-from types.type_dictionary import *
+from type_dictionary.common_types import *
 
 
 def sum_pos(a: Pos, b: Pos) -> Pos:

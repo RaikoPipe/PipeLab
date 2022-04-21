@@ -1,7 +1,7 @@
 from constants import horizontal_directions, vertical_directions
 from data_class.BuildingInstruction import BuildingInstruction
 from data_class.Solution import Solution
-from types.type_dictionary import Trail, Pos
+from type_dictionary.common_types import Trail, Pos
 from path_finding.path_math import get_direction, diff_pos, manhattan_distance
 from process_planning.ProcessState import ProcessState
 from process_planning.ps_util import get_optimal_attachment_pos

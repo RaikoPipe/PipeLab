@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from data_class import PathProblem
-from types.type_dictionary import *
+from type_dictionary.common_types import *
 
 
 @dataclass
@@ -21,5 +21,5 @@ class Solution:
     part_stock: dict[int:int]
 
     # todo: replace code using this with rendering_dict
-    definite_path: DefinitePath = field(
+    absolute_path: list = field(
         default_factory=list)  # solution path: Positions with parts used to get to position

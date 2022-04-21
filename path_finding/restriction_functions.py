@@ -1,4 +1,4 @@
-from types.type_dictionary import Pos
+from type_dictionary.common_types import Pos
 from path_finding.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
 from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check
@@ -62,16 +62,17 @@ def goal_restricted(part_id: int, neighbor_pos: Pos, direction, goal_dict: dict[
 
 
 def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], current_pos: tuple,
-                          pipe_stock, predecessors, fast_mode, key, current_part_id) -> set:
+                          pipe_stock, predecessors, fast_mode, key, start_pos) -> set:
     """Determines what neighbors are reachable from the current position and with the available parts."""
 
-    available_parts = pipe_stock_check(pipe_stock, predecessors, fast_mode, key)
+
     neighbor_relative_positions = set()
-    previous_part = current_part_id
+    previous_part = predecessors.get(key).part_to_successor
+    available_parts = pipe_stock_check(pipe_stock, predecessors, fast_mode, key)
     remove = set()
 
     for direction in directions:
-        if previous_part is None:
+        if current_pos == start_pos:
             # neighbor_pos.extend(get_corner_neighbors(direction, available_parts))
             neighbor_relative_positions.update(get_pipe_neighbors(direction, available_parts, True))
         elif previous_part == 0:

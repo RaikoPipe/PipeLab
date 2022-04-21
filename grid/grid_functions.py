@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 import vpython as vpy
 
-from data_class.type_dictionary import *
+from type_dictionary.common_types import *
 from rendering.object_data_classes import mounting_wall_data
 
 

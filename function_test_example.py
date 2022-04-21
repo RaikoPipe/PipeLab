@@ -1,6 +1,6 @@
 from data_class.PathProblem import PathProblem
 from data_class.Weights import Weights
-from function_test_gui import function_test_app
+from function_test.function_test_gui import function_test_app
 from grid import grid_functions, randomizer
 from path_finding.search_algorithm import find_path
 

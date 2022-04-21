@@ -7,7 +7,7 @@ default_mounting_wall = odc.mounting_wall_data()
 default_scene = odc.scene_data()
 default_obstacle = odc.obstacle_data()
 
-# default pipe types
+# default pipe type_dictionary
 pipe_magenta = odc.pipe_data(point_length=1, cost=1.15, length=88, color=vpy.color.magenta)
 pipe_blue = odc.pipe_data(point_length=2, cost=1.38, length=193, color=vpy.color.blue)
 pipe_cyan = odc.pipe_data(point_length=3, cost=1.6, length=298, color=vpy.color.cyan)

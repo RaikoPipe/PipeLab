@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 
 from data_class.Weights import Weights
-from types.type_dictionary import *  #
+from type_dictionary.common_types import *  #
 
 
 # todo: documentation
@@ -16,8 +16,8 @@ class PathProblem:
     start_pos: Pos
     goal_pos: Pos
 
-    start_directions: Positions  # directions that start is restricted to
-    goal_directions: Positions  # directions that goal is restricted to (i.e. last part that is linked to the goal)
+    start_directions: set[Pos]  # directions that start is restricted to
+    goal_directions: set[Pos]  # directions that goal is restricted to (i.e. last part that is linked to the goal)
 
     starting_part: Optional[int]  # signifies if there is a starting part; None: No part; 0: Corner; 1: Pipe
 

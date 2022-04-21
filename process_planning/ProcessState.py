@@ -6,9 +6,9 @@ from data_class.ConstructionState import ConstructionState
 from data_class.EventInfo import EventInfo
 from data_class.Solution import Solution
 from path_finding import path_math
-from types.type_dictionary import *
+from type_dictionary.common_types import *
 # todo: documentation
-from types.type_dictionary import Pos, Trail
+from type_dictionary.common_types import Pos, Trail
 from path_finding.path_math import get_direction, diff_pos
 from process_planning.ps_util import get_neighboring_layouts, get_detour_trail, \
     get_detour_state, get_building_instructions_from_solution
@@ -106,7 +106,7 @@ class ProcessState:
                                current_layout=current_layout, removal=removal, part_not_picked=part_not_picked,
                                detour_event=detour_event, error=error)
 
-        construction_state = ConstructionState(event_code=worker_event_code, part_id=part_id, deviated=deviated,
+        construction_state = ConstructionState(event_pos=worker_event_pos, event_code=worker_event_code, part_id=part_id, deviated=deviated,
                                                misplaced=misplaced, unnecessary=unnecessary)
 
         # event evaluation
@@ -122,7 +122,7 @@ class ProcessState:
             return event_info
 
         event_info.obstructed_part = self.obstructed_part(worker_event_pos, worker_event_code)
-        if obstructed_part:
+        if event_info.obstructed_part:
             return event_info
 
         building_instruction, current_layout = self.get_building_instruction(worker_event_code, worker_event_pos)
@@ -371,9 +371,6 @@ class ProcessState:
         # copy picked parts
         picked_parts = deepcopy(self.picked_parts)
 
-        # make a fake picked parts
-        self.picked_parts = None
-
         # reevaluate motion dict according to new building instructions
         self.last_event_trail = self.aimed_solution.ordered_trails[0]
         for pos, construction_state in motion_dict.items():
@@ -398,7 +395,7 @@ class ProcessState:
                 self.fitting_placed(event_pos=construction_state.event_pos, building_instruction=building_instruction,
                                     event_info=event_info, ignore_part_restriction=True)
 
-        self.last_event_trail = detour_event.popitem()[0]
+        self.last_event_trail = list(detour_event.keys())[0]
 
     # restriction checks
 

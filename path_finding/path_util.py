@@ -2,50 +2,55 @@ from copy import deepcopy
 
 from data_class.Predecessor import Predecessor
 from data_class.Solution import Solution
-from types.type_dictionary import *
+from type_dictionary.common_types import *
 from path_finding.path_math import diff_pos, get_direction
 
 def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_grid, score,
-                       algorithm, path_problem, fast_mode) -> Solution:
+                       algorithm, path_problem, fast_mode, goal_pos, goal_part) -> Solution:
     """Returns a solution based on given parameters. """
 
-    definite_path = []
+    absolute_path = []
     rendering_dict = {}
     part_stock = deepcopy(path_problem.part_stock)
+    absolute_path.append((goal_pos,goal_part))
+    rendering_dict[goal_pos] = goal_part
+    part_stock[goal_part] -= 1
     while current_node in predecessors:
-        part_id = predecessors.get(current_node).part_used
+        part_id = predecessors.get(current_node).part_to_successor
         if current_node == Pos:
-            definite_path.append((current_node, part_id))
+            absolute_path.append((current_node, part_id))
+            rendering_dict[current_node] = part_id
         else:
-            definite_path.append((current_node[0], part_id))
-        rendering_dict[current_node] = part_id
+            absolute_path.append((current_node[0], part_id))
+            rendering_dict[current_node[0]] = part_id
+
 
         part_stock[part_id] -= 1
         predecessor_node: Predecessor = predecessors.get(current_node)
         if fast_mode:
             current_node = predecessor_node.pos
         else:
-            current_node = (predecessor_node.pos, predecessor_node.part_used, predecessor_node.direction)
+            current_node = (predecessor_node.pos, predecessor_node.part_to_predecessor, predecessor_node.direction)
         if current_node is None:
             break
 
-    definite_path = definite_path[::-1]  # reverse order
+    absolute_path = absolute_path[::-1]  # reverse order
 
     absolute_trail = {}
     ordered_trails = []
     fc_set = set()
     fit_start_pos = None
     i = 0
-    while i < len(definite_path) - 1:
-        start_node = definite_path[i]
+    while i < len(absolute_path) - 1:
+        start_node = absolute_path[i]
 
         if start_node[1] == 0 or start_node[1] is None:
             trail_list = []
             absolute_trail[start_node[0]] = start_node[1]
             trail_list.append(start_node[0])
             # get id of straight pipe
-            pipe_node = definite_path[i + 1]
-            end_node = definite_path[i + 2]
+            pipe_node = absolute_path[i + 1]
+            end_node = absolute_path[i + 2]
             direction = get_direction(diff_pos(start_node[0], end_node[0]))
 
             pos = start_node[0]
@@ -64,7 +69,7 @@ def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_
             # definite path must start with None or 0
             raise Exception
 
-    return Solution(definite_path=definite_path, absolute_trail=absolute_trail,
+    return Solution(absolute_path=absolute_path, absolute_trail=absolute_trail,
                     ordered_trails=ordered_trails, state_grid=state_grid, score=score, algorithm=algorithm,
                     path_problem=path_problem, part_stock=part_stock,
                     rendering_dict=rendering_dict)
@@ -151,20 +156,20 @@ def pipe_stock_check(pipe_stock: dict, predecessors: dict, fast_mode, key) -> li
     """Checks how many parts are available."""
     available_parts = []
     pipe_stock_copy = deepcopy(pipe_stock)
-    if not predecessors:
+    if len(predecessors) < 2:
         # no parts used, no need to check current path
         available_parts = get_available_parts(pipe_stock_copy)
         return available_parts
 
     while key in predecessors:
-        part_id = predecessors.get(key).part_used
+        part_id = predecessors.get(key).part_to_successor
 
         predecessor_node: Predecessor = predecessors.get(key)
 
         if fast_mode:
             key = predecessor_node.pos
         else:
-            key = (predecessor_node.pos, predecessor_node.part_used, predecessor_node.direction)
+            key = (predecessor_node.pos, predecessor_node.part_to_predecessor, predecessor_node.direction)
 
         pipe_stock_copy[part_id] -= 1
 

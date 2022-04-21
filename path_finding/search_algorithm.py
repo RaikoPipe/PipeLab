@@ -1,3 +1,4 @@
+import heapq
 from copy import copy, deepcopy
 from typing import Optional
 
@@ -51,7 +52,8 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
     key_dict = {1: start_pos, 0: (start_pos, starting_part, None)}
 
     predecessors = {
-        key_dict.get(fast_mode): Predecessor(state_grid=state_grid, direction=None, path=(), part_used=starting_part,
+        key_dict.get(fast_mode): Predecessor(state_grid=state_grid, direction=None, path=(), part_to_predecessor=None,
+                                             part_to_successor=0,
                                              part_stock=path_problem.part_stock, pos=None)}
     current_state_grid = state_grid
     current_state_grid[start_pos] = 2
@@ -77,12 +79,10 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
         current_path = tuple(current_path)
 
         if current_pos == start_pos:
-
-            # fixme: used part is ambiguous, therefore error
             verifiable_neighbors = restrict_neighbor_pos(directions=start_directions,
                                                          goal_dict=goal_dict,
                                                          current_pos=current_pos,
-                                                         current_part_id=current_part_id,
+                                                         start_pos=start_pos,
                                                          pipe_stock=pipe_stock, predecessors=predecessors,
                                                          fast_mode=fast_mode, key=key_dict.get(fast_mode))
         else:
@@ -94,10 +94,12 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
             verifiable_neighbors = restrict_neighbor_pos(directions={current_direction},
                                                          goal_dict=goal_dict,
                                                          current_pos=current_pos,
-                                                         current_part_id=current_part_id,
+                                                         start_pos=start_pos,
                                                          pipe_stock=pipe_stock, predecessors=predecessors,
                                                          fast_mode=fast_mode, key=key_dict.get(fast_mode))
-
+        print(current_path)
+        if current_path == ((0, 0), (0, 2), (0, 3), (2, 3), (3, 3), (3, 2), (3, 1), (2, 1), (1, 1), (1, 2)):
+            print("dubg")
         if draw_debug:
             data = current_state_grid.tolist()
             plt.imshow(data)
@@ -116,7 +118,8 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
             goal_node = key_dict.get(fast_mode)
 
             # add a predecessor that reaches goal
-            predecessors[goal_node] = Predecessor(pos=current_pos, part_used=current_part_id,
+            predecessors[goal_node] = Predecessor(pos=current_pos, part_to_successor=0,
+                                                  part_to_predecessor=current_part_id,
                                                   direction=get_direction(diff_pos(current_pos, goal_pos)),
                                                   path=tuple(current_path),
                                                   state_grid=current_state_grid, part_stock=pipe_stock)
@@ -124,8 +127,8 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
             end_score = total_score[current_pos]
             # current_pos = goal_pos
 
-            return construct_solution(predecessors=predecessors, current_node=goal_node, state_grid=current_state_grid,
-                                      score=end_score,
+            return construct_solution(predecessors=predecessors, current_node=current_node, state_grid=current_state_grid,
+                                      score=end_score, goal_pos = goal_pos, goal_part = 0,
                                       algorithm=algorithm, path_problem=path_problem, fast_mode=fast_mode)
 
         closed_list.add(key_dict.get(fast_mode))
@@ -154,7 +157,8 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
             if current_score_start_distance < score_start.get(neighbor_pos, 0) or (
             neighbor_pos, neighbor_part_id, neighbor_direction) not in p_list:
                 # todo: make predecessors get pos, part id and direction as key (prevents infinite loop)
-                predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_used=current_part_id,
+                predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_to_successor=neighbor_part_id,
+                                                                    part_to_predecessor=current_part_id,
                                                                     direction=current_direction, path=current_path,
                                                                     state_grid=current_state_grid,
                                                                     part_stock=pipe_stock)
