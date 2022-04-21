@@ -6,11 +6,11 @@ from typing import Optional
 import numpy as np
 
 from data_class.ConstructionState import ConstructionState
-from data_class.PathProblem import PathProblem
 from data_class.EventInfo import EventInfo
+from data_class.PathProblem import PathProblem
 from process_planning.ProcessPlanner import ProcessPlanner
 from process_planning.ProcessState import ProcessState
-from process_planning.pp_util import get_total_definite_trail_from_construction_layouts
+from process_planning.pp_util import get_absolute_trail_from_building_instructions
 
 free_style = "FREE.TButton"
 pipe_style = "PIPE.TButton"
@@ -144,29 +144,35 @@ def update_button_grid(button_grid, process_planner, style_grid, previous_style_
     #                 style_grid[pos] = initial_style_grid[pos]
 
 
-
-
-def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previous_style_grids):
+def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previous_style_grids, process_message_tree):
     process_planner.return_to_previous_state()
+    if previous_style_grids:
+        style_grid = previous_style_grids.pop(0)
+        for pos, style in np.ndenumerate(style_grid):
+            button_grid[pos].configure(style=style)
 
-    style_grid = previous_style_grids.pop(0)
-    for pos, style in np.ndenumerate(style_grid):
-        button_grid[pos].configure(style=style)
+        part_id = 0
+        for item in part_stock_tree.get_children():
+            part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
+                                               process_planner.tentative_process_state.part_stock[part_id]))
+            part_id += 1
 
-    part_id = 0
-    for item in part_stock_tree.get_children():
-        part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
-                                           process_planner.tentative_process_state.part_stock[part_id]))
-        part_id += 1
+        global message_count
+        process_message_tree.insert("", index=tk.END, values=("Last Action was undone!",))
+        process_message_tree.tag_configure(tagname=message_count, background="cyan")
+        message_count += 1
+
+
 
 message_count = 0
+
 
 def update_solution_grid(tentative_state: ProcessState, button_grid):
     # clear everything
     for pos, state in np.ndenumerate(tentative_state.state_grid):
         button_grid[pos].configure(style=free_style)
 
-    for pos, part_id in tentative_state.aimed_solution.total_definite_trail.items():
+    for pos, part_id in tentative_state.aimed_solution.absolute_trail.items():
         if part_id == 0:
             button_grid[pos].configure(style=fit_style)
         else:
@@ -175,11 +181,11 @@ def update_solution_grid(tentative_state: ProcessState, button_grid):
 
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
                              initial_style_grid, part_stock_tree, previous_style_grids, solution_button_grid):
-    process_state, messages = process_planner.main_func((pos, event_code), check_for_deviations=True, ignore_errors=False)
+    process_state, messages = process_planner.main((pos, event_code), check_for_deviations=True, ignore_errors=False)
     event_info: EventInfo = process_state.last_event_info
     update_button_grid(button_grid, process_planner, style_grid, previous_style_grids)
 
-    if event_info.rerouting_event:
+    if event_info.detour_event:
         update_solution_grid(tentative_state=process_state, button_grid=solution_button_grid)
 
     message = messages[0]
@@ -189,10 +195,17 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
     global message_count
     if message:
         tree.insert("", index=tk.END, tag=message_count, values=(message.replace("process_planning: ", ""),))
+        tree.tag_configure(tagname=message_count, background="green2")
+        if special_message and not event_info.removal:
+            tree.tag_configure(tagname=message_count, background="yellow")
+        if error_message:
+            tree.tag_configure(tagname=message_count, background="red")
         message_count += 1
     if special_message:
         tree.insert("", index=tk.END, tag=message_count, values=(special_message.replace("process_planning: ", ""),))
         tree.tag_configure(tagname=message_count, background="yellow")
+        if event_info.removal:
+            tree.tag_configure(tagname=message_count, background="green2")
         message_count += 1
     if error_message:
         tree.insert("", index=tk.END, tag=message_count, values=(error_message.replace("process_planning: ", ""),))
@@ -210,7 +223,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
 def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree, style_grid,
                         previous_style_grids):
-    message = process_planner.new_pick_event(part_id)
+    message = process_planner.send_new_pick_event(part_id)
     tree.insert("", index=tk.END, values=(message,))
     item = part_stock_tree.get_children()[part_id]
     part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
@@ -219,7 +232,7 @@ def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_sto
     tree.yview_moveto(1)
 
 
-def get_button_grid(state_grid: np.ndarray, total_definite_trail, start, goal, button_grid_frame,
+def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_grid_frame,
                     process_planner: Optional[ProcessPlanner],
                     part_select_option: Optional[tk.IntVar], tree, part_stock_tree, solution_button_grid):
     previous_style_grids = []
@@ -236,7 +249,7 @@ def get_button_grid(state_grid: np.ndarray, total_definite_trail, start, goal, b
             style_grid[pos] = obs_style
         elif state == 2:
             # what part?
-            if total_definite_trail[pos] == 0:
+            if absolute_trail[pos] == 0:
                 style = fit_style
                 style_grid[pos] = fit_style
             else:
@@ -257,7 +270,8 @@ def get_button_grid(state_grid: np.ndarray, total_definite_trail, start, goal, b
             command = lambda t=pos: send_new_placement_event(t, part_select_option.get(), process_planner, button_grid,
                                                              tree, style_grid, initial_style_grid,
                                                              previous_style_grids=previous_style_grids,
-                                                             part_stock_tree=part_stock_tree, solution_button_grid=solution_button_grid)
+                                                             part_stock_tree=part_stock_tree,
+                                                             solution_button_grid=solution_button_grid)
             button.config(command=command)
         else:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
@@ -275,7 +289,6 @@ class function_test_app:
 
         self.process_planner = ProcessPlanner(initial_path_problem=path_problem, initial_process_state=initial_state)
 
-
         start = path_problem.start_pos
         goal = path_problem.goal_pos
 
@@ -285,7 +298,7 @@ class function_test_app:
         style = ttk.Style()
         button_width = 5
         button_height = 5
-        font= ('Tahoma', 7)
+        font = ('Tahoma', 7)
         style.configure(free_style, background="white", width=button_width, height=button_height, font=font)
         style.configure(pipe_style, background="blue", width=button_width, height=button_height, font=font)
         style.configure(obs_style, background="orange", width=button_width, height=button_height, font=font)
@@ -293,14 +306,19 @@ class function_test_app:
         style.configure(start_style, background="green", width=button_width, height=button_height, font=font)
         style.configure(goal_style, background="red", width=button_width, height=button_height, font=font)
         style.configure(att_style, background="magenta", width=button_width, height=button_height, font=font)
-        style.configure(fit_caution_style, background="cyan", foreground="yellow", width=button_width, height=button_height,
+        style.configure(fit_caution_style, background="cyan", foreground="yellow", width=button_width,
+                        height=button_height,
                         font=font)
-        style.configure(att_caution_style, background="magenta", foreground="yellow", width=button_width, height=button_height,
+        style.configure(att_caution_style, background="magenta", foreground="yellow", width=button_width,
+                        height=button_height,
                         font=font)
-        style.configure(pipe_caution_style, background="blue", foreground="yellow", width=button_width, height=button_height,
+        style.configure(pipe_caution_style, background="blue", foreground="yellow", width=button_width,
+                        height=button_height,
                         font=font)
-        style.configure(fit_warn_style, background="cyan", foreground="red", width=button_width, height=button_height, font=font)
-        style.configure(att_warn_style, background="magenta", foreground="red", width=button_width, height=button_height,
+        style.configure(fit_warn_style, background="cyan", foreground="red", width=button_width, height=button_height,
+                        font=font)
+        style.configure(att_warn_style, background="magenta", foreground="red", width=button_width,
+                        height=button_height,
                         font=font)
         style.configure(pipe_warn_style, background="blue", foreground="red", width=button_width, height=button_height,
                         font=font)
@@ -318,9 +336,10 @@ class function_test_app:
         solution_button_grid, _, _ = get_button_grid(state_grid=state_grid,
                                                      button_grid_frame=solution_button_grid_frame,
                                                      start=start, goal=goal,
-                                                     total_definite_trail=self.process_planner.optimal_solution.total_definite_trail,
+                                                     absolute_trail=self.process_planner.optimal_solution.absolute_trail,
                                                      process_planner=None,
-                                                     part_select_option=None, tree=None, part_stock_tree=None, solution_button_grid=None)
+                                                     part_select_option=None, tree=None, part_stock_tree=None,
+                                                     solution_button_grid=None)
 
         # Current Build Layout Display
 
@@ -391,28 +410,29 @@ class function_test_app:
                                                                                                 previous_style_grids=previous_style_grids))
             return_to_previous_state.pack(anchor=tk.W)
             part_stock_tree.insert("", tk.END,
-                                   values=(part_id, self.process_planner.tentative_process_state.picked_parts.count(part_id),
-                                           self.process_planner.tentative_process_state.part_stock[part_id]))
+                                   values=(
+                                   part_id, self.process_planner.tentative_process_state.picked_parts.count(part_id),
+                                   self.process_planner.tentative_process_state.part_stock[part_id]))
 
         # todo: Construction Build Information Frame with picked_parts, current stock, deviation, solution scores etc.
 
-        construction_definite_trail = get_total_definite_trail_from_construction_layouts(
+        construction_definite_trail = get_absolute_trail_from_building_instructions(
             self.process_planner.latest_assembly_state.building_instructions)
 
         construction_button_grid, style_grid, previous_style_grids = get_button_grid(
             state_grid=self.process_planner.latest_assembly_state.state_grid, start=start,
             goal=goal, button_grid_frame=construction_button_grid_frame,
-            total_definite_trail=construction_definite_trail,
+            absolute_trail=construction_definite_trail,
             process_planner=self.process_planner,
             part_select_option=part_select_option,
-            tree=process_message_tree, part_stock_tree=part_stock_tree, solution_button_grid = solution_button_grid)
+            tree=process_message_tree, part_stock_tree=part_stock_tree, solution_button_grid=solution_button_grid)
 
         return_to_previous_state = ttk.Button(tool_frame, text="Undo action",
                                               command=lambda: undo_action(process_planner=self.process_planner,
                                                                           part_stock_tree=part_stock_tree,
                                                                           button_grid=construction_button_grid,
                                                                           style_grid=style_grid,
-                                                                          previous_style_grids=previous_style_grids))
+                                                                          previous_style_grids=previous_style_grids, process_message_tree=process_message_tree))
         return_to_previous_state.grid(row=2, column=0)
 
         # setting title

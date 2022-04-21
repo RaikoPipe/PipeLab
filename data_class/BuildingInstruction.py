@@ -1,18 +1,12 @@
 from dataclasses import dataclass
-from data_class import PathProblem
-from typing import Optional, Set
-from path_finding.common_types import *
-from data_class.Solution import Solution
 
+from type_dictionary.common_types import *
 
-# todo: documentation
+#todo: documentation
 
 @dataclass
 class BuildingInstruction:
     """Contains instructions for a construction layout.
-    :param pipe_id:
-    Args:
-        pipe_id:
         """
 
     pipe_id: int  # ID of pipe that needs to be

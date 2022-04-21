@@ -1,20 +1,22 @@
 """Server; Instantiates Interpreter, Process Planner"""
 
 """Debug starts here"""
-from grid import grid_functions, randomizer
-from data_class.Weights import Weights
 from data_class.PathProblem import PathProblem
+from data_class.Weights import Weights
+from grid import grid_functions, randomizer
 
-x=20
-y=20
+# todo: make server environment
 
-r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x,y)
+x = 20
+y = 20
+
+r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
 solution = None
 while solution is None:
     state_grid = grid_functions.get_empty_stategrid(x, y)
     state_grid = randomizer.set_random_obstacles(0.1, state_grid)
-    start_node = (0,0)
-    goal_node = (17,19)
+    start_node = (0, 0)
+    goal_node = (17, 19)
     state_grid[start_node] = 0
     state_grid[goal_node] = 0
 
@@ -24,7 +26,8 @@ while solution is None:
 
     weights = Weights(path_length=1, cost=0, distance_to_obstacles=0)
 
-    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node, start_direction={(1, 0)},
+    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node,
+                               start_direction={(1, 0)},
                                goal_direction={(0, 1)}, part_cost=part_cost,
                                starting_part=None, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
 """Debug ends here"""
