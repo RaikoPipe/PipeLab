@@ -144,18 +144,24 @@ def update_button_grid(button_grid, process_planner, style_grid, previous_style_
     #                 style_grid[pos] = initial_style_grid[pos]
 
 
-def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previous_style_grids):
+def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previous_style_grids, process_message_tree):
     process_planner.return_to_previous_state()
+    if previous_style_grids:
+        style_grid = previous_style_grids.pop(0)
+        for pos, style in np.ndenumerate(style_grid):
+            button_grid[pos].configure(style=style)
 
-    style_grid = previous_style_grids.pop(0)
-    for pos, style in np.ndenumerate(style_grid):
-        button_grid[pos].configure(style=style)
+        part_id = 0
+        for item in part_stock_tree.get_children():
+            part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
+                                               process_planner.tentative_process_state.part_stock[part_id]))
+            part_id += 1
 
-    part_id = 0
-    for item in part_stock_tree.get_children():
-        part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
-                                           process_planner.tentative_process_state.part_stock[part_id]))
-        part_id += 1
+        global message_count
+        process_message_tree.insert("", index=tk.END, values=("Last Action was undone!",))
+        process_message_tree.tag_configure(tagname=message_count, background="cyan")
+        message_count += 1
+
 
 
 message_count = 0
@@ -189,10 +195,17 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
     global message_count
     if message:
         tree.insert("", index=tk.END, tag=message_count, values=(message.replace("process_planning: ", ""),))
+        tree.tag_configure(tagname=message_count, background="green2")
+        if special_message and not event_info.removal:
+            tree.tag_configure(tagname=message_count, background="yellow")
+        if error_message:
+            tree.tag_configure(tagname=message_count, background="red")
         message_count += 1
     if special_message:
         tree.insert("", index=tk.END, tag=message_count, values=(special_message.replace("process_planning: ", ""),))
         tree.tag_configure(tagname=message_count, background="yellow")
+        if event_info.removal:
+            tree.tag_configure(tagname=message_count, background="green2")
         message_count += 1
     if error_message:
         tree.insert("", index=tk.END, tag=message_count, values=(error_message.replace("process_planning: ", ""),))
@@ -419,7 +432,7 @@ class function_test_app:
                                                                           part_stock_tree=part_stock_tree,
                                                                           button_grid=construction_button_grid,
                                                                           style_grid=style_grid,
-                                                                          previous_style_grids=previous_style_grids))
+                                                                          previous_style_grids=previous_style_grids, process_message_tree=process_message_tree))
         return_to_previous_state.grid(row=2, column=0)
 
         # setting title
