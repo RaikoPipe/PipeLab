@@ -24,7 +24,7 @@ def get_absolute_trail_from_building_instructions(building_instructions: dict[Tr
     absolute_trail = {}
     for trail in building_instructions.keys():
         layout_state = building_instructions[trail]
-        if layout_state.completed:
+        if layout_state.layout_completed:
             for pos in layout_state.fit_set:
                 absolute_trail[pos] = 0
 
@@ -41,7 +41,7 @@ def get_completed_instructions(building_instructions) -> dict[Trail:BuildingInst
     completed_instructions = {}
     for layout_trail in building_instructions.keys():
         instruction = building_instructions[layout_trail]
-        if instruction.completed:
+        if instruction.layout_completed:
             completed_instructions[layout_trail] = instruction
 
     return completed_instructions

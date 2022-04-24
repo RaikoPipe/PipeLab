@@ -1,9 +1,11 @@
 from copy import deepcopy
+from typing import Optional
 
 from data_class.Predecessor import Predecessor
 from data_class.Solution import Solution
 from type_dictionary.common_types import *
-from path_finding.path_math import diff_pos, get_direction
+from path_finding.path_math import diff_pos, get_direction, sum_pos
+
 
 def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_grid, score,
                        algorithm, path_problem, fast_mode, goal_pos, goal_part) -> Solution:
@@ -17,7 +19,8 @@ def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_
     part_stock[goal_part] -= 1
     while current_node in predecessors:
         part_id = predecessors.get(current_node).part_to_successor
-        if current_node == Pos:
+
+        if current_node == Pos: # fixme: doesn't work, fix exists
             absolute_path.append((current_node, part_id))
             rendering_dict[current_node] = part_id
         else:
@@ -56,6 +59,9 @@ def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_
             pos = start_node[0]
             while pos != end_node[0]:
                 pos = (pos[0] + 1 * direction[0], pos[1] + 1 * direction[1])
+                # handle transition case
+                if state_grid[pos] == 3:
+                    continue
                 absolute_trail[pos] = pipe_node[1]
                 trail_list.append(pos)
 
@@ -205,3 +211,13 @@ def is_between(a: Pos, b: Pos, pos: Pos) -> bool:
     con_dir = get_direction(diff_pos(pos, a))
 
     return fit_dir == con_dir
+
+
+def get_transition(pos, direction, transition_points) -> Optional[tuple]:
+    for transition_point in transition_points:
+        check_pos = sum_pos(pos, direction)
+        if check_pos[0] == transition_point[0] or check_pos[1] == transition_point[1]:
+            transition = (transition_point, direction)
+            return transition
+
+    return None

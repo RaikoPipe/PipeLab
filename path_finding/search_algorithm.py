@@ -22,7 +22,10 @@ from path_finding.score_calculation import get_worst_move_cost, get_f_score, get
 
 # fixme: mca* doesn't work, mcsa* doesn't include extra score
 def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=False) -> Optional[Solution]:
-    """Searches for a solution for the given path problem."""
+    """Searches for a solution for the given path problem.
+        :class:`data_class.PathProblem`
+
+    """
     starting_part = path_problem.starting_part
     state_grid = deepcopy(path_problem.state_grid)
     start_pos = path_problem.start_pos
@@ -100,14 +103,11 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
                                                          transition_points=transition_points,
                                                          pipe_stock=pipe_stock, predecessors=predecessors,
                                                          fast_mode=fast_mode, key=key_dict.get(fast_mode))
-        print(current_path)
-        if current_path == ((0, 0), (0, 2), (0, 3), (2, 3), (3, 3), (3, 2), (3, 1), (2, 1), (1, 1), (1, 2)):
-            print("dubg")
+
         if draw_debug:
             data = current_state_grid.tolist()
             plt.imshow(data)
             plt.show()
-            print(current_path)
 
         if current_pos in goal_set:
             # search is finished!
@@ -159,7 +159,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
 
             if current_score_start_distance < score_start.get(neighbor_pos, 0) or (
             neighbor_pos, neighbor_part_id, neighbor_direction) not in p_list:
-                # todo: make predecessors get pos, part id and direction as key (prevents infinite loop)
+
                 predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_to_successor=neighbor_part_id,
                                                                     part_to_predecessor=current_part_id,
                                                                     direction=current_direction, path=current_path,

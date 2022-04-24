@@ -93,6 +93,8 @@ def get_attributes_as_string(data_class):
     for attribute in vars(data_class):
         value = data_class.__getattribute__(attribute)
         if value:
+            if attribute == "time_registered":
+                value = str(value.replace(microsecond=0))
             text += attribute + ": " + str(value) + "\n"
 
     return text
@@ -135,9 +137,9 @@ def get_tool_tip_text_grid(process_planner, tool_tip_text_grid):
     pass
 
 
-def update_button_grid(button_grid, process_planner, style_grid, previous_style_grids, tool_tip_text_grid):
+def update_button_grid(button_grid, process_planner, style_grid,  tool_tip_text_grid):
 
-    previous_style_grids.insert(0, deepcopy(style_grid))
+    #previous_style_grids.insert(0, deepcopy(style_grid))
 
     style_grid = get_style_grid(process_planner, style_grid)
     tool_tip_text_grid = get_tool_tip_text_grid(process_planner, tool_tip_text_grid)
@@ -153,29 +155,48 @@ def update_button_grid(button_grid, process_planner, style_grid, previous_style_
     for pos, tool_tip_text in np.ndenumerate(tool_tip_text_grid):
         Hovertip(button_grid[pos], tool_tip_text, hover_delay=0)
 
+    # reset button text
+    for pos, _ in np.ndenumerate(process_planner.tentative_process_state.state_grid):
+        button_grid[pos].configure(text=str(pos))
+
+    # update button text
+    for _, construction_state in process_planner.tentative_process_state.motion_dict.items():
+        construction_state: ConstructionState
+        button = button_grid[construction_state.event_pos]
+        button : ttk.Button
+        button_text = button.cget("text")
+        button_text : str
+        button_text.replace("?", "")
+        if construction_state.part_id == -2:
+            button_text += "?"
+
+        button_grid[construction_state.event_pos].configure(text=button_text)
 
 
 
 
 
 
-def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previous_style_grids, process_message_tree):
+
+
+def undo_action(process_planner, button_grid, style_grid, part_stock_tree, tool_tip_text_grid, process_message_tree):
     process_planner.return_to_previous_state()
-    if previous_style_grids:
-        style_grid = previous_style_grids.pop(0)
-        for pos, style in np.ndenumerate(style_grid):
-            button_grid[pos].configure(style=style)
+    update_button_grid(button_grid=button_grid, process_planner=process_planner, tool_tip_text_grid=tool_tip_text_grid, style_grid=style_grid)
+    # if previous_style_grids:
+    #     style_grid = previous_style_grids.pop(0)
+    #     for pos, style in np.ndenumerate(style_grid):
+    #         button_grid[pos].configure(style=style)
+    #
+    part_id = 0
+    for item in part_stock_tree.get_children():
+        part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
+                                           process_planner.tentative_process_state.part_stock[part_id]))
+        part_id += 1
 
-        part_id = 0
-        for item in part_stock_tree.get_children():
-            part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
-                                               process_planner.tentative_process_state.part_stock[part_id]))
-            part_id += 1
-
-        global message_count
-        process_message_tree.insert("", index=tk.END, values=("Last Action was undone!",))
-        process_message_tree.tag_configure(tagname=message_count, background="cyan")
-        message_count += 1
+    global message_count
+    process_message_tree.insert("", index=tk.END, text="Last Action was undone!")
+    process_message_tree.tag_configure(tagname=message_count, background="cyan")
+    message_count += 1
 
 
 
@@ -196,11 +217,11 @@ def update_solution_grid(tentative_state: ProcessState, button_grid, initial_sty
 
 
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
-                             initial_style_grid, part_stock_tree, previous_style_grids, solution_button_grid, tool_tip_text_grid):
+                             initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid):
     process_state, messages = process_planner.main((pos, event_code), check_for_deviations=True, ignore_errors=False)
 
     event_info: EventInfo = process_state.last_event_info
-    update_button_grid(button_grid, process_planner, style_grid, previous_style_grids, tool_tip_text_grid)
+    update_button_grid(button_grid, process_planner, style_grid, tool_tip_text_grid)
 
     if event_info.detour_event:
         update_solution_grid(tentative_state=process_state, button_grid=solution_button_grid, initial_style_grid=initial_style_grid)
@@ -211,7 +232,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
     global message_count
     if message:
-        tree.insert("", index=tk.END, tag=message_count, iid=message_count, values=(message.replace("Process Planner: ", ""),))
+        tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=message.replace("Process Planner: ", ""))
         tree.tag_configure(tagname=message_count, background="green2")
         if any((event_info.deviated, event_info.unnecessary, event_info.misplaced)):
             if not event_info.removal:
@@ -227,16 +248,19 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
         message_count += 1
 
         if special_message:
-            tree.insert("", index=tk.END, tag=message_count, iid=message_count, values=(special_message,))
+            tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=special_message)
             extra_message_ids.append(message_count)
             message_count += 1
 
         for attribute in vars(event_info):
             value = event_info.__getattribute__(attribute)
-            if attribute == "detour_event":
+            if attribute == "detour_event" and value:
                 value = True
+            elif attribute == "time_registered":
+
+                value = str(value.replace(microsecond=0))
             if value:
-                tree.insert("", index=tk.END,iid=message_count, tag=message_count, values=(str.format(f"{attribute}: {value}"),))
+                tree.insert("", index=tk.END,iid=message_count, tag=message_count, text=str.format(f"{attribute}: {value}"))
                 extra_message_ids.append(message_count)
                 message_count += 1
 
@@ -248,7 +272,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
             tree.move(child_message_id, parent_message_id, idx-1)
 
     if detour_message:
-        tree.insert("", index=tk.END, tag=message_count,iid=message_count, values=(detour_message,))
+        tree.insert("", index=tk.END, tag=message_count,iid=message_count, text=detour_message)
         tree.tag_configure(tagname=message_count, background="maroon1")
         message_count += 1
 
@@ -280,28 +304,25 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
     part_id = event_info.part_id
 
-    if part_id is not None and part_id != -1 and part_id != -2 and part_id != -99:
+    if part_id not in {None,-1,-2,-99}:
         item = part_stock_tree.get_children()[part_id]
         part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
                                            process_planner.tentative_process_state.part_stock[part_id]))
     tree.yview_moveto(1)
 
 
-def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree, style_grid,
-                        previous_style_grids):
+def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree):
     message = process_planner.send_new_pick_event(part_id)
-    tree.insert("", index=tk.END, values=(message.replace("process_planning: ", ""),))
+    tree.insert("", index=tk.END, text=message.replace("process_planning: ", ""))
     item = part_stock_tree.get_children()[part_id]
     part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
                                        process_planner.tentative_process_state.part_stock[part_id]))
-    previous_style_grids.insert(0, deepcopy(style_grid))
+    #previous_style_grids.insert(0, deepcopy(style_grid))
     tree.yview_moveto(1)
-
 
 def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_grid_frame,
                     process_planner: Optional[ProcessPlanner],
                     part_select_option: Optional[tk.IntVar], tree, part_stock_tree, solution_button_grid):
-    previous_style_grids = []
     # Grid Button
     button_grid = np.zeros((state_grid.shape[0], state_grid.shape[1]), dtype=ttk.Button)
     style_grid = np.zeros((state_grid.shape[0], state_grid.shape[1]), dtype=np.dtype("U100"))
@@ -349,7 +370,6 @@ def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_
                 Hovertip(button, tool_tip_text_grid[pos], hover_delay=0)
             command = lambda t=pos: send_new_placement_event(t, part_select_option.get(), process_planner, button_grid,
                                                              tree, style_grid, initial_style_grid,
-                                                             previous_style_grids=previous_style_grids,
                                                              part_stock_tree=part_stock_tree,
                                                              solution_button_grid=solution_button_grid,
                                                              tool_tip_text_grid=tool_tip_text_grid)
@@ -357,19 +377,20 @@ def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_
         else:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
 
-        button.grid(row=pos[0], column=pos[1], ipady=6, ipadx=3)
+        button.grid(row=pos[0], column=pos[1], ipady=8, ipadx=3)
         button_grid[pos] = button
 
 
 
-    previous_style_grids.insert(0, deepcopy(style_grid))
+    #previous_style_grids.insert(0, deepcopy(style_grid))
 
-    return button_grid, style_grid, previous_style_grids
+    return button_grid, style_grid, tool_tip_text_grid
 
 
 class function_test_app:
     def __init__(self, state_grid: np.ndarray, path_problem: PathProblem, initial_state: Optional[ProcessState]):
         root = tk.Tk()
+
 
         self.process_planner = ProcessPlanner(initial_path_problem=path_problem, initial_process_state=initial_state)
 
@@ -381,7 +402,7 @@ class function_test_app:
 
         style = ttk.Style()
         button_width = 5
-        button_height = 5
+        button_height = 8
         font = ('Tahoma', 7)
         style.configure(free_style, background="white", width=button_width, height=button_height, font=font)
         style.configure(pipe_style, background="blue", width=button_width, height=button_height, font=font)
@@ -476,26 +497,25 @@ class function_test_app:
         process_message_frame = ttk.LabelFrame(layout_frame, text="Process Planner Message Output:")
         process_message_frame.grid(row=1, column=2)
 
-        process_message_tree = ttk.Treeview(process_message_frame, columns="message", show="tree", selectmode="none")
+        process_message_tree = ttk.Treeview(process_message_frame, show="tree", columns=("message",),  selectmode="none")
         #process_message_tree.heading("message", text="Message")
-        process_message_tree.column("message", width=500, anchor=tk.W)
+        process_message_tree.column("#0", width=500)
+        process_message_tree.column("message", width=0, anchor=tk.W)
         process_message_tree.grid(row=0, column=0)
 
         scrollbar = ttk.Scrollbar(process_message_frame, orient=tk.VERTICAL, command=process_message_tree.yview)
-        process_message_tree.configure(yscroll=scrollbar.set, style=treeview_style)
+        process_message_tree.configure(style=treeview_style)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
-        previous_style_grids = []
+        tool_tip_text_grid = []
 
         for part_id in straight_pipe_ids:
-            return_to_previous_state = ttk.Button(part_pick_frame, text="Pick ID " + str(part_id),
+            pick_part_button = ttk.Button(part_pick_frame, text="Pick ID " + str(part_id),
                                                   command=lambda t=part_id: send_new_pick_event(t,
                                                                                                 process_planner=self.process_planner,
                                                                                                 tree=process_message_tree,
-                                                                                                part_stock_tree=part_stock_tree,
-                                                                                                style_grid=style_grid,
-                                                                                                previous_style_grids=previous_style_grids))
-            return_to_previous_state.pack(anchor=tk.W)
+                                                                                                part_stock_tree=part_stock_tree))
+            pick_part_button.pack(anchor=tk.W)
             part_stock_tree.insert("", tk.END,
                                    values=(
                                    part_id, self.process_planner.tentative_process_state.picked_parts.count(part_id),
@@ -506,7 +526,7 @@ class function_test_app:
         construction_definite_trail = get_absolute_trail_from_building_instructions(
             self.process_planner.latest_assembly_state.building_instructions)
 
-        construction_button_grid, style_grid, previous_style_grids = get_button_grid(
+        construction_button_grid, style_grid, tool_tip_text_grid = get_button_grid(
             state_grid=self.process_planner.latest_assembly_state.state_grid, start=start,
             goal=goal, button_grid_frame=construction_button_grid_frame,
             absolute_trail=construction_definite_trail,
@@ -519,7 +539,7 @@ class function_test_app:
                                                                           part_stock_tree=part_stock_tree,
                                                                           button_grid=construction_button_grid,
                                                                           style_grid=style_grid,
-                                                                          previous_style_grids=previous_style_grids, process_message_tree=process_message_tree))
+                                                                          tool_tip_text_grid=tool_tip_text_grid, process_message_tree=process_message_tree))
         return_to_previous_state.grid(row=2, column=0)
 
         # setting title

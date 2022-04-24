@@ -25,9 +25,11 @@ fastening robot event codes:
 
 
 part ids:
+-99: Placeholder
+-2: Unknown straight pipe
 -1: attachment
 0: fitting
-1-n: straight pipe (corresponding to it's dot length)
+1-n: straight pipe (corresponding to the amount of nodes it passes)
 
 error codes
 0: process deviation: unnecessary part inside solution

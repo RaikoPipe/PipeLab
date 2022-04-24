@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from typing import Optional
 
 from type_dictionary.common_types import *
+from datetime import datetime
+
 
 
 # todo: documentation
@@ -12,7 +14,7 @@ class EventInfo:
     event_pos: Pos
     event_code: int
     removal: bool
-    current_layout: Optional[Trail]
+    layout: Optional[Trail]
     part_id: Optional[int]
     deviated: bool
     detour_event: dict
@@ -20,8 +22,10 @@ class EventInfo:
     unnecessary: bool
     obstructed_obstacle: bool
     obstructed_part: bool
-    completed: bool
+    layout_completed: bool
 
     part_not_picked: bool
 
     error: bool
+
+    time_registered : datetime

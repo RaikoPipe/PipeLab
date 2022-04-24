@@ -105,6 +105,9 @@ def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pi
     if pipe_id not in (0, -1, None):
         message = str.format(
             f"Process Planner: Registered {motion_type} for object {object_name} (ID {pipe_id}) at Position {event_pos}")
+    elif pipe_id == -2:
+        message = str.format(
+        f"Process Planner: Registered {motion_type} for object {object_name} (ID Unknown) at Position {event_pos}")
     else:
         message = str.format(
             f"Process Planner: Registered {motion_type} for object {object_name} at Position {event_pos}")
@@ -126,7 +129,6 @@ def make_error_message(event_pos: Pos, additional_message: str):
 
 # Todo:
 #   Known Issues:
-#   - detour event not triggered if deviated fitting and fitting on solution in proximity
 #   - Can't return to optimal solution (Fix: Track detour trail, if removed, go back to optimal solution)
 #   - Pipes with deviating IDs can't be placed on solution nodes
 #   - missing intelligence: if unknown pipe id in between two fittings (in a detour event), check if distance between two fittings
@@ -173,9 +175,10 @@ class ProcessPlanner:
 
     def send_new_pick_event(self, part_id: int) -> str:
         """Sends a new pick event to be evaluated and registered in current ProcessState."""
+        self.previous_states.insert(0, deepcopy(self.tentative_process_state))
         message = self.tentative_process_state.pick_part(part_id)
         print(message)
-        self.previous_states.insert(0, deepcopy(self.tentative_process_state))
+
         return message
 
     def main(self, worker_event: tuple[Union[Pos, int], int], check_for_deviations: bool = True,
@@ -238,13 +241,7 @@ class ProcessPlanner:
             note = str.format(
                 f"Obstructed {message_dict[event_info.event_code]} while placing {message_dict[event_info.obstructed_part]}")
 
-        if event_info.part_not_picked:
-            if event_info.part_id == -99:
-                note = str.format(f"Placed {message_dict[event_info.event_code]}"
-                                        f", but part was not picked!")
-            else:
-                note = str.format(f"Placed id {event_info.part_id} "
-                                        f", but not picked!")
+
 
         if event_info.removal:
             if event_info.unnecessary:
@@ -261,15 +258,23 @@ class ProcessPlanner:
             elif event_info.misplaced:
                 note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
 
-        # make messages
 
-        if event_info.deviated:
+        if event_info.part_not_picked:
+            if event_info.part_id == -99:
+                note = str.format(f"Placed {message_dict[event_info.event_code]}"
+                                        f", but part was not picked!")
+            else:
+                note = str.format(f"Placed id {event_info.part_id} "
+                                        f", but not picked!")
+
+        # make messages
+        if event_info.error:
+            message = make_error_message(event_pos=event_info.event_pos,
+                                               additional_message=note)
+        elif event_info.deviated:
             message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
                                                 removal=event_info.removal, pipe_id=event_info.part_id)
 
-        elif event_info.error:
-            message = make_error_message(event_pos=event_info.event_pos,
-                                               additional_message=note)
         else:
             message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
                                                 removal=event_info.removal, pipe_id=event_info.part_id)
@@ -324,7 +329,7 @@ class ProcessPlanner:
     def return_to_previous_state(self):
         """Returns to previous state."""
         if self.previous_states:
-            print("Latest action was undone!")
             self.tentative_process_state = self.latest_assembly_state = self.previous_states.pop(0)
+            print("Latest action was undone!")
         else:
             print("There is no last state to return to!")

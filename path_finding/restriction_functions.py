@@ -1,8 +1,7 @@
 from type_dictionary.common_types import Pos
 from path_finding.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
-from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check
-from typing import Optional
+from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, get_transition
 
 
 def out_of_bounds(neighbor_node: tuple, state_grid):
@@ -17,7 +16,8 @@ def out_of_bounds(neighbor_node: tuple, state_grid):
 
 collision_set = {1,2}
 def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid) -> bool:
-    """Checks if the path from current_node to neighbor_node obstructs any obstacles."""
+    """Checks if the path from current_node to neighbor_node obstructs any obstacles.
+    """
 
     length = abs(neighbor_node[0] - neighbor_node[1])
     direction = get_direction(neighbor_node)
@@ -37,18 +37,6 @@ def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid) ->
         return True
 
     return False
-
-# def wall_transition_restricted(pos, transition_pos_set: set[Pos]):
-#     for transition_pos in transition_pos_set:
-#         if pos[0] > transition_pos[0] and transition_pos[0] != 0:
-#             # horizontal transition restriction
-#             return True
-#
-#         elif pos[1] > transition_pos[1] and transition_pos[1] != 0:
-#             # vertical transition restriction
-
-
-
 
 def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: dict[Pos, Pos]) -> bool:
     """Checks if the direction restriction of the goal is violated."""
@@ -71,17 +59,6 @@ def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: dict[Pos, Pos]
             restricted = False
 
     return restricted
-
-
-def get_transition(pos, direction, transition_points) -> Optional[tuple]:
-    for transition_point in transition_points:
-        check_pos = sum_pos(pos, direction)
-        if check_pos[0] == transition_point[0] or check_pos[1] == transition_point[1]:
-            transition = (transition_point, direction)
-            return transition
-
-    return None
-
 
 
 def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], current_pos: tuple,

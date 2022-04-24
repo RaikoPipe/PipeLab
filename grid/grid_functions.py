@@ -26,6 +26,9 @@ def change_grid_states(state_grid: np.ndarray, node_states: list[Node]):
     """
 
     for item in node_states:
+        if state_grid[item[0]] == 3:
+            # transition states can't be overwritten
+            continue
         state_grid[item[0]] = item[1]  # 0: pos, 1: state
 
     return state_grid

@@ -13,4 +13,4 @@ class BuildingInstruction:
     required_fit_positions: DirectedConnection  # Position where fittings need to be placed
     possible_att_pipe_positions: Trail
     recommended_attachment_pos: Pos  # recommended placement position of attachment, determined by an algorithm
-    completed: bool = False  # if the layout is completed
+    layout_completed: bool = False  # if the layout is completed
