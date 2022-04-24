@@ -1,5 +1,5 @@
-i = (1, 1)
-j = (1, 1)
+value = 2
+copnt = [value]
+value = 3
 
-if i in j:
-    print("true")
+print(copnt)

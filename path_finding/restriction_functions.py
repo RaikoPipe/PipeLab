@@ -2,6 +2,7 @@ from type_dictionary.common_types import Pos
 from path_finding.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
 from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check
+from typing import Optional
 
 
 def out_of_bounds(neighbor_node: tuple, state_grid):
@@ -14,7 +15,7 @@ def out_of_bounds(neighbor_node: tuple, state_grid):
     else:
         return True  # array bound x walls
 
-
+collision_set = {1,2}
 def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid) -> bool:
     """Checks if the path from current_node to neighbor_node obstructs any obstacles."""
 
@@ -23,7 +24,7 @@ def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid) -> 
 
     for i in range(1, length + 1):
         node = (current_node[0] + direction[0] * i, current_node[1] + direction[1] * i)
-        if state_grid[node] != 0:
+        if state_grid[node] in collision_set:
             return True
 
 
@@ -37,8 +38,19 @@ def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid) ->
 
     return False
 
+# def wall_transition_restricted(pos, transition_pos_set: set[Pos]):
+#     for transition_pos in transition_pos_set:
+#         if pos[0] > transition_pos[0] and transition_pos[0] != 0:
+#             # horizontal transition restriction
+#             return True
+#
+#         elif pos[1] > transition_pos[1] and transition_pos[1] != 0:
+#             # vertical transition restriction
 
-def goal_restricted(part_id: int, neighbor_pos: Pos, direction, goal_dict: dict[Pos, Pos]) -> bool:
+
+
+
+def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: dict[Pos, Pos]) -> bool:
     """Checks if the direction restriction of the goal is violated."""
 
     restricted = True
@@ -55,15 +67,27 @@ def goal_restricted(part_id: int, neighbor_pos: Pos, direction, goal_dict: dict[
         return True
     else:
         # simply check if pipe axis is the same as goal axis
-        if goal_dict.get(neighbor_pos) == direction:
+        if goal_dict.get(pos) == direction:
             restricted = False
 
     return restricted
 
 
+def get_transition(pos, direction, transition_points) -> Optional[tuple]:
+    for transition_point in transition_points:
+        check_pos = sum_pos(pos, direction)
+        if check_pos[0] == transition_point[0] or check_pos[1] == transition_point[1]:
+            transition = (transition_point, direction)
+            return transition
+
+    return None
+
+
+
 def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], current_pos: tuple,
-                          pipe_stock, predecessors, fast_mode, key, start_pos) -> set:
-    """Determines what neighbors are reachable from the current position and with the available parts."""
+                          pipe_stock, predecessors, fast_mode, key, start_pos, transition_points) -> set:
+    """Determines what neighbors are reachable from the current position and with the available parts. Removes neighbors
+    that violate goal restrictions."""
 
 
     neighbor_relative_positions = set()
@@ -73,11 +97,13 @@ def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], curren
 
     for direction in directions:
         if current_pos == start_pos:
+            transition = get_transition(current_pos, direction, transition_points)
             # neighbor_pos.extend(get_corner_neighbors(direction, available_parts))
-            neighbor_relative_positions.update(get_pipe_neighbors(direction, available_parts, True))
+            neighbor_relative_positions.update(get_pipe_neighbors(direction, available_parts, True, transition))
         elif previous_part == 0:
+            transition = get_transition(current_pos, direction, transition_points)
             # previous move was corner -> only pipes allowed
-            neighbor_relative_positions.update(get_pipe_neighbors(direction, available_parts, False))
+            neighbor_relative_positions.update(get_pipe_neighbors(direction, available_parts, False, transition))
         else:
             # previous mode was pipe -> only corners allowed
             neighbor_relative_positions.update(get_corner_neighbors(direction, available_parts))
@@ -86,7 +112,7 @@ def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], curren
             neighbor_pos = sum_pos(current_pos, relative_pos[0])
             if neighbor_pos in goal_dict.keys():
                 # restriction check necessary, neighbor reaches goal
-                if goal_restricted(part_id=relative_pos[1], neighbor_pos=neighbor_pos,
+                if goal_restricted(part_id=relative_pos[1], pos=neighbor_pos,
                                    direction=get_direction(relative_pos[0]), goal_dict=goal_dict):
                     # disallow any neighbors that violate goal condition
                     remove.add(relative_pos)

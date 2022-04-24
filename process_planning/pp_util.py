@@ -20,43 +20,6 @@ def determine_next_part(layout_state: BuildingInstruction):
 
     return next_part_id
 
-def get_building_instructions_from_solution(solution: Solution) -> dict[Trail:BuildingInstruction]:
-    """returns a dictionary containing trails pointing to their building instruction."""
-    construction_layout = {}
-    start = solution.path_problem.start_pos
-    goal = solution.path_problem.goal_pos
-
-    for layout_trail in solution.ordered_trails:
-        add_fit = set()
-        pipe_id = solution.absolute_trail[layout_trail[1]]
-        rec_att_pos = get_optimal_attachment_pos(state_grid=solution.path_problem.state_grid,
-                                                 direction=get_direction(diff_pos(layout_trail[0], layout_trail[1])),
-                                                 part_id=manhattan_distance(layout_trail[1], layout_trail[-1]),
-                                                 pos=layout_trail[1])
-        if layout_trail[0] == start:
-            add_fit.add(start)
-        elif layout_trail[-1] == goal:
-            add_fit.add(goal)
-
-        construction_layout[tuple(layout_trail)] = BuildingInstruction(att_set=set(), pipe_set=set(),
-                                                                       fit_set=add_fit, pipe_id=pipe_id,
-                                                                       required_fit_positions=(
-                                                                       layout_trail[0], layout_trail[-1]),
-                                                                       recommended_attachment_pos=rec_att_pos)
-
-    return construction_layout
-
-
-def get_initial_process_state_from_solution(solution: Solution) -> ProcessState:
-    """Creates and returns a new process state from a solution."""
-    construction_layouts = get_building_instructions_from_solution(solution)
-
-    state = ProcessState(state_grid=solution.path_problem.state_grid, part_stock=solution.path_problem.part_stock,
-                         aimed_solution=solution, latest_layout=solution.ordered_trails[0]  # starting with first layout
-                         , construction_layouts=construction_layouts)
-    return state
-
-
 def get_absolute_trail_from_building_instructions(building_instructions: dict[Trail:BuildingInstruction]) -> dict[Pos:int]:
     absolute_trail = {}
     for trail in building_instructions.keys():

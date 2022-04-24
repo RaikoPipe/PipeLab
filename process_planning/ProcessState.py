@@ -13,7 +13,6 @@ from path_finding.path_math import get_direction, diff_pos
 from process_planning.ps_util import get_neighboring_layouts, get_detour_trail, \
     get_detour_state, get_building_instructions_from_solution
 
-
 class ProcessState:
     """Data class that contains information about a process state
 
@@ -119,13 +118,17 @@ class ProcessState:
 
         if self.obstructed_obstacle(worker_event_pos):
             event_info.obstructed_obstacle = True
+            event_info.error = True
             return event_info
 
         event_info.obstructed_part = self.obstructed_part(worker_event_pos, worker_event_code)
         if event_info.obstructed_part:
+            event_info.obstructed_part = True
+            event_info.error = True
             return event_info
 
         building_instruction, current_layout = self.get_building_instruction(worker_event_code, worker_event_pos)
+        event_info.current_layout = current_layout
 
         # evaluate placement and modify event info accordingly
 
@@ -420,7 +423,7 @@ class ProcessState:
 
     def obstructed_obstacle(self, pos: Pos):
         """Check state grid if position obstructs obstacle"""
-        if self.state_grid[pos] == 1:
+        if self.state_grid[pos] == 1 or self.state_grid[pos] == 3:
             return True
         else:
             return False

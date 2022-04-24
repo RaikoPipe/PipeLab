@@ -12,6 +12,7 @@ from process_planning.ProcessState import ProcessState
 from process_planning.pp_util import get_completed_instructions, get_outgoing_node_pairs, get_outgoing_node_directions, \
     determine_next_part
 
+
 standard_weights = Weights(1, 1, 1)
 standard_algorithm = "mcsa*"
 
@@ -103,24 +104,24 @@ def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pi
 
     if pipe_id not in (0, -1, None):
         message = str.format(
-            f"process_planning: Registered {motion_type} for object {object_name} (ID {pipe_id}) at Position {event_pos}")
+            f"Process Planner: Registered {motion_type} for object {object_name} (ID {pipe_id}) at Position {event_pos}")
     else:
         message = str.format(
-            f"process_planning: Registered {motion_type} for object {object_name} at Position {event_pos}")
+            f"Process Planner: Registered {motion_type} for object {object_name} at Position {event_pos}")
 
     return message
 
 
 def make_special_message(message: str, event_pos: Pos):
-    """Returns a special message as string, usually used in case of deviated placements/removals."""
-    message = str.format(f"process_planning: Position {event_pos}: {message} ")
+    """Returns a special message as string, usually used in case of deviated placements."""
+    message = str.format(f"Process Planner: Position {event_pos}: {message} ")
     return message
 
 
 def make_error_message(event_pos: Pos, additional_message: str):
     """Returns error messages as string containing the position where the error occurred as well as additional
     information regarding the reason for the error."""
-    message = str.format(f"process_planning: Process error at Position {event_pos}: {additional_message}")
+    message = str.format(f"Process Planner: Process error at Position {event_pos}: {additional_message}")
     return message
 
 # Todo:
@@ -145,11 +146,11 @@ class ProcessPlanner:
         self.initial_process_state = initial_process_state
 
         if self.optimal_solution is None:
-            print("process_planning Error: No optimal solution found!")
+            print("Process Planner Error: No optimal solution found!")
             if initial_process_state:
                 if initial_process_state.aimed_solution:
                     self.optimal_solution = initial_process_state.aimed_solution
-                    print("process_planning: Assuming aimed solution from initial state as optimal solution.")
+                    print("Process Planner: Assuming aimed solution from initial state as optimal solution.")
         else:
             if not initial_process_state:
                 self.initial_process_state = ProcessState(self.optimal_solution)
@@ -193,31 +194,28 @@ class ProcessPlanner:
         # extract messages
         message = messages[0]
         special_message = messages[1]
-        error_message = messages[2]
 
         # print messages
         if message:
             print(message)
         if special_message:
             print(special_message)
-        if error_message:
-            print(error_message)
 
         detour_event = self.tentative_process_state.last_event_info.detour_event
-
+        detour_message = None
         if detour_event:
 
-            error_message = str.format(f"detour event confirmed, but no alternative solution found!")
+            detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
 
             solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
                                                     process_state=self.tentative_process_state,
                                                     detour_event=detour_event)
 
             if solution:
-                error_message = str.format(f"detour event confirmed, applying alternative solution!")
+                detour_message = str.format(f"detour event confirmed, applying alternative solution!")
                 self.tentative_process_state.handle_detour_event(detour_event, solution)
 
-        return self.tentative_process_state, (message, special_message, error_message)
+        return self.tentative_process_state, (message, special_message, detour_message)
 
     def send_placement_event(self, worker_event: tuple[Pos, int], check_for_deviation_events: bool = True,
                              ignore_errors: bool = False, allow_stacking: bool = False):
@@ -229,59 +227,56 @@ class ProcessPlanner:
                                                                                 check_for_deviation_events=check_for_deviation_events,
                                                                                 ignore_errors=ignore_errors,
                                                                                 allow_stacking=allow_stacking)
-
-        special_note = None
-        error_note = None
+        message = None
+        special_message = None
+        note = None
 
         if event_info.obstructed_obstacle:
-            error_note = str.format(f"Obstructed obstacle while placing {message_dict[event_info.event_code]}")
-            error_message = make_error_message(event_pos=event_info.event_pos,
-                                               additional_message=error_note)
+            note = str.format(f"Obstructed obstacle while placing {message_dict[event_info.event_code]}")
 
         if event_info.obstructed_part:
-            error_note = str.format(
+            note = str.format(
                 f"Obstructed {message_dict[event_info.event_code]} while placing {message_dict[event_info.obstructed_part]}")
-            error_message = make_error_message(event_pos=event_info.event_pos,
-                                               additional_message=error_note)
+
         if event_info.part_not_picked:
             if event_info.part_id == -99:
-                error_note = str.format(f"Placed {message_dict[event_info.event_code]}"
+                note = str.format(f"Placed {message_dict[event_info.event_code]}"
                                         f", but part was not picked!")
             else:
-                error_note = str.format(f"Placed id {event_info.part_id} "
+                note = str.format(f"Placed id {event_info.part_id} "
                                         f", but not picked!")
 
         if event_info.removal:
             if event_info.unnecessary:
-                special_note = str.format(f"Removed unnecessary {message_dict[event_info.event_code]}")
-
+                note = str.format(f"Removed unnecessary {message_dict[event_info.event_code]}")
             elif event_info.misplaced:
-                special_note = str.format(f"Removed misplaced {message_dict[event_info.event_code]}")
+                note = str.format(f"Removed misplaced {message_dict[event_info.event_code]}")
+            elif event_info.deviated:
+                note = str.format(f"Removed deviating {message_dict[event_info.event_code]}")
         else:
             if event_info.unnecessary:
-                special_note = str.format(f"Unnecessary {message_dict[event_info.event_code]} detected!")
-            if event_info.misplaced:
-                special_note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
-
-        message = None
-        special_message = None
-        error_message = None
+                note = str.format(f"Unnecessary {message_dict[event_info.event_code]} detected!")
+            elif event_info.deviated:
+                note = str.format(f"Deviating {message_dict[event_info.event_code]} detected!")
+            elif event_info.misplaced:
+                note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
 
         # make messages
-        if not event_info.error:
+
+        if event_info.deviated:
             message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
                                                 removal=event_info.removal, pipe_id=event_info.part_id)
 
-        if special_note:
-            special_message = make_special_message(message=special_note, event_pos=event_info.event_pos)
-
-        if error_note:
-            error_message = make_error_message(event_pos=event_info.event_pos,
-                                               additional_message=error_note)
+        elif event_info.error:
+            message = make_error_message(event_pos=event_info.event_pos,
+                                               additional_message=note)
+        else:
+            message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
+                                                removal=event_info.removal, pipe_id=event_info.part_id)
 
         self.tentative_process_state.last_event_info = event_info
 
-        return message, special_message, error_message
+        return message, note
 
     def determine_robot_commands(self, worker_event: tuple[Pos, int], info_dict: dict) -> tuple[list, list]:
         """Evaluates the current process state and issues robot commands."""

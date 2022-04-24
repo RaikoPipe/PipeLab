@@ -29,6 +29,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
     goal_pos = path_problem.goal_pos
     start_directions = path_problem.start_directions
     goal_directions = path_problem.goal_directions
+    transition_points = path_problem.transition_points
     pipe_stock = deepcopy(path_problem.part_stock)
     part_cost = path_problem.part_cost
     worst_move_cost, worst_moves = get_worst_move_cost(part_cost)
@@ -83,6 +84,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
                                                          goal_dict=goal_dict,
                                                          current_pos=current_pos,
                                                          start_pos=start_pos,
+                                                         transition_points=transition_points,
                                                          pipe_stock=pipe_stock, predecessors=predecessors,
                                                          fast_mode=fast_mode, key=key_dict.get(fast_mode))
         else:
@@ -95,6 +97,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
                                                          goal_dict=goal_dict,
                                                          current_pos=current_pos,
                                                          start_pos=start_pos,
+                                                         transition_points=transition_points,
                                                          pipe_stock=pipe_stock, predecessors=predecessors,
                                                          fast_mode=fast_mode, key=key_dict.get(fast_mode))
         print(current_path)

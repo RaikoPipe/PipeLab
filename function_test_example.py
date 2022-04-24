@@ -10,12 +10,15 @@ from path_finding.search_algorithm import find_path
 x = 10
 y = 20
 
+transition_points_set = {(-2,10)}
+
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
 solution = None
 while solution is None:
-
+    # mandatory adjustments to state grid
     state_grid = grid_functions.get_empty_stategrid(x, y)
     state_grid = randomizer.set_random_obstacles(0., state_grid)
+    state_grid = grid_functions.set_transition_points(state_grid, transition_points_set)
     start_node = (0, 0)
     goal_node = (9, 17)
     state_grid[start_node] = 0
@@ -30,7 +33,8 @@ while solution is None:
     path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node,
                                start_directions={(0, 1), (1, 0), (-1, 0), (0, -1)},
                                goal_directions={(0, 1), (1, 0), (-1, 0), (0, -1)}, part_cost=part_cost,
-                               starting_part=0, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
+                               starting_part=0, part_stock=pipe_stock, weights=weights, algorithm="mcsa*",
+                               transition_points=transition_points_set)
 
     solution = find_path(path_problem=path_problem)
 

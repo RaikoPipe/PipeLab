@@ -86,7 +86,7 @@ def get_corner_neighbors(axis: tuple, available_parts: list) -> set:
     return neighbors
 
 
-def get_pipe_neighbors(axis, available_parts, at_start) -> set:
+def get_pipe_neighbors(axis, available_parts, at_start, transition) -> set:
     """Returns all neighbors that are allowed as the next move by the currently available pipe parts"""
 
     # pipe moves have two variants, depending on the current axis
@@ -96,13 +96,21 @@ def get_pipe_neighbors(axis, available_parts, at_start) -> set:
         # for all part IDs except corner the point length matches the id
         if part_id == 0:
             continue
-        if at_start:
+
+        if transition:
+            neighbors.add(((axis[0] * (part_id + axis[0]), (axis[1] * (part_id + axis[1]))), part_id))
+            if not at_start:
+                neighbors.add(((part_id * axis[1], part_id * axis[0]), part_id))
+                neighbors.add(((part_id * -axis[1], part_id * -axis[0]), part_id))
+        elif at_start:
             # only allow neighbors that meet start condition
             neighbors.add(((part_id * axis[0], part_id * axis[1]), part_id))
         else:
             # only allow neighbors that meet corner condition
             neighbors.add(((part_id * axis[1], part_id * axis[0]), part_id))
             neighbors.add(((part_id * -axis[1], part_id * -axis[0]), part_id))
+
+
 
     return neighbors
 

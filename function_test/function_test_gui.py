@@ -1,8 +1,8 @@
 import tkinter as tk
 from copy import deepcopy
 from tkinter import ttk
+from idlelib.tooltip import Hovertip
 from typing import Optional
-
 import numpy as np
 
 from data_class.ConstructionState import ConstructionState
@@ -11,6 +11,9 @@ from data_class.PathProblem import PathProblem
 from process_planning.ProcessPlanner import ProcessPlanner
 from process_planning.ProcessState import ProcessState
 from process_planning.pp_util import get_absolute_trail_from_building_instructions
+from type_dictionary.common_types import Pos
+
+from datetime import datetime
 
 free_style = "FREE.TButton"
 pipe_style = "PIPE.TButton"
@@ -19,12 +22,15 @@ att_style = "ATTACHMENT.TButton"
 fit_style = "CORNER.TButton"
 start_style = "START.TButton"
 goal_style = "GOAL.TButton"
-fit_caution_style = "FITCAUTION.TButton"
-att_caution_style = "ATTCAUTION.TButton"
-pipe_caution_style = "PIPECAUTION.TButton"
-fit_warn_style = "FITWARN.TButton"
-att_warn_style = "ATTWARN.TButton"
-pipe_warn_style = "PIPEWARN.TButton"
+transition_style = "TRANSITION.TButton"
+fit_deviated_style = "FITDEV.TButton"
+att_deviated_style = "ATTDEV.TButton"
+pipe_deviated_style = "PIPEDEV.TButton"
+fit_misplaced_style = "FITMIS.TButton"
+att_misplaced_style = "ATTMIS.TButton"
+pipe_misplaced_style = "PIPEMIS.TButton"
+
+treeview_style = "TREESTYLE.Treeview"
 
 button_dict = {}
 
@@ -34,23 +40,23 @@ def get_style_from_construction_state(construction_state: Optional[ConstructionS
     if construction_state:
         if construction_state.event_code == 3:
             if construction_state.unnecessary or construction_state.deviated:
-                style = att_caution_style
+                style = att_deviated_style
             elif construction_state.misplaced:
-                style = att_warn_style
+                style = att_misplaced_style
             else:
                 style = att_style
         elif construction_state.event_code == 2:
             if construction_state.unnecessary or construction_state.deviated:
-                style = pipe_caution_style
+                style = pipe_deviated_style
             elif construction_state.misplaced:
-                style = pipe_warn_style
+                style = pipe_misplaced_style
             else:
                 style = pipe_style
         elif construction_state.event_code == 1:
             if construction_state.unnecessary or construction_state.deviated:
-                style = fit_caution_style
+                style = fit_deviated_style
             elif construction_state.misplaced:
-                style = fit_warn_style
+                style = fit_misplaced_style
             else:
                 style = fit_style
 
@@ -58,15 +64,20 @@ def get_style_from_construction_state(construction_state: Optional[ConstructionS
 
 
 def get_style_grid(process_planner, style_grid):
+    # reset style grid
     for pos, state in np.ndenumerate(process_planner.tentative_process_state.aimed_solution.path_problem.state_grid):
         if state == 0:
             style_grid[pos] = free_style
         elif state == 1:
             style_grid[pos] = obs_style
+        elif state == 3:
+            style_grid[pos] = transition_style
         else:
             style_grid[pos] = free_style
+
+    # set style grid
     for motion_pos, construction_state in process_planner.tentative_process_state.motion_dict.items():
-        if construction_state.event_code == 2:
+        if not isinstance(motion_pos[0], int):
             for pos in motion_pos:
                 style = get_style_from_construction_state(construction_state)
                 style_grid[pos] = style
@@ -77,71 +88,75 @@ def get_style_grid(process_planner, style_grid):
     return style_grid
 
 
-def update_button_grid(button_grid, process_planner, style_grid, previous_style_grids):
-    # todo simplify: just update everything with each input
+def get_attributes_as_string(data_class):
+    text = ""
+    for attribute in vars(data_class):
+        value = data_class.__getattribute__(attribute)
+        if value:
+            text += attribute + ": " + str(value) + "\n"
+
+    return text
+
+
+def get_tool_tip_text_grid(process_planner, tool_tip_text_grid):
+    # reset
+    for pos, state in np.ndenumerate(process_planner.tentative_process_state.aimed_solution.path_problem.state_grid):
+        if state == 0:
+            tool_tip_text_grid[pos] = "free"
+        elif state == 1:
+            tool_tip_text_grid[pos] = "obstructed"
+        elif state == 3:
+            tool_tip_text_grid[pos] = "Transition"
+
+        part_id = process_planner.initial_process_state.aimed_solution.absolute_trail.get(pos)
+        if part_id is not None:
+            text = str.format(f"Required part ID: {part_id}")
+            tool_tip_text_grid[pos] = text
+
+
+
+    # set
+    for motion_pos, construction_state in process_planner.tentative_process_state.motion_dict.items():
+        if not isinstance(motion_pos[0], int):
+            for pos in motion_pos:
+                text = get_attributes_as_string(construction_state)
+
+                tool_tip_text_grid[pos] = text
+        else:
+            text = get_attributes_as_string(construction_state)
+
+            tool_tip_text_grid[motion_pos] = text
+
+    return tool_tip_text_grid
+
+
+
+
+    pass
+
+
+def update_button_grid(button_grid, process_planner, style_grid, previous_style_grids, tool_tip_text_grid):
 
     previous_style_grids.insert(0, deepcopy(style_grid))
 
     style_grid = get_style_grid(process_planner, style_grid)
+    tool_tip_text_grid = get_tool_tip_text_grid(process_planner, tool_tip_text_grid)
 
     style_grid[process_planner.tentative_process_state.aimed_solution.path_problem.start_pos] = start_style
     style_grid[process_planner.tentative_process_state.aimed_solution.path_problem.goal_pos] = goal_style
 
+    # update button grid
     for pos, style in np.ndenumerate(style_grid):
         button_grid[pos].configure(style=style)
 
-    # if current_layout:
-    #     for pos in current_layout:
-    #         style_grid[pos] = free_style
-    #
-    #     # set fittings
-    #     for pos in layout_state.fit_set:
-    #         if pos in layout_state.required_fit_positions:
-    #             style_grid[pos] = fit_style
-    #
-    #     # set attachment
-    #     for pos in layout_state.att_set:
-    #         style_grid[pos] = att_style
-    #
-    #     # set pipe
-    #     if layout_state.pipe_set:
-    #         for pos in current_layout:
-    #             if pos not in layout_state.required_fit_positions:
-    #                 style_grid[pos] = pipe_style
-    #
-    #     for (pos, event_code) in process_planner.tentative_process_state.unnecessary_parts.items():
-    #         if event_code == 1:
-    #             style_grid[pos] = fit_caution_style
-    #
-    #         if event_code == 3:
-    #             style_grid[pos] = att_caution_style
-    #
-    #     for (pos, event_code) in process_planner.tentative_process_state.misplaced_parts.items():
-    #         if event_code == 1:
-    #             style_grid[pos] = fit_warn_style
-    #
-    #         if event_code == 2:
-    #             style_grid[pos] = pipe_warn_style
-    #
-    #         if event_code == 3:
-    #             style_grid[pos] = att_warn_style
-    #
-    #     pos_list = []
-    #     for pos in process_planner.tentative_process_state.deviated_motion_set_fitting:
-    #         pos_list.append(pos)
-    #         style_grid[pos] = fit_caution_style
-    #     for pos in process_planner.tentative_process_state.deviated_motion_set_attachment:
-    #         pos_list.append(pos)
-    #         style_grid[pos] = att_caution_style
-    #     for pos in process_planner.tentative_process_state.deviated_motion_dict_pipe.keys():
-    #         pos_list.append(pos)
-    #         style_grid[pos] = pipe_caution_style
-    #
-    #
-    #     for pos, style in np.ndenumerate(initial_style_grid):
-    #         if pos not in pos_list and pos not in process_planner.tentative_process_state.unnecessary_parts.keys() and pos not in process_planner.tentative_process_state.misplaced_parts.keys():
-    #             if style_grid[pos] in (fit_caution_style, pipe_caution_style, att_caution_style):
-    #                 style_grid[pos] = initial_style_grid[pos]
+    # update tooltip-text grid
+    for pos, tool_tip_text in np.ndenumerate(tool_tip_text_grid):
+        Hovertip(button_grid[pos], tool_tip_text, hover_delay=0)
+
+
+
+
+
 
 
 def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previous_style_grids, process_message_tree):
@@ -167,10 +182,11 @@ def undo_action(process_planner, button_grid, style_grid, part_stock_tree, previ
 message_count = 0
 
 
-def update_solution_grid(tentative_state: ProcessState, button_grid):
-    # clear everything
-    for pos, state in np.ndenumerate(tentative_state.state_grid):
-        button_grid[pos].configure(style=free_style)
+def update_solution_grid(tentative_state: ProcessState, button_grid, initial_style_grid):
+    #
+    for pos, style in np.ndenumerate(initial_style_grid):
+        if style != fit_style or style != pipe_style:
+            button_grid[pos].configure(style=style)
 
     for pos, part_id in tentative_state.aimed_solution.absolute_trail.items():
         if part_id == 0:
@@ -180,37 +196,87 @@ def update_solution_grid(tentative_state: ProcessState, button_grid):
 
 
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
-                             initial_style_grid, part_stock_tree, previous_style_grids, solution_button_grid):
+                             initial_style_grid, part_stock_tree, previous_style_grids, solution_button_grid, tool_tip_text_grid):
     process_state, messages = process_planner.main((pos, event_code), check_for_deviations=True, ignore_errors=False)
+
     event_info: EventInfo = process_state.last_event_info
-    update_button_grid(button_grid, process_planner, style_grid, previous_style_grids)
+    update_button_grid(button_grid, process_planner, style_grid, previous_style_grids, tool_tip_text_grid)
 
     if event_info.detour_event:
-        update_solution_grid(tentative_state=process_state, button_grid=solution_button_grid)
+        update_solution_grid(tentative_state=process_state, button_grid=solution_button_grid, initial_style_grid=initial_style_grid)
 
     message = messages[0]
     special_message = messages[1]
-    error_message = messages[2]
+    detour_message = messages[2]
 
     global message_count
     if message:
-        tree.insert("", index=tk.END, tag=message_count, values=(message.replace("process_planning: ", ""),))
+        tree.insert("", index=tk.END, tag=message_count, iid=message_count, values=(message.replace("Process Planner: ", ""),))
         tree.tag_configure(tagname=message_count, background="green2")
-        if special_message and not event_info.removal:
+        if any((event_info.deviated, event_info.unnecessary, event_info.misplaced)):
+            if not event_info.removal:
+                tree.tag_configure(tagname=message_count, background="yellow")
+            else:
+                tree.tag_configure(tagname=message_count, background="green2")
+        elif event_info.removal:
             tree.tag_configure(tagname=message_count, background="yellow")
-        if error_message:
+        if event_info.error:
             tree.tag_configure(tagname=message_count, background="red")
+
+        extra_message_ids = [message_count]
         message_count += 1
-    if special_message:
-        tree.insert("", index=tk.END, tag=message_count, values=(special_message.replace("process_planning: ", ""),))
-        tree.tag_configure(tagname=message_count, background="yellow")
-        if event_info.removal:
-            tree.tag_configure(tagname=message_count, background="green2")
+
+        if special_message:
+            tree.insert("", index=tk.END, tag=message_count, iid=message_count, values=(special_message,))
+            extra_message_ids.append(message_count)
+            message_count += 1
+
+        for attribute in vars(event_info):
+            value = event_info.__getattribute__(attribute)
+            if attribute == "detour_event":
+                value = True
+            if value:
+                tree.insert("", index=tk.END,iid=message_count, tag=message_count, values=(str.format(f"{attribute}: {value}"),))
+                extra_message_ids.append(message_count)
+                message_count += 1
+
+
+        parent_message_id = extra_message_ids[0]
+        for idx, child_message_id in enumerate(extra_message_ids):
+            if idx == 0:
+                continue
+            tree.move(child_message_id, parent_message_id, idx-1)
+
+    if detour_message:
+        tree.insert("", index=tk.END, tag=message_count,iid=message_count, values=(detour_message,))
+        tree.tag_configure(tagname=message_count, background="maroon1")
         message_count += 1
-    if error_message:
-        tree.insert("", index=tk.END, tag=message_count, values=(error_message.replace("process_planning: ", ""),))
-        tree.tag_configure(tagname=message_count, background="red")
-        message_count += 1
+
+
+        # if event_info.part_id in process_planner.initial_process_state.part_stock:
+        #     tree.insert("", index=tk.END, tag=message_count, values=(str.format(f"ID: {event_info.part_id}"),))
+        #     extra_message_ids.append(message_count)
+        #     message_count += 1
+        # if event_info.removal:
+        #     tree.insert("", index=tk.END, tag=message_count, values=("Removal",))
+        #     extra_message_ids.append(message_count)
+        #     message_count += 1
+        # if event_info.deviated:
+        #     tree.insert("", index=tk.END, tag=message_count, values=("Deviated",))
+        #     extra_message_ids.append(message_count)
+        #     message_count += 1
+        # if event_info.deviated:
+        #     tree.insert("", index=tk.END, tag=message_count, values=("Deviated",))
+        #     extra_message_ids.append(message_count)
+        #     message_count += 1
+        # if event_info.unnecessary:
+        #     tree.insert("", index=tk.END, tag=message_count, values=("Unnecessary",))
+        #     extra_message_ids.append(message_count)
+        #     message_count += 1
+        # if event_info.misplaced:
+        #     tree.insert("", index=tk.END, tag=message_count, values=("Misplaced",))
+        #     extra_message_ids.append(message_count)
+        #     message_count += 1
 
     part_id = event_info.part_id
 
@@ -224,7 +290,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree, style_grid,
                         previous_style_grids):
     message = process_planner.send_new_pick_event(part_id)
-    tree.insert("", index=tk.END, values=(message,))
+    tree.insert("", index=tk.END, values=(message.replace("process_planning: ", ""),))
     item = part_stock_tree.get_children()[part_id]
     part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
                                        process_planner.tentative_process_state.part_stock[part_id]))
@@ -239,14 +305,17 @@ def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_
     # Grid Button
     button_grid = np.zeros((state_grid.shape[0], state_grid.shape[1]), dtype=ttk.Button)
     style_grid = np.zeros((state_grid.shape[0], state_grid.shape[1]), dtype=np.dtype("U100"))
+    tool_tip_text_grid = np.zeros((state_grid.shape[0], state_grid.shape[1]), dtype=np.dtype("U100"))
     for pos, state in np.ndenumerate(state_grid):
         style = ""
         if state == 0:
             style = free_style
             style_grid[pos] = free_style
+            tool_tip_text_grid[pos] = "free"
         elif state == 1:
             style = obs_style
             style_grid[pos] = obs_style
+            tool_tip_text_grid[pos] = "obstructed"
         elif state == 2:
             # what part?
             if absolute_trail[pos] == 0:
@@ -255,6 +324,10 @@ def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_
             else:
                 style = pipe_style
                 style_grid[pos] = pipe_style
+        elif state == 3:
+            style = transition_style
+            style_grid[pos] = transition_style
+            tool_tip_text_grid[pos] = "Transition"
 
         if pos == start:
             style = start_style
@@ -267,16 +340,27 @@ def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_
 
         if process_planner:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
+            part_id = process_planner.initial_process_state.aimed_solution.absolute_trail.get(pos)
+            if part_id is not None:
+                text = str.format(f"Required part ID: {part_id}")
+                tool_tip_text_grid[pos] = text
+                Hovertip(button, text, hover_delay=0)
+            else:
+                Hovertip(button, tool_tip_text_grid[pos], hover_delay=0)
             command = lambda t=pos: send_new_placement_event(t, part_select_option.get(), process_planner, button_grid,
                                                              tree, style_grid, initial_style_grid,
                                                              previous_style_grids=previous_style_grids,
                                                              part_stock_tree=part_stock_tree,
-                                                             solution_button_grid=solution_button_grid)
+                                                             solution_button_grid=solution_button_grid,
+                                                             tool_tip_text_grid=tool_tip_text_grid)
             button.config(command=command)
         else:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
+
         button.grid(row=pos[0], column=pos[1], ipady=6, ipadx=3)
         button_grid[pos] = button
+
+
 
     previous_style_grids.insert(0, deepcopy(style_grid))
 
@@ -305,23 +389,26 @@ class function_test_app:
         style.configure(fit_style, background="cyan", width=button_width, height=button_height, font=font)
         style.configure(start_style, background="green", width=button_width, height=button_height, font=font)
         style.configure(goal_style, background="red", width=button_width, height=button_height, font=font)
+        style.configure(transition_style, background="black", width=button_width, height=button_height, font=font)
         style.configure(att_style, background="magenta", width=button_width, height=button_height, font=font)
-        style.configure(fit_caution_style, background="cyan", foreground="yellow", width=button_width,
+        style.configure(fit_deviated_style, background="cyan", foreground="yellow", width=button_width,
                         height=button_height,
                         font=font)
-        style.configure(att_caution_style, background="magenta", foreground="yellow", width=button_width,
+        style.configure(att_deviated_style, background="magenta", foreground="yellow", width=button_width,
                         height=button_height,
                         font=font)
-        style.configure(pipe_caution_style, background="blue", foreground="yellow", width=button_width,
+        style.configure(pipe_deviated_style, background="blue", foreground="yellow", width=button_width,
                         height=button_height,
                         font=font)
-        style.configure(fit_warn_style, background="cyan", foreground="red", width=button_width, height=button_height,
+        style.configure(fit_misplaced_style, background="cyan", foreground="yellow", width=button_width, height=button_height,
                         font=font)
-        style.configure(att_warn_style, background="magenta", foreground="red", width=button_width,
+        style.configure(att_misplaced_style, background="magenta", foreground="yellow", width=button_width,
                         height=button_height,
                         font=font)
-        style.configure(pipe_warn_style, background="blue", foreground="red", width=button_width, height=button_height,
+        style.configure(pipe_misplaced_style, background="blue", foreground="yellow", width=button_width, height=button_height,
                         font=font)
+        style.configure(treeview_style)
+        style.layout(treeview_style, [(treeview_style +'.treearea', {'sticky': 'nswe'})])
 
         style.configure("TRadiobutton", anchor="W")
 
@@ -351,7 +438,7 @@ class function_test_app:
         part_stock_frame = ttk.LabelFrame(layout_frame, text="Current Parts:")
         part_stock_frame.grid(row=0, column=1)
 
-        part_stock_tree = ttk.Treeview(part_stock_frame, columns=("part_id", "picked", "stock"), show="headings")
+        part_stock_tree = ttk.Treeview(part_stock_frame, columns=("part_id", "picked", "stock"), show="headings", style=treeview_style)
         part_stock_tree.heading("part_id", text="Part ID")
         part_stock_tree.heading("picked", text="Picked")
         part_stock_tree.heading("stock", text="Stock")
@@ -389,13 +476,13 @@ class function_test_app:
         process_message_frame = ttk.LabelFrame(layout_frame, text="Process Planner Message Output:")
         process_message_frame.grid(row=1, column=2)
 
-        process_message_tree = ttk.Treeview(process_message_frame, columns="message", show="headings")
-        process_message_tree.heading("message", text="Message")
-        process_message_tree.column("message", width=500)
+        process_message_tree = ttk.Treeview(process_message_frame, columns="message", show="tree", selectmode="none")
+        #process_message_tree.heading("message", text="Message")
+        process_message_tree.column("message", width=500, anchor=tk.W)
         process_message_tree.grid(row=0, column=0)
 
         scrollbar = ttk.Scrollbar(process_message_frame, orient=tk.VERTICAL, command=process_message_tree.yview)
-        process_message_tree.configure(yscroll=scrollbar.set)
+        process_message_tree.configure(yscroll=scrollbar.set, style=treeview_style)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
         previous_style_grids = []

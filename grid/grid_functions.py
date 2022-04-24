@@ -71,3 +71,12 @@ def get_rendering_grid(x_nodes: int, y_nodes: int, x_start: float = x_start_defa
 
     size_data = mounting_wall_data(dim=vpy.vector(x_pos + x_start - node_dist, 2 * y_start + y_pos, z_pos))
     return rendering_grid, size_data
+
+
+def set_transition_points(state_grid, transition_points_set):
+    for pos, state in np.ndenumerate(state_grid):
+        for transition_point in transition_points_set:
+            if pos[0] == transition_point[0] or pos[1] == transition_point[1]:
+                state_grid[pos] = 3
+
+    return state_grid

@@ -1,6 +1,8 @@
 import heapq
 from copy import deepcopy
 
+import numpy as np
+
 import constants as const
 from data_class.BuildingInstruction import BuildingInstruction
 from data_class.PathProblem import PathProblem
@@ -11,7 +13,7 @@ from path_finding.solution_manager import get_solution
 
 
 def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set],
-                          outgoing_node_directions_dict: dict, state_grid, part_stock, path_problem,
+                          outgoing_node_directions_dict: dict, state_grid:np.ndarray, part_stock:dict, path_problem:PathProblem,
                           ) -> list[Solution]:
     """
     Tries to generate partial solutions with the given node pairs. Node pairs may be excluded if
@@ -64,7 +66,8 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
                                                goal_directions=outgoing_node_directions_dict[other_point_pos],
                                                part_cost=path_problem.part_cost, part_stock=part_stock,
                                                starting_part=0,
-                                               state_grid=deepcopy(state_grid))
+                                               state_grid=deepcopy(state_grid),
+                                               transition_points=path_problem.transition_points)
 
             draw_debug = False
             solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
