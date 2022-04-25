@@ -92,9 +92,11 @@ def get_attributes_as_string(data_class):
     text = ""
     for attribute in vars(data_class):
         value = data_class.__getattribute__(attribute)
+        if attribute == "time_registered":
+            value = str(value.replace(microsecond=0))
+        elif attribute == "part_id":
+            value = str(value)
         if value:
-            if attribute == "time_registered":
-                value = str(value.replace(microsecond=0))
             text += attribute + ": " + str(value) + "\n"
 
     return text
@@ -223,7 +225,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
     event_info: EventInfo = process_state.last_event_info
     update_button_grid(button_grid, process_planner, style_grid, tool_tip_text_grid)
 
-    if event_info.detour_event:
+    if event_info.detour_event or process_state.detour_trails:
         update_solution_grid(tentative_state=process_state, button_grid=solution_button_grid, initial_style_grid=initial_style_grid)
 
     message = messages[0]
@@ -257,10 +259,11 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
             if attribute == "detour_event" and value:
                 value = True
             elif attribute == "time_registered":
-
                 value = str(value.replace(microsecond=0))
+            elif attribute == "part_id":
+                value = str(value)
             if value:
-                tree.insert("", index=tk.END,iid=message_count, tag=message_count, text=str.format(f"{attribute}: {value}"))
+                tree.insert("", index=tk.END,iid=message_count, tag=message_count, text=str.format(f"{attribute}: {str(value)}"))
                 extra_message_ids.append(message_count)
                 message_count += 1
 

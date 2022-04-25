@@ -103,7 +103,7 @@ def get_detour_state(length: int, att_set: set, pipe_set: set, fit_tup: tuple, s
 
     layout_state = BuildingInstruction(pipe_id=pipe_id, required_fit_positions=(fit_tup[0], fit_tup[1]),
                                        recommended_attachment_pos=rec_att_pos,
-                                       completed=True, possible_att_pipe_positions=possible_att_pipe_positions)
+                                       layout_completed=True, possible_att_pipe_positions=possible_att_pipe_positions)
 
     return layout_state
 
@@ -132,6 +132,6 @@ def get_building_instructions_from_solution(solution):
                                                                            layout_trail[0], layout_trail[-1]),
                                                                        recommended_attachment_pos=rec_att_pos,
                                                                        possible_att_pipe_positions=tuple(
-                                                                           possible_att_pipe_positions))
+                                                                           possible_att_pipe_positions),)
 
     return construction_layout

@@ -52,6 +52,8 @@ class ProcessState:
 
         self.last_event_info = None
 
+        self.detour_trails = []
+
         self.event_history = []
 
     def get_construction_state(self, pos: Union[Pos, Trail], event_codes: list) -> Union[
@@ -59,7 +61,7 @@ class ProcessState:
         """returns construction state and pos/trail if pos and event_code are specified are in motion_dict."""
         if 2 in event_codes:
             for trail, construction_state in self.motion_dict.items():
-                if pos in trail and construction_state.event_code == 2:
+                if (pos in trail or pos == trail) and construction_state.event_code == 2:
                     return trail, construction_state
 
         else:
@@ -90,7 +92,7 @@ class ProcessState:
 
         # possible event outcomes:
         removal = False
-        completed = False
+        completed_layouts = set()
         obstructed_obstacle = False
         obstructed_part = False
         deviated = False
@@ -104,7 +106,7 @@ class ProcessState:
 
         event_info = EventInfo(event_pos=worker_event_pos, event_code=worker_event_code, part_id=part_id,
                                obstructed_part=obstructed_part, obstructed_obstacle=obstructed_obstacle,
-                               deviated=deviated, misplaced=misplaced, unnecessary=unnecessary, layout_completed=completed,
+                               deviated=deviated, misplaced=misplaced, unnecessary=unnecessary, completed_layouts=completed_layouts,
                                layout=current_layout, removal=removal, part_not_picked=part_not_picked,
                                detour_event=detour_event, error=error, time_registered=time_registered)
 
@@ -147,11 +149,15 @@ class ProcessState:
             self.fitting_placed(event_pos=worker_event_pos, building_instruction=building_instruction,
                                 event_info=event_info)
 
+
         if not event_info.error:
+            # register placement
+            self.register_placement(building_instruction, construction_state, event_info, worker_event_code,
+                                    worker_event_pos)
 
             if not event_info.deviated:
                 # check completion state of this and neighboring layouts
-                event_info.layout_completed = self.set_completion_state(current_layout, event_info)
+                event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
             else:
                 if worker_event_code == 1 and check_for_deviation_events:
                     # check for detour events
@@ -163,10 +169,7 @@ class ProcessState:
                         for pos in list(detour_event.keys())[0]:
                             self.state_grid[pos] = 2
 
-            # register placement
-            if not event_info.part_not_picked:
-                self.register_placement(building_instruction, construction_state, event_info, worker_event_code,
-                                        worker_event_pos)
+
 
 
             # modify parts_picked
@@ -381,7 +384,7 @@ class ProcessState:
 
                 return {detour_trail: detour_state}
 
-    def handle_detour_event(self, detour_event: dict, solution: Solution):
+    def handle_detour_event(self,  solution: Solution, detour_event: dict = None):
 
         self.aimed_solution = solution
         self.building_instructions = get_building_instructions_from_solution(solution)
@@ -399,7 +402,7 @@ class ProcessState:
                 event_pos=construction_state.event_pos, event_code=construction_state.event_code)
 
             # possible event outcomes:
-            completed = False
+            completed_layouts = set()
             deviated = False
             misplaced = False
             unnecessary = False
@@ -408,7 +411,7 @@ class ProcessState:
             event_info = EventInfo(event_pos=construction_state.event_pos, event_code=construction_state.event_code,
                                    removal=False, layout=None,
                                    part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced, unnecessary=unnecessary,
-                                   obstructed_part=False, layout_completed=completed, part_not_picked=False, error=False,
+                                   obstructed_part=False, completed_layouts=completed_layouts, part_not_picked=False, error=False,
                                    obstructed_obstacle=False, time_registered=construction_state.time_registered)
 
             new_construction_state = ConstructionState(event_pos=construction_state.event_pos, event_code=construction_state.event_code,
@@ -431,10 +434,12 @@ class ProcessState:
 
             self.register_placement(building_instruction=building_instruction, construction_state=new_construction_state,
                                     event_info=event_info, worker_event_code=construction_state.event_code, worker_event_pos=construction_state.event_pos)
-
-            self.set_completion_state(current_layout, event_info)
-
-        self.last_event_trail = list(detour_event.keys())[0]
+            if not event_info.deviated:
+                event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
+        if detour_event:
+            self.last_event_trail = list(detour_event.keys())[0]
+        else:
+            self.last_event_trail = self.aimed_solution.ordered_trails[0]
 
     # restriction checks
 
@@ -465,35 +470,42 @@ class ProcessState:
             return False
 
     # utilities
-    def set_completion_state(self, current_layout, event_info):
-        """sets completion state of current layout and neighboring layouts. Updates state grid."""
+    def set_completion_state(self, current_layout, event_info) -> set:
+        """sets completion state of current layout and neighboring layouts. Updates state grid on completed layouts."""
         neighboring_layouts = get_neighboring_layouts(current_layout, self.aimed_solution.ordered_trails)
         neighboring_layouts.append(current_layout)
-
+        completed_layouts = set()
         for layout in neighboring_layouts:
-            layout_state = self.building_instructions.get(layout)
-            if not layout_state.layout_completed:
-                # check if required fittings placed
-                for fit_pos in layout_state.required_fit_positions:
-                    if None in self.get_construction_state(fit_pos, event_codes=[1]):
-                        return False
 
-                # check if required pipe placed
-                if None in self.get_construction_state(layout_state.possible_att_pipe_positions, event_codes=[2]):
-                    return False
-
-                layout_state.layout_completed = True
-
-                for pos in layout:
-                    self.state_grid[pos] = 2
-                return True
+            building_instruction = self.building_instructions.get(layout)
+            if not building_instruction.layout_completed:
+                # check if instruction was completed
+                if self.completed_instruction(building_instruction):
+                    building_instruction.layout_completed = True
+                    completed_layouts.add(layout)
+                    for pos in layout:
+                        self.state_grid[pos] = 2
 
             else:
                 if event_info.removal:
-                    layout_state.layout_completed = False
+                    building_instruction.layout_completed = False
                     for pos in layout:
                         self.state_grid[pos] = 0
+
+        return completed_layouts
+
+    def completed_instruction(self, building_instruction) -> bool:
+        # check if required fitting placed
+        for fit_pos in building_instruction.required_fit_positions:
+            if None in self.get_construction_state(fit_pos, event_codes=[1]):
                 return False
+        # check if required pipe placed
+        pipe_positions = building_instruction.possible_att_pipe_positions
+
+        if None in self.get_construction_state(pipe_positions, event_codes=[2]):
+            return False
+
+        return True
 
     def get_all_fit_positions(self):
         fit_set = set()
@@ -526,6 +538,7 @@ class ProcessState:
             if part_id != pipe_id:
                 event_info.deviated = True
         else:
+            event_info.part_id = pipe_id
             event_info.deviated = True
 
         pass

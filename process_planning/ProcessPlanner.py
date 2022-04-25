@@ -129,7 +129,7 @@ def make_error_message(event_pos: Pos, additional_message: str):
 
 # Todo:
 #   Known Issues:
-#   - Can't return to optimal solution (Fix: Track detour trail, if removed, go back to optimal solution)
+#   - detour trails arent tracket correctly
 #   - Pipes with deviating IDs can't be placed on solution nodes
 #   - missing intelligence: if unknown pipe id in between two fittings (in a detour event), check if distance between two fittings
 #       exists as a picked part, then assign and continue detour event
@@ -204,10 +204,11 @@ class ProcessPlanner:
         if special_message:
             print(special_message)
 
-        detour_event = self.tentative_process_state.last_event_info.detour_event
+        detour_event : dict = self.tentative_process_state.last_event_info.detour_event
         detour_message = None
-        if detour_event:
 
+        if detour_event:
+            self.tentative_process_state.detour_trails.append(list(detour_event)[0])
             detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
 
             solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
@@ -216,7 +217,39 @@ class ProcessPlanner:
 
             if solution:
                 detour_message = str.format(f"detour event confirmed, applying alternative solution!")
-                self.tentative_process_state.handle_detour_event(detour_event, solution)
+                self.tentative_process_state.handle_detour_event(solution, detour_event)
+
+                # clean up remaining detour trails
+                for detour_trail in self.tentative_process_state.detour_trails:
+                    if not detour_trail in self.tentative_process_state.building_instructions.keys():
+                        # detour trail is not in current solution anymore
+                        self.tentative_process_state.detour_trails.remove(detour_trail)
+        else:
+            if self.tentative_process_state.detour_trails:
+                # check if layout that caused detour is not completed anymore
+                if not self.tentative_process_state.building_instructions[self.tentative_process_state.detour_trails[-1]].layout_completed:
+                    self.tentative_process_state.detour_trails.pop(-1)
+                    if self.tentative_process_state.detour_trails:
+                        # there are still complete detour layouts
+                        last_detour_trail = self.tentative_process_state.detour_trails[-1]
+
+                        last_detour_instruction = self.tentative_process_state.building_instructions[last_detour_trail]
+                        detour_event = {last_detour_trail:last_detour_instruction}
+                        solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
+                                                                process_state=self.tentative_process_state,
+                                                                detour_event=detour_event)
+                        self.tentative_process_state.handle_detour_event(solution, detour_event)
+                        detour_message = str.format(
+                            f"Deviating layout incomplete, returning solution for last deviating layout")
+                    else:
+                        # return to optimal solution
+                        detour_event = {None: "Returned to optimal solution"}
+                        self.tentative_process_state.handle_detour_event(self.optimal_solution)
+
+
+                        detour_message = str.format(f"No complete deviating layouts left, returning to optimal solution")
+
+                    self.tentative_process_state.last_event_info.detour_event = detour_event
 
         return self.tentative_process_state, (message, special_message, detour_message)
 

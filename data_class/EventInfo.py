@@ -22,7 +22,7 @@ class EventInfo:
     unnecessary: bool
     obstructed_obstacle: bool
     obstructed_part: bool
-    layout_completed: bool
+    completed_layouts: set
 
     part_not_picked: bool
 
