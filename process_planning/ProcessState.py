@@ -80,8 +80,8 @@ class ProcessState:
         message = str.format(f"ProcessPlanner: Picked part with id {part_id}")
         return message
 
-    def evaluate_placement(self, worker_event: tuple[Pos, int], check_for_deviation_events: bool = True,
-                           ignore_errors: bool = False, allow_stacking: bool = False) -> EventInfo:
+    def evaluate_placement(self, worker_event: tuple[Pos, int],
+                           ignore_part_check: bool = False, ignore_obstructions: bool = False) -> EventInfo:
         """Evaluates a placement event and registers changes to the motion dict according to building_instructions./
          Also registers if a instruction has been completed."""
         worker_event_pos = worker_event[0]
@@ -100,6 +100,7 @@ class ProcessState:
         unnecessary = False
         error = False
         part_not_picked = False
+        layout_changed = False
         detour_event = {}
 
         time_registered = datetime.now()
@@ -108,32 +109,39 @@ class ProcessState:
                                obstructed_part=obstructed_part, obstructed_obstacle=obstructed_obstacle,
                                deviated=deviated, misplaced=misplaced, unnecessary=unnecessary, completed_layouts=completed_layouts,
                                layout=current_layout, removal=removal, part_not_picked=part_not_picked,
-                               detour_event=detour_event, error=error, time_registered=time_registered)
+                               detour_event=detour_event, error=error, time_registered=time_registered, layout_changed=layout_changed)
 
         construction_state = ConstructionState(event_pos=worker_event_pos, event_code=worker_event_code, part_id=part_id, deviated=deviated,
                                                misplaced=misplaced, unnecessary=unnecessary, time_registered=time_registered)
 
+
+
+        # get current layout and building instruction
+        building_instruction, current_layout, layout_changed = self.get_current_layout_and_building_instruction(worker_event_code, worker_event_pos, )
+        event_info.layout = current_layout
+
         # event evaluation
 
         if self.part_removed(worker_event_pos, worker_event_code, event_info):
+            if not event_info.deviated:
+                event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
             # return part to picked_parts
             if event_info.part_id in self.part_stock:
                 self.picked_parts.append(event_info.part_id)
             return event_info
+        if ignore_obstructions:
+            if self.obstructed_obstacle(worker_event_pos):
+                event_info.obstructed_obstacle = True
+                event_info.error = True
+                return event_info
 
-        if self.obstructed_obstacle(worker_event_pos):
-            event_info.obstructed_obstacle = True
-            event_info.error = True
-            return event_info
+            event_info.obstructed_part = self.obstructed_part(worker_event_pos, worker_event_code)
+            if event_info.obstructed_part:
+                event_info.obstructed_part = True
+                event_info.error = True
+                return event_info
 
-        event_info.obstructed_part = self.obstructed_part(worker_event_pos, worker_event_code)
-        if event_info.obstructed_part:
-            event_info.obstructed_part = True
-            event_info.error = True
-            return event_info
 
-        building_instruction, current_layout = self.get_current_layout_and_building_instruction(worker_event_code, worker_event_pos)
-        event_info.layout = current_layout
 
         # evaluate placement and modify event info accordingly
 
@@ -143,11 +151,11 @@ class ProcessState:
 
         elif worker_event_code == 2:
             self.pipe_placed(event_pos=worker_event_pos, event_info=event_info,
-                             building_instruction=building_instruction)
+                             building_instruction=building_instruction, ignore_part_check=ignore_part_check)
 
         elif worker_event_code == 1:
             self.fitting_placed(event_pos=worker_event_pos, building_instruction=building_instruction,
-                                event_info=event_info)
+                                event_info=event_info, ignore_part_check=ignore_part_check)
 
 
         if not event_info.error:
@@ -159,7 +167,7 @@ class ProcessState:
                 # check completion state of this and neighboring layouts
                 event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
             else:
-                if worker_event_code == 1 and check_for_deviation_events:
+                if worker_event_code == 1:
                     # check for detour events
                     detour_event = self.detour_event(event_pos=worker_event_pos, event_code=worker_event_code)
                     if detour_event:
@@ -183,6 +191,7 @@ class ProcessState:
 
         current_layout = self.last_event_trail
         building_instruction = self.building_instructions.get(current_layout)
+        layout_changed = False
 
         if event_pos in self.aimed_solution.absolute_trail.keys():
 
@@ -204,9 +213,11 @@ class ProcessState:
                         if event_pos in trail:
                             break
                 current_layout = trail
-                self.last_event_trail = current_layout
 
-            layout_changed = current_layout != self.last_event_trail
+
+                layout_changed = current_layout != self.last_event_trail
+
+                self.last_event_trail = current_layout
 
             building_instruction = self.building_instructions[current_layout]
         else:
@@ -214,7 +225,7 @@ class ProcessState:
             building_instruction = None
 
             # todo: check recommended att pos
-        return building_instruction, current_layout
+        return building_instruction, current_layout, layout_changed
 
     def register_placement(self, building_instruction, construction_state, event_info, worker_event_code,
                            worker_event_pos):
@@ -260,14 +271,16 @@ class ProcessState:
                         _, construction_state = self.get_construction_state(pos=pos, event_codes=[event_code])
                         if construction_state:
                             event_info.unnecessary = True
+                            event_info.deviated = True
 
             else:
                 event_info.misplaced = True
+                event_info.deviated = True
         else:
             event_info.deviated = True
         event_info.part_id = -1
 
-    def pipe_placed(self, event_pos, building_instruction: BuildingInstruction, event_info):
+    def pipe_placed(self, event_pos, building_instruction: BuildingInstruction, event_info, ignore_part_check):
         """Evaluates the placement of a pipe. Notes findings in event_info."""
         if event_pos in self.aimed_solution.absolute_trail.keys():
             # if pipe placement occurred somewhere inside the trail of building instruction, then it's valid
@@ -275,43 +288,46 @@ class ProcessState:
             event_info.part_id = part_id
             # check if part was actually picked
             # todo: if part not in picked_parts, check if other pipes available like on else route
-            if part_id not in self.picked_parts:
-                # ERROR : part was not picked!
-                event_info.part_not_picked = True
-                event_info.error = True
+            if part_id not in self.picked_parts and not ignore_part_check:
+                self.pipe_placed_deviated_route(event_info, ignore_part_check)
 
         else:
-            event_info.deviated = True
-            picked_parts = self.picked_parts
-            # find the part id
-            picked_pipes = [i for i in picked_parts if i != 0]
-            if len(set(picked_pipes)) == 1:
-                # if there is only one of a kind of pipe in picked_parts, then we know which id was placed
-                event_info.part_id = picked_pipes[0]
-            elif len(set(picked_parts)) > 1:
-                # multiple kinds of pipe picked
-                if self.get_num_unknown_pipes() >= len(picked_pipes):
-                    # number of unknown pipes can't be greater than pipes picked
-                    event_info.part_id = -99
-                    event_info.error = True
-                    event_info.part_not_picked = True
-                else:
-                    event_info.part_id = -2
+            self.pipe_placed_deviated_route(event_info, ignore_part_check)
 
-
-
+    def pipe_placed_deviated_route(self, event_info, ignore_part_check):
+        event_info.deviated = True
+        picked_parts = self.picked_parts
+        # find the part id
+        picked_pipes = [i for i in picked_parts if i != 0]
+        if len(set(picked_pipes)) == 1:
+            # if there is only one of a kind of pipe in picked_parts, then we know which id was placed
+            event_info.part_id = picked_pipes[0]
+        elif len(set(picked_parts)) > 1 or ignore_part_check:
+            if self.get_num_unknown_pipes() < len(picked_pipes) or ignore_part_check:
+                event_info.part_id = -2
+            # multiple kinds of pipe picked
             else:
+                # number of unknown pipes can't be greater than pipes picked
                 event_info.part_id = -99
                 event_info.error = True
                 event_info.part_not_picked = True
 
-    def fitting_placed(self, event_pos, building_instruction, event_info, ignore_part_restriction=False):
+
+        else:
+            event_info.part_id = -99
+            event_info.error = True
+            event_info.part_not_picked = True
+
+        return event_info
+
+    def fitting_placed(self, event_pos, building_instruction, event_info, ignore_part_check=False):
         """Evaluates the placement of a fitting. Notes findings in event_info. If picked_parts is set to None, part restrictions will be ignored"""
-        if 0 in self.picked_parts or ignore_part_restriction:
+        if 0 in self.picked_parts or ignore_part_check:
             event_info.part_id = 0
             if event_pos in self.aimed_solution.absolute_trail.keys():
                 if event_pos not in building_instruction.required_fit_positions:
                     event_info.misplaced = True
+                    event_info.deviated = True
             else:
                 event_info.deviated = True
         else:
@@ -398,7 +414,7 @@ class ProcessState:
         # reevaluate motion dict according to new building instructions
         self.last_event_trail = self.aimed_solution.ordered_trails[0]
         for pos, construction_state in motion_dict.items():
-            building_instruction, current_layout = self.get_current_layout_and_building_instruction(
+            building_instruction, current_layout, _ = self.get_current_layout_and_building_instruction(
                 event_pos=construction_state.event_pos, event_code=construction_state.event_code)
 
             # possible event outcomes:
@@ -412,7 +428,7 @@ class ProcessState:
                                    removal=False, layout=None,
                                    part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced, unnecessary=unnecessary,
                                    obstructed_part=False, completed_layouts=completed_layouts, part_not_picked=False, error=False,
-                                   obstructed_obstacle=False, time_registered=construction_state.time_registered)
+                                   obstructed_obstacle=False, time_registered=construction_state.time_registered, layout_changed=False)
 
             new_construction_state = ConstructionState(event_pos=construction_state.event_pos, event_code=construction_state.event_code,
                                                        part_id=construction_state.part_id, deviated=deviated, unnecessary=unnecessary, misplaced=misplaced,
@@ -430,7 +446,7 @@ class ProcessState:
 
             elif construction_state.event_code == 1:
                 self.fitting_placed(event_pos=construction_state.event_pos, building_instruction=building_instruction,
-                                    event_info=event_info, ignore_part_restriction=True)
+                                    event_info=event_info, ignore_part_check=True)
 
             self.register_placement(building_instruction=building_instruction, construction_state=new_construction_state,
                                     event_info=event_info, worker_event_code=construction_state.event_code, worker_event_pos=construction_state.event_pos)
@@ -480,7 +496,7 @@ class ProcessState:
             building_instruction = self.building_instructions.get(layout)
             if not building_instruction.layout_completed:
                 # check if instruction was completed
-                if self.completed_instruction(building_instruction):
+                if self.completed_instruction(building_instruction)[0]:
                     building_instruction.layout_completed = True
                     completed_layouts.add(layout)
                     for pos in layout:
@@ -494,18 +510,22 @@ class ProcessState:
 
         return completed_layouts
 
-    def completed_instruction(self, building_instruction) -> bool:
-        # check if required fitting placed
-        for fit_pos in building_instruction.required_fit_positions:
-            if None in self.get_construction_state(fit_pos, event_codes=[1]):
-                return False
+    def completed_instruction(self, building_instruction) -> tuple[bool,int]:
+        """Checks if the building instruction was completed.
+        and returns event code corresponding to its completion state."""
+
         # check if required pipe placed
         pipe_positions = building_instruction.possible_att_pipe_positions
 
         if None in self.get_construction_state(pipe_positions, event_codes=[2]):
-            return False
+            return False, 2
 
-        return True
+        # check if required fitting placed
+        for fit_pos in building_instruction.required_fit_positions:
+            if None in self.get_construction_state(fit_pos, event_codes=[1]):
+                return False, 1
+
+        return True, 0
 
     def get_all_fit_positions(self):
         fit_set = set()

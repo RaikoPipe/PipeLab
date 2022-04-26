@@ -112,7 +112,7 @@ def get_tool_tip_text_grid(process_planner, tool_tip_text_grid):
         elif state == 3:
             tool_tip_text_grid[pos] = "Transition"
 
-        part_id = process_planner.initial_process_state.aimed_solution.absolute_trail.get(pos)
+        part_id = process_planner.tentative_process_state.aimed_solution.absolute_trail.get(pos)
         if part_id is not None:
             text = str.format(f"Required part ID: {part_id}")
             tool_tip_text_grid[pos] = text
@@ -220,7 +220,7 @@ def update_solution_grid(tentative_state: ProcessState, button_grid, initial_sty
 
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
                              initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid):
-    process_state, messages = process_planner.main((pos, event_code), check_for_deviations=True, ignore_errors=False)
+    process_state, messages = process_planner.main((pos, event_code), handle_detour_events=True, ignore_part_check=False)
 
     event_info: EventInfo = process_state.last_event_info
     update_button_grid(button_grid, process_planner, style_grid, tool_tip_text_grid)
@@ -262,8 +262,11 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
                 value = str(value.replace(microsecond=0))
             elif attribute == "part_id":
                 value = str(value)
+            elif attribute == "completed_layouts":
+                value = tuple(value)# tkinter gets key error on sets
             if value:
-                tree.insert("", index=tk.END,iid=message_count, tag=message_count, text=str.format(f"{attribute}: {str(value)}"))
+                value = str(value)
+                tree.insert("", index=tk.END,iid=message_count, tag=message_count, text=str.format(f"{attribute}: {value}"))
                 extra_message_ids.append(message_count)
                 message_count += 1
 
@@ -279,7 +282,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
         tree.tag_configure(tagname=message_count, background="maroon1")
         message_count += 1
 
-
+        # todo: make tidier information output
         # if event_info.part_id in process_planner.initial_process_state.part_stock:
         #     tree.insert("", index=tk.END, tag=message_count, values=(str.format(f"ID: {event_info.part_id}"),))
         #     extra_message_ids.append(message_count)
@@ -315,7 +318,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
 
 def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree):
-    message = process_planner.send_new_pick_event(part_id)
+    _, message = process_planner.main((part_id, 4))
     tree.insert("", index=tk.END, text=message.replace("process_planning: ", ""))
     item = part_stock_tree.get_children()[part_id]
     part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
@@ -527,10 +530,10 @@ class function_test_app:
         # todo: Construction Build Information Frame with picked_parts, current stock, deviation, solution scores etc.
 
         construction_definite_trail = get_absolute_trail_from_building_instructions(
-            self.process_planner.latest_assembly_state.building_instructions)
+            self.process_planner.last_process_state.building_instructions)
 
         construction_button_grid, style_grid, tool_tip_text_grid = get_button_grid(
-            state_grid=self.process_planner.latest_assembly_state.state_grid, start=start,
+            state_grid=self.process_planner.last_process_state.state_grid, start=start,
             goal=goal, button_grid_frame=construction_button_grid_frame,
             absolute_trail=construction_definite_trail,
             process_planner=self.process_planner,
@@ -546,7 +549,7 @@ class function_test_app:
         return_to_previous_state.grid(row=2, column=0)
 
         # setting title
-        root.title("Pipe Lab")
+        root.title("Pipe Lab 2.0")
         # setting window size
 
         root.mainloop()

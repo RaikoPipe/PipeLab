@@ -2,6 +2,7 @@ from type_dictionary.common_types import Pos
 from path_finding.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
 from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, get_transition
+from constants import fitting_id
 
 
 def out_of_bounds(neighbor_node: tuple, state_grid):
@@ -15,23 +16,37 @@ def out_of_bounds(neighbor_node: tuple, state_grid):
         return True  # array bound x walls
 
 collision_set = {1,2}
-def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid) -> bool:
-    """Checks if the path from current_node to neighbor_node obstructs any obstacles.
+def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid, part_id) -> bool:
+    """Checks if the path from current_node to neighbor_node obstructs any obstacles or transitions.
     """
 
     length = abs(neighbor_node[0] - neighbor_node[1])
     direction = get_direction(neighbor_node)
-
+    #collision_nodes = []
+    # check collision with obstacles
     for i in range(1, length + 1):
         node = (current_node[0] + direction[0] * i, current_node[1] + direction[1] * i)
+        #collision_nodes.append(node)
         if state_grid[node] in collision_set:
             return True
+        elif state_grid[node] == 3 and ((part_id != fitting_id and i != 1) or part_id == fitting_id):
+            return True
+
+    # if part_id != fitting_id and collision_nodes:
+    #     collision_nodes.pop(0) # first node is allowed to obstruct transition
+    #     # check collision with transitions
+    #     for node in collision_nodes:
+    #         if state_grid[node] == 3:
+    #             return True
 
 
-def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid) -> bool:
-    """Contains restriction set that checks if neighbor is restricted."""
+
+def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid, part_id) -> bool:
+    """Contains restriction set that checks if neighbor is restricted.
+    :param part_id:
+    """
     if not out_of_bounds(neighbor_node, current_state_grid):
-        if collided_obstacle(current_node, pos, current_state_grid):
+        if collided_obstacle(current_node, pos, current_state_grid, part_id):
             return True
     else:
         return True

@@ -1,6 +1,6 @@
 import numpy as np
 
-import path_finding.restriction_functions
+import path_finding.restrictions
 from type_dictionary.common_types import Pos, Trail, Layouts
 
 from data_class.BuildingInstruction import BuildingInstruction
@@ -23,8 +23,8 @@ def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id: int, d
         b_left = (pos[0] + n_left[0], pos[1] + n_left[1])
         n_right = (right[0] + (direction[0] * (i)), right[1] + (direction[1] * (i)))
         b_right = (pos[0] + n_right[0], pos[1] + n_right[1])
-        if not path_finding.restriction_functions.out_of_bounds(b_left,
-                                                                state_grid) and not path_finding.restriction_functions.out_of_bounds(
+        if not path_finding.restrictions.out_of_bounds(b_left,
+                                                                state_grid) and not path_finding.restrictions.out_of_bounds(
                 b_right, state_grid):
             if state_grid[b_left] != 0 or state_grid[b_right] != 0:
                 continue
@@ -42,8 +42,8 @@ def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id: int, d
             b_left = (pos[0] + n_left[0], pos[1] + n_left[1])
             n_right = (right[0] + (direction[0] * (i)), right[1] + (direction[1] * (i)))
             b_right = (pos[0] + n_right[0], pos[1] + n_right[1])
-            if not path_finding.restriction_functions.out_of_bounds(b_left,
-                                                                    state_grid) and not path_finding.restriction_functions.out_of_bounds(
+            if not path_finding.restrictions.out_of_bounds(b_left,
+                                                                    state_grid) and not path_finding.restrictions.out_of_bounds(
                     b_right, state_grid):
                 if state_grid[b_left] != 0 and state_grid[b_right] != 0:
                     continue

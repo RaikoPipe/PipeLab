@@ -3,7 +3,7 @@ worker motion event codes
 1 -> fitting placed
 2 -> pipe placed
 3 -> attachment placed
-4 -> accepted part from picking robot
+4 -> accepted part from picking robot or requested different part
 -> removals are determined implicitly
 
 picking robot event codes/command codes :
@@ -11,7 +11,7 @@ picking robot event codes/command codes :
 -1: Cancel all picking tasks
 0: (go to) neutral state
 1: move to pick-up point of part id x and pick part
-2: move to return position of part id x and return part # todo: remove this code
+2: move to return position of part id x and return part # unused
 3: move into offering position
 4: wait for worker to accept part
 - picking robot immediately executes negative commands
@@ -21,6 +21,7 @@ fastening robot event codes:
 -1: remove fastening of positions x from command pipeline (if still in pipeline)
 0: (go to) neutral state
 1: move to a fastening position and fasten attachment at pos x
+2: move to a fastening position and fasten pipe at pos x
 - if fastening robot command pipeline is empty, robot should go to neutral state
 
 

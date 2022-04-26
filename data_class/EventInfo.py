@@ -29,3 +29,5 @@ class EventInfo:
     error: bool
 
     time_registered : datetime
+
+    layout_changed : bool

@@ -10,7 +10,7 @@ from data_class.Solution import Solution
 from grid.grid_functions import change_grid_states
 from path_finding.path_math import *
 from path_finding.path_util import *
-from path_finding.restriction_functions import neighbor_restricted, restrict_neighbor_pos
+from path_finding.restrictions import neighbor_restricted, restrict_neighbor_pos
 from path_finding.score_calculation import get_worst_move_cost, get_f_score, get_m_score, \
     get_e_score
 
@@ -152,7 +152,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
                 continue
 
             if neighbor_restricted(current_node=current_pos, neighbor_node=neighbor_pos, pos=neighbor,
-                                   current_state_grid=current_state_grid):
+                                   current_state_grid=current_state_grid, part_id=neighbor_part_id):
                 continue
 
             p_list = [p[1] for p in open_list]
