@@ -1,13 +1,12 @@
 from typing import Optional
 
-import numpy as np
 import vpython as vpy
+from type_dictionary.common_types import *
 
-from path_finding.common_types import *
-from path_finding.path_math import diff_pos, get_direction
-from rendering.object_rendering import render_obstacle, render_pipe, render_corner, render_marker
+from PathFinding.util.path_math import diff_pos, get_direction
+from VpythonRendering.object_rendering import render_obstacle, render_pipe, render_corner, render_marker
 
-"""functions for rendering a group of objects"""
+"""functions for VpythonRendering a group of objects"""
 
 
 def render_obstacles_from_state_grid(state_grid: np.ndarray, rendering_grid: np.ndarray, scene: vpy.canvas) -> Optional[
@@ -27,8 +26,8 @@ def render_obstacles_from_state_grid(state_grid: np.ndarray, rendering_grid: np.
 
 
 # todo: get directions from solution data class
-def render_pipe_layout(definite_path: DefinitePath, rendering_grid: np.ndarray, scene: vpy.canvas, opacity: float) -> \
-list[vpy.cylinder]:
+def render_pipe_layout(definite_path: NodePath, rendering_grid: np.ndarray, scene: vpy.canvas, opacity: float) -> \
+        list[vpy.cylinder]:
     """Renders pipe objects on a VPython canvas according to the given list of parts used."""
     solution_layout = []
     for index, (pos, part_id) in enumerate(definite_path):
@@ -41,7 +40,7 @@ list[vpy.cylinder]:
             try:
                 to_dir = get_direction(diff_pos(definite_path[index][0], definite_path[index + 1][0]))
             except IndexError:
-                print("Vpython rendering: No next object in list, finished rendering.")
+                print("Vpython VpythonRendering: No next object in list, finished VpythonRendering.")
                 break
 
             pos = rendering_grid[definite_path[index][0]]

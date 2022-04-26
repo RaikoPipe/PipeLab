@@ -1,18 +1,16 @@
 import heapq
-from copy import copy, deepcopy
-from typing import Optional
+from copy import copy
 
 import matplotlib.pyplot as plt
 
-from data_class.PathProblem import PathProblem
-from data_class.Predecessor import Predecessor
-from data_class.Solution import Solution
-from grid.grid_functions import change_grid_states
-from path_finding.path_math import *
-from path_finding.path_util import *
-from path_finding.restrictions import neighbor_restricted, restrict_neighbor_pos
-from path_finding.score_calculation import get_worst_move_cost, get_f_score, get_m_score, \
+from PathFinding.data_class.PathProblem import PathProblem
+from PathFinding.grid.grid_functions import change_grid_states
+from PathFinding.util.path_math import *
+from PathFinding.util.path_util import *
+from PathFinding.util.restrictions import neighbor_restricted, restrict_neighbor_pos
+from PathFinding.util.score_calculation import get_worst_move_cost, get_f_score, get_m_score, \
     get_e_score
+from typing import Optional
 
 
 # idea: make a separate function for search showcase
@@ -23,7 +21,7 @@ from path_finding.score_calculation import get_worst_move_cost, get_f_score, get
 # fixme: mca* doesn't work, mcsa* doesn't include extra score
 def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=False) -> Optional[Solution]:
     """Searches for a solution for the given path problem.
-        :class:`data_class.PathProblem`
+        :class:`classes.PathProblem`
 
     """
     starting_part = path_problem.starting_part
@@ -130,8 +128,9 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
             end_score = total_score[current_pos]
             # current_pos = goal_pos
 
-            return construct_solution(predecessors=predecessors, current_node=current_node, state_grid=current_state_grid,
-                                      score=end_score, goal_pos = goal_pos, goal_part = 0,
+            return construct_solution(predecessors=predecessors, current_node=current_node,
+                                      state_grid=current_state_grid,
+                                      score=end_score, goal_pos=goal_pos, goal_part=0,
                                       algorithm=algorithm, path_problem=path_problem, fast_mode=fast_mode)
 
         closed_list.add(key_dict.get(fast_mode))
@@ -158,8 +157,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
             p_list = [p[1] for p in open_list]
 
             if current_score_start_distance < score_start.get(neighbor_pos, 0) or (
-            neighbor_pos, neighbor_part_id, neighbor_direction) not in p_list:
-
+                    neighbor_pos, neighbor_part_id, neighbor_direction) not in p_list:
                 predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_to_successor=neighbor_part_id,
                                                                     part_to_predecessor=current_part_id,
                                                                     direction=current_direction, path=current_path,

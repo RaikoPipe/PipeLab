@@ -1,8 +1,8 @@
-from data_class.PathProblem import PathProblem
-from data_class.Weights import Weights
+from PathFinding.data_class.PathProblem import PathProblem
+from PathFinding.data_class.Weights import Weights
 from function_test.function_test_gui import function_test_app
-from grid import grid_functions, randomizer
-from path_finding.search_algorithm import find_path
+from PathFinding.grid import grid_functions, randomizer
+from PathFinding.util.search_algorithm import find_path
 
 # todo: use change_grid_states function to create a mounting wall with obstacles
 # todo: create a solution with a* and extract path and parts to define a static solution
@@ -10,7 +10,7 @@ from path_finding.search_algorithm import find_path
 x = 10
 y = 20
 
-transition_points_set = {(-2,10)}
+transition_points_set = {(-2, 10)}
 
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
 solution = None
@@ -46,7 +46,7 @@ while solution is None:
 # print(path_problem)
 # print(solution)
 
-# rendering
+# VpythonRendering
 
 # scene = object_rendering.create_new_scene()
 # mounting_wall, dot_object = \

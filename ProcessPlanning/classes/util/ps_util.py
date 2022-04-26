@@ -1,10 +1,9 @@
 import numpy as np
 
-import path_finding.restrictions
+import PathFinding.util.restrictions
+from ProcessPlanning.classes.data_cl.BuildingInstruction import BuildingInstruction
+from PathFinding.util.path_math import get_direction, diff_pos, manhattan_distance
 from type_dictionary.common_types import Pos, Trail, Layouts
-
-from data_class.BuildingInstruction import BuildingInstruction
-from path_finding.path_math import get_direction, diff_pos, manhattan_distance
 
 
 def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id: int, direction: Pos):
@@ -23,9 +22,9 @@ def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id: int, d
         b_left = (pos[0] + n_left[0], pos[1] + n_left[1])
         n_right = (right[0] + (direction[0] * (i)), right[1] + (direction[1] * (i)))
         b_right = (pos[0] + n_right[0], pos[1] + n_right[1])
-        if not path_finding.restrictions.out_of_bounds(b_left,
-                                                                state_grid) and not path_finding.restrictions.out_of_bounds(
-                b_right, state_grid):
+        if not PathFinding.util.restrictions.out_of_bounds(b_left,
+                                                           state_grid) and not PathFinding.util.restrictions.out_of_bounds(
+            b_right, state_grid):
             if state_grid[b_left] != 0 or state_grid[b_right] != 0:
                 continue
             else:
@@ -42,9 +41,9 @@ def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id: int, d
             b_left = (pos[0] + n_left[0], pos[1] + n_left[1])
             n_right = (right[0] + (direction[0] * (i)), right[1] + (direction[1] * (i)))
             b_right = (pos[0] + n_right[0], pos[1] + n_right[1])
-            if not path_finding.restrictions.out_of_bounds(b_left,
-                                                                    state_grid) and not path_finding.restrictions.out_of_bounds(
-                    b_right, state_grid):
+            if not PathFinding.util.restrictions.out_of_bounds(b_left,
+                                                               state_grid) and not PathFinding.util.restrictions.out_of_bounds(
+                b_right, state_grid):
                 if state_grid[b_left] != 0 and state_grid[b_right] != 0:
                     continue
                 else:
@@ -132,6 +131,6 @@ def get_building_instructions_from_solution(solution):
                                                                            layout_trail[0], layout_trail[-1]),
                                                                        recommended_attachment_pos=rec_att_pos,
                                                                        possible_att_pipe_positions=tuple(
-                                                                           possible_att_pipe_positions),)
+                                                                           possible_att_pipe_positions), )
 
     return construction_layout

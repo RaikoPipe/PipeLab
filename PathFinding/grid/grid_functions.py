@@ -1,10 +1,9 @@
 from typing import Tuple
 
-import numpy as np
 import vpython as vpy
 
+from VpythonRendering.object_data_classes import mounting_wall_data
 from type_dictionary.common_types import *
-from rendering.object_data_classes import mounting_wall_data
 
 
 def get_empty_stategrid(x_nodes: int, y_nodes: int):
@@ -39,6 +38,7 @@ x_start_default = 50
 y_start_default = 100
 z_start_default = 150
 dot_dist_default = 105
+
 
 def get_rendering_grid(x_nodes: int, y_nodes: int, x_start: float = x_start_default,
                        y_start: float = y_start_default, z_start: float = z_start_default,

@@ -1,6 +1,6 @@
 import vpython as vpy
 
-from rendering import object_data_classes as odc
+from VpythonRendering import object_data_classes as odc
 
 # defaults
 default_mounting_wall = odc.mounting_wall_data()

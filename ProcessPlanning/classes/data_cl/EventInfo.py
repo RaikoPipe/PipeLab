@@ -1,9 +1,7 @@
 from dataclasses import dataclass
-from typing import Optional
-
-from type_dictionary.common_types import *
 from datetime import datetime
-
+from typing import Optional
+from type_dictionary.common_types import *
 
 
 # todo: documentation
@@ -28,6 +26,6 @@ class EventInfo:
 
     error: bool
 
-    time_registered : datetime
+    time_registered: datetime
 
-    layout_changed : bool
+    layout_changed: bool

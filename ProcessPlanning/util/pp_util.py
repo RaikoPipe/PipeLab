@@ -1,19 +1,18 @@
 from copy import deepcopy
 from typing import Optional
 
-import constants
-from constants import horizontal_directions, vertical_directions
-from data_class.BuildingInstruction import BuildingInstruction
-from data_class.Solution import Solution
-from path_finding import partial_solver
+from type_dictionary.constants import horizontal_directions, vertical_directions
+from ProcessPlanning.classes.data_cl.BuildingInstruction import BuildingInstruction
+from PathFinding.data_class.Solution import Solution
+from PathFinding.util import partial_solver
+from PathFinding.util.path_math import get_direction, diff_pos
+from ProcessPlanning.classes.ProcessState import ProcessState
 from type_dictionary.common_types import Trail, Pos
-from path_finding.path_math import get_direction, diff_pos, manhattan_distance
-from process_planning.ProcessState import ProcessState
-from process_planning.ps_util import get_optimal_attachment_pos
 
 message_dict = {1: "fitting", 2: "pipe", 3: "attachment"}
 
-def determine_next_part(process_state:ProcessState, layout:Trail):
+
+def determine_next_part(process_state: ProcessState, layout: Trail):
     next_part_id = None
 
     building_instruction = process_state.building_instructions.get(layout)
@@ -30,7 +29,9 @@ def determine_next_part(process_state:ProcessState, layout:Trail):
 
     return next_part_id
 
-def get_absolute_trail_from_building_instructions(building_instructions: dict[Trail:BuildingInstruction]) -> dict[Pos:int]:
+
+def get_absolute_trail_from_building_instructions(building_instructions: dict[Trail:BuildingInstruction]) -> dict[
+                                                                                                             Pos:int]:
     absolute_trail = {}
     for trail in building_instructions.keys():
         layout_state = building_instructions[trail]
@@ -195,7 +196,7 @@ def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pi
             f"Process Planner: Registered {motion_type} for object {object_name} (ID {pipe_id}) at Position {event_pos}")
     elif pipe_id == -2:
         message = str.format(
-        f"Process Planner: Registered {motion_type} for object {object_name} (ID Unknown) at Position {event_pos}")
+            f"Process Planner: Registered {motion_type} for object {object_name} (ID Unknown) at Position {event_pos}")
     else:
         message = str.format(
             f"Process Planner: Registered {motion_type} for object {object_name} at Position {event_pos}")
@@ -214,6 +215,3 @@ def make_error_message(event_pos: Pos, additional_message: str):
     information regarding the reason for the error."""
     message = str.format(f"Process Planner: Process error at Position {event_pos}: {additional_message}")
     return message
-
-
-

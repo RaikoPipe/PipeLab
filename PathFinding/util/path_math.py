@@ -1,8 +1,6 @@
 from math import copysign
 
-import numpy as np
-
-from constants import *
+from type_dictionary.constants import *
 from type_dictionary.common_types import *
 
 

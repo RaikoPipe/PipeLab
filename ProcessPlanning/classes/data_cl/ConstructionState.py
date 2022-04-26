@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-from typing import Optional
-from type_dictionary.common_types import Pos
 from datetime import datetime
+from typing import Optional
+
+from type_dictionary.common_types import Pos
+
 
 # todo: documentation
 

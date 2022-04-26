@@ -3,12 +3,12 @@ from typing import Optional
 import numpy as np
 import vpython as vpy
 
-import constants as cs
-from rendering import object_data_classes as odc
-from rendering.default_data import default_mounting_wall, default_scene, default_obstacle, \
+from type_dictionary import constants as cs
+from VpythonRendering import object_data_classes as odc
+from VpythonRendering.default_data import default_mounting_wall, default_scene, default_obstacle, \
     pipe_corner, default_pipes
 
-"""functions for rendering single objects (or compound objects)"""
+"""functions for VpythonRendering single objects (or compound objects)"""
 
 testvector = vpy.vector(0, 0, 0)
 

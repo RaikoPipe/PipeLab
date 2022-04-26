@@ -1,6 +1,6 @@
-from data_class.Weights import Weights
-from path_finding.path_math import manhattan_distance, get_direction
-from path_finding.restrictions import out_of_bounds
+from PathFinding.data_class.Weights import Weights
+from PathFinding.util.path_math import manhattan_distance, get_direction
+from PathFinding.util.restrictions import out_of_bounds
 
 
 def get_min_o_reduction(current_node, length: int, relative_direction: tuple, axis: tuple, state_grid) -> int:

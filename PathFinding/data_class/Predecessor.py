@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+
 @dataclass
 class Predecessor:
     """Dataclass that contains information about the predecessor of a node"""

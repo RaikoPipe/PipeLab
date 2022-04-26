@@ -1,8 +1,8 @@
 from typing import Optional
 
-from data_class.PathProblem import PathProblem
-from data_class.Solution import Solution
-from path_finding.search_algorithm import find_path
+from PathFinding.data_class.PathProblem import PathProblem
+from PathFinding.data_class.Solution import Solution
+from PathFinding.util.search_algorithm import find_path
 
 completed_solutions_stack = []
 

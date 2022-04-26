@@ -1,9 +1,9 @@
 """Server; Instantiates Interpreter, Process Planner"""
 
 """Debug starts here"""
-from data_class.PathProblem import PathProblem
-from data_class.Weights import Weights
-from grid import grid_functions, randomizer
+from PathFinding.data_class.PathProblem import PathProblem
+from PathFinding.data_class.Weights import Weights
+from PathFinding.grid import grid_functions, randomizer
 
 # todo: make server environment
 

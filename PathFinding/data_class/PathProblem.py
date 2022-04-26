@@ -1,10 +1,8 @@
 from dataclasses import dataclass
-from typing import Optional
 
-import numpy as np
-
-from data_class.Weights import Weights
+from PathFinding.data_class.Weights import Weights
 from type_dictionary.common_types import *  #
+from typing import Optional
 
 
 # todo: documentation
@@ -36,7 +34,7 @@ class PathProblem:
 
     start_directions: set[Pos]
     goal_directions: set[Pos]  #
-    transition_points: set[Pos] #
+    transition_points: set[Pos]  #
 
     starting_part: Optional[int]  #
 

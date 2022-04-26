@@ -1,11 +1,10 @@
 from copy import deepcopy
-from typing import Optional
 
-from data_class.Predecessor import Predecessor
-from data_class.Solution import Solution
+from PathFinding.data_class.Predecessor import Predecessor
+from PathFinding.data_class.Solution import Solution
+from PathFinding.util.path_math import diff_pos, get_direction, sum_pos
 from type_dictionary.common_types import *
-from path_finding.path_math import diff_pos, get_direction, sum_pos
-
+from typing import Optional
 
 def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_grid, score,
                        algorithm, path_problem, fast_mode, goal_pos, goal_part) -> Solution:
@@ -14,19 +13,18 @@ def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_
     absolute_path = []
     rendering_dict = {}
     part_stock = deepcopy(path_problem.part_stock)
-    absolute_path.append((goal_pos,goal_part))
+    absolute_path.append((goal_pos, goal_part))
     rendering_dict[goal_pos] = goal_part
     part_stock[goal_part] -= 1
     while current_node in predecessors:
         part_id = predecessors.get(current_node).part_to_successor
 
-        if current_node == Pos: # fixme: doesn't work, fix exists
+        if current_node == Pos:  # fixme: doesn't work, fix exists
             absolute_path.append((current_node, part_id))
             rendering_dict[current_node] = part_id
         else:
             absolute_path.append((current_node[0], part_id))
             rendering_dict[current_node[0]] = part_id
-
 
         part_stock[part_id] -= 1
         predecessor_node: Predecessor = predecessors.get(current_node)
@@ -115,8 +113,6 @@ def get_pipe_neighbors(axis, available_parts, at_start, transition) -> set:
             # only allow neighbors that meet corner condition
             neighbors.add(((part_id * axis[1], part_id * axis[0]), part_id))
             neighbors.add(((part_id * -axis[1], part_id * -axis[0]), part_id))
-
-
 
     return neighbors
 

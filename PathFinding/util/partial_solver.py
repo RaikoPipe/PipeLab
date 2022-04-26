@@ -3,17 +3,18 @@ from copy import deepcopy
 
 import numpy as np
 
-import constants as const
-from data_class.BuildingInstruction import BuildingInstruction
-from data_class.PathProblem import PathProblem
-from data_class.Solution import Solution
+from type_dictionary import constants as const
+from ProcessPlanning.classes.data_cl.BuildingInstruction import BuildingInstruction
+from PathFinding.data_class.PathProblem import PathProblem
+from PathFinding.data_class.Solution import Solution
+from PathFinding.util.path_math import manhattan_distance
+from PathFinding.solution_manager import get_solution
 from type_dictionary.common_types import Trail
-from path_finding.path_math import manhattan_distance
-from path_finding.solution_manager import get_solution
 
 
 def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set],
-                          outgoing_node_directions_dict: dict, state_grid:np.ndarray, part_stock:dict, path_problem:PathProblem,
+                          outgoing_node_directions_dict: dict, state_grid: np.ndarray, part_stock: dict,
+                          path_problem: PathProblem,
                           ) -> list[Solution]:
     """
     Tries to generate partial solutions with the given node pairs. Node pairs may be excluded if
@@ -26,7 +27,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
         outgoing_node_directions_dict: Dictionary containing the directions each node can be connected to.
         state_grid: #todo: reference
         part_stock: todo: reference
-        path_problem: :class: 'data_class.PathProblem.PathProblem'
+        path_problem: :class: 'classes.PathProblem.PathProblem'
 
     """
 
@@ -108,7 +109,7 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
     # add solution information from already completed layouts
     for layout_trail, building_instruction in completed_layouts.items():
         building_instruction: BuildingInstruction
-        layout_trail:Trail
+        layout_trail: Trail
 
         unordered_layouts.add(layout_trail)  # add for use later
 

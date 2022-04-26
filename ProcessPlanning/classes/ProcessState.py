@@ -1,18 +1,18 @@
 from copy import deepcopy
-from typing import Optional, Union
 from datetime import datetime
+from typing import Optional, Union
 
-from data_class.BuildingInstruction import BuildingInstruction
-from data_class.ConstructionState import ConstructionState
-from data_class.EventInfo import EventInfo
-from data_class.Solution import Solution
-from path_finding import path_math
-from type_dictionary.common_types import *
+from ProcessPlanning.classes.data_cl.BuildingInstruction import BuildingInstruction
+from ProcessPlanning.classes.data_cl.ConstructionState import ConstructionState
+from ProcessPlanning.classes.data_cl.EventInfo import EventInfo
+from PathFinding.data_class.Solution import Solution
+from PathFinding.util import path_math
+from PathFinding.util.path_math import get_direction, diff_pos
+from ProcessPlanning.classes.util.ps_util import get_neighboring_layouts, get_detour_trail, \
+    get_detour_state, get_building_instructions_from_solution
 # todo: documentation
 from type_dictionary.common_types import Pos, Trail
-from path_finding.path_math import get_direction, diff_pos
-from process_planning.ps_util import get_neighboring_layouts, get_detour_trail, \
-    get_detour_state, get_building_instructions_from_solution
+
 
 class ProcessState:
     """Data class that contains information about a process state
@@ -107,17 +107,20 @@ class ProcessState:
 
         event_info = EventInfo(event_pos=worker_event_pos, event_code=worker_event_code, part_id=part_id,
                                obstructed_part=obstructed_part, obstructed_obstacle=obstructed_obstacle,
-                               deviated=deviated, misplaced=misplaced, unnecessary=unnecessary, completed_layouts=completed_layouts,
+                               deviated=deviated, misplaced=misplaced, unnecessary=unnecessary,
+                               completed_layouts=completed_layouts,
                                layout=current_layout, removal=removal, part_not_picked=part_not_picked,
-                               detour_event=detour_event, error=error, time_registered=time_registered, layout_changed=layout_changed)
+                               detour_event=detour_event, error=error, time_registered=time_registered,
+                               layout_changed=layout_changed)
 
-        construction_state = ConstructionState(event_pos=worker_event_pos, event_code=worker_event_code, part_id=part_id, deviated=deviated,
-                                               misplaced=misplaced, unnecessary=unnecessary, time_registered=time_registered)
-
-
+        construction_state = ConstructionState(event_pos=worker_event_pos, event_code=worker_event_code,
+                                               part_id=part_id, deviated=deviated,
+                                               misplaced=misplaced, unnecessary=unnecessary,
+                                               time_registered=time_registered)
 
         # get current layout and building instruction
-        building_instruction, current_layout, layout_changed = self.get_current_layout_and_building_instruction(worker_event_code, worker_event_pos, )
+        building_instruction, current_layout, layout_changed = self.get_current_layout_and_building_instruction(
+            worker_event_code, worker_event_pos, )
         event_info.layout = current_layout
 
         # event evaluation
@@ -141,8 +144,6 @@ class ProcessState:
                 event_info.error = True
                 return event_info
 
-
-
         # evaluate placement and modify event info accordingly
 
         if worker_event_code == 3:
@@ -156,7 +157,6 @@ class ProcessState:
         elif worker_event_code == 1:
             self.fitting_placed(event_pos=worker_event_pos, building_instruction=building_instruction,
                                 event_info=event_info, ignore_part_check=ignore_part_check)
-
 
         if not event_info.error:
             # register placement
@@ -176,9 +176,6 @@ class ProcessState:
                         # update state grid
                         for pos in list(detour_event.keys())[0]:
                             self.state_grid[pos] = 2
-
-
-
 
             # modify parts_picked
             if event_info.part_id in self.part_stock.keys():
@@ -213,7 +210,6 @@ class ProcessState:
                         if event_pos in trail:
                             break
                 current_layout = trail
-
 
                 layout_changed = current_layout != self.last_event_trail
 
@@ -400,7 +396,7 @@ class ProcessState:
 
                 return {detour_trail: detour_state}
 
-    def handle_detour_event(self,  solution: Solution, detour_event: dict = None):
+    def handle_detour_event(self, solution: Solution, detour_event: dict = None):
 
         self.aimed_solution = solution
         self.building_instructions = get_building_instructions_from_solution(solution)
@@ -422,16 +418,21 @@ class ProcessState:
             deviated = False
             misplaced = False
             unnecessary = False
-            #error = False
+            # error = False
 
             event_info = EventInfo(event_pos=construction_state.event_pos, event_code=construction_state.event_code,
                                    removal=False, layout=None,
-                                   part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced, unnecessary=unnecessary,
-                                   obstructed_part=False, completed_layouts=completed_layouts, part_not_picked=False, error=False,
-                                   obstructed_obstacle=False, time_registered=construction_state.time_registered, layout_changed=False)
+                                   part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced,
+                                   unnecessary=unnecessary,
+                                   obstructed_part=False, completed_layouts=completed_layouts, part_not_picked=False,
+                                   error=False,
+                                   obstructed_obstacle=False, time_registered=construction_state.time_registered,
+                                   layout_changed=False)
 
-            new_construction_state = ConstructionState(event_pos=construction_state.event_pos, event_code=construction_state.event_code,
-                                                       part_id=construction_state.part_id, deviated=deviated, unnecessary=unnecessary, misplaced=misplaced,
+            new_construction_state = ConstructionState(event_pos=construction_state.event_pos,
+                                                       event_code=construction_state.event_code,
+                                                       part_id=construction_state.part_id, deviated=deviated,
+                                                       unnecessary=unnecessary, misplaced=misplaced,
                                                        time_registered=construction_state.time_registered)
 
             if construction_state.event_code == 3:
@@ -448,8 +449,10 @@ class ProcessState:
                 self.fitting_placed(event_pos=construction_state.event_pos, building_instruction=building_instruction,
                                     event_info=event_info, ignore_part_check=True)
 
-            self.register_placement(building_instruction=building_instruction, construction_state=new_construction_state,
-                                    event_info=event_info, worker_event_code=construction_state.event_code, worker_event_pos=construction_state.event_pos)
+            self.register_placement(building_instruction=building_instruction,
+                                    construction_state=new_construction_state,
+                                    event_info=event_info, worker_event_code=construction_state.event_code,
+                                    worker_event_pos=construction_state.event_pos)
             if not event_info.deviated:
                 event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
         if detour_event:
@@ -510,7 +513,7 @@ class ProcessState:
 
         return completed_layouts
 
-    def completed_instruction(self, building_instruction) -> tuple[bool,int]:
+    def completed_instruction(self, building_instruction) -> tuple[bool, int]:
         """Checks if the building instruction was completed.
         and returns event code corresponding to its completion state."""
 
@@ -570,5 +573,3 @@ class ProcessState:
                 if construction_state.part_id == -2:
                     counter += 1
         return counter
-
-

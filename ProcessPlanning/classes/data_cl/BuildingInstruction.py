@@ -2,7 +2,8 @@ from dataclasses import dataclass
 
 from type_dictionary.common_types import *
 
-#todo: documentation
+
+# todo: documentation
 
 @dataclass
 class BuildingInstruction:

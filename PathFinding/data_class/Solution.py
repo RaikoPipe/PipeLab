@@ -1,16 +1,16 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
-from data_class import PathProblem
+from PathFinding.data_class import PathProblem
 from type_dictionary.common_types import *
+from typing import Optional
 
 
 @dataclass
 class Solution:
     """Dataclass that contains information about the solution to a path problem. Contains a copy of the path problem."""
 
-    # todo: refactor rendering dict according to type
-    rendering_dict: dict[int:tuple[Pos, int, Pos]]  # Dict containing information on rendering of objects
+    # todo: refactor VpythonRendering dict according to type
+    rendering_dict: dict[int:tuple[Pos, int, Pos]]  # Dict containing information on VpythonRendering of objects
     absolute_trail: dict[Pos:int]  # Dict containing all trail positions pointing to the part they are occupied by
     ordered_trails: list[Trail]  # List with all trails in order from start to goal
     state_grid: any  # state grid with inserted solution layout

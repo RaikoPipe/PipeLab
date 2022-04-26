@@ -1,8 +1,8 @@
-from type_dictionary.common_types import Pos
-from path_finding.path_math import sum_pos, get_direction
+from type_dictionary.constants import fitting_id
+from PathFinding.util.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
-from path_finding.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, get_transition
-from constants import fitting_id
+from PathFinding.util.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, get_transition
+from type_dictionary.common_types import Pos
 
 
 def out_of_bounds(neighbor_node: tuple, state_grid):
@@ -15,18 +15,21 @@ def out_of_bounds(neighbor_node: tuple, state_grid):
     else:
         return True  # array bound x walls
 
-collision_set = {1,2}
+
+collision_set = {1, 2}
+
+
 def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid, part_id) -> bool:
     """Checks if the path from current_node to neighbor_node obstructs any obstacles or transitions.
     """
 
     length = abs(neighbor_node[0] - neighbor_node[1])
     direction = get_direction(neighbor_node)
-    #collision_nodes = []
+    # collision_nodes = []
     # check collision with obstacles
     for i in range(1, length + 1):
         node = (current_node[0] + direction[0] * i, current_node[1] + direction[1] * i)
-        #collision_nodes.append(node)
+        # collision_nodes.append(node)
         if state_grid[node] in collision_set:
             return True
         elif state_grid[node] == 3 and ((part_id != fitting_id and i != 1) or part_id == fitting_id):
@@ -40,7 +43,6 @@ def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid, par
     #             return True
 
 
-
 def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid, part_id) -> bool:
     """Contains restriction set that checks if neighbor is restricted.
     :param part_id:
@@ -52,6 +54,7 @@ def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid, pa
         return True
 
     return False
+
 
 def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: dict[Pos, Pos]) -> bool:
     """Checks if the direction restriction of the goal is violated."""
@@ -80,7 +83,6 @@ def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], curren
                           pipe_stock, predecessors, fast_mode, key, start_pos, transition_points) -> set:
     """Determines what neighbors are reachable from the current position and with the available parts. Removes neighbors
     that violate goal restrictions."""
-
 
     neighbor_relative_positions = set()
     previous_part = predecessors.get(key).part_to_successor

@@ -1,15 +1,16 @@
 from copy import deepcopy
 from typing import Union
 
-from data_class.EventInfo import EventInfo
-from data_class.PathProblem import PathProblem
-from data_class.Weights import Weights
-from path_finding.path_math import get_direction, diff_pos
-from type_dictionary.common_types import *
-from path_finding.search_algorithm import find_path
-from process_planning.ProcessState import ProcessState
-from process_planning.pp_util import determine_next_part, get_solution_on_detour_event, make_registration_message, \
+from ProcessPlanning.classes.data_cl.EventInfo import EventInfo
+from PathFinding.data_class.PathProblem import PathProblem
+from PathFinding.data_class.Weights import Weights
+from PathFinding.util.path_math import get_direction, diff_pos
+from PathFinding.util.search_algorithm import find_path
+from ProcessPlanning.classes.ProcessState import ProcessState
+from ProcessPlanning.util.pp_util import determine_next_part, get_solution_on_detour_event, make_registration_message, \
     make_error_message, message_dict
+from type_dictionary.common_types import *
+from typing import Optional
 
 standard_weights = Weights(1, 1, 1)
 standard_algorithm = "mcsa*"
@@ -18,18 +19,18 @@ picking_robot_command_message_dict = {-2: "STOP",
                                       -1: "Cancel all picking tasks",
                                       0: "Go to neutral state",
                                       1: "Move to pick-up point and pick part id: ",
-                                      2: "Move to return position and return of part id: ", # unused
+                                      2: "Move to return position and return of part id: ",  # unused
                                       3: "Move to offering position",
                                       4: "Wait for worker to accept part",
                                       }
 
 fastening_robot_command_message_dict = {
-                                    -2: "STOP",
-                                    -1: "Remove fastening of positions x from command pipeline (if still in pipeline)",
-                                    0: "Go to neutral state",
-                                    1: "Move to a fastening position and fasten attachment at Position: ",
-                                    2: "Move to a fastening position and fasten pipe at Position: "
-                                      }
+    -2: "STOP",
+    -1: "Remove fastening of positions x from command pipeline (if still in pipeline)",
+    0: "Go to neutral state",
+    1: "Move to a fastening position and fasten attachment at Position: ",
+    2: "Move to a fastening position and fasten pipe at Position: "
+}
 
 example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will probably never be bigger than 1
 
@@ -86,7 +87,7 @@ class ProcessPlanner:
 
     def main(self, worker_event: tuple[Union[Pos, int], int], handle_detour_events: bool = True,
              ignore_part_check: bool = True):
-        """Main method of ProcessPlanner. Takes worker_event as input and sends information about the event to
+        """Main method of ProcessPlanning. Takes worker_event as input and sends information about the event to
         ProcessState. Prints message output of ProcessState and handles possible detour events. Returns current
          ProcessState, messages and robot commands.
          
@@ -100,7 +101,6 @@ class ProcessPlanner:
             self.determine_picking_robot_commands(worker_event=worker_event)
             return self.tentative_process_state, (self.send_new_pick_event(worker_event[0]))
 
-
         # check if worker event occurred on transition point, correct if necessary
         start_pos = self._initial_path_problem.start_pos
         for transition_point in self._initial_path_problem.transition_points:
@@ -112,9 +112,10 @@ class ProcessPlanner:
                 check_pos = (start_pos[0], transition_point[1])
 
             if check_pos:
-                direction = get_direction(diff_pos(self._initial_path_problem.start_pos,check_pos)) # get direction relative to start pos
+                direction = get_direction(
+                    diff_pos(self._initial_path_problem.start_pos, check_pos))  # get direction relative to start pos
                 # correct worker event pos
-                worker_event = ((worker_event[0][0] - direction[0],worker_event[0][1] - direction[1]), worker_event[1])
+                worker_event = ((worker_event[0][0] - direction[0], worker_event[0][1] - direction[1]), worker_event[1])
         messages = self.send_placement_event(worker_event=worker_event,
                                              ignore_part_check=ignore_part_check)
 
@@ -128,7 +129,7 @@ class ProcessPlanner:
         if special_message:
             print(special_message)
 
-        detour_event : dict = self.tentative_process_state.last_event_info.detour_event
+        detour_event: dict = self.tentative_process_state.last_event_info.detour_event
         detour_message = None
 
         if detour_event and handle_detour_events:
@@ -164,7 +165,7 @@ class ProcessPlanner:
                         last_detour_trail = self.tentative_process_state.detour_trails[-1]
 
                         last_detour_instruction = self.tentative_process_state.building_instructions[last_detour_trail]
-                        detour_event = {last_detour_trail:last_detour_instruction}
+                        detour_event = {last_detour_trail: last_detour_instruction}
                         solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
                                                                 process_state=self.tentative_process_state,
                                                                 detour_event=detour_event)
@@ -176,18 +177,17 @@ class ProcessPlanner:
                         detour_event = {None: "Returned to optimal solution"}
                         self.tentative_process_state.handle_detour_event(self.optimal_solution)
 
-
-                        detour_message = str.format(f"No complete deviating layouts left, returning to optimal solution")
+                        detour_message = str.format(
+                            f"No complete deviating layouts left, returning to optimal solution")
 
                     self.tentative_process_state.last_event_info.detour_event = detour_event
 
         # get fastening commands
-        self.determine_fastening_robot_commands(worker_event=worker_event, event_info=self.tentative_process_state.last_event_info)
-
+        self.determine_fastening_robot_commands(worker_event=worker_event,
+                                                event_info=self.tentative_process_state.last_event_info)
 
         self.determine_picking_robot_commands(worker_event=worker_event,
                                               layout=self.tentative_process_state.last_event_info.layout)
-
 
         return self.tentative_process_state, (message, special_message, detour_message)
 
@@ -203,15 +203,12 @@ class ProcessPlanner:
 
         note = None
 
-
         if event_info.obstructed_obstacle:
             note = str.format(f"Obstructed obstacle while placing {message_dict[event_info.event_code]}")
 
         if event_info.obstructed_part:
             note = str.format(
                 f"Obstructed {message_dict[event_info.event_code]} while placing {message_dict[event_info.obstructed_part]}")
-
-
 
         if event_info.removal:
             if event_info.unnecessary:
@@ -228,14 +225,13 @@ class ProcessPlanner:
             elif event_info.misplaced:
                 note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
 
-
         if event_info.part_not_picked:
             if event_info.part_id == -99:
                 note = str.format(f"Placed {message_dict[event_info.event_code]}"
-                                        f", but part was not picked!")
+                                  f", but part was not picked!")
             else:
                 note = str.format(f"Placed id {event_info.part_id} "
-                                        f", but not picked!")
+                                  f", but not picked!")
 
         # make messages
         if event_info.error:
@@ -275,12 +271,10 @@ class ProcessPlanner:
             if fastening_robot_commands:
                 print("Next fastening robot commands: ")
                 for item in fastening_robot_commands:
-
                     print(fastening_robot_command_message_dict[item[0]] + str(item[1]))
                 print("\n")
 
         return fastening_robot_commands
-
 
     def determine_picking_robot_commands(self, worker_event: tuple[Pos, int], layout: Trail = None):
         """Evaluates the current process state and issues robot commands."""
@@ -314,9 +308,7 @@ class ProcessPlanner:
                         print(picking_robot_command_message_dict[item])
                 print("\n")
 
-
         return picking_robot_commands
-
 
     def return_to_previous_state(self):
         """Returns to previous state."""

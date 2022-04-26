@@ -3,7 +3,8 @@ worker motion event codes
 1 -> fitting placed
 2 -> pipe placed
 3 -> attachment placed
-4 -> accepted part from picking robot or requested different part
+4 -> accepted part from picking robot
+5 -> picked part manually
 -> removals are determined implicitly
 
 picking robot event codes/command codes :
