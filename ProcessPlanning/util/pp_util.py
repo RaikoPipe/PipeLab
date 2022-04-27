@@ -16,10 +16,12 @@ def determine_next_part(process_state: ProcessState, layout: Trail):
     next_part_id = None
 
     building_instruction = process_state.building_instructions.get(layout)
-    completed, build_progress = process_state.completed_instruction(building_instruction)
-
     if not building_instruction:
         return None
+
+    completed, build_progress = process_state.completed_instruction(building_instruction)
+
+
 
     if not completed:
         if build_progress == 2:

@@ -382,7 +382,7 @@ def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_
 
 
 class function_test_app:
-    def __init__(self, state_grid: np.ndarray, path_problem: PathProblem, initial_state: Optional[ProcessState]):
+    def __init__(self, state_grid: np.ndarray, path_problem: PathProblem, initial_state: Optional[ProcessState], use_dark_theme:bool=False):
         root = tk.Tk()
 
         self.process_planner = ProcessPlanner(initial_path_problem=path_problem, initial_process_state=initial_state)
@@ -397,6 +397,7 @@ class function_test_app:
         button_width = 5
         button_height = 8
         font = ('Tahoma', 7)
+
         style.configure(free_style, background="white", width=button_width, height=button_height, font=font)
         style.configure(pipe_style, background="blue", width=button_width, height=button_height, font=font)
         style.configure(obs_style, background="orange", width=button_width, height=button_height, font=font)
@@ -423,10 +424,25 @@ class function_test_app:
         style.configure(pipe_misplaced_style, background="blue", foreground="yellow", width=button_width,
                         height=button_height,
                         font=font)
+
         style.configure(treeview_style)
         style.layout(treeview_style, [(treeview_style + '.treearea', {'sticky': 'nswe'})])
 
         style.configure("TRadiobutton", anchor="W")
+
+        if use_dark_theme:
+            style.configure("TFrame", background = "grey12")
+            style.configure("TButton", background="black", foreground="black")
+            style.configure(free_style, background="black", foreground="black")
+            style.configure(transition_style, background="tan4", foreground="black")
+            style.configure("Treeview", foreground = "white", background = "grey12")
+            style.configure("TLabelframe", foreground="white", background="grey12")
+            style.configure("TLabelframe.Label", foreground="white", background="grey12")
+            style.configure("TRadiobutton", background="grey12", foreground = "white")
+
+
+
+
 
         # Solution Display
 
@@ -500,7 +516,7 @@ class function_test_app:
         process_message_tree.grid(row=0, column=0)
 
         scrollbar = ttk.Scrollbar(process_message_frame, orient=tk.VERTICAL, command=process_message_tree.yview)
-        process_message_tree.configure(style=treeview_style)
+        process_message_tree.configure(style=treeview_style, yscroll=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
         tool_tip_text_grid = []

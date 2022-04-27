@@ -77,8 +77,6 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
                 # try again, but exclude this connection combination
                 exclusion_list.append({point_pos, other_point_pos})
                 continue
-            else:
-                print(point_pos, other_point_pos, solution.absolute_path)
 
             heapq.heappush(open_list, (solution.score, other_point_pos, solution))
         # get connecting node with best score, then remove it

@@ -132,7 +132,7 @@ class ProcessState:
             if event_info.part_id in self.part_stock:
                 self.picked_parts.append(event_info.part_id)
             return event_info
-        if ignore_obstructions:
+        if not ignore_obstructions:
             if self.obstructed_obstacle(worker_event_pos):
                 event_info.obstructed_obstacle = True
                 event_info.error = True

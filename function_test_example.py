@@ -17,7 +17,7 @@ solution = None
 while solution is None:
     # mandatory adjustments to state grid
     state_grid = grid_functions.get_empty_stategrid(x, y)
-    state_grid = randomizer.set_random_obstacles(0., state_grid)
+    state_grid = randomizer.set_random_obstacles(0.1, state_grid)
     state_grid = grid_functions.set_transition_points(state_grid, transition_points_set)
     start_node = (0, 0)
     goal_node = (9, 17)
@@ -61,4 +61,4 @@ while solution is None:
 
 # positions = debug_rendering.display_pos(rendering_grid=r_grid, scene=scene)
 
-app = function_test_app(state_grid=solution.state_grid, path_problem=path_problem, initial_state=None)
+app = function_test_app(state_grid=solution.state_grid, path_problem=path_problem, initial_state=None, use_dark_theme=True)

@@ -37,9 +37,14 @@ example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will prob
 
 # Todo:
 #   Known Issues:
+#   -
+#   Planned Features:
 #   - missing intelligence: if unknown pipe id in between two fittings (in a detour event), check if distance between two fittings
 #       exists as a picked part, then assign and continue detour event (add picked_parts_stamp to construction state:contains all parts picked before the event, then get difference between current parts and the stamp)
 #   - add check: pipe placement only allowed if event on existing attachment, else error
+#   - confirm pipe ids after fittings have been placed
+#   - Highlighting correct build spots
+
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process with ProcessState and provides robot
      commands. Handles calculation of a new solution in case of a detour event."""
@@ -155,7 +160,7 @@ class ProcessPlanner:
                 previous_detour_trails = deepcopy(self.tentative_process_state.detour_trails)
                 last_detour_trail = previous_detour_trails.pop(-1)
                 for detour_trail in previous_detour_trails:
-                    if not self.tentative_process_state.building_instructions[last_detour_trail].layout_completed:
+                    if not self.tentative_process_state.building_instructions[detour_trail].layout_completed:
                         self.tentative_process_state.detour_trails.remove(detour_trail)
                 # check if layout that caused last detour is not completed anymore
                 if not self.tentative_process_state.building_instructions[last_detour_trail].layout_completed:
