@@ -12,6 +12,7 @@ from PathFinding.data_class.PathProblem import PathProblem
 from ProcessPlanning.ProcessPlanner import ProcessPlanner
 from ProcessPlanning.classes.ProcessState import ProcessState
 from ProcessPlanning.util.pp_util import get_absolute_trail_from_building_instructions
+from os import system
 
 free_style = "FREE.TButton"
 pipe_style = "PIPE.TButton"
@@ -187,6 +188,8 @@ def undo_action(process_planner, button_grid, style_grid, part_stock_tree, tool_
     process_message_tree.tag_configure(tagname=message_count, background="cyan")
     message_count += 1
 
+    process_message_tree.yview_moveto(1)
+
 
 message_count = 0
 
@@ -233,7 +236,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
         elif event_info.removal:
             tree.tag_configure(tagname=message_count, background="yellow")
         if event_info.error:
-            tree.tag_configure(tagname=message_count, background="red")
+            tree.tag_configure(tagname=message_count, background="red", foreground="white")
 
         extra_message_ids = [message_count]
         message_count += 1
@@ -429,6 +432,8 @@ class function_test_app:
         style.layout(treeview_style, [(treeview_style + '.treearea', {'sticky': 'nswe'})])
 
         style.configure("TRadiobutton", anchor="W")
+
+
 
         if use_dark_theme:
             style.configure("TFrame", background = "grey12")

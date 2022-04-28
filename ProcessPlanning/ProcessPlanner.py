@@ -44,6 +44,11 @@ example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will prob
 #   - add check: pipe placement only allowed if event on existing attachment, else error
 #   - confirm pipe ids after fittings have been placed
 #   - Highlighting correct build spots
+#   - check score calculation of mcsa*
+#   - Output next recommended action
+#   - Check if all layouts are complete -> Finish
+#   - add attachment to part tracking
+#   - setup opcua server
 
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process with ProcessState and provides robot
@@ -82,7 +87,7 @@ class ProcessPlanner:
         self.weights = optimization_weights
         self.algorithm = algorithm
 
-    def send_new_pick_event(self, part_id: int) -> str:
+    def send_pick_event(self, part_id: int) -> str:
         """Sends a new pick event to be evaluated and registered in current ProcessState."""
         self.previous_states.insert(0, deepcopy(self.tentative_process_state))
         message = self.tentative_process_state.pick_part(part_id)
@@ -104,7 +109,7 @@ class ProcessPlanner:
         # check if worker event is pick event
         if worker_event[1] == 4:
             self.determine_picking_robot_commands(worker_event=worker_event)
-            return self.tentative_process_state, (self.send_new_pick_event(worker_event[0]))
+            return self.tentative_process_state, (self.send_pick_event(worker_event[0]))
 
         # check if worker event occurred on transition point, correct if necessary
         start_pos = self._initial_path_problem.start_pos
