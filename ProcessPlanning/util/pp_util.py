@@ -2,9 +2,9 @@ from copy import deepcopy
 from typing import Optional
 
 from type_dictionary.constants import horizontal_directions, vertical_directions
-from ProcessPlanning.classes.data_cl.BuildingInstruction import BuildingInstruction
+from ProcessPlanning.classes.data_class.BuildingInstruction import BuildingInstruction
 from PathFinding.data_class.Solution import Solution
-from PathFinding.util import partial_solver
+from PathFinding import partial_solver
 from PathFinding.util.path_math import get_direction, diff_pos
 from ProcessPlanning.classes.ProcessState import ProcessState
 from type_dictionary.common_types import Trail, Pos

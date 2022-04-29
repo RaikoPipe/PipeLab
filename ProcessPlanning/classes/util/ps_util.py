@@ -1,7 +1,7 @@
 import numpy as np
 
 import PathFinding.util.restrictions
-from ProcessPlanning.classes.data_cl.BuildingInstruction import BuildingInstruction
+from ProcessPlanning.classes.data_class.BuildingInstruction import BuildingInstruction
 from PathFinding.util.path_math import get_direction, diff_pos, manhattan_distance
 from type_dictionary.common_types import Pos, Trail, Layouts
 
@@ -28,10 +28,10 @@ def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id: int, d
             if state_grid[b_left] != 0 or state_grid[b_right] != 0:
                 continue
             else:
-                rec_att_pos = (pos[0] + i * direction[0] + 1, pos[1] + i * direction[1] + 1)
+                rec_att_pos = (pos[0] + i * direction[0], pos[1] + i * direction[1])
                 return rec_att_pos
         else:
-            rec_att_pos = (pos[0] + i * direction[0] + 1, pos[1] + i * direction[1] + 1)
+            rec_att_pos = (pos[0] + i * direction[0] , pos[1] + i * direction[1])
             return rec_att_pos
     else:  # second best option: one side is empty
         for i in sorter:  # check pos right of pipe
@@ -47,10 +47,10 @@ def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id: int, d
                 if state_grid[b_left] != 0 and state_grid[b_right] != 0:
                     continue
                 else:
-                    rec_att_pos = (pos[0] + i * direction[0] + 1, pos[1] + i * direction[1] + 1)
+                    rec_att_pos = (pos[0] + i * direction[0], pos[1] + i * direction[1])
                     break
             else:
-                rec_att_pos = (pos[0] + i * direction[0] + 1, pos[1] + i * direction[1] + 1)
+                rec_att_pos = (pos[0] + i * direction[0], pos[1] + i * direction[1])
                 break
         else:
             rec_att_pos = pos

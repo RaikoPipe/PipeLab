@@ -1,13 +1,14 @@
+import sys
 import tkinter as tk
 from copy import deepcopy
 from idlelib.tooltip import Hovertip
 from tkinter import ttk
 from typing import Optional
-
+import pathlib
 import numpy as np
 
-from ProcessPlanning.classes.data_cl.ConstructionState import ConstructionState
-from ProcessPlanning.classes.data_cl.EventInfo import EventInfo
+from ProcessPlanning.classes.data_class.ConstructionState import ConstructionState
+from ProcessPlanning.classes.data_class.EventInfo import EventInfo
 from PathFinding.data_class.PathProblem import PathProblem
 from ProcessPlanning.ProcessPlanner import ProcessPlanner
 from ProcessPlanning.classes.ProcessState import ProcessState
@@ -28,8 +29,10 @@ pipe_deviated_style = "PIPEDEV.TButton"
 fit_misplaced_style = "FITMIS.TButton"
 att_misplaced_style = "ATTMIS.TButton"
 pipe_misplaced_style = "PIPEMIS.TButton"
+highlight_next_rec_action_style = "NEXTRECACT.TButton"
 
 treeview_style = "TREESTYLE.Treeview"
+
 
 button_dict = {}
 
@@ -206,12 +209,13 @@ def update_solution_grid(tentative_state: ProcessState, button_grid, initial_sty
         else:
             button_grid[pos].configure(style=pipe_style)
 
-
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
                              initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid):
-    process_state, messages = process_planner.main((pos, event_code), handle_detour_events=True,
+    output = process_planner.main((pos, event_code), handle_detour_events=True,
                                                    ignore_part_check=False)
-
+    process_state = output.process_state
+    messages = output.messages
+    next_recommended_action = output.next_recommended_action
     event_info: EventInfo = process_state.last_event_info
     update_button_grid(button_grid, process_planner, style_grid, tool_tip_text_grid)
 
@@ -243,6 +247,11 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
         if special_message:
             tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=special_message)
+            extra_message_ids.append(message_count)
+            message_count += 1
+
+        if next_recommended_action:
+            tree.insert("", index=tk.END, tag=message_count, iid=message_count, text="Next recommended action: " + str(next_recommended_action))
             extra_message_ids.append(message_count)
             message_count += 1
 
@@ -301,6 +310,11 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
         #     message_count += 1
 
     part_id = event_info.part_id
+    if process_planner.tentative_process_state.completion == 1:
+        tree.insert("", index=tk.END, tag=message_count, iid=message_count, text="Construction complete!")
+        tree.tag_configure(tagname=message_count, background="gold")
+        message_count += 1
+
 
     if part_id not in {None, -1, -2, -99}:
         item = part_stock_tree.get_children()[part_id]
@@ -310,7 +324,8 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
 
 def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree):
-    _, message = process_planner.main((part_id, 4))
+    output = process_planner.main((part_id, 4))
+    message = output.messages[0]
     tree.insert("", index=tk.END, text=message.replace("util: ", ""))
     item = part_stock_tree.get_children()[part_id]
     part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
@@ -373,6 +388,9 @@ def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_
                                                              solution_button_grid=solution_button_grid,
                                                              tool_tip_text_grid=tool_tip_text_grid)
             button.config(command=command)
+
+
+
         else:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
 

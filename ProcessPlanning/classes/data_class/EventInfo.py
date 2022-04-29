@@ -14,17 +14,19 @@ class EventInfo:
     removal: bool
     layout: Optional[Trail]
     part_id: Optional[int]
+
     deviated: bool
-    detour_event: dict
     misplaced: bool
     unnecessary: bool
-    obstructed_obstacle: bool
-    obstructed_part: bool
+
     completed_layouts: set
 
-    part_not_picked: bool
+    detour_event: dict
 
     error: bool
+    part_not_picked: bool
+    obstructed_obstacle: bool
+    obstructed_part: bool
 
     time_registered: datetime
 

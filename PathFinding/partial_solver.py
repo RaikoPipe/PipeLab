@@ -4,7 +4,7 @@ from copy import deepcopy
 import numpy as np
 
 from type_dictionary import constants as const
-from ProcessPlanning.classes.data_cl.BuildingInstruction import BuildingInstruction
+from ProcessPlanning.classes.data_class.BuildingInstruction import BuildingInstruction
 from PathFinding.data_class.PathProblem import PathProblem
 from PathFinding.data_class.Solution import Solution
 from PathFinding.util.path_math import manhattan_distance

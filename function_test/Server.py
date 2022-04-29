@@ -1,33 +1,106 @@
-"""Server; Instantiates Interpreter, Process Planner"""
+import os.path
+import asyncio
 
-"""Debug starts here"""
+from asyncua import ua, uamethod, Server
+
 from PathFinding.data_class.PathProblem import PathProblem
-from PathFinding.data_class.Weights import Weights
-from PathFinding.grid import grid_functions, randomizer
+from ProcessPlanning.ProcessPlanner import ProcessPlanner
+from ProcessPlanning.classes.data_class.EventInfo import EventInfo
 
-# todo: make server environment
+process_planner: ProcessPlanner
 
-x = 20
-y = 20
+@uamethod
+def say_hello_xml(parent, happy):
+    print("Calling say_hello_xml")
+    if happy:
+        result = "I'm happy"
+    else:
+        result = "I'm not happy"
+    print(result)
+    return result
 
-r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
-solution = None
-while solution is None:
-    state_grid = grid_functions.get_empty_stategrid(x, y)
-    state_grid = randomizer.set_random_obstacles(0.1, state_grid)
-    start_node = (0, 0)
-    goal_node = (17, 19)
-    state_grid[start_node] = 0
-    state_grid[goal_node] = 0
 
-    pipe_stock = {0: 100, 1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100}
+@uamethod
+def say_hello(parent, x,y,code):
+    output = process_planner.main(((x,y),code))
+    event_info : EventInfo = output.event_info
 
-    part_cost = {0: 5.32, 1: 3.00, 2: 3.00, 3: 3.00, 4: 3.00, 5: 3.00, 6: 00}
+    # array = []
+    # for attribute in vars(event_info):
+    #     value = event_info.__getattribute__(attribute)
+    #     array.append(value)
 
-    weights = Weights(path_length=1, cost=0, distance_to_obstacles=0)
+    #print(array)
 
-    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node,
-                               start_direction={(1, 0)},
-                               goal_direction={(0, 1)}, part_cost=part_cost,
-                               starting_part=None, part_stock=pipe_stock, weights=weights, algorithm="mcsa*")
-"""Debug ends here"""
+    return event_info.event_code
+
+
+@uamethod
+def say_hello_array(parent, happy):
+    if happy:
+        result = "I'm happy"
+    else:
+        result = "I'm not happy"
+    print(result)
+    return [result, "Actually I am"]
+
+
+class PipeLabServer:
+    def __init__(self, endpoint, name, model_filepath, path_problem: PathProblem):
+        self.server = Server()
+        self.model_filepath = model_filepath
+        self.server.set_server_name(name)
+        self.server.set_endpoint(endpoint)
+
+
+
+    async def init(self):
+        await self.server.init()
+
+        #  This need to be imported at the start or else it will overwrite the data
+        await self.server.import_xml(self.model_filepath)
+
+        objects = self.server.nodes.objects
+
+        freeopcua_namespace = await self.server.get_namespace_index(
+            "urn:freeopcua:python:server"
+        )
+        hellower = await objects.get_child("0:Hellower")
+
+        hellower_say_hello = await hellower.get_child("0:DoSomething")
+
+        self.server.link_method(hellower_say_hello, say_hello_xml)
+
+        await hellower.add_method(
+            freeopcua_namespace,
+            "SayHello2",
+            say_hello,
+            [ua.VariantType.Boolean],
+            [ua.VariantType.Int64],
+            [ua.VariantType.Int64],
+            [ua.VariantType.Int64]
+        )
+
+
+
+    async def __aenter__(self):
+        await self.init()
+        await self.server.start()
+        return self.server
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.server.stop()
+
+
+async def main(path_problem: PathProblem):
+    global process_planner
+    process_planner = ProcessPlanner(initial_path_problem=path_problem)
+    script_dir = os.path.dirname(__file__)
+    async with PipeLabServer(
+        "opc.tcp://0.0.0.0:4840/freeopcua/server/",
+        "FreeOpcUa Example Server",
+        os.path.join(script_dir, "test_saying.xml"),
+        path_problem
+    ) as server:
+        while True:
+            await asyncio.sleep(1)

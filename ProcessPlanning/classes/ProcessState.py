@@ -2,9 +2,9 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Optional, Union
 
-from ProcessPlanning.classes.data_cl.BuildingInstruction import BuildingInstruction
-from ProcessPlanning.classes.data_cl.ConstructionState import ConstructionState
-from ProcessPlanning.classes.data_cl.EventInfo import EventInfo
+from ProcessPlanning.classes.data_class.BuildingInstruction import BuildingInstruction
+from ProcessPlanning.classes.data_class.ConstructionState import ConstructionState
+from ProcessPlanning.classes.data_class.EventInfo import EventInfo
 from PathFinding.data_class.Solution import Solution
 from PathFinding.util import path_math
 from PathFinding.util.path_math import get_direction, diff_pos
@@ -12,6 +12,16 @@ from ProcessPlanning.classes.util.ps_util import get_neighboring_layouts, get_de
     get_detour_state, get_building_instructions_from_solution
 # todo: documentation
 from type_dictionary.common_types import Pos, Trail
+
+
+def get_completion_proportion(building_instructions):
+    count = 0
+    for layout, instruction in building_instructions.items():
+        if instruction.layout_completed:
+            count += 1
+    proportion = count / len(building_instructions.keys())
+    return proportion
+
 
 
 class ProcessState:
@@ -48,6 +58,8 @@ class ProcessState:
         self.picked_parts: list[int] = []
         self.building_instructions = get_building_instructions_from_solution(solution)
 
+
+
         self.motion_dict: dict[tuple[Pos, int]:ConstructionState] = {}
 
         self.last_event_info = None
@@ -55,6 +67,8 @@ class ProcessState:
         self.detour_trails = []
 
         self.event_history = []
+
+        self.completion = 0
 
     def get_construction_state(self, pos: Union[Pos, Trail], event_codes: list) -> Union[
         Union[Union[Pos, Trail], ConstructionState], tuple[None, None]]:
@@ -102,6 +116,7 @@ class ProcessState:
         part_not_picked = False
         layout_changed = False
         detour_event = {}
+        next_recommended_action = ()
 
         time_registered = datetime.now()
 
@@ -166,6 +181,9 @@ class ProcessState:
             if not event_info.deviated:
                 # check completion state of this and neighboring layouts
                 event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
+                self.completion = get_completion_proportion(self.building_instructions)
+
+                print(self.completion)
             else:
                 if worker_event_code == 1:
                     # check for detour events
@@ -519,6 +537,16 @@ class ProcessState:
 
         # check if required pipe placed
         pipe_positions = building_instruction.possible_att_pipe_positions
+
+        att_pos_set = set()
+        for pos in building_instruction.possible_att_pipe_positions:
+            att_pos, att_state = self.get_construction_state(pos, event_codes=[3])
+            if att_state:
+                if not att_state.deviated:
+                    att_pos_set.add(att_pos)
+
+        if not att_pos_set:
+            return False, 3
 
         if None in self.get_construction_state(pipe_positions, event_codes=[2]):
             return False, 2

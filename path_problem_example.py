@@ -1,11 +1,7 @@
 from PathFinding.data_class.PathProblem import PathProblem
 from PathFinding.data_class.Weights import Weights
-from function_test.function_test_gui import function_test_app
 from PathFinding.grid import grid_functions, randomizer
-from PathFinding.util.search_algorithm import find_path
-
-# todo: use change_grid_states function to create a mounting wall with obstacles
-# todo: create a solution with a* and extract path and parts to define a static solution
+from PathFinding.search_algorithm import find_path
 
 x = 10
 y = 20
@@ -61,4 +57,4 @@ while solution is None:
 
 # positions = debug_rendering.display_pos(rendering_grid=r_grid, scene=scene)
 
-app = function_test_app(state_grid=solution.state_grid, path_problem=path_problem, initial_state=None, use_dark_theme=False)
+
