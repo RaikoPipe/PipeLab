@@ -12,7 +12,7 @@ from PathFinding.solution_manager import get_solution
 from type_dictionary.common_types import Trail
 
 
-def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set],
+def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
                           outgoing_node_directions_dict: dict, state_grid: np.ndarray, part_stock: dict,
                           path_problem: PathProblem,
                           ) -> list[Solution]:
@@ -23,7 +23,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
     Args:
 
         outgoing_node_pairs_set: Set of node pairs that represent the end points of a layout
-        exclusion_list: List of node pairs that are excluded from connecting.
+        closed_list: List of node pairs that are excluded from connecting.
         outgoing_node_directions_dict: Dictionary containing the directions each node can be connected to.
         state_grid: #todo: reference
         part_stock: todo: reference
@@ -47,24 +47,28 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
 
     # sort all
     all_points_list = sorted(all_points_dict.keys(), key=lambda x: manhattan_distance(start, x))
-    other_points = deepcopy(all_points_list)
+    neighbors = deepcopy(all_points_list)
+    # todo: use a* algorithm
+    solution_dict = {}
+    open_list = []
+    heapq.heappush(open_list, (0, all_points_list[0]))
 
-    while all_points_list:
-        open_list = []
-        point_pos = all_points_list.pop(0)
+    while open_list:
+
+        point_pos = open_list.pop(0)
         point_outgoing_node_pairs_ref = all_points_dict[point_pos]
         solution = None
-        for other_point_pos in other_points:
-            if other_point_pos in point_outgoing_node_pairs_ref:
+        for neighbor in neighbors:
+            if neighbor in point_outgoing_node_pairs_ref:
                 continue
-            if {point_pos, other_point_pos} in exclusion_list:
+            if {point_pos, neighbor} in closed_list:
                 continue
 
             partial_path_problem = PathProblem(algorithm=path_problem.algorithm, weights=path_problem.weights,
                                                start_pos=point_pos,
                                                start_directions=outgoing_node_directions_dict[point_pos],
-                                               goal_pos=other_point_pos,
-                                               goal_directions=outgoing_node_directions_dict[other_point_pos],
+                                               goal_pos=neighbor,
+                                               goal_directions=outgoing_node_directions_dict[neighbor],
                                                part_cost=path_problem.part_cost, part_stock=part_stock,
                                                starting_part=0,
                                                state_grid=deepcopy(state_grid),
@@ -75,18 +79,21 @@ def get_partial_solutions(outgoing_node_pairs_set: set, exclusion_list: list[set
 
             if not solution:
                 # try again, but exclude this connection combination
-                exclusion_list.append({point_pos, other_point_pos})
+                closed_list.append({point_pos, neighbor})
                 continue
 
-            heapq.heappush(open_list, (solution.score, other_point_pos, solution))
+            heapq.heappush(open_list, (solution.score, neighbor, solution))
+
+        #all_points_list.remove(point_pos)
+        # other_points.remove(point_pos)
         # get connecting node with best score, then remove it
         if open_list:
             best = heapq.heappop(open_list)
             best_point = best[1]
             best_solution = best[2]
-            exclusion_list.append({point_pos, best_point})
-            all_points_list.remove(best_point)
-            other_points.remove(point_pos)
+            closed_list.append({point_pos, best_point})
+            #all_points_list.remove(best_point)
+
             partial_solutions.append(best_solution)
             part_stock = solution.part_stock  # adjust part stock for next iteration
             # state_grid = solution.state_grid

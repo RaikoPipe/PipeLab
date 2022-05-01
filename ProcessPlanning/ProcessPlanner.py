@@ -48,10 +48,11 @@ example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will prob
 #   - check score calculation of mcsa*
 #   - Output next recommended action
 #   - add attachment to part tracking
+#   - add option determine_pipe_id_by_fittings_only
 
-def get_next_recommended_action(process_state, event_trail):
+def get_next_recommended_action(process_state, building_instruction):
     # get next recommended action
-    building_instruction = process_state.building_instructions.get(event_trail)
+
     completed = process_state.completed_instruction(building_instruction)
     rec_pos = None
     rec_event = None
@@ -90,7 +91,7 @@ def get_next_recommended_action(process_state, event_trail):
         for layout in process_state.aimed_solution.ordered_trails:
             building_instruction = process_state.building_instructions.get(layout)
             if not building_instruction.layout_completed:
-                return get_next_recommended_action(process_state, layout)
+                return get_next_recommended_action(process_state, building_instruction)
 
 
     return rec_pos, rec_event, rec_part_id
@@ -199,12 +200,14 @@ class ProcessPlanner:
 
         # handle all detour events
         if detour_event and handle_detour_events:
-            detour_message = self.start_detour_event(detour_event, detour_message)
+            detour_message = self.start_detour_event(detour_event)
         else:
             detour_message = self.handle_detour_trails(detour_message)
 
         # get next recommended action
-        self.next_recommended_action = get_next_recommended_action(self.tentative_process_state, self.tentative_process_state.last_event_trail)
+        building_instruction = self.tentative_process_state.building_instructions.get(self.tentative_process_state.last_event_trail)
+        if building_instruction:
+            self.next_recommended_action = get_next_recommended_action(self.tentative_process_state, building_instruction)
 
         # get fastening commands
         self.determine_fastening_robot_commands(worker_event=worker_event,
@@ -254,7 +257,7 @@ class ProcessPlanner:
                 self.tentative_process_state.last_event_info.detour_event = detour_event
         return detour_message
 
-    def start_detour_event(self, detour_event, detour_message):
+    def start_detour_event(self, detour_event):
         self.tentative_process_state.detour_trails.append(list(detour_event)[0])
         detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
         solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,

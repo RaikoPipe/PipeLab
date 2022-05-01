@@ -1,5 +1,5 @@
 from path_problem_example import path_problem
-from function_test import Server
+from FunctionTestGUI import Server
 
 import asyncio
 import logging

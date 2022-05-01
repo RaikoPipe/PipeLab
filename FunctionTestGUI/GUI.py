@@ -316,10 +316,10 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
         message_count += 1
 
 
-    if part_id not in {None, -1, -2, -99}:
-        item = part_stock_tree.get_children()[part_id]
-        part_stock_tree.item(item, values=(part_id, process_planner.tentative_process_state.picked_parts.count(part_id),
-                                           process_planner.tentative_process_state.part_stock[part_id]))
+    for p_id in process_planner.tentative_process_state.part_stock.keys():
+        item = part_stock_tree.get_children()[p_id]
+        part_stock_tree.item(item, values=(p_id, process_planner.tentative_process_state.picked_parts.count(p_id),
+                                           process_planner.tentative_process_state.part_stock[p_id]))
     tree.yview_moveto(1)
 
 
