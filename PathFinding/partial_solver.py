@@ -50,12 +50,11 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
     neighbors = deepcopy(all_points_list)
     # todo: use a* algorithm
     solution_dict = {}
-    open_list = []
-    heapq.heappush(open_list, (0, all_points_list[0]))
 
-    while open_list:
 
-        point_pos = open_list.pop(0)
+    while all_points_list:
+        solution_list = []
+        point_pos = all_points_list.pop(0)
         point_outgoing_node_pairs_ref = all_points_dict[point_pos]
         solution = None
         for neighbor in neighbors:
@@ -82,17 +81,18 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
                 closed_list.append({point_pos, neighbor})
                 continue
 
-            heapq.heappush(open_list, (solution.score, neighbor, solution))
+            heapq.heappush(solution_list, (solution.score, neighbor, solution))
 
         #all_points_list.remove(point_pos)
-        # other_points.remove(point_pos)
+        neighbors.remove(point_pos)
         # get connecting node with best score, then remove it
-        if open_list:
-            best = heapq.heappop(open_list)
+        if solution_list:
+            best = heapq.heappop(solution_list)
             best_point = best[1]
             best_solution = best[2]
             closed_list.append({point_pos, best_point})
-            #all_points_list.remove(best_point)
+            all_points_list.remove(best_point)
+            neighbors.remove(best_point)
 
             partial_solutions.append(best_solution)
             part_stock = solution.part_stock  # adjust part stock for next iteration

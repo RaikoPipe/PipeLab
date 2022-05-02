@@ -91,7 +91,7 @@ class ProcessState:
         """Handling of a pick event."""
         self.picked_parts.append(part_id)
         self.part_stock[part_id] -= 1
-        message = str.format(f"ProcessPlanner: Picked part with id {part_id}")
+        message = str.format(f"Process Planner: Picked part with id {part_id}")
         return message
 
     def evaluate_placement(self, worker_event: tuple[Pos, int],
@@ -392,6 +392,7 @@ class ProcessState:
                     else:
                         continue
                     self.motion_dict.pop((pipe_pos,))
+                    pipe_state.deviated = False
                     self.register_placement(building_instruction=check_building_instruction, construction_state=pipe_state,
                                              worker_event_pos=pipe_pos, worker_event_code=2)
 
