@@ -26,8 +26,6 @@ class EventInfo:
     error: bool
     part_not_picked: bool
     obstructed_obstacle: bool
-    obstructed_part: bool
+    obstructed_part: int
 
     time_registered: datetime
-
-    layout_changed: bool

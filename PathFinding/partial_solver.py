@@ -156,11 +156,16 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
             add_layout = layout_trail
             break
 
+    if add_layout[-1] == initial_path_problem.start_pos:
+        unordered_layouts.remove(add_layout)
+        add_layout = add_layout[::-1]
+        unordered_layouts.add(add_layout)
+
     while add_layout in unordered_layouts:
         unordered_layouts.remove(add_layout)
         ordered_layouts.append(add_layout)
         for other_layout in unordered_layouts:
-            if add_layout[-1] == other_layout[0]:
+            if add_layout[-1] in (other_layout[0], other_layout[-1]):
                 add_layout = other_layout
                 break
 

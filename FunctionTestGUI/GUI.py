@@ -14,6 +14,7 @@ from ProcessPlanning.ProcessPlanner import ProcessPlanner
 from ProcessPlanning.classes.ProcessState import ProcessState
 from ProcessPlanning.util.pp_util import get_absolute_trail_from_building_instructions
 from os import system
+import pprint
 
 free_style = "FREE.TButton"
 pipe_style = "PIPE.TButton"
@@ -219,6 +220,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
                              initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid):
     output = process_planner.main((pos, event_code), handle_detour_events=True,
                                                    ignore_part_check=False)
+    pprint.pprint(output)
     global previous_detour_trails
     process_state = output.process_state
     messages = output.messages
@@ -335,6 +337,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
 def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree):
     output = process_planner.main((part_id, 4))
+    pprint.pprint(output)
     message = output.messages[0]
     tree.insert("", index=tk.END, text=message.replace("Process Planner: ", ""))
     item = part_stock_tree.get_children()[part_id]

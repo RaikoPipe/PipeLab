@@ -40,15 +40,9 @@ example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will prob
 #   Known Issues:
 #   -
 #   Planned Features:
-#   - missing intelligence: if unknown pipe id in between two fittings (in a detour event), check if distance between two fittings
-#       exists as a picked part, then assign and continue detour event (add picked_parts_stamp to construction state:contains all parts picked before the event, then get difference between current parts and the stamp)
-#   - add check: pipe placement only allowed if event on existing attachment, else error
-#   - confirm pipe ids after fittings have been placed
 #   - Highlighting correct build spots
 #   - check score calculation of mcsa*
 #   - Output next recommended action
-#   - add attachment to part tracking
-#   - add option determine_pipe_id_by_fittings_only
 
 def get_next_recommended_action(process_state, building_instruction):
     # get next recommended action
@@ -159,12 +153,12 @@ class ProcessPlanner:
             """
         # check if worker event is pick event
         if worker_event[1] == 4:
-            self.determine_picking_robot_commands(worker_event=worker_event)
+            picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event)
             messages = self.send_pick_event(worker_event[0])
             process_output = ProcessOutput(process_state=self.tentative_process_state,
                                            event_info=self.tentative_process_state.last_event_info,
                                            messages=(messages,), next_recommended_action=self.next_recommended_action,
-                                           highlight_positions=())
+                                           highlight_positions=(), picking_robot_commands=picking_robot_commands, fastening_robot_commands=())
             return process_output
 
         # check if worker event occurred on transition point, correct if necessary
@@ -189,18 +183,12 @@ class ProcessPlanner:
         message = messages[0]
         special_message = messages[1]
 
-        # print messages
-        if message:
-            print(message)
-        if special_message:
-            print(special_message)
-
         detour_event: dict = self.tentative_process_state.last_event_info.detour_event
         detour_message = None
 
         # handle all detour events
         if detour_event and handle_detour_events:
-            detour_message = self.start_detour_event(detour_event)
+            detour_message = self.start_detour_event(detour_event, self.tentative_process_state)
         else:
             detour_message = self.handle_detour_trails(detour_message)
 
@@ -210,16 +198,17 @@ class ProcessPlanner:
             self.next_recommended_action = get_next_recommended_action(self.tentative_process_state, building_instruction)
 
         # get fastening commands
-        self.determine_fastening_robot_commands(worker_event=worker_event,
+        fastening_robot_commands = self.determine_fastening_robot_commands(worker_event=worker_event,
                                                 event_info=self.tentative_process_state.last_event_info)
 
-        self.determine_picking_robot_commands(worker_event=worker_event,
+        picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event,
                                               layout=self.tentative_process_state.last_event_info.layout)
 
         messages = (message, special_message, detour_message)
 
         process_output = ProcessOutput(process_state=self.tentative_process_state, event_info=self.tentative_process_state.last_event_info,
-                                       messages=messages, next_recommended_action=self.next_recommended_action, highlight_positions=())
+                                       messages=messages, next_recommended_action=self.next_recommended_action, highlight_positions=(),
+                                       picking_robot_commands=picking_robot_commands, fastening_robot_commands=fastening_robot_commands)
 
         return process_output
 
@@ -257,21 +246,28 @@ class ProcessPlanner:
                 self.tentative_process_state.last_event_info.detour_event = detour_event
         return detour_message
 
-    def start_detour_event(self, detour_event):
-        self.tentative_process_state.detour_trails.append(list(detour_event)[0])
+    def start_detour_event(self, detour_event, process_state):
+
         detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
+        detour_process_state = deepcopy(process_state)
+        detour_process_state.building_instructions.update(detour_event)
+        detour_process_state.detour_trails.append(list(detour_event)[0])
+        # update state grid
+        for pos in list(detour_event.keys())[0]:
+            detour_process_state.state_grid[pos] = 2
         solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
-                                                process_state=self.tentative_process_state,
+                                                process_state=detour_process_state,
                                                 detour_event=detour_event)
         if solution:
             detour_message = str.format(f"detour event confirmed, applying alternative solution!")
-            self.tentative_process_state.handle_detour_event(solution, detour_event)
+            detour_process_state.handle_detour_event(solution, detour_event)
 
             # clean up remaining detour trails
-            for detour_trail in self.tentative_process_state.detour_trails:
-                if not detour_trail in self.tentative_process_state.building_instructions.keys():
+            for detour_trail in detour_process_state.detour_trails:
+                if not detour_trail in detour_process_state.building_instructions.keys():
                     # detour trail is not in current solution anymore
-                    self.tentative_process_state.detour_trails.remove(detour_trail)
+                    detour_process_state.detour_trails.remove(detour_trail)
+            self.tentative_process_state = detour_process_state
         return detour_message
 
     def send_placement_event(self, worker_event: tuple[Pos, int],
@@ -291,7 +287,7 @@ class ProcessPlanner:
 
         if event_info.obstructed_part:
             note = str.format(
-                f"Obstructed {message_dict[event_info.event_code]} while placing {message_dict[event_info.obstructed_part]}")
+                f"Obstructed {message_dict[event_info.obstructed_part]} while placing {message_dict[event_info.event_code]}")
 
         if event_info.removal:
             if event_info.unnecessary:
@@ -357,7 +353,7 @@ class ProcessPlanner:
                     print(fastening_robot_command_message_dict[item[0]] + str(item[1]))
                 print("\n")
 
-        return fastening_robot_commands
+        return tuple(fastening_robot_commands)
 
     def determine_picking_robot_commands(self, worker_event: tuple[Pos, int], layout: Trail = None):
         """Evaluates the current process state and issues robot commands."""
@@ -382,16 +378,16 @@ class ProcessPlanner:
                     picking_robot_commands.extend([(1, next_part_id), 3, 4])
 
             # print commands
-            if picking_robot_commands:
-                print("Next picking robot commands: ")
-                for item in picking_robot_commands:
-                    if isinstance(item, tuple):
-                        print(picking_robot_command_message_dict[item[0]] + str(item[1]))
-                    else:
-                        print(picking_robot_command_message_dict[item])
-                print("\n")
+            # if picking_robot_commands:
+            #     print("Next picking robot commands: ")
+            #     for item in picking_robot_commands:
+            #         if isinstance(item, tuple):
+            #             print(picking_robot_command_message_dict[item[0]] + str(item[1]))
+            #         else:
+            #             print(picking_robot_command_message_dict[item])
+            #     print("\n")
 
-        return picking_robot_commands
+        return tuple(picking_robot_commands)
 
     def return_to_previous_state(self):
         """Returns to previous state."""

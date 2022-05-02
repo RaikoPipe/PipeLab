@@ -107,14 +107,16 @@ class ProcessState:
         # possible event outcomes:
         removal = False
         completed_layouts = set()
-        obstructed_obstacle = False
-        obstructed_part = False
+
         deviated = False
         misplaced = False
         unnecessary = False
         error = False
+        process_error = False
         part_not_picked = False
-        layout_changed = False
+        obstructed_obstacle = False
+        obstructed_part = False
+
         detour_event = {}
         next_recommended_action = ()
 
@@ -126,7 +128,7 @@ class ProcessState:
                                completed_layouts=completed_layouts,
                                layout=current_layout, removal=removal, part_not_picked=part_not_picked,
                                detour_event=detour_event, error=error, time_registered=time_registered,
-                               layout_changed=layout_changed)
+                               )
 
         construction_state = ConstructionState(event_pos=worker_event_pos, event_code=worker_event_code,
                                                part_id=part_id, deviated=deviated,
@@ -155,7 +157,6 @@ class ProcessState:
 
             event_info.obstructed_part = self.obstructed_part(worker_event_pos, worker_event_code)
             if event_info.obstructed_part:
-                event_info.obstructed_part = True
                 event_info.error = True
                 return event_info
 
@@ -194,16 +195,12 @@ class ProcessState:
                 self.completion = get_completion_proportion(self.building_instructions)
 
 
-            else:
-                if worker_event_code == 1:
-                    # check for detour events
-                    detour_event = self.check_detour_event(event_pos=worker_event_pos, event_code=worker_event_code)
-                    if detour_event:
-                        self.building_instructions.update(detour_event)
-                        event_info.detour_event = detour_event
-                        # update state grid
-                        for pos in list(detour_event.keys())[0]:
-                            self.state_grid[pos] = 2
+            #else:
+            if worker_event_code == 1:
+                # check for detour events
+                detour_event = self.check_detour_event(event_pos=worker_event_pos, event_code=worker_event_code)
+                event_info.detour_event = detour_event
+
 
             # modify parts_picked
             if event_info.part_id in self.part_stock.keys():
@@ -243,7 +240,7 @@ class ProcessState:
 
                 self.last_event_trail = current_layout
 
-            building_instruction = self.building_instructions[current_layout]
+            building_instruction = self.building_instructions.get(current_layout)
         else:
             current_layout = None
             building_instruction = None
@@ -518,7 +515,7 @@ class ProcessState:
                                    obstructed_part=False, completed_layouts=completed_layouts, part_not_picked=False,
                                    error=False,
                                    obstructed_obstacle=False, time_registered=construction_state.time_registered,
-                                   layout_changed=False)
+                                   )
 
             new_construction_state = ConstructionState(event_pos=construction_state.event_pos,
                                                        event_code=construction_state.event_code,

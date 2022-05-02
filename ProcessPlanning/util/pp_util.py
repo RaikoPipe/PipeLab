@@ -142,9 +142,9 @@ def get_solution_on_detour_event(initial_path_problem, process_state, detour_eve
 
     current_part_stock = deepcopy(process_state.part_stock)
 
-    for layout_state in completed_instructions.values():
-        current_part_stock[0] -= len(layout_state.required_fit_positions)
-        current_part_stock[layout_state.pipe_id] -= 1
+    # for layout_state in completed_instructions.values():
+    #     current_part_stock[0] -= len(layout_state.required_fit_positions)
+    #     current_part_stock[layout_state.pipe_id] -= 1
 
     layout_outgoing_node_pairs_set = get_outgoing_node_pairs(completed_instructions)
     layout_outgoing_directions_dict = get_outgoing_node_directions(completed_instructions)
@@ -173,12 +173,15 @@ def get_solution_on_detour_event(initial_path_problem, process_state, detour_eve
         path_problem=path_problem)
     solution = None
 
-    detour_trail = list(detour_event)[0][-1]
+
+    check_pos = list(detour_event)[0][-1]
+    if check_pos in (start,goal):
+        check_pos = list(detour_event)[0][0]
 
     for partial_solution in partial_solutions:
         for trail in partial_solution.ordered_trails:
 
-            if detour_trail in trail:
+            if check_pos in trail:
                 solution = partial_solver.fuse_partial_solutions(partial_solutions, completed_instructions,
                                                                  initial_path_problem)
                 break

@@ -12,5 +12,7 @@ class ProcessOutput:
     process_state: ProcessState
     event_info: EventInfo
     messages: tuple
+    picking_robot_commands: tuple
+    fastening_robot_commands: tuple
     next_recommended_action: tuple
     highlight_positions: tuple
