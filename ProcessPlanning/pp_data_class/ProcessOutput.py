@@ -1,10 +1,10 @@
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Optional
+from __future__ import annotations
 
-from ProcessPlanning.classes.ProcessState import ProcessState
-from ProcessPlanning.classes.data_class.EventInfo import EventInfo
-from type_dictionary.common_types import Pos
+from dataclasses import dataclass
+
+from ProcessPlanning.ProcessState import ProcessState
+from ProcessPlanning.pp_data_class.EventInfo import EventInfo
+
 
 @dataclass
 class ProcessOutput:

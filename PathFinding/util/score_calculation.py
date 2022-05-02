@@ -1,4 +1,6 @@
-from PathFinding.data_class.Weights import Weights
+from __future__ import annotations
+
+from PathFinding.pf_data_class.Weights import Weights
 from PathFinding.util.path_math import manhattan_distance, get_direction
 from PathFinding.util.restrictions import out_of_bounds
 

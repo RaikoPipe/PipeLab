@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import heapq
 from copy import copy
 
 import matplotlib.pyplot as plt
 
-from PathFinding.data_class.PathProblem import PathProblem
+from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.grid.grid_functions import change_grid_states
 from PathFinding.util.path_math import *
 from PathFinding.util.path_util import *
@@ -21,7 +23,8 @@ from typing import Optional
 # fixme: mca* doesn't work, mcsa* doesn't include extra score
 def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=False) -> Optional[Solution]:
     """Searches for a solution for the given path problem.
-        :class:`classes.PathProblem`
+
+        :param path_problem: :class:`PathFinding.pf_data_class.PathProblem.PathProblem`
 
     """
     starting_part = path_problem.starting_part

@@ -1,13 +1,16 @@
+from __future__ import annotations
+
 import os.path
 import asyncio
 
 from asyncua import ua, uamethod, Server
 
-from PathFinding.data_class.PathProblem import PathProblem
+from PathFinding.pf_data_class.PathProblem import PathProblem
 from ProcessPlanning.ProcessPlanner import ProcessPlanner
-from ProcessPlanning.classes.data_class.EventInfo import EventInfo
+from ProcessPlanning.pp_data_class.EventInfo import EventInfo
 
 process_planner: ProcessPlanner
+
 
 @uamethod
 def say_hello_xml(parent, happy):
@@ -21,16 +24,16 @@ def say_hello_xml(parent, happy):
 
 
 @uamethod
-def say_hello(parent, x,y,code):
-    output = process_planner.main(((x,y),code))
-    event_info : EventInfo = output.event_info
+def say_hello(parent, x, y, code):
+    output = process_planner.main(((x, y), code))
+    event_info: EventInfo = output.event_info
 
     # array = []
     # for attribute in vars(event_info):
     #     value = event_info.__getattribute__(attribute)
     #     array.append(value)
 
-    #print(array)
+    # print(array)
 
     return event_info.event_code
 
@@ -51,8 +54,6 @@ class PipeLabServer:
         self.model_filepath = model_filepath
         self.server.set_server_name(name)
         self.server.set_endpoint(endpoint)
-
-
 
     async def init(self):
         await self.server.init()
@@ -81,8 +82,6 @@ class PipeLabServer:
             [ua.VariantType.Int64]
         )
 
-
-
     async def __aenter__(self):
         await self.init()
         await self.server.start()
@@ -97,10 +96,10 @@ async def main(path_problem: PathProblem):
     process_planner = ProcessPlanner(initial_path_problem=path_problem)
     script_dir = os.path.dirname(__file__)
     async with PipeLabServer(
-        "opc.tcp://0.0.0.0:4840/freeopcua/server/",
-        "FreeOpcUa Example Server",
-        os.path.join(script_dir, "test_saying.xml"),
-        path_problem
+            "opc.tcp://0.0.0.0:4840/freeopcua/server/",
+            "FreeOpcUa Example Server",
+            os.path.join(script_dir, "test_saying.xml"),
+            path_problem
     ) as server:
         while True:
             await asyncio.sleep(1)

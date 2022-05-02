@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 from copy import deepcopy
 from typing import Optional
 
 from type_dictionary.constants import horizontal_directions, vertical_directions
-from ProcessPlanning.classes.data_class.BuildingInstruction import BuildingInstruction
-from PathFinding.data_class.Solution import Solution
+from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
+from PathFinding.pf_data_class.Solution import Solution
 from PathFinding import partial_solver
 from PathFinding.util.path_math import get_direction, diff_pos
-from ProcessPlanning.classes.ProcessState import ProcessState
+from ProcessPlanning.ProcessState import ProcessState
 from type_dictionary.common_types import Trail, Pos
 
 message_dict = {1: "fitting", 2: "pipe", 3: "attachment"}
@@ -20,8 +22,6 @@ def determine_next_part(process_state: ProcessState, layout: Trail):
         return None
 
     completed, build_progress = process_state.completed_instruction(building_instruction)
-
-
 
     if not completed:
         if build_progress == 2:
@@ -139,7 +139,6 @@ def get_solution_on_detour_event(initial_path_problem, process_state, detour_eve
         for pos in layout_state:
             current_state_grid[pos] = 2
 
-
     current_part_stock = deepcopy(process_state.part_stock)
 
     # for layout_state in completed_instructions.values():
@@ -173,9 +172,8 @@ def get_solution_on_detour_event(initial_path_problem, process_state, detour_eve
         path_problem=path_problem)
     solution = None
 
-
     check_pos = list(detour_event)[0][-1]
-    if check_pos in (start,goal):
+    if check_pos in (start, goal):
         check_pos = list(detour_event)[0][0]
 
     for partial_solution in partial_solutions:

@@ -1,5 +1,7 @@
-from PathFinding.data_class.PathProblem import PathProblem
-from PathFinding.data_class.Weights import Weights
+from __future__ import annotations
+
+from PathFinding.pf_data_class.PathProblem import PathProblem
+from PathFinding.pf_data_class.Weights import Weights
 from PathFinding.grid import grid_functions, randomizer
 from PathFinding.search_algorithm import find_path
 
@@ -56,5 +58,3 @@ while solution is None:
 # print(solution.definite_path[-2])
 
 # positions = debug_rendering.display_pos(rendering_grid=r_grid, scene=scene)
-
-

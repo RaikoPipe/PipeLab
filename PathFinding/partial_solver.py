@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import heapq
 from copy import deepcopy
 
 import numpy as np
 
 from type_dictionary import constants as const
-from ProcessPlanning.classes.data_class.BuildingInstruction import BuildingInstruction
-from PathFinding.data_class.PathProblem import PathProblem
-from PathFinding.data_class.Solution import Solution
+from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
+from PathFinding.pf_data_class.PathProblem import PathProblem
+from PathFinding.pf_data_class.Solution import Solution
 from PathFinding.util.path_math import manhattan_distance
 from PathFinding.solution_manager import get_solution
 from type_dictionary.common_types import Trail
@@ -32,7 +34,6 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
     """
 
     start = path_problem.start_pos
-    goal = path_problem.goal_pos
 
     partial_solutions = []
 
@@ -50,7 +51,6 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
     neighbors = deepcopy(all_points_list)
     # todo: use a* algorithm
     solution_dict = {}
-
 
     while all_points_list:
         solution_list = []
@@ -83,7 +83,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
 
             heapq.heappush(solution_list, (solution.score, neighbor, solution))
 
-        #all_points_list.remove(point_pos)
+        # all_points_list.remove(point_pos)
         neighbors.remove(point_pos)
         # get connecting node with best score, then remove it
         if solution_list:
@@ -101,7 +101,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
     return partial_solutions
 
 
-def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail:BuildingInstruction],
+def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail,BuildingInstruction],
                            initial_path_problem: PathProblem):
     """Fuses partial solutions and completed layouts into a complete solution from start to goal of the initial path problem.
     Only partially checks the validity of the complete solution. Partial solutions and completed layouts must therefore

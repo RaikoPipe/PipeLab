@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 from copy import deepcopy
 from typing import Optional
 
-from PathFinding.data_class.PathProblem import PathProblem
-from PathFinding.data_class.Solution import Solution
+from PathFinding.pf_data_class.PathProblem import PathProblem
+from PathFinding.pf_data_class.Solution import Solution
 from PathFinding.search_algorithm import find_path
 
 completed_solutions_stack = []

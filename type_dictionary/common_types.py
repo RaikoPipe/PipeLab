@@ -1,3 +1,4 @@
+from __future__ import annotations
 import numpy as np
 
 Pos = tuple[int, int]
@@ -12,10 +13,10 @@ Path = list[Pos]
 NodePath = list[Node]
 """Ordered list of nodes from start to goal."""
 
-Trail = tuple[Pos, ...]
+Trail = tuple[Pos]
 """Contains each node visited (in a path for example)."""
 
-AbsoluteTrail = dict[Pos:int]
+AbsoluteTrail = dict[Pos,int]
 """Trail where each position points to a part ID."""
 
 DirectedConnection = tuple[Pos, Pos]

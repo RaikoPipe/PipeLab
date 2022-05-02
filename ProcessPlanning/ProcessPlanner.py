@@ -1,13 +1,15 @@
+from __future__ import annotations
+
 from copy import deepcopy
 from typing import Union
 
-from ProcessPlanning.classes.data_class.EventInfo import EventInfo
-from PathFinding.data_class.PathProblem import PathProblem
-from PathFinding.data_class.Weights import Weights
+from ProcessPlanning.pp_data_class.EventInfo import EventInfo
+from PathFinding.pf_data_class.PathProblem import PathProblem
+from PathFinding.pf_data_class.Weights import Weights
 from PathFinding.util.path_math import get_direction, diff_pos
 from PathFinding.search_algorithm import find_path
-from ProcessPlanning.classes.ProcessState import ProcessState
-from ProcessPlanning.classes.data_class.ProcessOutput import ProcessOutput
+from ProcessPlanning.ProcessState import ProcessState
+from ProcessPlanning.pp_data_class.ProcessOutput import ProcessOutput
 from ProcessPlanning.util.pp_util import determine_next_part, get_solution_on_detour_event, make_registration_message, \
     make_error_message, message_dict
 from type_dictionary import constants
@@ -87,7 +89,6 @@ def get_next_recommended_action(process_state, building_instruction):
             if not building_instruction.layout_completed:
                 return get_next_recommended_action(process_state, building_instruction)
 
-
     return rec_pos, rec_event, rec_part_id
 
 
@@ -119,46 +120,50 @@ class ProcessPlanner:
                 # set initial layout at start
                 self.initial_process_state.last_event_trail = self.initial_process_state.aimed_solution.ordered_trails[
                     0]
-                    # get first recommended action
-                first_building_instruction = self.initial_process_state.building_instructions.get(self.initial_process_state.last_event_trail)
+                # get first recommended action
+                first_building_instruction = self.initial_process_state.building_instructions.get(
+                    self.initial_process_state.last_event_trail)
                 self.next_recommended_action = (first_building_instruction.recommended_attachment_pos, 3, -1)
 
         self.previous_states = []  # contains all previous valid states
 
         self.last_process_state = self.initial_process_state  # last valid state
 
-        self.tentative_process_state = deepcopy(self.initial_process_state)
         self.is_optimal = True  # if path of current state is on optimal solution
 
         self.weights = optimization_weights
         self.algorithm = algorithm
 
-    def send_pick_event(self, part_id: int) -> str:
-        """Sends a new pick event to be evaluated and registered in current ProcessState."""
-        self.previous_states.insert(0, deepcopy(self.tentative_process_state))
-        message = self.tentative_process_state.pick_part(part_id)
+    def send_pick_event(self, part_id: int, process_state:ProcessState) -> str:
+        """Sends a new pick event to be evaluated and registered in the current process state.
+        :param part_id: """
+        message = process_state.pick_part(part_id)
 
         return message
 
     def main(self, worker_event: tuple[Union[Pos, int], int], handle_detour_events: bool = True,
              ignore_part_check: bool = True) -> ProcessOutput:
         """Main method of ProcessPlanning. Takes worker_event as input and sends information about the event to
-        ProcessState. Prints message output of ProcessState and handles possible detour events. Returns current
-         ProcessState, messages and robot commands.
+        ProcessState. Prints message output of ProcessState and handles detour events.
          
-        :param handle_detour_events: 
-        :param worker_event: A tuple containing event position and event code. Contains part ID instead of position in case
-        of a pick event.
-        :param ignore_part_check: 
-            """
+        :param handle_detour_events: If set to true, detour events will result in the process planner looking for a new solution.
+        :param worker_event: A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.
+        :param ignore_part_check: If set to true, part restrictions will be ignored. Could lead to unexpected behaviour."""
+
+        tentative_process_state = deepcopy(self.last_process_state)
         # check if worker event is pick event
         if worker_event[1] == 4:
-            picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event)
-            messages = self.send_pick_event(worker_event[0])
-            process_output = ProcessOutput(process_state=self.tentative_process_state,
-                                           event_info=self.tentative_process_state.last_event_info,
+            picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event, process_state=tentative_process_state)
+            messages = self.send_pick_event(worker_event[0], process_state=tentative_process_state)
+            self.previous_states.insert(0, deepcopy(tentative_process_state))
+            self.last_process_state = tentative_process_state
+
+            process_output = ProcessOutput(process_state=tentative_process_state,
+                                           event_info=tentative_process_state.last_event_info,
                                            messages=(messages,), next_recommended_action=self.next_recommended_action,
-                                           highlight_positions=(), picking_robot_commands=picking_robot_commands, fastening_robot_commands=())
+                                           highlight_positions=(), picking_robot_commands=picking_robot_commands,
+                                           fastening_robot_commands=())
+
             return process_output
 
         # check if worker event occurred on transition point, correct if necessary
@@ -176,74 +181,85 @@ class ProcessPlanner:
                     diff_pos(self._initial_path_problem.start_pos, check_pos))  # get direction relative to start pos
                 # correct worker event pos
                 worker_event = ((worker_event[0][0] - direction[0], worker_event[0][1] - direction[1]), worker_event[1])
+
         messages = self.send_placement_event(worker_event=worker_event,
-                                             ignore_part_check=ignore_part_check)
+                                             ignore_part_check=ignore_part_check, process_state=tentative_process_state)
 
         # extract messages
         message = messages[0]
         special_message = messages[1]
 
-        detour_event: dict = self.tentative_process_state.last_event_info.detour_event
+        detour_event: dict = tentative_process_state.last_event_info.detour_event
         detour_message = None
 
         # handle all detour events
         if detour_event and handle_detour_events:
-            detour_message = self.start_detour_event(detour_event, self.tentative_process_state)
+            detour_message, tentative_process_state = self.start_detour_event(detour_event, tentative_process_state)
         else:
-            detour_message = self.handle_detour_trails(detour_message)
+            detour_message = self.handle_detour_trails(detour_message, process_state=tentative_process_state)
 
         # get next recommended action
-        building_instruction = self.tentative_process_state.building_instructions.get(self.tentative_process_state.last_event_trail)
+        building_instruction = tentative_process_state.building_instructions.get(
+            tentative_process_state.last_event_trail)
         if building_instruction:
-            self.next_recommended_action = get_next_recommended_action(self.tentative_process_state, building_instruction)
+            self.next_recommended_action = get_next_recommended_action(tentative_process_state,
+                                                                       building_instruction)
 
         # get fastening commands
         fastening_robot_commands = self.determine_fastening_robot_commands(worker_event=worker_event,
-                                                event_info=self.tentative_process_state.last_event_info)
+                                                                           event_info=tentative_process_state.last_event_info)
 
         picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event,
-                                              layout=self.tentative_process_state.last_event_info.layout)
+                                                                       layout=tentative_process_state.last_event_info.layout,
+                                                                       process_state=tentative_process_state)
 
         messages = (message, special_message, detour_message)
 
-        process_output = ProcessOutput(process_state=self.tentative_process_state, event_info=self.tentative_process_state.last_event_info,
-                                       messages=messages, next_recommended_action=self.next_recommended_action, highlight_positions=(),
-                                       picking_robot_commands=picking_robot_commands, fastening_robot_commands=fastening_robot_commands)
+
+        self.previous_states.insert(0, deepcopy(tentative_process_state))
+        self.last_process_state = tentative_process_state
+
+        process_output = ProcessOutput(process_state=tentative_process_state,
+                                       event_info=tentative_process_state.last_event_info,
+                                       messages=messages, next_recommended_action=self.next_recommended_action,
+                                       highlight_positions=(),
+                                       picking_robot_commands=picking_robot_commands,
+                                       fastening_robot_commands=fastening_robot_commands)
 
         return process_output
 
-    def handle_detour_trails(self, detour_message):
-        if self.tentative_process_state.detour_trails:
+    def handle_detour_trails(self, detour_message, process_state):
+        if process_state.detour_trails:
             # check if previous layouts that caused detour are not completed anymore
-            previous_detour_trails = deepcopy(self.tentative_process_state.detour_trails)
+            previous_detour_trails = deepcopy(process_state.detour_trails)
             last_detour_trail = previous_detour_trails.pop(-1)
             for detour_trail in previous_detour_trails:
-                if not self.tentative_process_state.building_instructions[detour_trail].layout_completed:
-                    self.tentative_process_state.detour_trails.remove(detour_trail)
+                if not process_state.building_instructions[detour_trail].layout_completed:
+                    process_state.detour_trails.remove(detour_trail)
             # check if layout that caused last detour is not completed anymore
-            if not self.tentative_process_state.building_instructions[last_detour_trail].layout_completed:
-                self.tentative_process_state.detour_trails.pop(-1)
-                if self.tentative_process_state.detour_trails:
+            if not process_state.building_instructions[last_detour_trail].layout_completed:
+                process_state.detour_trails.pop(-1)
+                if process_state.detour_trails:
                     # there are still complete detour layouts
-                    last_detour_trail = self.tentative_process_state.detour_trails[-1]
+                    last_detour_trail = process_state.detour_trails[-1]
 
-                    last_detour_instruction = self.tentative_process_state.building_instructions[last_detour_trail]
+                    last_detour_instruction = process_state.building_instructions[last_detour_trail]
                     detour_event = {last_detour_trail: last_detour_instruction}
                     solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
-                                                            process_state=self.tentative_process_state,
+                                                            process_state=process_state,
                                                             detour_event=detour_event)
-                    self.tentative_process_state.handle_detour_event(solution, detour_event)
+                    process_state.handle_detour_event(solution, detour_event)
                     detour_message = str.format(
                         f"Deviating layout incomplete, returning solution for last deviating layout")
                 else:
                     # return to optimal solution
                     detour_event = {None: "Returned to optimal solution"}
-                    self.tentative_process_state.handle_detour_event(self.optimal_solution)
+                    process_state.handle_detour_event(self.optimal_solution)
 
                     detour_message = str.format(
                         f"No complete deviating layouts left, returning to optimal solution")
 
-                self.tentative_process_state.last_event_info.detour_event = detour_event
+                process_state.last_event_info.detour_event = detour_event
         return detour_message
 
     def start_detour_event(self, detour_event, process_state):
@@ -267,16 +283,13 @@ class ProcessPlanner:
                 if not detour_trail in detour_process_state.building_instructions.keys():
                     # detour trail is not in current solution anymore
                     detour_process_state.detour_trails.remove(detour_trail)
-            self.tentative_process_state = detour_process_state
-        return detour_message
+        return detour_message, detour_process_state
 
-    def send_placement_event(self, worker_event: tuple[Pos, int],
+    def send_placement_event(self, worker_event: tuple[Pos, int], process_state:ProcessState,
                              ignore_part_check: bool = False, ignore_obstructions: bool = False):
         """Sends a new placement/removal event to be evaluated and registered in current ProcessState."""
 
-        self.previous_states.insert(0, deepcopy(self.tentative_process_state))
-
-        event_info: EventInfo = self.tentative_process_state.evaluate_placement(worker_event=worker_event,
+        event_info: EventInfo = process_state.evaluate_placement(worker_event=worker_event,
                                                                                 ignore_part_check=ignore_part_check,
                                                                                 ignore_obstructions=ignore_obstructions)
 
@@ -324,7 +337,7 @@ class ProcessPlanner:
             message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
                                                 removal=event_info.removal, pipe_id=event_info.part_id)
 
-        self.tentative_process_state.last_event_info = event_info
+        process_state.last_event_info = event_info
 
         return message, note
 
@@ -355,7 +368,7 @@ class ProcessPlanner:
 
         return tuple(fastening_robot_commands)
 
-    def determine_picking_robot_commands(self, worker_event: tuple[Pos, int], layout: Trail = None):
+    def determine_picking_robot_commands(self, worker_event: tuple[Pos, int], process_state:ProcessState, layout: Trail = None,):
         """Evaluates the current process state and issues robot commands."""
 
         picking_robot_commands = []
@@ -371,7 +384,7 @@ class ProcessPlanner:
             if event_code == 4:
                 picking_robot_commands.append(0)
 
-            next_part_id = determine_next_part(process_state=self.tentative_process_state, layout=layout)
+            next_part_id = determine_next_part(process_state=process_state, layout=layout)
 
             if event_code == 3:
                 if next_part_id:
@@ -392,7 +405,7 @@ class ProcessPlanner:
     def return_to_previous_state(self):
         """Returns to previous state."""
         if self.previous_states:
-            self.tentative_process_state = self.last_process_state = self.previous_states.pop(0)
+            self.last_process_state = self.previous_states.pop(0)
             print("Latest action was undone!")
         else:
             print("There is no last state to return to!")

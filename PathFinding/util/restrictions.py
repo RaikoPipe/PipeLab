@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from type_dictionary.constants import fitting_id
 from PathFinding.util.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions

@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import numpy as np
 
 import PathFinding.util.restrictions
-from ProcessPlanning.classes.data_class.BuildingInstruction import BuildingInstruction
+from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
 from PathFinding.util.path_math import get_direction, diff_pos, manhattan_distance
 from type_dictionary.common_types import Pos, Trail, Layouts
 
@@ -31,7 +33,7 @@ def get_optimal_attachment_pos(state_grid: np.ndarray, pos: Pos, part_id: int, d
                 rec_att_pos = (pos[0] + i * direction[0], pos[1] + i * direction[1])
                 return rec_att_pos
         else:
-            rec_att_pos = (pos[0] + i * direction[0] , pos[1] + i * direction[1])
+            rec_att_pos = (pos[0] + i * direction[0], pos[1] + i * direction[1])
             return rec_att_pos
     else:  # second best option: one side is empty
         for i in sorter:  # check pos right of pipe
@@ -134,3 +136,12 @@ def get_building_instructions_from_solution(solution):
                                                                            possible_att_pipe_positions), )
 
     return construction_layout
+
+
+def get_completion_proportion(building_instructions):
+    count = 0
+    for layout, instruction in building_instructions.items():
+        if instruction.layout_completed:
+            count += 1
+    proportion = count / len(building_instructions.keys())
+    return proportion
