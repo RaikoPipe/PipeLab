@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 free_style = "FREE.TButton"
 pipe_style = "PIPE.TButton"

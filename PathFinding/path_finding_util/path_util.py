@@ -9,7 +9,7 @@ from PathFinding.pf_data_class.Solution import Solution
 from type_dictionary.common_types import *
 
 
-def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_grid, score,
+def construct_solution(predecessors: dict[Pos,Predecessor], current_node, state_grid, score,
                        algorithm, path_problem, fast_mode, goal_pos, goal_part) -> Solution:
     """Returns a solution based on given parameters. """
 
@@ -76,7 +76,7 @@ def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_
             # definite path must start with None or 0
             raise Exception
 
-    return Solution(absolute_path=absolute_path, absolute_trail=absolute_trail,
+    return Solution(absolute_path=absolute_path, node_trail=absolute_trail,
                     ordered_trails=ordered_trails, state_grid=state_grid, score=score, algorithm=algorithm,
                     path_problem=path_problem, part_stock=part_stock,
                     rendering_dict=rendering_dict)

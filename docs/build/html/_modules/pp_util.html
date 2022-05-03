@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pp_util &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../OPC_UA.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FunctionTestGUI.html">FunctionTestGUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProcessPlanning.html">ProcessPlanning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PathFinding.html">PathFinding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../type_dictionary.html">type_dictionary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>pp_util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pp_util</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">PathFinding</span> <span class="kn">import</span> <span class="n">partial_solver</span>
+<span class="kn">from</span> <span class="nn">PathFinding.path_finding_util.path_math</span> <span class="kn">import</span> <span class="n">get_direction</span><span class="p">,</span> <span class="n">diff_pos</span>
+<span class="kn">from</span> <span class="nn">PathFinding.pf_data_class.PathProblem</span> <span class="kn">import</span> <span class="n">PathProblem</span>
+<span class="kn">from</span> <span class="nn">PathFinding.pf_data_class.Solution</span> <span class="kn">import</span> <span class="n">Solution</span>
+<span class="kn">from</span> <span class="nn">ProcessPlanning.ProcessState</span> <span class="kn">import</span> <span class="n">ProcessState</span>
+<span class="kn">from</span> <span class="nn">ProcessPlanning.pp_data_class.BuildingInstruction</span> <span class="kn">import</span> <span class="n">BuildingInstruction</span>
+<span class="kn">from</span> <span class="nn">type_dictionary</span> <span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span> <span class="nn">type_dictionary.common_types</span> <span class="kn">import</span> <span class="n">Trail</span><span class="p">,</span> <span class="n">Pos</span>
+<span class="kn">from</span> <span class="nn">type_dictionary.special_types</span> <span class="kn">import</span> <span class="n">BuildingInstructions</span>
+<span class="kn">from</span> <span class="nn">type_dictionary.constants</span> <span class="kn">import</span> <span class="n">horizontal_directions</span><span class="p">,</span> <span class="n">vertical_directions</span>
+
+<span class="n">message_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;fitting&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;pipe&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;attachment&quot;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="determine_next_part"><a class="viewcode-back" href="../pp_util.html#pp_util.determine_next_part">[docs]</a><span class="k">def</span> <span class="nf">determine_next_part</span><span class="p">(</span><span class="n">process_state</span><span class="p">:</span> <span class="n">ProcessState</span><span class="p">,</span> <span class="n">layout</span><span class="p">:</span> <span class="n">Trail</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determines which part should be picked next according to the current build progress.</span>
+
+<span class="sd">    :param layout: Layout that is currently being built.</span>
+<span class="sd">    :param process_state: The current process state.&quot;&quot;&quot;</span>
+    <span class="n">next_part_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">building_instruction</span> <span class="o">=</span> <span class="n">process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">building_instruction</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">completed</span><span class="p">,</span> <span class="n">build_progress</span> <span class="o">=</span> <span class="n">process_state</span><span class="o">.</span><span class="n">completed_instruction</span><span class="p">(</span><span class="n">building_instruction</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">completed</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">build_progress</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">next_part_id</span> <span class="o">=</span> <span class="n">building_instruction</span><span class="o">.</span><span class="n">pipe_id</span>
+        <span class="c1"># elif build_progress == 1:</span>
+        <span class="c1">#     next_part_id = constants.fitting_id</span>
+
+    <span class="k">return</span> <span class="n">next_part_id</span></div>
+
+
+<div class="viewcode-block" id="get_completed_instructions"><a class="viewcode-back" href="../pp_util.html#pp_util.get_completed_instructions">[docs]</a><span class="k">def</span> <span class="nf">get_completed_instructions</span><span class="p">(</span><span class="n">building_instructions</span><span class="p">:</span> <span class="n">BuildingInstructions</span><span class="p">)</span> <span class="o">-&gt;</span> \
+        <span class="n">BuildingInstructions</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Looks for completed instructions inside building_instructions and returns them.</span>
+
+<span class="sd">    :param building_instructions: See :attr:`ProcessState.building_instructions`.</span>
+<span class="sd">    :return: All completed instructions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">completed_instructions</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">layout_trail</span> <span class="ow">in</span> <span class="n">building_instructions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">instruction</span> <span class="o">=</span> <span class="n">building_instructions</span><span class="p">[</span><span class="n">layout_trail</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">instruction</span><span class="o">.</span><span class="n">layout_completed</span><span class="p">:</span>
+            <span class="n">completed_instructions</span><span class="p">[</span><span class="n">layout_trail</span><span class="p">]</span> <span class="o">=</span> <span class="n">instruction</span>
+
+    <span class="k">return</span> <span class="n">completed_instructions</span></div>
+
+
+<div class="viewcode-block" id="get_outgoing_node_pairs"><a class="viewcode-back" href="../pp_util.html#pp_util.get_outgoing_node_pairs">[docs]</a><span class="k">def</span> <span class="nf">get_outgoing_node_pairs</span><span class="p">(</span><span class="n">building_instructions</span><span class="p">:</span> <span class="n">BuildingInstructions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="n">Pos</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Returns all outgoing points in building_instructions as a connection. Interpolates them if they are</span>
+<span class="sd">    connected.</span>
+
+<span class="sd">    :param building_instructions: See :attr:`ProcessState.building_instructions`.</span>
+<span class="sd">    :return: Set with all outgoing node pairs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">outgoing_node_pairs_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">layout_state</span> <span class="ow">in</span> <span class="n">building_instructions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">outgoing_node_pairs_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">layout_state</span><span class="o">.</span><span class="n">required_fit_positions</span><span class="p">)</span>
+
+    <span class="n">layout_state_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">building_instructions</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+
+    <span class="n">layout_state</span> <span class="o">=</span> <span class="n">layout_state_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">layout_state_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">other_layout_state</span> <span class="ow">in</span> <span class="n">layout_state_list</span><span class="p">:</span>
+            <span class="n">fit_positions</span> <span class="o">=</span> <span class="n">layout_state</span><span class="o">.</span><span class="n">required_fit_positions</span>
+            <span class="n">other_fit_positions</span> <span class="o">=</span> <span class="n">other_layout_state</span><span class="o">.</span><span class="n">required_fit_positions</span>
+            <span class="n">fit_positions_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">fit_positions</span><span class="p">)</span>
+            <span class="n">other_fit_positions_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">other_fit_positions</span><span class="p">)</span>
+            <span class="n">intersection</span> <span class="o">=</span> <span class="n">fit_positions_set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">other_fit_positions_set</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">intersection</span><span class="p">:</span>
+                <span class="n">outgoing_node_pairs_set</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">fit_positions</span><span class="p">)</span>
+                <span class="n">outgoing_node_pairs_set</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">other_fit_positions</span><span class="p">)</span>
+
+                <span class="n">intersected_pos</span> <span class="o">=</span> <span class="n">intersection</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="n">fit_positions_set</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">intersected_pos</span><span class="p">)</span>
+                <span class="n">other_fit_positions_set</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">intersected_pos</span><span class="p">)</span>
+
+                <span class="n">fits_left</span> <span class="o">=</span> <span class="p">(</span><span class="n">fit_positions_set</span><span class="o">.</span><span class="n">pop</span><span class="p">(),</span> <span class="n">other_fit_positions_set</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+                <span class="n">new_end_points</span> <span class="o">=</span> <span class="p">(</span><span class="n">fits_left</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fits_left</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+                <span class="n">outgoing_node_pairs_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">new_end_points</span><span class="p">)</span>
+        <span class="n">layout_state</span> <span class="o">=</span> <span class="n">layout_state_list</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">outgoing_node_pairs_set</span></div>
+
+
+<div class="viewcode-block" id="get_outgoing_node_directions"><a class="viewcode-back" href="../pp_util.html#pp_util.get_outgoing_node_directions">[docs]</a><span class="k">def</span> <span class="nf">get_outgoing_node_directions</span><span class="p">(</span><span class="n">building_instructions</span><span class="p">:</span> <span class="n">BuildingInstructions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the connecting directions the fittings of each building instruction requires.</span>
+
+<span class="sd">    :param building_instructions: See :paramref:`~ProcessState.building_instructions`.</span>
+<span class="sd">    :return: Set with all outgoing node directions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">direction_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">layout_trail</span> <span class="ow">in</span> <span class="n">building_instructions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">fit_pos</span> <span class="o">=</span> <span class="n">building_instructions</span><span class="p">[</span><span class="n">layout_trail</span><span class="p">]</span><span class="o">.</span><span class="n">required_fit_positions</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">get_direction</span><span class="p">(</span><span class="n">diff_pos</span><span class="p">(</span><span class="n">fit_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fit_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">horizontal_directions</span><span class="p">:</span>
+            <span class="n">direction_dict</span><span class="p">[</span><span class="n">fit_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">direction_dict</span><span class="p">[</span><span class="n">fit_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">vertical_directions</span>
+
+        <span class="k">elif</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">vertical_directions</span><span class="p">:</span>
+            <span class="n">direction_dict</span><span class="p">[</span><span class="n">fit_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">direction_dict</span><span class="p">[</span><span class="n">fit_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">horizontal_directions</span>
+
+    <span class="k">return</span> <span class="n">direction_dict</span></div>
+
+
+<div class="viewcode-block" id="adjust_pos_in_node_pairs_set"><a class="viewcode-back" href="../pp_util.html#pp_util.adjust_pos_in_node_pairs_set">[docs]</a><span class="k">def</span> <span class="nf">adjust_pos_in_node_pairs_set</span><span class="p">(</span><span class="n">node_pairs_set</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]]],</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Pos</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove pos from first node pair tuple in node_pairs_set that contains it. If not found,</span>
+<span class="sd">    then add as a node pair tuple containing only pos.</span>
+
+<span class="sd">    :param pos: Pos to be evaluated.</span>
+<span class="sd">    :param node_pairs_set: Set with all outgoing node pairs.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">node_pairs_set</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">connection</span><span class="p">:</span>
+            <span class="n">set_connection</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+            <span class="n">set_connection</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="n">node_pairs_set</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+            <span class="n">node_pairs_set</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">set_connection</span><span class="o">.</span><span class="n">pop</span><span class="p">(),</span> <span class="p">()))</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">node_pairs_set</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">pos</span><span class="p">,</span> <span class="p">()))</span></div>
+
+
+<div class="viewcode-block" id="get_solution_on_detour_event"><a class="viewcode-back" href="../pp_util.html#pp_util.get_solution_on_detour_event">[docs]</a><span class="k">def</span> <span class="nf">get_solution_on_detour_event</span><span class="p">(</span><span class="n">initial_path_problem</span><span class="p">:</span> <span class="n">PathProblem</span><span class="p">,</span> <span class="n">process_state</span><span class="p">:</span> <span class="n">ProcessState</span><span class="p">,</span> <span class="n">detour_event</span><span class="p">)</span> <span class="o">-&gt;</span> \
+        <span class="n">Optional</span><span class="p">[</span><span class="n">Solution</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Tries to get a new solution on a detour event.</span>
+
+<span class="sd">    :param initial_path_problem: The original path problem.</span>
+<span class="sd">    :param process_state: The current process state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">completed_instructions</span> <span class="o">=</span> <span class="n">get_completed_instructions</span><span class="p">(</span><span class="n">process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="p">)</span>
+
+    <span class="n">path_problem</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">initial_path_problem</span><span class="p">)</span>
+
+    <span class="c1"># get state grid of completed layouts</span>
+    <span class="n">current_state_grid</span> <span class="o">=</span> <span class="n">path_problem</span><span class="o">.</span><span class="n">state_grid</span>
+
+    <span class="k">for</span> <span class="n">layout_state</span> <span class="ow">in</span> <span class="n">completed_instructions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">layout_state</span><span class="p">:</span>
+            <span class="n">current_state_grid</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">current_part_stock</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">process_state</span><span class="o">.</span><span class="n">part_stock</span><span class="p">)</span>
+
+    <span class="c1"># for layout_state in completed_instructions.values():</span>
+    <span class="c1">#     current_part_stock[0] -= len(layout_state.required_fit_positions)</span>
+    <span class="c1">#     current_part_stock[layout_state.pipe_id] -= 1</span>
+
+    <span class="n">layout_outgoing_node_pairs_set</span> <span class="o">=</span> <span class="n">get_outgoing_node_pairs</span><span class="p">(</span><span class="n">completed_instructions</span><span class="p">)</span>
+    <span class="n">layout_outgoing_directions_dict</span> <span class="o">=</span> <span class="n">get_outgoing_node_directions</span><span class="p">(</span><span class="n">completed_instructions</span><span class="p">)</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">path_problem</span><span class="o">.</span><span class="n">start_pos</span>
+    <span class="n">goal</span> <span class="o">=</span> <span class="n">path_problem</span><span class="o">.</span><span class="n">goal_pos</span>
+
+    <span class="c1"># Add start/goal to the node_pairs set. If already in a connection, discard.</span>
+    <span class="n">adjust_pos_in_node_pairs_set</span><span class="p">(</span><span class="n">layout_outgoing_node_pairs_set</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+    <span class="n">adjust_pos_in_node_pairs_set</span><span class="p">(</span><span class="n">layout_outgoing_node_pairs_set</span><span class="p">,</span> <span class="n">goal</span><span class="p">)</span>
+
+    <span class="n">layout_outgoing_directions_dict</span><span class="p">[</span>
+        <span class="n">initial_path_problem</span><span class="o">.</span><span class="n">start_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_path_problem</span><span class="o">.</span><span class="n">start_directions</span>
+    <span class="n">layout_outgoing_directions_dict</span><span class="p">[</span>
+        <span class="n">initial_path_problem</span><span class="o">.</span><span class="n">goal_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">initial_path_problem</span><span class="o">.</span><span class="n">goal_directions</span>
+
+    <span class="n">exclusion_list</span> <span class="o">=</span> <span class="p">[{</span><span class="n">start</span><span class="p">,</span> <span class="n">goal</span><span class="p">}]</span>  <span class="c1"># contains node_pairs that are excluded from partial solving</span>
+
+    <span class="c1"># get new solution</span>
+    <span class="n">partial_solutions</span> <span class="o">=</span> <span class="n">partial_solver</span><span class="o">.</span><span class="n">get_partial_solutions</span><span class="p">(</span>
+        <span class="n">outgoing_node_pairs_set</span><span class="o">=</span><span class="n">layout_outgoing_node_pairs_set</span><span class="p">,</span>
+        <span class="n">outgoing_node_directions_dict</span><span class="o">=</span><span class="n">layout_outgoing_directions_dict</span><span class="p">,</span>
+        <span class="n">closed_list</span><span class="o">=</span><span class="n">exclusion_list</span><span class="p">,</span>
+        <span class="n">part_stock</span><span class="o">=</span><span class="n">current_part_stock</span><span class="p">,</span>
+        <span class="n">state_grid</span><span class="o">=</span><span class="n">current_state_grid</span><span class="p">,</span>
+        <span class="n">path_problem</span><span class="o">=</span><span class="n">path_problem</span><span class="p">)</span>
+    <span class="n">solution</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">check_pos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">detour_event</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">check_pos</span> <span class="ow">in</span> <span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">goal</span><span class="p">):</span>
+        <span class="n">check_pos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">detour_event</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">partial_solution</span> <span class="ow">in</span> <span class="n">partial_solutions</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">trail</span> <span class="ow">in</span> <span class="n">partial_solution</span><span class="o">.</span><span class="n">ordered_trails</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">check_pos</span> <span class="ow">in</span> <span class="n">trail</span><span class="p">:</span>
+                <span class="n">solution</span> <span class="o">=</span> <span class="n">partial_solver</span><span class="o">.</span><span class="n">fuse_partial_solutions</span><span class="p">(</span><span class="n">partial_solutions</span><span class="p">,</span> <span class="n">completed_instructions</span><span class="p">,</span>
+                                                                 <span class="n">initial_path_problem</span><span class="p">)</span>
+                <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">solution</span></div>
+
+
+<div class="viewcode-block" id="make_registration_message"><a class="viewcode-back" href="../pp_util.html#pp_util.make_registration_message">[docs]</a><span class="k">def</span> <span class="nf">make_registration_message</span><span class="p">(</span><span class="n">event_pos</span><span class="p">:</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">event_code</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">removal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">pipe_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Returns a message as string confirming a placement or removal event.&quot;&quot;&quot;</span>
+    <span class="n">object_name</span> <span class="o">=</span> <span class="n">message_dict</span><span class="p">[</span><span class="n">event_code</span><span class="p">]</span>
+    <span class="n">motion_type</span> <span class="o">=</span> <span class="s2">&quot;placement&quot;</span>
+    <span class="k">if</span> <span class="n">removal</span><span class="p">:</span>
+        <span class="n">motion_type</span> <span class="o">=</span> <span class="s2">&quot;removal&quot;</span>
+
+    <span class="k">if</span> <span class="n">pipe_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Process Planner: Registered </span><span class="si">{</span><span class="n">motion_type</span><span class="si">}</span><span class="s2"> for object </span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2"> (ID </span><span class="si">{</span><span class="n">pipe_id</span><span class="si">}</span><span class="s2">) at Position </span><span class="si">{</span><span class="n">event_pos</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">pipe_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Process Planner: Registered </span><span class="si">{</span><span class="n">motion_type</span><span class="si">}</span><span class="s2"> for object </span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2"> (ID Unknown) at Position </span><span class="si">{</span><span class="n">event_pos</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Process Planner: Registered </span><span class="si">{</span><span class="n">motion_type</span><span class="si">}</span><span class="s2"> for object </span><span class="si">{</span><span class="n">object_name</span><span class="si">}</span><span class="s2"> at Position </span><span class="si">{</span><span class="n">event_pos</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="make_special_message"><a class="viewcode-back" href="../pp_util.html#pp_util.make_special_message">[docs]</a><span class="k">def</span> <span class="nf">make_special_message</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">event_pos</span><span class="p">:</span> <span class="n">Pos</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a special message as string, usually used in case of deviated placements.&quot;&quot;&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Process Planner: Position </span><span class="si">{</span><span class="n">event_pos</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2"> &quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="make_error_message"><a class="viewcode-back" href="../pp_util.html#pp_util.make_error_message">[docs]</a><span class="k">def</span> <span class="nf">make_error_message</span><span class="p">(</span><span class="n">event_pos</span><span class="p">:</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">additional_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns error messages as string containing the position where the error occurred as well as additional</span>
+<span class="sd">    information regarding the reason for the error.&quot;&quot;&quot;</span>
+    <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Process Planner: Process error at Position </span><span class="si">{</span><span class="n">event_pos</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">additional_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="get_next_recommended_action"><a class="viewcode-back" href="../pp_util.html#pp_util.get_next_recommended_action">[docs]</a><span class="k">def</span> <span class="nf">get_next_recommended_action</span><span class="p">(</span><span class="n">process_state</span><span class="p">,</span> <span class="n">building_instruction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the completion for the building instruction and determines the next recommended action.</span>
+
+<span class="sd">    :param building_instruction: Building instruction currently being followed.</span>
+<span class="sd">    :param process_state: The current process state.</span>
+<span class="sd">    :return: Tuple containing the position, motion event code and part id for the next recommended action.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">completed</span> <span class="o">=</span> <span class="n">process_state</span><span class="o">.</span><span class="n">completed_instruction</span><span class="p">(</span><span class="n">building_instruction</span><span class="p">)</span>
+    <span class="n">rec_pos</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rec_event</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">rec_part_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">completed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">rec_pos</span> <span class="o">=</span> <span class="n">building_instruction</span><span class="o">.</span><span class="n">recommended_attachment_pos</span>
+        <span class="n">rec_event</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">rec_part_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">completed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="c1"># pipe next</span>
+        <span class="n">rec_event</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">rec_part_id</span> <span class="o">=</span> <span class="n">building_instruction</span><span class="o">.</span><span class="n">pipe_id</span>
+        <span class="c1"># get attachment that is not deviated</span>
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">building_instruction</span><span class="o">.</span><span class="n">possible_att_pipe_positions</span><span class="p">:</span>
+            <span class="n">pos</span><span class="p">,</span> <span class="n">construction_state</span> <span class="o">=</span> <span class="n">process_state</span><span class="o">.</span><span class="n">get_construction_state</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">construction_state</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">construction_state</span><span class="o">.</span><span class="n">deviated</span><span class="p">:</span>
+                    <span class="n">rec_pos</span> <span class="o">=</span> <span class="n">pos</span>
+                    <span class="k">break</span>
+    <span class="k">elif</span> <span class="n">completed</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># fittings next</span>
+        <span class="n">rec_event</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">rec_part_id</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">fitting_id</span>
+
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">building_instruction</span><span class="o">.</span><span class="n">required_fit_positions</span><span class="p">:</span>
+            <span class="c1"># get required fit pos</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">process_state</span><span class="o">.</span><span class="n">get_construction_state</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">rec_pos</span> <span class="o">=</span> <span class="n">pos</span>
+                <span class="k">break</span>
+
+    <span class="k">elif</span> <span class="n">completed</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="c1"># layout complete, get next incomplete layout</span>
+
+        <span class="k">for</span> <span class="n">layout</span> <span class="ow">in</span> <span class="n">process_state</span><span class="o">.</span><span class="n">aimed_solution</span><span class="o">.</span><span class="n">ordered_trails</span><span class="p">:</span>
+            <span class="n">building_instruction</span> <span class="o">=</span> <span class="n">process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">building_instruction</span><span class="o">.</span><span class="n">layout_completed</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">get_next_recommended_action</span><span class="p">(</span><span class="n">process_state</span><span class="p">,</span> <span class="n">building_instruction</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rec_pos</span><span class="p">,</span> <span class="n">rec_event</span><span class="p">,</span> <span class="n">rec_part_id</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

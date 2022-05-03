@@ -3,11 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
-from PathFinding.pf_data_class.Weights import Weights
-from type_dictionary.common_types import *  #
+from PathFinding.pf_data_class import Weights
+from type_dictionary.common_types import *
 
-
-# todo: documentation
 
 @dataclass
 class PathProblem:
@@ -30,19 +28,15 @@ class PathProblem:
         weights:
 
     """
+
     state_grid: StateGrid
     start_pos: Pos
     goal_pos: Pos
-
     start_directions: set[Pos]
     goal_directions: set[Pos]
     transition_points: set[Pos]
-
     starting_part: Optional[int]
-
     part_stock: dict
     part_cost: dict
-
-    # solving options
     weights: Optional[Weights]
     algorithm: Optional[str]

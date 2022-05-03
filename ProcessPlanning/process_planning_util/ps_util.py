@@ -11,6 +11,7 @@ def get_optimal_attachment_pos(state_grid: StateGrid, pos: Pos, part_id: int, di
     """Returns the best attachment position. This is evaluated by two factors: The amount of obstacles surrounding the position
      and the distance relative to the middle of the part.
 
+     :param part_id: Part ID
      :param direction: The direction though which positions are iterated through the function
      :param pos: Starting position of a pipe.
      :param state_grid: See type for explanation. Only parts and obstacles are considered as obstacles.
@@ -135,7 +136,7 @@ def construct_building_instructions_from_solution(solution: Solution) -> dict[Tr
 
     for layout_trail in solution.ordered_trails:
         add_fit = set()
-        pipe_id = solution.absolute_trail[layout_trail[1]]
+        pipe_id = solution.node_trail[layout_trail[1]]
         rec_att_pos = get_optimal_attachment_pos(state_grid=solution.path_problem.state_grid,
                                                  direction=get_direction(diff_pos(layout_trail[0], layout_trail[1])),
                                                  part_id=manhattan_distance(layout_trail[1], layout_trail[-1]),

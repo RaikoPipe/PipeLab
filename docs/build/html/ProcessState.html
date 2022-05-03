@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProcessState class &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pp_data_class" href="pp_data_class.html" />
+    <link rel="prev" title="ProcessPlanner class" href="ProcessPlanner.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ProcessPlanner.html">ProcessPlanner class</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ProcessState class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">pp_data_class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">process_planning_util</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="ProcessPlanning.html">ProcessPlanning</a> &raquo;</li>
+      <li>ProcessState class</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ProcessState.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-ProcessState">
+<span id="processstate-class"></span><h1>ProcessState class<a class="headerlink" href="#module-ProcessState" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ProcessState.ProcessState">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ProcessState.</span></span><span class="sig-name descname"><span class="pre">ProcessState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data class that contains information about a process state</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state_grid</strong> – Numpy array that shows where obstacles and completed layouts occupy nodes</p></li>
+<li><p><strong>aimed_solution</strong> – Solution that contains information of the desired construction./</p></li>
+</ul>
+</dd>
+</dl>
+<p>Is recalculated after a detour event.
+:ivar last_event_trail: Layout trail at which the last non deviated event occurred.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>part_stock</strong> – Dictionary containing the number of available parts in stock.</p></li>
+<li><p><strong>picked_parts</strong> – List containing parts picked from stock. Parts will be removed upon usage.</p></li>
+<li><p><strong>building_instructions</strong> – Dictionary containing information about the required placements and IDs of parts to</p></li>
+</ul>
+</dd>
+</dl>
+<p>:ivar complete the construction process. Is recalculated after a detour event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><p><strong>motion_dict</strong> – Dictionary containing all registered motion events that are valid (non-error) that point to</p>
+</dd>
+</dl>
+<p>a ConstructionState. The keys for pipe events are of the type Trail, while other events are of the type Pos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><p><strong>last_event_info</strong> – Dictionary containing information of the last event that occurred.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><span class="target" id="ProcessState.ProcessState.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.params.solution">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>) – :class:”~Solution”</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.adjust_motion_dict_to_solution">
+<span class="sig-name descname"><span class="pre">adjust_motion_dict_to_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detour_event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.adjust_motion_dict_to_solution" title="Permalink to this definition"></a></dt>
+<dd><p>Reevaluates all entries in the motion dict according to the given solution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.adjust_motion_dict_to_solution.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.adjust_motion_dict_to_solution.params.solution">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>) – New solution.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.adjust_motion_dict_to_solution.params.detour_event"></span><strong>detour_event</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.adjust_motion_dict_to_solution.params.detour_event">¶</a> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]) – Element that caused detour event: Dictionary containing a trail and building instruction.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.assign_pipe_id">
+<span class="sig-name descname"><span class="pre">assign_pipe_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipe_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.assign_pipe_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.attachment_placed">
+<span class="sig-name descname"><span class="pre">attachment_placed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.attachment_placed" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluates the placement of an attachment. Notes findings into event_info.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.check_assignment_pipe_id">
+<span class="sig-name descname"><span class="pre">check_assignment_pipe_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.check_assignment_pipe_id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.check_detour_event">
+<span class="sig-name descname"><span class="pre">check_detour_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.check_detour_event" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if conditions for a detour event are met.
+Detour event occurs if:
+1. 2 fittings in proximity (connectable by available parts)
+2. 1 attachment in between those 2 fittings
+3. 1 pipe (with correct or unknown id) in between those fittings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.check_detour_event.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.check_detour_event.params.event_pos">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.check_detour_event.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.check_detour_event.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.completed_instruction">
+<span class="sig-name descname"><span class="pre">completed_instruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.completed_instruction" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the building instruction was completed.
+and returns event code corresponding to its completion state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.evaluate_placement">
+<span class="sig-name descname"><span class="pre">evaluate_placement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_part_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_obstructions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_pipe_id_from_solution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.evaluate_placement" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Evaluates a placement event and registers changes to motion_dict according to building_instructions.</dt><dd><p>Also registers if an instruction has been completed.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Position where motion event occurred.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Event code of motion event.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_part_check"></span><strong>ignore_part_check</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_part_check">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Option for ignoring part restrictions. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessPlanner.ignore_part_check</span></code></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions"></span><strong>ignore_obstructions</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Option for ignoring obstructions. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessPlanner.ignore_obstructions</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<p>:param assume_pipe_id_from_solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">EventInfo</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.fitting_placed">
+<span class="sig-name descname"><span class="pre">fitting_placed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_pipe_id_from_solution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_part_check</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_layout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.fitting_placed" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluates the placement of a fitting. Notes findings in event_info. If picked_parts is set to None, part restrictions will be ignored</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.get_all_att_positions">
+<span class="sig-name descname"><span class="pre">get_all_att_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.get_all_att_positions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.get_all_fit_positions">
+<span class="sig-name descname"><span class="pre">get_all_fit_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.get_all_fit_positions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.get_all_pipe_positions">
+<span class="sig-name descname"><span class="pre">get_all_pipe_positions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.get_all_pipe_positions" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.get_construction_state">
+<span class="sig-name descname"><span class="pre">get_construction_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">find_me</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_codes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.get_construction_state" title="Permalink to this definition"></a></dt>
+<dd><p>returns construction state and pos/trail if pos and event_code specified are in motion_dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.find_me"></span><strong>find_me</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.find_me">¶</a> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]) – Position or trail to find in motion_dict.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.event_codes"></span><strong>event_codes</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.event_codes">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – List containing event codes valid for search.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>:return If nothing was found, returns a tuple containing None, otherwise returns a tuple containing the position</dt><dd><p>or trail and its construction state</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.get_current_layout_and_building_instruction">
+<span class="sig-name descname"><span class="pre">get_current_layout_and_building_instruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.get_current_layout_and_building_instruction" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the current layout and building instruction if event occurred inside solution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.get_current_layout_and_building_instruction.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_current_layout_and_building_instruction.params.event_pos">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.get_current_layout_and_building_instruction.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_current_layout_and_building_instruction.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Tuple containing the current layout and building instruction and a value that signifies if the layout has</p>
+</dd>
+</dl>
+<p>changed from the previous one.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.get_num_unknown_pipes">
+<span class="sig-name descname"><span class="pre">get_num_unknown_pipes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.get_num_unknown_pipes" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.obstructed_obstacle">
+<span class="sig-name descname"><span class="pre">obstructed_obstacle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.obstructed_obstacle" title="Permalink to this definition"></a></dt>
+<dd><p>Checks state grid if motion event obstructed obstacle.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.obstructed_obstacle.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_obstacle.params.event_pos">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.obstructed_part">
+<span class="sig-name descname"><span class="pre">obstructed_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.obstructed_part" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if motion event obstructed an already placed part.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.obstructed_part.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_part.params.event_pos">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.obstructed_part.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_part.params.event_code">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Event code of part that was obstructed or None if no part was obstructed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.part_removed">
+<span class="sig-name descname"><span class="pre">part_removed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.part_removed" title="Permalink to this definition"></a></dt>
+<dd><p>Removes event_pos from the motion dict, if already in motion dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.part_removed.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.part_removed.params.event_pos">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.part_removed.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.part_removed.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.pick_part">
+<span class="sig-name descname"><span class="pre">pick_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.pick_part" title="Permalink to this definition"></a></dt>
+<dd><p>Handling of a pick event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.pick_part.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.pick_part.params.part_id">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Part ID that was picked.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.pipe_placed">
+<span class="sig-name descname"><span class="pre">pipe_placed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_part_check</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_pipe_id_from_solution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.pipe_placed" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluates the placement of a pipe. Notes findings in event_info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.pipe_placed.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.pipe_placed.params.event_pos">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.pipe_placed_detour_event">
+<span class="sig-name descname"><span class="pre">pipe_placed_detour_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.pipe_placed_detour_event" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.pipe_placed_deviated_route">
+<span class="sig-name descname"><span class="pre">pipe_placed_deviated_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_part_check</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.pipe_placed_deviated_route" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.register_placement">
+<span class="sig-name descname"><span class="pre">register_placement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">construction_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.register_placement" title="Permalink to this definition"></a></dt>
+<dd><p>Registers placement event into motion_dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.register_placement.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.register_placement.params.event_pos">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.register_placement.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.register_placement.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.register_placement.params.building_instruction"></span><strong>building_instruction</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.register_placement.params.building_instruction">¶</a> – The current building instruction.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.register_placement.params.construction_state"></span><strong>construction_state</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.register_placement.params.construction_state">¶</a> – Construction state of the current motion event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ProcessState.ProcessState.set_completion_state">
+<span class="sig-name descname"><span class="pre">set_completion_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.set_completion_state" title="Permalink to this definition"></a></dt>
+<dd><p>sets completion state of current layout and neighboring layouts. Updates state grid on completed layouts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ProcessPlanner.html" class="btn btn-neutral float-left" title="ProcessPlanner class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pp_data_class.html" class="btn btn-neutral float-right" title="pp_data_class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

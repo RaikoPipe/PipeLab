@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 import pprint
 import tkinter as tk
@@ -98,7 +98,7 @@ def get_tool_tip_text_grid(process_planner, tool_tip_text_grid):
         elif state == 3:
             tool_tip_text_grid[pos] = "Transition"
 
-        part_id = process_planner.last_process_state.aimed_solution.absolute_trail.get(pos)
+        part_id = process_planner.last_process_state.aimed_solution.node_trail.get(pos)
         if part_id is not None:
             text = str.format(f"Required part ID: {part_id}")
             tool_tip_text_grid[pos] = text
@@ -189,7 +189,7 @@ def update_solution_grid(tentative_state: ProcessState, button_grid, initial_sty
         if style != fit_style or style != pipe_style:
             button_grid[pos].configure(style=style)
 
-    for pos, part_id in tentative_state.aimed_solution.absolute_trail.items():
+    for pos, part_id in tentative_state.aimed_solution.node_trail.items():
         if part_id == 0:
             button_grid[pos].configure(style=fit_style)
         else:
@@ -369,7 +369,7 @@ def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_g
 
         if process_planner:
             button = ttk.Button(button_grid_frame, text=str(pos), style=style)
-            part_id = process_planner.initial_process_state.aimed_solution.absolute_trail.get(pos)
+            part_id = process_planner.initial_process_state.aimed_solution.node_trail.get(pos)
             if part_id is not None:
                 text = str.format(f"Required part ID: {part_id}")
                 tool_tip_text_grid[pos] = text

@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 from PathFinding.grid import grid_functions, randomizer
 from PathFinding.pf_data_class.PathProblem import PathProblem

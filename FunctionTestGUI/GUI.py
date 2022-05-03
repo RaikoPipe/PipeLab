@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 import tkinter as tk
 from tkinter import ttk
@@ -49,7 +49,7 @@ class FunctionTestGUI:
             state_grid=self.process_planner.last_process_state.aimed_solution.state_grid,
             button_grid_frame=self.solution_button_grid_frame,
             start=start, goal=goal,
-            absolute_trail=self.process_planner.optimal_solution.absolute_trail,
+            absolute_trail=self.process_planner.optimal_solution.node_trail,
             process_planner=None,
             part_select_option=None, tree=None, part_stock_tree=None,
             solution_button_grid=None)
@@ -132,7 +132,7 @@ class FunctionTestGUI:
         self.construction_button_grid, self.style_grid, self.tool_tip_text_grid = get_button_grid(
             state_grid=self.process_planner.last_process_state.state_grid, start=start,
             goal=goal, button_grid_frame=self.construction_button_grid_frame,
-            absolute_trail=self.process_planner.last_process_state.aimed_solution.absolute_trail,
+            absolute_trail=self.process_planner.last_process_state.aimed_solution.node_trail,
             process_planner=self.process_planner,
             part_select_option=part_select_option,
             tree=self.process_message_tree, part_stock_tree=self.part_stock_tree,

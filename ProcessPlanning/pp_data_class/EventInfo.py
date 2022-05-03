@@ -7,11 +7,12 @@ from typing import Optional
 from type_dictionary.common_types import *
 
 
-# todo: documentation
+
 
 @dataclass
 class EventInfo:
     """Dataclass containing information about a placement/removal/error event."""
+
     event_pos: Pos
     event_code: int
     removal: bool

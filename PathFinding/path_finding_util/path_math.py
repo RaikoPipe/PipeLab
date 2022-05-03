@@ -65,16 +65,16 @@ def get_rel_dist_same_axis(a: Pos, b: Pos) -> tuple:
     return rel_dist
 
 
-def get_adjacency(a: Pos, b: Pos) -> dict[str:bool, str: Pos]:
-    """Checks if two pos are adjacent and the direction b is from a."""
-    for rel_pos in valid_directions:
-        b_check = sum_pos(b, rel_pos)
-        adjacent = a == b_check
-        if adjacent:
-            adjacency = {"adj": adjacent, "dir": rel_pos}
-            return adjacency
-
-    return False
+# def get_adjacency(a: Pos, b: Pos) -> dict[str, bool, str, Pos]:
+#     """Checks if two pos are adjacent and the direction b is from a."""
+#     for rel_pos in valid_directions:
+#         b_check = sum_pos(b, rel_pos)
+#         adjacent = a == b_check
+#         if adjacent:
+#             adjacency = {"adj": adjacent, "dir": rel_pos}
+#             return adjacency
+#
+#     return False
 
 
 def manhattan_distance(a: tuple[int, int], b: tuple[int, int]):

@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 from copy import deepcopy
 from datetime import datetime
@@ -214,7 +214,7 @@ class ProcessState:
         building_instruction = self.building_instructions.get(current_layout)
         layout_changed = False
 
-        if event_pos in self.aimed_solution.absolute_trail.keys():
+        if event_pos in self.aimed_solution.node_trail.keys():
 
             # get information about layout where event occurred
             if event_pos not in self.last_event_trail:
@@ -266,6 +266,7 @@ class ProcessState:
 
     def part_removed(self, event_pos, event_code, event_info) -> Optional[tuple[Pos, ConstructionState]]:
         """Removes event_pos from the motion dict, if already in motion dict.
+
         :param event_pos: See :paramref:`~evaluate_placement.event_pos`
         :param event_code: See :paramref:`~evaluate_placement.event_code`
         """
@@ -287,7 +288,7 @@ class ProcessState:
     def attachment_placed(self, event_pos, event_code, building_instruction, event_info):
         """Evaluates the placement of an attachment. Notes findings into event_info."""
         # todo: check recommended att_pos
-        if event_pos in self.aimed_solution.absolute_trail.keys():
+        if event_pos in self.aimed_solution.node_trail.keys():
             if event_pos not in building_instruction.required_fit_positions:
                 if event_pos in building_instruction.possible_att_pipe_positions:
                     for pos in building_instruction.possible_att_pipe_positions:
@@ -308,7 +309,7 @@ class ProcessState:
         """Evaluates the placement of a pipe. Notes findings in event_info.
 
         :param event_pos: See :paramref:`~evaluate_placement.event_pos`"""
-        if event_pos in self.aimed_solution.absolute_trail.keys():
+        if event_pos in self.aimed_solution.node_trail.keys():
             part_id = building_instruction.pipe_id
             if not assume_pipe_id_from_solution:
                 pipe_id = self.pipe_placed_deviated_route(event_info, ignore_part_check)  #
@@ -355,7 +356,7 @@ class ProcessState:
         """Evaluates the placement of a fitting. Notes findings in event_info. If picked_parts is set to None, part restrictions will be ignored"""
         if 0 in self.picked_parts or ignore_part_check:
             event_info.part_id = 0
-            if event_pos in self.aimed_solution.absolute_trail.keys():
+            if event_pos in self.aimed_solution.node_trail.keys():
 
                 if event_pos not in building_instruction.required_fit_positions:
                     event_info.misplaced = True
@@ -497,6 +498,7 @@ class ProcessState:
 
     def adjust_motion_dict_to_solution(self, solution: Solution, detour_event: dict = None):
         """Reevaluates all entries in the motion dict according to the given solution.
+
         :param solution: New solution.
         :param detour_event: Element that caused detour event: Dictionary containing a trail and building instruction.
         """
@@ -677,7 +679,7 @@ class ProcessState:
         return pipe_set
 
     def pipe_placed_detour_event(self, event_pos, event_info, building_instruction, pipe_id):
-        if event_pos in self.aimed_solution.absolute_trail.keys():
+        if event_pos in self.aimed_solution.node_trail.keys():
             # if pipe placement occurred somewhere inside the trail of building instruction, then it's valid
             part_id = building_instruction.pipe_id
             event_info.part_id = pipe_id

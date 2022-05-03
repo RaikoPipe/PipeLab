@@ -11,6 +11,7 @@ from ProcessPlanning.ProcessState import ProcessState
 from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
 from type_dictionary import constants
 from type_dictionary.common_types import Trail, Pos
+from type_dictionary.special_types import BuildingInstructions
 from type_dictionary.constants import horizontal_directions, vertical_directions
 
 message_dict = {1: "fitting", 2: "pipe", 3: "attachment"}
@@ -38,12 +39,13 @@ def determine_next_part(process_state: ProcessState, layout: Trail):
     return next_part_id
 
 
-def get_completed_instructions(building_instructions: dict[Trail, BuildingInstruction]) -> dict[
-    Trail, BuildingInstruction]:
+def get_completed_instructions(building_instructions: BuildingInstructions) -> \
+        BuildingInstructions:
     """Looks for completed instructions inside building_instructions and returns them.
 
-    :param building_instructions: See :attr:`ProcessState.building_instructions`
-    :return All completed instructions"""
+    :param building_instructions: See :attr:`ProcessState.building_instructions`.
+    :return: All completed instructions.
+    """
     completed_instructions = {}
     for layout_trail in building_instructions.keys():
         instruction = building_instructions[layout_trail]
@@ -53,12 +55,12 @@ def get_completed_instructions(building_instructions: dict[Trail, BuildingInstru
     return completed_instructions
 
 
-def get_outgoing_node_pairs(building_instructions: dict[Trail, BuildingInstruction]) -> set[tuple[Pos, Pos]]:
+def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> set[tuple[Pos, Pos]]:
     """Returns all outgoing points in building_instructions as a connection. Interpolates them if they are
     connected.
 
     :param building_instructions: See :attr:`ProcessState.building_instructions`.
-    :return Set with all outgoing node pairs.
+    :return: Set with all outgoing node pairs.
     """
 
     outgoing_node_pairs_set = set()
@@ -93,11 +95,11 @@ def get_outgoing_node_pairs(building_instructions: dict[Trail, BuildingInstructi
     return outgoing_node_pairs_set
 
 
-def get_outgoing_node_directions(building_instructions: dict[Trail, BuildingInstruction]):
+def get_outgoing_node_directions(building_instructions: BuildingInstructions):
     """Returns the connecting directions the fittings of each building instruction requires.
 
-    :param building_instructions: See :attr:`ProcessState.building_instructions`.
-    :return Set with all outgoing node directions.
+    :param building_instructions: See :paramref:`~ProcessState.building_instructions`.
+    :return: Set with all outgoing node directions.
     """
 
     direction_dict = {}
@@ -132,7 +134,7 @@ def adjust_pos_in_node_pairs_set(node_pairs_set: set[tuple[Pos, Union[Pos, tuple
 
 
 def get_solution_on_detour_event(initial_path_problem: PathProblem, process_state: ProcessState, detour_event) -> \
-Optional[Solution]:
+        Optional[Solution]:
     """Tries to get a new solution on a detour event.
 
     :param initial_path_problem: The original path problem.
@@ -233,10 +235,9 @@ def make_error_message(event_pos: Pos, additional_message: str):
 def get_next_recommended_action(process_state, building_instruction) -> tuple[Pos, int, int]:
     """Calculates the completion for the building instruction and determines the next recommended action.
 
-
     :param building_instruction: Building instruction currently being followed.
     :param process_state: The current process state.
-    :return Tuple containing the position, motion event code and part id for the next recommended action.
+    :return: Tuple containing the position, motion event code and part id for the next recommended action.
     """
 
     completed = process_state.completed_instruction(building_instruction)

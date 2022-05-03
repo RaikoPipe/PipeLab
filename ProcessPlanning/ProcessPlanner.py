@@ -53,17 +53,18 @@ class ProcessPlanner:
     class and provides robot commands.
     Handles calculation of a new solution in case of a detour event.
 
-    :param initial_path_problem:
-    :param initial_process_state
+    :param initial_path_problem: Todo: Documentation
+    :param initial_process_state: Todo: Documentation
     :param optimization_weights: Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
-    :param algorithm: The search algorithm to be used for calculating any solutions to a path problem."""
+    :param algorithm: The search algorithm to be used for calculating any solutions to a path problem.
+    """
 
     def __init__(self, initial_path_problem: PathProblem, initial_process_state: ProcessState = None,
                  optimization_weights: Weights = standard_weights,
                  algorithm: str = standard_algorithm):
 
-        self._initial_path_problem = initial_path_problem  # original path problem
-        self.optimal_solution = find_path(self._initial_path_problem)  # optimal solution for the initial path problem
+        self._initial_path_problem = initial_path_problem  #: original path problem
+        self.optimal_solution = find_path(self._initial_path_problem)  #: optimal solution for the initial path problem
 
         self.initial_process_state = initial_process_state
 
@@ -96,24 +97,23 @@ class ProcessPlanner:
         self.weights = optimization_weights
         self.algorithm = algorithm
 
-    def main(self, worker_event: tuple[Union[Pos, int], int], handle_detour_events: bool = True,
+    def main(self, motion_event: , handle_detour_events: bool = True,
              ignore_part_check: bool = False, ignore_obstructions: bool = False) -> ProcessOutput:
         """Main method of ProcessPlanning. Takes worker_event as input and sends information about the event to
         ProcessState. Prints message output of ProcessState and handles detour events.
-         
 
-        :param worker_event: A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.
+        :param motion_event: A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.
         :param handle_detour_events: If set to true, detour events will result in the process planner looking for a new solution.
         :param ignore_part_check: If set to true, part restrictions will be ignored. Could lead to unexpected behaviour.
         :param ignore_obstructions: If set to true, obstructions will be ignored. Untested. Could lead to unexpected behaviour.
-        :return A dataclass containing processed information regarding the event and current process state (See :class:`ProcessOutput`). """
+        :return: A dataclass containing processed information regarding the event and current process state (See :class:`ProcessOutput`)."""
 
         tentative_process_state = deepcopy(self.last_process_state)
         # check if worker event is pick event
-        if worker_event[1] == 4:
-            picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event,
+        if motion_event[1] == 4:
+            picking_robot_commands = self.determine_picking_robot_commands(worker_event=motion_event,
                                                                            process_state=tentative_process_state)
-            messages = self.send_pick_event(worker_event[0], process_state=tentative_process_state)
+            messages = self.send_pick_event(motion_event[0], process_state=tentative_process_state)
             self.previous_states.insert(0, deepcopy(tentative_process_state))
             self.last_process_state = tentative_process_state
 
@@ -130,18 +130,18 @@ class ProcessPlanner:
         for transition_point in self._initial_path_problem.transition_points:
 
             check_pos = None
-            if worker_event[0][0] == transition_point[0]:
+            if motion_event[0][0] == transition_point[0]:
                 check_pos = (transition_point[0], start_pos[1])
-            elif worker_event[0][1] == transition_point[1]:
+            elif motion_event[0][1] == transition_point[1]:
                 check_pos = (start_pos[0], transition_point[1])
 
             if check_pos:
                 direction = get_direction(
                     diff_pos(self._initial_path_problem.start_pos, check_pos))  # get direction relative to start pos
                 # correct worker event pos
-                worker_event = ((worker_event[0][0] - direction[0], worker_event[0][1] - direction[1]), worker_event[1])
+                motion_event = ((motion_event[0][0] - direction[0], motion_event[0][1] - direction[1]), motion_event[1])
 
-        messages = self.send_placement_event(worker_event=worker_event,
+        messages = self.send_placement_event(worker_event=motion_event,
                                              ignore_part_check=ignore_part_check, process_state=tentative_process_state,
                                              ignore_obstructions=ignore_obstructions)
 
@@ -165,10 +165,11 @@ class ProcessPlanner:
                                                                        building_instruction)
 
         # get fastening commands
-        fastening_robot_commands = self.determine_fastening_robot_commands(worker_event=worker_event,
+        fastening_robot_commands = self.determine_fastening_robot_commands(event_pos=motion_event[0],
+                                                                           event_code=motion_event[1],
                                                                            event_info=tentative_process_state.last_event_info)
 
-        picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event,
+        picking_robot_commands = self.determine_picking_robot_commands(worker_event=motion_event,
                                                                        layout=tentative_process_state.last_event_info.layout,
                                                                        process_state=tentative_process_state)
 
@@ -191,7 +192,7 @@ class ProcessPlanner:
                              ignore_part_check: bool = False, ignore_obstructions: bool = False):
         """Sends a new placement/removal event to be evaluated and registered in current ProcessState."""
 
-        event_info: EventInfo = process_state.evaluate_placement(worker_event=worker_event,
+        event_info: EventInfo = process_state.evaluate_placement(event_pos=worker_event[0], event_code=worker_event[1],
                                                                  ignore_part_check=ignore_part_check,
                                                                  ignore_obstructions=ignore_obstructions)
 
@@ -249,7 +250,7 @@ class ProcessPlanner:
 
         :param part_id: Part ID that was picked.
         :param process_state: The current process state.
-        :return A string containing a success message."""
+        :return: A string containing a success message."""
         process_state.pick_part(part_id)
         message = str.format(f"Process Planner: Picked part with id {part_id}")
 
@@ -259,7 +260,8 @@ class ProcessPlanner:
         """Handles current detour trails and decides if the currently aimed solution should return to a previous iteration.
 
         :param process_state: The current process state
-        :return An optional string message if the currently aimed solution was changed to a previous one."""
+        :return: An optional string message if the currently aimed solution was changed to a previous one.
+        """
 
         detour_message = None
         if process_state.detour_trails:
@@ -295,7 +297,7 @@ class ProcessPlanner:
                 process_state.last_event_info.detour_event = detour_event
         return detour_message
 
-    def handle_detour_event(self, detour_event: dict[Trail:BuildingInstruction], process_state: ProcessState) -> tuple[
+    def handle_detour_event(self, detour_event: dict[Trail, BuildingInstruction], process_state: ProcessState) -> tuple[
         str, ProcessState]:
         """Handles the detour event, applies new solution if found.
 
@@ -325,10 +327,7 @@ class ProcessPlanner:
         return detour_message, detour_process_state
 
     @staticmethod
-    def determine_fastening_robot_commands(worker_event: tuple[Pos, int], event_info):
-
-        event_code = worker_event[1]
-        event_pos = worker_event[0]
+    def determine_fastening_robot_commands(event_pos: Pos, event_code: int, event_info):
 
         retrieve_part_id = None
 

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProcessPlanner &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../OPC_UA.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FunctionTestGUI.html">FunctionTestGUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProcessPlanning.html">ProcessPlanning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PathFinding.html">PathFinding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../type_dictionary.html">type_dictionary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>ProcessPlanner</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ProcessPlanner</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeAlias</span>
+
+<span class="kn">from</span> <span class="nn">PathFinding.path_finding_util.path_math</span> <span class="kn">import</span> <span class="n">get_direction</span><span class="p">,</span> <span class="n">diff_pos</span>
+<span class="kn">from</span> <span class="nn">PathFinding.pf_data_class.PathProblem</span> <span class="kn">import</span> <span class="n">PathProblem</span>
+<span class="kn">from</span> <span class="nn">PathFinding.pf_data_class.Weights</span> <span class="kn">import</span> <span class="n">Weights</span>
+<span class="kn">from</span> <span class="nn">PathFinding.search_algorithm</span> <span class="kn">import</span> <span class="n">find_path</span>
+<span class="kn">from</span> <span class="nn">ProcessPlanning.ProcessState</span> <span class="kn">import</span> <span class="n">ProcessState</span>
+<span class="kn">from</span> <span class="nn">ProcessPlanning.pp_data_class.BuildingInstruction</span> <span class="kn">import</span> <span class="n">BuildingInstruction</span>
+<span class="kn">from</span> <span class="nn">ProcessPlanning.pp_data_class.EventInfo</span> <span class="kn">import</span> <span class="n">EventInfo</span>
+<span class="kn">from</span> <span class="nn">ProcessPlanning.pp_data_class.ProcessOutput</span> <span class="kn">import</span> <span class="n">ProcessOutput</span>
+<span class="kn">from</span> <span class="nn">ProcessPlanning.process_planning_util.pp_util</span> <span class="kn">import</span> <span class="n">determine_next_part</span><span class="p">,</span> <span class="n">get_solution_on_detour_event</span><span class="p">,</span> \
+    <span class="n">make_registration_message</span><span class="p">,</span> \
+    <span class="n">make_error_message</span><span class="p">,</span> <span class="n">message_dict</span><span class="p">,</span> <span class="n">get_next_recommended_action</span>
+<span class="kn">from</span> <span class="nn">type_dictionary.common_types</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">standard_weights</span> <span class="o">=</span> <span class="n">Weights</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">standard_algorithm</span> <span class="o">=</span> <span class="s2">&quot;mcsa*&quot;</span>
+
+<span class="n">picking_robot_command_message_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;STOP&quot;</span><span class="p">,</span>
+                                      <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Cancel all picking tasks&quot;</span><span class="p">,</span>
+                                      <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;Go to neutral state&quot;</span><span class="p">,</span>
+                                      <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Move to pick-up point and pick part id: &quot;</span><span class="p">,</span>
+                                      <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Move to return position and return of part id: &quot;</span><span class="p">,</span>  <span class="c1"># unused</span>
+                                      <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;Move to offering position&quot;</span><span class="p">,</span>
+                                      <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;Wait for worker to accept part&quot;</span><span class="p">,</span>
+                                      <span class="p">}</span>
+
+<span class="n">fastening_robot_command_message_dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">-</span><span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;STOP&quot;</span><span class="p">,</span>
+    <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Remove fastening of positions x from command pipeline (if still in pipeline)&quot;</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;Go to neutral state&quot;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Move to a fastening position and fasten attachment at Position: &quot;</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;Move to a fastening position and fasten pipe at Position: &quot;</span>
+<span class="p">}</span>
+
+<span class="n">example_motion_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)}</span>  <span class="c1"># considering motion capture speed, will probably never be bigger than 1</span>
+
+
+<span class="c1"># Todo:</span>
+<span class="c1">#   Known Issues:</span>
+<span class="c1">#   -</span>
+<span class="c1">#   Planned Features:</span>
+<span class="c1">#   - Highlighting correct build spots</span>
+<span class="c1">#   - check score calculation of mcsa*</span>
+<span class="c1">#   - Output next recommended action</span>
+
+
+<div class="viewcode-block" id="ProcessPlanner"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner">[docs]</a><span class="k">class</span> <span class="nc">ProcessPlanner</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Acts as an interface for handling events. Keeps track of the building process with the:class:`~ProcessState`</span>
+<span class="sd">    class and provides robot commands.</span>
+<span class="sd">    Handles calculation of a new solution in case of a detour event.</span>
+
+<span class="sd">    :param initial_path_problem: Todo: Documentation</span>
+<span class="sd">    :param initial_process_state: Todo: Documentation</span>
+<span class="sd">    :param optimization_weights: Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)</span>
+<span class="sd">    :param algorithm: The search algorithm to be used for calculating any solutions to a path problem.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_path_problem</span><span class="p">:</span> <span class="n">PathProblem</span><span class="p">,</span> <span class="n">initial_process_state</span><span class="p">:</span> <span class="n">ProcessState</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">optimization_weights</span><span class="p">:</span> <span class="n">Weights</span> <span class="o">=</span> <span class="n">standard_weights</span><span class="p">,</span>
+                 <span class="n">algorithm</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">standard_algorithm</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initial_path_problem</span> <span class="o">=</span> <span class="n">initial_path_problem</span>  <span class="c1">#: original path problem</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimal_solution</span> <span class="o">=</span> <span class="n">find_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_path_problem</span><span class="p">)</span>  <span class="c1">#: optimal solution for the initial path problem</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_process_state</span> <span class="o">=</span> <span class="n">initial_process_state</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_recommended_action</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_solution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process Planner Error: No optimal solution found!&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">initial_process_state</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">initial_process_state</span><span class="o">.</span><span class="n">aimed_solution</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">optimal_solution</span> <span class="o">=</span> <span class="n">initial_process_state</span><span class="o">.</span><span class="n">aimed_solution</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Process Planner: Assuming aimed solution from initial state as optimal solution.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">initial_process_state</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_process_state</span> <span class="o">=</span> <span class="n">ProcessState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimal_solution</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_process_state</span><span class="o">.</span><span class="n">aimed_solution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimal_solution</span>
+                <span class="c1"># set initial layout at start</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_process_state</span><span class="o">.</span><span class="n">last_event_trail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_process_state</span><span class="o">.</span><span class="n">aimed_solution</span><span class="o">.</span><span class="n">ordered_trails</span><span class="p">[</span>
+                    <span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># get first recommended action</span>
+                <span class="n">first_building_instruction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">initial_process_state</span><span class="o">.</span><span class="n">last_event_trail</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">next_recommended_action</span> <span class="o">=</span> <span class="p">(</span><span class="n">first_building_instruction</span><span class="o">.</span><span class="n">recommended_attachment_pos</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_states</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># contains all previous valid states</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_process_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_process_state</span>  <span class="c1"># last valid state</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_optimal</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># if path of current state is on optimal solution</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">optimization_weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span> <span class="o">=</span> <span class="n">algorithm</span>
+
+<div class="viewcode-block" id="ProcessPlanner.main"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main">[docs]</a>    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">worker_event</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">],</span> <span class="n">handle_detour_events</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+             <span class="n">ignore_part_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ignore_obstructions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProcessOutput</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Main method of ProcessPlanning. Takes worker_event as input and sends information about the event to</span>
+<span class="sd">        ProcessState. Prints message output of ProcessState and handles detour events.</span>
+
+<span class="sd">        :param worker_event: A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.</span>
+<span class="sd">        :param handle_detour_events: If set to true, detour events will result in the process planner looking for a new solution.</span>
+<span class="sd">        :param ignore_part_check: If set to true, part restrictions will be ignored. Could lead to unexpected behaviour.</span>
+<span class="sd">        :param ignore_obstructions: If set to true, obstructions will be ignored. Untested. Could lead to unexpected behaviour.</span>
+<span class="sd">        :return: A dataclass containing processed information regarding the event and current process state (See :class:`ProcessOutput`).&quot;&quot;&quot;</span>
+
+        <span class="n">tentative_process_state</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_process_state</span><span class="p">)</span>
+        <span class="c1"># check if worker event is pick event</span>
+        <span class="k">if</span> <span class="n">worker_event</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">picking_robot_commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_picking_robot_commands</span><span class="p">(</span><span class="n">worker_event</span><span class="o">=</span><span class="n">worker_event</span><span class="p">,</span>
+                                                                           <span class="n">process_state</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="p">)</span>
+            <span class="n">messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_pick_event</span><span class="p">(</span><span class="n">worker_event</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">process_state</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">previous_states</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">tentative_process_state</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_process_state</span> <span class="o">=</span> <span class="n">tentative_process_state</span>
+
+            <span class="n">process_output</span> <span class="o">=</span> <span class="n">ProcessOutput</span><span class="p">(</span><span class="n">process_state</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="p">,</span>
+                                           <span class="n">event_info</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="o">.</span><span class="n">last_event_info</span><span class="p">,</span>
+                                           <span class="n">messages</span><span class="o">=</span><span class="p">(</span><span class="n">messages</span><span class="p">,),</span> <span class="n">next_recommended_action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">next_recommended_action</span><span class="p">,</span>
+                                           <span class="n">highlight_positions</span><span class="o">=</span><span class="p">(),</span> <span class="n">picking_robot_commands</span><span class="o">=</span><span class="n">picking_robot_commands</span><span class="p">,</span>
+                                           <span class="n">fastening_robot_commands</span><span class="o">=</span><span class="p">())</span>
+
+            <span class="k">return</span> <span class="n">process_output</span>
+
+        <span class="c1"># check if worker event occurred on transition point, correct if necessary</span>
+        <span class="n">start_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_path_problem</span><span class="o">.</span><span class="n">start_pos</span>
+        <span class="k">for</span> <span class="n">transition_point</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_path_problem</span><span class="o">.</span><span class="n">transition_points</span><span class="p">:</span>
+
+            <span class="n">check_pos</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">worker_event</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">transition_point</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">check_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">transition_point</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">start_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">worker_event</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">transition_point</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">check_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">transition_point</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">check_pos</span><span class="p">:</span>
+                <span class="n">direction</span> <span class="o">=</span> <span class="n">get_direction</span><span class="p">(</span>
+                    <span class="n">diff_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_path_problem</span><span class="o">.</span><span class="n">start_pos</span><span class="p">,</span> <span class="n">check_pos</span><span class="p">))</span>  <span class="c1"># get direction relative to start pos</span>
+                <span class="c1"># correct worker event pos</span>
+                <span class="n">worker_event</span> <span class="o">=</span> <span class="p">((</span><span class="n">worker_event</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">worker_event</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">worker_event</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">messages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_placement_event</span><span class="p">(</span><span class="n">worker_event</span><span class="o">=</span><span class="n">worker_event</span><span class="p">,</span>
+                                             <span class="n">ignore_part_check</span><span class="o">=</span><span class="n">ignore_part_check</span><span class="p">,</span> <span class="n">process_state</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="p">,</span>
+                                             <span class="n">ignore_obstructions</span><span class="o">=</span><span class="n">ignore_obstructions</span><span class="p">)</span>
+
+        <span class="c1"># extract messages</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">special_message</span> <span class="o">=</span> <span class="n">messages</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">detour_event</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">tentative_process_state</span><span class="o">.</span><span class="n">last_event_info</span><span class="o">.</span><span class="n">detour_event</span>
+
+        <span class="c1"># handle all detour events</span>
+        <span class="k">if</span> <span class="n">detour_event</span> <span class="ow">and</span> <span class="n">handle_detour_events</span><span class="p">:</span>
+            <span class="n">detour_message</span><span class="p">,</span> <span class="n">tentative_process_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_detour_event</span><span class="p">(</span><span class="n">detour_event</span><span class="p">,</span> <span class="n">tentative_process_state</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">detour_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_detour_trails</span><span class="p">(</span><span class="n">process_state</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="p">)</span>
+
+        <span class="c1"># get next recommended action</span>
+        <span class="n">building_instruction</span> <span class="o">=</span> <span class="n">tentative_process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">tentative_process_state</span><span class="o">.</span><span class="n">last_event_trail</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">building_instruction</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">next_recommended_action</span> <span class="o">=</span> <span class="n">get_next_recommended_action</span><span class="p">(</span><span class="n">tentative_process_state</span><span class="p">,</span>
+                                                                       <span class="n">building_instruction</span><span class="p">)</span>
+
+        <span class="c1"># get fastening commands</span>
+        <span class="n">fastening_robot_commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_fastening_robot_commands</span><span class="p">(</span><span class="n">worker_event</span><span class="o">=</span><span class="n">worker_event</span><span class="p">,</span>
+                                                                           <span class="n">event_info</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="o">.</span><span class="n">last_event_info</span><span class="p">)</span>
+
+        <span class="n">picking_robot_commands</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_picking_robot_commands</span><span class="p">(</span><span class="n">worker_event</span><span class="o">=</span><span class="n">worker_event</span><span class="p">,</span>
+                                                                       <span class="n">layout</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="o">.</span><span class="n">last_event_info</span><span class="o">.</span><span class="n">layout</span><span class="p">,</span>
+                                                                       <span class="n">process_state</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="p">)</span>
+
+        <span class="n">messages</span> <span class="o">=</span> <span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">special_message</span><span class="p">,</span> <span class="n">detour_message</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_states</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">tentative_process_state</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_process_state</span> <span class="o">=</span> <span class="n">tentative_process_state</span>
+
+        <span class="n">process_output</span> <span class="o">=</span> <span class="n">ProcessOutput</span><span class="p">(</span><span class="n">process_state</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="p">,</span>
+                                       <span class="n">event_info</span><span class="o">=</span><span class="n">tentative_process_state</span><span class="o">.</span><span class="n">last_event_info</span><span class="p">,</span>
+                                       <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span> <span class="n">next_recommended_action</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">next_recommended_action</span><span class="p">,</span>
+                                       <span class="n">highlight_positions</span><span class="o">=</span><span class="p">(),</span>
+                                       <span class="n">picking_robot_commands</span><span class="o">=</span><span class="n">picking_robot_commands</span><span class="p">,</span>
+                                       <span class="n">fastening_robot_commands</span><span class="o">=</span><span class="n">fastening_robot_commands</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">process_output</span></div>
+
+<div class="viewcode-block" id="ProcessPlanner.send_placement_event"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner.send_placement_event">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">send_placement_event</span><span class="p">(</span><span class="n">worker_event</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">process_state</span><span class="p">:</span> <span class="n">ProcessState</span><span class="p">,</span>
+                             <span class="n">ignore_part_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ignore_obstructions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sends a new placement/removal event to be evaluated and registered in current ProcessState.&quot;&quot;&quot;</span>
+
+        <span class="n">event_info</span><span class="p">:</span> <span class="n">EventInfo</span> <span class="o">=</span> <span class="n">process_state</span><span class="o">.</span><span class="n">evaluate_placement</span><span class="p">(</span><span class="n">event_pos</span><span class="o">=</span><span class="n">worker_event</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">event_code</span><span class="o">=</span><span class="n">worker_event</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                                 <span class="n">ignore_part_check</span><span class="o">=</span><span class="n">ignore_part_check</span><span class="p">,</span>
+                                                                 <span class="n">ignore_obstructions</span><span class="o">=</span><span class="n">ignore_obstructions</span><span class="p">)</span>
+
+        <span class="n">note</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">event_info</span><span class="o">.</span><span class="n">obstructed_obstacle</span><span class="p">:</span>
+            <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Obstructed obstacle while placing </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">event_info</span><span class="o">.</span><span class="n">obstructed_part</span><span class="p">:</span>
+            <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Obstructed </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">obstructed_part</span><span class="p">]</span><span class="si">}</span><span class="s2"> while placing </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">event_info</span><span class="o">.</span><span class="n">removal</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event_info</span><span class="o">.</span><span class="n">unnecessary</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removed unnecessary </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">event_info</span><span class="o">.</span><span class="n">misplaced</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removed misplaced </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">event_info</span><span class="o">.</span><span class="n">deviated</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removed deviating </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event_info</span><span class="o">.</span><span class="n">unnecessary</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unnecessary </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2"> detected!&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">event_info</span><span class="o">.</span><span class="n">deviated</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Deviating </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2"> detected!&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">event_info</span><span class="o">.</span><span class="n">misplaced</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Misplaced </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2"> detected!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">event_info</span><span class="o">.</span><span class="n">part_not_picked</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event_info</span><span class="o">.</span><span class="n">part_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">99</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Placed </span><span class="si">{</span><span class="n">message_dict</span><span class="p">[</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                                  <span class="sa">f</span><span class="s2">&quot;, but part was not picked!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">note</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Placed id </span><span class="si">{</span><span class="n">event_info</span><span class="o">.</span><span class="n">part_id</span><span class="si">}</span><span class="s2"> &quot;</span>
+                                  <span class="sa">f</span><span class="s2">&quot;, but not picked!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># make messages</span>
+        <span class="k">if</span> <span class="n">event_info</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">make_error_message</span><span class="p">(</span><span class="n">event_pos</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_pos</span><span class="p">,</span>
+                                         <span class="n">additional_message</span><span class="o">=</span><span class="n">note</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">event_info</span><span class="o">.</span><span class="n">deviated</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">make_registration_message</span><span class="p">(</span><span class="n">event_pos</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_pos</span><span class="p">,</span> <span class="n">event_code</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">,</span>
+                                                <span class="n">removal</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">removal</span><span class="p">,</span> <span class="n">pipe_id</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">part_id</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">make_registration_message</span><span class="p">(</span><span class="n">event_pos</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_pos</span><span class="p">,</span> <span class="n">event_code</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">event_code</span><span class="p">,</span>
+                                                <span class="n">removal</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">removal</span><span class="p">,</span> <span class="n">pipe_id</span><span class="o">=</span><span class="n">event_info</span><span class="o">.</span><span class="n">part_id</span><span class="p">)</span>
+
+        <span class="n">process_state</span><span class="o">.</span><span class="n">last_event_info</span> <span class="o">=</span> <span class="n">event_info</span>
+
+        <span class="k">return</span> <span class="n">message</span><span class="p">,</span> <span class="n">note</span></div>
+
+<div class="viewcode-block" id="ProcessPlanner.send_pick_event"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner.send_pick_event">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">send_pick_event</span><span class="p">(</span><span class="n">part_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">process_state</span><span class="p">:</span> <span class="n">ProcessState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Sends a new pick event to be evaluated and registered in the current process state.</span>
+
+<span class="sd">        :param part_id: Part ID that was picked.</span>
+<span class="sd">        :param process_state: The current process state.</span>
+<span class="sd">        :return: A string containing a success message.&quot;&quot;&quot;</span>
+        <span class="n">process_state</span><span class="o">.</span><span class="n">pick_part</span><span class="p">(</span><span class="n">part_id</span><span class="p">)</span>
+        <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Process Planner: Picked part with id </span><span class="si">{</span><span class="n">part_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">message</span></div>
+
+<div class="viewcode-block" id="ProcessPlanner.handle_detour_trails"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner.handle_detour_trails">[docs]</a>    <span class="k">def</span> <span class="nf">handle_detour_trails</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">process_state</span><span class="p">:</span> <span class="n">ProcessState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Handles current detour trails and decides if the currently aimed solution should return to a previous iteration.</span>
+
+<span class="sd">        :param process_state: The current process state</span>
+<span class="sd">        :return: An optional string message if the currently aimed solution was changed to a previous one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">detour_message</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="p">:</span>
+            <span class="c1"># check if previous layouts that caused detour are not completed anymore</span>
+            <span class="n">previous_detour_trails</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="p">)</span>
+            <span class="n">last_detour_trail</span> <span class="o">=</span> <span class="n">previous_detour_trails</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">detour_trail</span> <span class="ow">in</span> <span class="n">previous_detour_trails</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="p">[</span><span class="n">detour_trail</span><span class="p">]</span><span class="o">.</span><span class="n">layout_completed</span><span class="p">:</span>
+                    <span class="n">process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">detour_trail</span><span class="p">)</span>
+            <span class="c1"># check if layout that caused last detour is not completed anymore</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="p">[</span><span class="n">last_detour_trail</span><span class="p">]</span><span class="o">.</span><span class="n">layout_completed</span><span class="p">:</span>
+                <span class="n">process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="p">:</span>
+                    <span class="c1"># there are still complete detour layouts</span>
+                    <span class="n">last_detour_trail</span> <span class="o">=</span> <span class="n">process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                    <span class="n">last_detour_instruction</span> <span class="o">=</span> <span class="n">process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="p">[</span><span class="n">last_detour_trail</span><span class="p">]</span>
+                    <span class="n">detour_event</span> <span class="o">=</span> <span class="p">{</span><span class="n">last_detour_trail</span><span class="p">:</span> <span class="n">last_detour_instruction</span><span class="p">}</span>
+                    <span class="n">solution</span> <span class="o">=</span> <span class="n">get_solution_on_detour_event</span><span class="p">(</span><span class="n">initial_path_problem</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_path_problem</span><span class="p">,</span>
+                                                            <span class="n">process_state</span><span class="o">=</span><span class="n">process_state</span><span class="p">,</span>
+                                                            <span class="n">detour_event</span><span class="o">=</span><span class="n">detour_event</span><span class="p">)</span>
+                    <span class="n">process_state</span><span class="o">.</span><span class="n">adjust_motion_dict_to_solution</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">detour_event</span><span class="p">)</span>
+                    <span class="n">detour_message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Deviating layout incomplete, returning to solution for last deviating layout.&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># return to optimal solution</span>
+                    <span class="n">detour_event</span> <span class="o">=</span> <span class="p">{</span><span class="kc">None</span><span class="p">:</span> <span class="s2">&quot;Returned to optimal solution&quot;</span><span class="p">}</span>
+                    <span class="n">process_state</span><span class="o">.</span><span class="n">adjust_motion_dict_to_solution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">optimal_solution</span><span class="p">)</span>
+
+                    <span class="n">detour_message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;No complete deviating layouts left, returning to optimal solution.&quot;</span><span class="p">)</span>
+
+                <span class="n">process_state</span><span class="o">.</span><span class="n">last_event_info</span><span class="o">.</span><span class="n">detour_event</span> <span class="o">=</span> <span class="n">detour_event</span>
+        <span class="k">return</span> <span class="n">detour_message</span></div>
+
+<div class="viewcode-block" id="ProcessPlanner.handle_detour_event"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner.handle_detour_event">[docs]</a>    <span class="k">def</span> <span class="nf">handle_detour_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detour_event</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Trail</span><span class="p">,</span><span class="n">BuildingInstruction</span><span class="p">],</span> <span class="n">process_state</span><span class="p">:</span> <span class="n">ProcessState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+        <span class="nb">str</span><span class="p">,</span> <span class="n">ProcessState</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Handles the detour event, applies new solution if found.</span>
+
+<span class="sd">        :param process_state: The current process state.</span>
+<span class="sd">        :param detour_event: Dictionary containing a trail and building instruction of the deviated layout.</span>
+<span class="sd">        :return: A tuple containing a string message and a modified state with the new solution applied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">detour_message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;detour event confirmed, but no alternative solution found!&quot;</span><span class="p">)</span>
+        <span class="n">detour_process_state</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">process_state</span><span class="p">)</span>
+        <span class="n">detour_process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">detour_event</span><span class="p">)</span>
+        <span class="n">detour_process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">detour_event</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># update state grid</span>
+        <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">detour_event</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">detour_process_state</span><span class="o">.</span><span class="n">state_grid</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">solution</span> <span class="o">=</span> <span class="n">get_solution_on_detour_event</span><span class="p">(</span><span class="n">initial_path_problem</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_path_problem</span><span class="p">,</span>
+                                                <span class="n">process_state</span><span class="o">=</span><span class="n">detour_process_state</span><span class="p">,</span>
+                                                <span class="n">detour_event</span><span class="o">=</span><span class="n">detour_event</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">solution</span><span class="p">:</span>
+            <span class="n">detour_message</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;detour event confirmed, applying alternative solution!&quot;</span><span class="p">)</span>
+            <span class="n">detour_process_state</span><span class="o">.</span><span class="n">adjust_motion_dict_to_solution</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">detour_event</span><span class="p">)</span>
+
+            <span class="c1"># clean up remaining detour trails</span>
+            <span class="k">for</span> <span class="n">detour_trail</span> <span class="ow">in</span> <span class="n">detour_process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">detour_trail</span> <span class="ow">in</span> <span class="n">detour_process_state</span><span class="o">.</span><span class="n">building_instructions</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="c1"># detour trail is not in current solution anymore</span>
+                    <span class="n">detour_process_state</span><span class="o">.</span><span class="n">detour_trails</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">detour_trail</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">detour_message</span><span class="p">,</span> <span class="n">detour_process_state</span></div>
+
+<div class="viewcode-block" id="ProcessPlanner.determine_fastening_robot_commands"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">determine_fastening_robot_commands</span><span class="p">(</span><span class="n">worker_event</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">event_info</span><span class="p">):</span>
+
+        <span class="n">event_code</span> <span class="o">=</span> <span class="n">worker_event</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">event_pos</span> <span class="o">=</span> <span class="n">worker_event</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">retrieve_part_id</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">fastening_robot_commands</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># make picking robot commands</span>
+
+        <span class="c1"># make fastening robot commands</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">event_info</span><span class="o">.</span><span class="n">removal</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event_code</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">fastening_robot_commands</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">event_pos</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">event_code</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">fastening_robot_commands</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="n">event_pos</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">fastening_robot_commands</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Next fastening robot commands: &quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">fastening_robot_commands</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">fastening_robot_command_message_dict</span><span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">fastening_robot_commands</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProcessPlanner.determine_picking_robot_commands"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">determine_picking_robot_commands</span><span class="p">(</span><span class="n">worker_event</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">process_state</span><span class="p">:</span> <span class="n">ProcessState</span><span class="p">,</span>
+                                         <span class="n">layout</span><span class="p">:</span> <span class="n">Trail</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Evaluates the current process state and makes robot commands.</span>
+
+<span class="sd">        :param layout: Optional last event layout if worker event code is 3.</span>
+<span class="sd">        :param process_state: The current process state.</span>
+<span class="sd">        :param worker_event: See :obj:`ProcessPlanner.worker_event`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">picking_robot_commands</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">layout</span><span class="p">:</span>
+
+            <span class="n">event_code</span> <span class="o">=</span> <span class="n">worker_event</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># make picking robot commands</span>
+
+            <span class="c1"># if event_info.layout_changed:  # last check is redundant</span>
+            <span class="c1">#     picking_robot_commands.append(-1)</span>
+
+            <span class="k">if</span> <span class="n">event_code</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">picking_robot_commands</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">next_part_id</span> <span class="o">=</span> <span class="n">determine_next_part</span><span class="p">(</span><span class="n">process_state</span><span class="o">=</span><span class="n">process_state</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">event_code</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">next_part_id</span><span class="p">:</span>
+                    <span class="n">picking_robot_commands</span><span class="o">.</span><span class="n">extend</span><span class="p">([(</span><span class="mi">1</span><span class="p">,</span> <span class="n">next_part_id</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+
+            <span class="c1"># print commands</span>
+            <span class="c1"># if picking_robot_commands:</span>
+            <span class="c1">#     print(&quot;Next picking robot commands: &quot;)</span>
+            <span class="c1">#     for item in picking_robot_commands:</span>
+            <span class="c1">#         if isinstance(item, tuple):</span>
+            <span class="c1">#             print(picking_robot_command_message_dict[item[0]] + str(item[1]))</span>
+            <span class="c1">#         else:</span>
+            <span class="c1">#             print(picking_robot_command_message_dict[item])</span>
+            <span class="c1">#     print(&quot;\n&quot;)</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">picking_robot_commands</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ProcessPlanner.return_to_previous_state"><a class="viewcode-back" href="../ProcessPlanner.html#ProcessPlanner.ProcessPlanner.return_to_previous_state">[docs]</a>    <span class="k">def</span> <span class="nf">return_to_previous_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns to previous state.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_states</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_process_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_states</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Returned to previous state!&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There is no last state to return to!&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

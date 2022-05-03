@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 import heapq
 from copy import deepcopy
@@ -131,7 +131,7 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
 
     # also update total definite trail from partial solutions
     for partial_solution in partial_solutions:
-        absolute_trail.update(partial_solution.absolute_trail)
+        absolute_trail.update(partial_solution.node_trail)
 
     # get information from last partial solution iteration
     last_partial_solution = partial_solutions[0]
