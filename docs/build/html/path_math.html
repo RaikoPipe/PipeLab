@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>path_math module &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="path_util module" href="path_util.html" />
+    <link rel="prev" title="path_finding_util" href="path_finding_util.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">search_algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">solution_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">partial_solver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">pf_data_class</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">path_finding_util</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">path_math module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_util.html">path_util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="restrictions.html">restrictions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="score_calculation.html">score_calculation module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
+          <li><a href="path_finding_util.html">path_finding_util</a> &raquo;</li>
+      <li>path_math module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/path_math.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-path_math">
+<span id="path-math-module"></span><h1>path_math module<a class="headerlink" href="#module-path_math" title="Permalink to this headline"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.diff_absolute_a_b">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">diff_absolute_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#diff_absolute_a_b"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.diff_absolute_a_b" title="Permalink to this definition"></a></dt>
+<dd><p>Sums up absolute a and absolute b.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.diff_pos">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">diff_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#diff_pos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.diff_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Subtracts two pos element wise. -&gt; relative distance between two nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.get_direction">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#get_direction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.get_direction" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the direction of a relative position.
+:type _sphinx_paramlinks_path_math.get_direction.pos: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]
+:param _sphinx_paramlinks_path_math.get_direction.pos: Relative position</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.get_length_same_axis">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_length_same_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#get_length_same_axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.get_length_same_axis" title="Permalink to this definition"></a></dt>
+<dd><p>return length and of a and b if row xor column are the same</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.get_rel_dist_same_axis">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_rel_dist_same_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#get_rel_dist_same_axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.get_rel_dist_same_axis" title="Permalink to this definition"></a></dt>
+<dd><p>return relative distance of a to b if row xor column are the same</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.manhattan_distance">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">manhattan_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#manhattan_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.manhattan_distance" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the distance between to nodes in horizontal/vertical steps required.
+:type _sphinx_paramlinks_path_math.manhattan_distance.a: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]
+:param _sphinx_paramlinks_path_math.manhattan_distance.a: Position of a node.
+:type _sphinx_paramlinks_path_math.manhattan_distance.b: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]
+:param _sphinx_paramlinks_path_math.manhattan_distance.b: Position of another node.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.random">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">x</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">interval</span> <span class="pre">[0,</span> <span class="pre">1).</span></span></span><a class="headerlink" href="#path_math.random" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.sum_abs_pos">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_abs_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#sum_abs_pos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.sum_abs_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Sums up two absolute pos element wise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.sum_absolute_a_b">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_absolute_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#sum_absolute_a_b"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.sum_absolute_a_b" title="Permalink to this definition"></a></dt>
+<dd><p>Sums up absolute a and absolute b.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.sum_pos">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/path_math.html#sum_pos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#path_math.sum_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Sums up two pos element wise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="path_finding_util.html" class="btn btn-neutral float-left" title="path_finding_util" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="path_util.html" class="btn btn-neutral float-right" title="path_util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

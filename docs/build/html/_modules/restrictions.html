@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>restrictions &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../OPC_UA.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FunctionTestGUI.html">FunctionTestGUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProcessPlanning.html">ProcessPlanning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../PathFinding.html">PathFinding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../type_dictionary.html">type_dictionary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Module code</a> &raquo;</li>
+      <li>restrictions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for restrictions</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">PathFinding.path_finding_util.path_math</span> <span class="kn">import</span> <span class="n">sum_pos</span><span class="p">,</span> <span class="n">get_direction</span>
+<span class="c1"># todo: put non restriction functions into support functions</span>
+<span class="kn">from</span> <span class="nn">PathFinding.path_finding_util.path_util</span> <span class="kn">import</span> <span class="n">get_corner_neighbors</span><span class="p">,</span> <span class="n">get_pipe_neighbors</span><span class="p">,</span> <span class="n">pipe_stock_check</span><span class="p">,</span> \
+    <span class="n">get_transition</span>
+<span class="kn">from</span> <span class="nn">type_dictionary.common_types</span> <span class="kn">import</span> <span class="n">Pos</span>
+<span class="kn">from</span> <span class="nn">type_dictionary.constants</span> <span class="kn">import</span> <span class="n">fitting_id</span>
+
+
+<div class="viewcode-block" id="out_of_bounds"><a class="viewcode-back" href="../restrictions.html#restrictions.out_of_bounds">[docs]</a><span class="k">def</span> <span class="nf">out_of_bounds</span><span class="p">(</span><span class="n">neighbor_node</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">state_grid</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks if neighbor is outside of the boundaries of the state grid.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">neighbor_node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">state_grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">neighbor_node</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">state_grid</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># array bound y walls</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># array bound x walls</span></div>
+
+
+<span class="n">collision_set</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="collided_obstacle"><a class="viewcode-back" href="../restrictions.html#restrictions.collided_obstacle">[docs]</a><span class="k">def</span> <span class="nf">collided_obstacle</span><span class="p">(</span><span class="n">current_node</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">neighbor_node</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">state_grid</span><span class="p">,</span> <span class="n">part_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks if the path from current_node to neighbor_node obstructs any obstacles or transitions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">neighbor_node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">neighbor_node</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">direction</span> <span class="o">=</span> <span class="n">get_direction</span><span class="p">(</span><span class="n">neighbor_node</span><span class="p">)</span>
+    <span class="c1"># collision_nodes = []</span>
+    <span class="c1"># check collision with obstacles</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_node</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">direction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="n">current_node</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">direction</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">i</span><span class="p">)</span>
+        <span class="c1"># collision_nodes.append(node)</span>
+        <span class="k">if</span> <span class="n">state_grid</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="ow">in</span> <span class="n">collision_set</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">state_grid</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">and</span> <span class="p">((</span><span class="n">part_id</span> <span class="o">!=</span> <span class="n">fitting_id</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">part_id</span> <span class="o">==</span> <span class="n">fitting_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+    <span class="c1"># if part_id != fitting_id and collision_nodes:</span>
+    <span class="c1">#     collision_nodes.pop(0) # first node is allowed to obstruct transition</span>
+    <span class="c1">#     # check collision with transitions</span>
+    <span class="c1">#     for node in collision_nodes:</span>
+    <span class="c1">#         if state_grid[node] == 3:</span>
+    <span class="c1">#             return True</span>
+
+
+<div class="viewcode-block" id="neighbor_restricted"><a class="viewcode-back" href="../restrictions.html#restrictions.neighbor_restricted">[docs]</a><span class="k">def</span> <span class="nf">neighbor_restricted</span><span class="p">(</span><span class="n">current_node</span><span class="p">,</span> <span class="n">neighbor_node</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">current_state_grid</span><span class="p">,</span> <span class="n">part_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Contains restriction set that checks if neighbor is restricted.</span>
+<span class="sd">    :param part_id:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">out_of_bounds</span><span class="p">(</span><span class="n">neighbor_node</span><span class="p">,</span> <span class="n">current_state_grid</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">collided_obstacle</span><span class="p">(</span><span class="n">current_node</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">current_state_grid</span><span class="p">,</span> <span class="n">part_id</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="goal_restricted"><a class="viewcode-back" href="../restrictions.html#restrictions.goal_restricted">[docs]</a><span class="k">def</span> <span class="nf">goal_restricted</span><span class="p">(</span><span class="n">part_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Pos</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">goal_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Pos</span><span class="p">,</span> <span class="n">Pos</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks if the direction restriction of the goal is violated.&quot;&quot;&quot;</span>
+
+    <span class="n">restricted</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># data = state_grid.tolist()</span>
+    <span class="c1"># plt.imshow(data)</span>
+    <span class="c1"># plt.show()</span>
+
+    <span class="c1"># if part_id == 0:</span>
+    <span class="c1">#     # check if corner axis is adjacent to goal axis</span>
+    <span class="c1">#     if sum_absolute_a_b(direction[0], goal_direction[1]) != 0 or sum_absolute_a_b(direction[1], goal_direction[0]) != 0:</span>
+    <span class="c1">#         restricted = False</span>
+    <span class="k">if</span> <span class="n">part_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># simply check if pipe axis is the same as goal axis</span>
+        <span class="k">if</span> <span class="n">goal_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">==</span> <span class="n">direction</span><span class="p">:</span>
+            <span class="n">restricted</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">restricted</span></div>
+
+
+<div class="viewcode-block" id="restrict_neighbor_pos"><a class="viewcode-back" href="../restrictions.html#restrictions.restrict_neighbor_pos">[docs]</a><span class="k">def</span> <span class="nf">restrict_neighbor_pos</span><span class="p">(</span><span class="n">directions</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">Pos</span><span class="p">],</span> <span class="n">goal_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Pos</span><span class="p">:</span><span class="n">Pos</span><span class="p">],</span> <span class="n">current_pos</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">,</span>
+                          <span class="n">pipe_stock</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">,</span> <span class="n">fast_mode</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">,</span> <span class="n">transition_points</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Determines what neighbors are reachable from the current position and with the available parts. Removes neighbors</span>
+<span class="sd">    that violate goal restrictions.&quot;&quot;&quot;</span>
+
+    <span class="n">neighbor_relative_positions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">previous_part</span> <span class="o">=</span> <span class="n">predecessors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">part_to_successor</span>
+    <span class="n">available_parts</span> <span class="o">=</span> <span class="n">pipe_stock_check</span><span class="p">(</span><span class="n">pipe_stock</span><span class="p">,</span> <span class="n">predecessors</span><span class="p">,</span> <span class="n">fast_mode</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="n">remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">directions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">current_pos</span> <span class="o">==</span> <span class="n">start_pos</span><span class="p">:</span>
+            <span class="n">transition</span> <span class="o">=</span> <span class="n">get_transition</span><span class="p">(</span><span class="n">current_pos</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">transition_points</span><span class="p">)</span>
+            <span class="c1"># neighbor_pos.extend(get_corner_neighbors(direction, available_parts))</span>
+            <span class="n">neighbor_relative_positions</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">get_pipe_neighbors</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">available_parts</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="n">transition</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">previous_part</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">transition</span> <span class="o">=</span> <span class="n">get_transition</span><span class="p">(</span><span class="n">current_pos</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">transition_points</span><span class="p">)</span>
+            <span class="c1"># previous move was corner -&gt; only pipes allowed</span>
+            <span class="n">neighbor_relative_positions</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">get_pipe_neighbors</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">available_parts</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="n">transition</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># previous mode was pipe -&gt; only corners allowed</span>
+            <span class="n">neighbor_relative_positions</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">get_corner_neighbors</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">available_parts</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">relative_pos</span> <span class="ow">in</span> <span class="n">neighbor_relative_positions</span><span class="p">:</span>
+            <span class="n">neighbor_pos</span> <span class="o">=</span> <span class="n">sum_pos</span><span class="p">(</span><span class="n">current_pos</span><span class="p">,</span> <span class="n">relative_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">neighbor_pos</span> <span class="ow">in</span> <span class="n">goal_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="c1"># restriction check necessary, neighbor reaches goal</span>
+                <span class="k">if</span> <span class="n">goal_restricted</span><span class="p">(</span><span class="n">part_id</span><span class="o">=</span><span class="n">relative_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pos</span><span class="o">=</span><span class="n">neighbor_pos</span><span class="p">,</span>
+                                   <span class="n">direction</span><span class="o">=</span><span class="n">get_direction</span><span class="p">(</span><span class="n">relative_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">goal_dict</span><span class="o">=</span><span class="n">goal_dict</span><span class="p">):</span>
+                    <span class="c1"># disallow any neighbors that violate goal condition</span>
+                    <span class="n">remove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">relative_pos</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">neighbor_relative_positions</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">remove</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

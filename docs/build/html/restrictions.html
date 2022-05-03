@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>restrictions module &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="score_calculation module" href="score_calculation.html" />
+    <link rel="prev" title="path_util module" href="path_util.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">search_algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">solution_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">partial_solver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">pf_data_class</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">path_finding_util</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="path_math.html">path_math module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_util.html">path_util module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">restrictions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="score_calculation.html">score_calculation module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
+          <li><a href="path_finding_util.html">path_finding_util</a> &raquo;</li>
+      <li>restrictions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/restrictions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-restrictions">
+<span id="restrictions-module"></span><h1>restrictions module<a class="headerlink" href="#module-restrictions" title="Permalink to this headline"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.collided_obstacle">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">collided_obstacle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/restrictions.html#collided_obstacle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#restrictions.collided_obstacle" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the path from current_node to neighbor_node obstructs any obstacles or transitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.goal_restricted">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">goal_restricted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/restrictions.html#goal_restricted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#restrictions.goal_restricted" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the direction restriction of the goal is violated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.neighbor_restricted">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">neighbor_restricted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/restrictions.html#neighbor_restricted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#restrictions.neighbor_restricted" title="Permalink to this definition"></a></dt>
+<dd><p>Contains restriction set that checks if neighbor is restricted.
+:param _sphinx_paramlinks_restrictions.neighbor_restricted.part_id:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.out_of_bounds">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">out_of_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/restrictions.html#out_of_bounds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#restrictions.out_of_bounds" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if neighbor is outside of the boundaries of the state grid.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.restrict_neighbor_pos">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">restrict_neighbor_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/restrictions.html#restrict_neighbor_pos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#restrictions.restrict_neighbor_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Determines what neighbors are reachable from the current position and with the available parts. Removes neighbors
+that violate goal restrictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="path_util.html" class="btn btn-neutral float-left" title="path_util module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="score_calculation.html" class="btn btn-neutral float-right" title="score_calculation module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
