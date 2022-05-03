@@ -3,19 +3,17 @@ from __future__ import annotations
 import heapq
 from copy import deepcopy
 
-import numpy as np
-
-from type_dictionary import constants as const
-from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
+from PathFinding.path_finding_util.path_math import manhattan_distance
 from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Solution import Solution
-from PathFinding.util.path_math import manhattan_distance
 from PathFinding.solution_manager import get_solution
-from type_dictionary.common_types import Trail
+from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
+from type_dictionary import constants as const
+from type_dictionary.common_types import Trail, StateGrid
 
 
 def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
-                          outgoing_node_directions_dict: dict, state_grid: np.ndarray, part_stock: dict,
+                          outgoing_node_directions_dict: dict, state_grid: StateGrid, part_stock: dict,
                           path_problem: PathProblem,
                           ) -> list[Solution]:
     """
@@ -101,7 +99,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
     return partial_solutions
 
 
-def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail,BuildingInstruction],
+def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail, BuildingInstruction],
                            initial_path_problem: PathProblem):
     """Fuses partial solutions and completed layouts into a complete solution from start to goal of the initial path problem.
     Only partially checks the validity of the complete solution. Partial solutions and completed layouts must therefore

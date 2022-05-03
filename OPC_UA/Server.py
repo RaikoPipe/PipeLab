@@ -1,15 +1,20 @@
 from __future__ import annotations
 
-import os.path
 import asyncio
+import os.path
+import threading
 
 from asyncua import ua, uamethod, Server
 
+from FunctionTestGUI.GUI import FunctionTestGUI
 from PathFinding.pf_data_class.PathProblem import PathProblem
 from ProcessPlanning.ProcessPlanner import ProcessPlanner
 from ProcessPlanning.pp_data_class.EventInfo import EventInfo
 
 process_planner: ProcessPlanner
+
+app: FunctionTestGUI
+gui_thread: threading.Thread
 
 
 @uamethod
@@ -27,13 +32,6 @@ def say_hello_xml(parent, happy):
 def say_hello(parent, x, y, code):
     output = process_planner.main(((x, y), code))
     event_info: EventInfo = output.event_info
-
-    # array = []
-    # for attribute in vars(event_info):
-    #     value = event_info.__getattribute__(attribute)
-    #     array.append(value)
-
-    # print(array)
 
     return event_info.event_code
 
@@ -57,7 +55,6 @@ class PipeLabServer:
 
     async def init(self):
         await self.server.init()
-
         #  This need to be imported at the start or else it will overwrite the data
         await self.server.import_xml(self.model_filepath)
 

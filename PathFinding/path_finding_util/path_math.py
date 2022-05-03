@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from math import copysign
 
-from type_dictionary.constants import *
 from type_dictionary.common_types import *
+from type_dictionary.constants import *
 
 
 def sum_pos(a: Pos, b: Pos) -> Pos:

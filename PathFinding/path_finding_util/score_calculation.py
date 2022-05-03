@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from PathFinding.path_finding_util.path_math import manhattan_distance, get_direction
+from PathFinding.path_finding_util.restrictions import out_of_bounds
 from PathFinding.pf_data_class.Weights import Weights
-from PathFinding.util.path_math import manhattan_distance, get_direction
-from PathFinding.util.restrictions import out_of_bounds
 
 
 def get_min_o_reduction(current_node, length: int, relative_direction: tuple, axis: tuple, state_grid) -> int:

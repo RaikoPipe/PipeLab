@@ -3,8 +3,10 @@ from copy import deepcopy
 
 import numpy as np
 
+from type_dictionary.common_types import StateGrid
 
-def set_random_obstacles(probability: float, state_grid: np.ndarray) -> np.ndarray:
+
+def set_random_obstacles(probability: float, state_grid: StateGrid) -> np.ndarray:
     """Randomly changes nodes on the state grid to 1 according to the frequency.
     Args:
         probability: probability of a node on the state grid receiving the state 1 (obstacle)

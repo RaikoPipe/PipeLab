@@ -1,15 +1,15 @@
 from typing import Optional
 
 import vpython as vpy
-from type_dictionary.common_types import *
 
-from PathFinding.util.path_math import diff_pos, get_direction
+from PathFinding.path_finding_util.path_math import diff_pos, get_direction
 from VpythonRendering.object_rendering import render_obstacle, render_pipe, render_corner, render_marker
+from type_dictionary.common_types import *
 
 """functions for VpythonRendering a group of objects"""
 
 
-def render_obstacles_from_state_grid(state_grid: np.ndarray, rendering_grid: np.ndarray, scene: vpy.canvas) -> Optional[
+def render_obstacles_from_state_grid(state_grid: StateGrid, rendering_grid: np.ndarray, scene: vpy.canvas) -> Optional[
     vpy.compound]:
     """Renders obstacles according to obstructions on the state_grid to VPython canvas.
     Returns a list containing the rendered objects, if any were created."""

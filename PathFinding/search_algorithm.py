@@ -2,17 +2,17 @@ from __future__ import annotations
 
 import heapq
 from copy import copy
+from typing import Optional
 
 import matplotlib.pyplot as plt
 
-from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.grid.grid_functions import change_grid_states
-from PathFinding.util.path_math import *
-from PathFinding.util.path_util import *
-from PathFinding.util.restrictions import neighbor_restricted, restrict_neighbor_pos
-from PathFinding.util.score_calculation import get_worst_move_cost, get_f_score, get_m_score, \
+from PathFinding.path_finding_util.path_math import *
+from PathFinding.path_finding_util.path_util import *
+from PathFinding.path_finding_util.restrictions import neighbor_restricted, restrict_neighbor_pos
+from PathFinding.path_finding_util.score_calculation import get_worst_move_cost, get_f_score, get_m_score, \
     get_e_score
-from typing import Optional
+from PathFinding.pf_data_class.PathProblem import PathProblem
 
 
 # idea: make a separate function for search showcase

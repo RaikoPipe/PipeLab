@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Union
+from typing import Union, Optional
 
-from ProcessPlanning.pp_data_class.EventInfo import EventInfo
+from PathFinding.path_finding_util.path_math import get_direction, diff_pos
 from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Weights import Weights
-from PathFinding.util.path_math import get_direction, diff_pos
 from PathFinding.search_algorithm import find_path
 from ProcessPlanning.ProcessState import ProcessState
+from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
+from ProcessPlanning.pp_data_class.EventInfo import EventInfo
 from ProcessPlanning.pp_data_class.ProcessOutput import ProcessOutput
-from ProcessPlanning.util.pp_util import determine_next_part, get_solution_on_detour_event, make_registration_message, \
-    make_error_message, message_dict
-from type_dictionary import constants
+from ProcessPlanning.process_planning_util.pp_util import determine_next_part, get_solution_on_detour_event, \
+    make_registration_message, \
+    make_error_message, message_dict, get_next_recommended_action
 from type_dictionary.common_types import *
 
 standard_weights = Weights(1, 1, 1)
@@ -46,55 +47,16 @@ example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will prob
 #   - check score calculation of mcsa*
 #   - Output next recommended action
 
-def get_next_recommended_action(process_state, building_instruction):
-    # get next recommended action
-
-    completed = process_state.completed_instruction(building_instruction)
-    rec_pos = None
-    rec_event = None
-    rec_part_id = None
-
-    if completed[1] == 3:
-        rec_pos = building_instruction.recommended_attachment_pos
-        rec_event = 3
-        rec_part_id = -1
-
-    if completed[1] == 2:
-        # pipe next
-        rec_event = 2
-        rec_part_id = building_instruction.pipe_id
-        # get attachment that is not deviated
-        for pos in building_instruction.possible_att_pipe_positions:
-            pos, construction_state = process_state.get_construction_state(pos, [3])
-            if construction_state:
-                if not construction_state.deviated:
-                    rec_pos = pos
-                    break
-    elif completed[1] == 1:
-        # fittings next
-        rec_event = 1
-        rec_part_id = constants.fitting_id
-
-        for pos in building_instruction.required_fit_positions:
-            # get required fit pos
-            if None in process_state.get_construction_state(pos, [1]):
-                rec_pos = pos
-                break
-
-    elif completed[0]:
-        # layout complete, get next incomplete layout
-
-        for layout in process_state.aimed_solution.ordered_trails:
-            building_instruction = process_state.building_instructions.get(layout)
-            if not building_instruction.layout_completed:
-                return get_next_recommended_action(process_state, building_instruction)
-
-    return rec_pos, rec_event, rec_part_id
-
 
 class ProcessPlanner:
-    """Acts as an interface for handling events. Keeps track of the building process with ProcessState and provides robot
-     commands. Handles calculation of a new solution in case of a detour event."""
+    """Acts as an interface for handling events. Keeps track of the building process with the:class:`~ProcessState`
+    class and provides robot commands.
+    Handles calculation of a new solution in case of a detour event.
+
+    :param initial_path_problem:
+    :param initial_process_state
+    :param optimization_weights: Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
+    :param algorithm: The search algorithm to be used for calculating any solutions to a path problem."""
 
     def __init__(self, initial_path_problem: PathProblem, initial_process_state: ProcessState = None,
                  optimization_weights: Weights = standard_weights,
@@ -134,26 +96,23 @@ class ProcessPlanner:
         self.weights = optimization_weights
         self.algorithm = algorithm
 
-    def send_pick_event(self, part_id: int, process_state:ProcessState) -> str:
-        """Sends a new pick event to be evaluated and registered in the current process state.
-        :param part_id: """
-        message = process_state.pick_part(part_id)
-
-        return message
-
     def main(self, worker_event: tuple[Union[Pos, int], int], handle_detour_events: bool = True,
-             ignore_part_check: bool = True) -> ProcessOutput:
+             ignore_part_check: bool = False, ignore_obstructions: bool = False) -> ProcessOutput:
         """Main method of ProcessPlanning. Takes worker_event as input and sends information about the event to
         ProcessState. Prints message output of ProcessState and handles detour events.
          
-        :param handle_detour_events: If set to true, detour events will result in the process planner looking for a new solution.
+
         :param worker_event: A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.
-        :param ignore_part_check: If set to true, part restrictions will be ignored. Could lead to unexpected behaviour."""
+        :param handle_detour_events: If set to true, detour events will result in the process planner looking for a new solution.
+        :param ignore_part_check: If set to true, part restrictions will be ignored. Could lead to unexpected behaviour.
+        :param ignore_obstructions: If set to true, obstructions will be ignored. Untested. Could lead to unexpected behaviour.
+        :return A dataclass containing processed information regarding the event and current process state (See :class:`ProcessOutput`). """
 
         tentative_process_state = deepcopy(self.last_process_state)
         # check if worker event is pick event
         if worker_event[1] == 4:
-            picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event, process_state=tentative_process_state)
+            picking_robot_commands = self.determine_picking_robot_commands(worker_event=worker_event,
+                                                                           process_state=tentative_process_state)
             messages = self.send_pick_event(worker_event[0], process_state=tentative_process_state)
             self.previous_states.insert(0, deepcopy(tentative_process_state))
             self.last_process_state = tentative_process_state
@@ -183,20 +142,20 @@ class ProcessPlanner:
                 worker_event = ((worker_event[0][0] - direction[0], worker_event[0][1] - direction[1]), worker_event[1])
 
         messages = self.send_placement_event(worker_event=worker_event,
-                                             ignore_part_check=ignore_part_check, process_state=tentative_process_state)
+                                             ignore_part_check=ignore_part_check, process_state=tentative_process_state,
+                                             ignore_obstructions=ignore_obstructions)
 
         # extract messages
         message = messages[0]
         special_message = messages[1]
 
         detour_event: dict = tentative_process_state.last_event_info.detour_event
-        detour_message = None
 
         # handle all detour events
         if detour_event and handle_detour_events:
-            detour_message, tentative_process_state = self.start_detour_event(detour_event, tentative_process_state)
+            detour_message, tentative_process_state = self.handle_detour_event(detour_event, tentative_process_state)
         else:
-            detour_message = self.handle_detour_trails(detour_message, process_state=tentative_process_state)
+            detour_message = self.handle_detour_trails(process_state=tentative_process_state)
 
         # get next recommended action
         building_instruction = tentative_process_state.building_instructions.get(
@@ -215,7 +174,6 @@ class ProcessPlanner:
 
         messages = (message, special_message, detour_message)
 
-
         self.previous_states.insert(0, deepcopy(tentative_process_state))
         self.last_process_state = tentative_process_state
 
@@ -228,70 +186,14 @@ class ProcessPlanner:
 
         return process_output
 
-    def handle_detour_trails(self, detour_message, process_state):
-        if process_state.detour_trails:
-            # check if previous layouts that caused detour are not completed anymore
-            previous_detour_trails = deepcopy(process_state.detour_trails)
-            last_detour_trail = previous_detour_trails.pop(-1)
-            for detour_trail in previous_detour_trails:
-                if not process_state.building_instructions[detour_trail].layout_completed:
-                    process_state.detour_trails.remove(detour_trail)
-            # check if layout that caused last detour is not completed anymore
-            if not process_state.building_instructions[last_detour_trail].layout_completed:
-                process_state.detour_trails.pop(-1)
-                if process_state.detour_trails:
-                    # there are still complete detour layouts
-                    last_detour_trail = process_state.detour_trails[-1]
-
-                    last_detour_instruction = process_state.building_instructions[last_detour_trail]
-                    detour_event = {last_detour_trail: last_detour_instruction}
-                    solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
-                                                            process_state=process_state,
-                                                            detour_event=detour_event)
-                    process_state.handle_detour_event(solution, detour_event)
-                    detour_message = str.format(
-                        f"Deviating layout incomplete, returning solution for last deviating layout")
-                else:
-                    # return to optimal solution
-                    detour_event = {None: "Returned to optimal solution"}
-                    process_state.handle_detour_event(self.optimal_solution)
-
-                    detour_message = str.format(
-                        f"No complete deviating layouts left, returning to optimal solution")
-
-                process_state.last_event_info.detour_event = detour_event
-        return detour_message
-
-    def start_detour_event(self, detour_event, process_state):
-
-        detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
-        detour_process_state = deepcopy(process_state)
-        detour_process_state.building_instructions.update(detour_event)
-        detour_process_state.detour_trails.append(list(detour_event)[0])
-        # update state grid
-        for pos in list(detour_event.keys())[0]:
-            detour_process_state.state_grid[pos] = 2
-        solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
-                                                process_state=detour_process_state,
-                                                detour_event=detour_event)
-        if solution:
-            detour_message = str.format(f"detour event confirmed, applying alternative solution!")
-            detour_process_state.handle_detour_event(solution, detour_event)
-
-            # clean up remaining detour trails
-            for detour_trail in detour_process_state.detour_trails:
-                if not detour_trail in detour_process_state.building_instructions.keys():
-                    # detour trail is not in current solution anymore
-                    detour_process_state.detour_trails.remove(detour_trail)
-        return detour_message, detour_process_state
-
-    def send_placement_event(self, worker_event: tuple[Pos, int], process_state:ProcessState,
+    @staticmethod
+    def send_placement_event(worker_event: tuple[Pos, int], process_state: ProcessState,
                              ignore_part_check: bool = False, ignore_obstructions: bool = False):
         """Sends a new placement/removal event to be evaluated and registered in current ProcessState."""
 
         event_info: EventInfo = process_state.evaluate_placement(worker_event=worker_event,
-                                                                                ignore_part_check=ignore_part_check,
-                                                                                ignore_obstructions=ignore_obstructions)
+                                                                 ignore_part_check=ignore_part_check,
+                                                                 ignore_obstructions=ignore_obstructions)
 
         note = None
 
@@ -342,6 +244,87 @@ class ProcessPlanner:
         return message, note
 
     @staticmethod
+    def send_pick_event(part_id: int, process_state: ProcessState) -> str:
+        """Sends a new pick event to be evaluated and registered in the current process state.
+
+        :param part_id: Part ID that was picked.
+        :param process_state: The current process state.
+        :return A string containing a success message."""
+        process_state.pick_part(part_id)
+        message = str.format(f"Process Planner: Picked part with id {part_id}")
+
+        return message
+
+    def handle_detour_trails(self, process_state: ProcessState) -> Optional[str]:
+        """Handles current detour trails and decides if the currently aimed solution should return to a previous iteration.
+
+        :param process_state: The current process state
+        :return An optional string message if the currently aimed solution was changed to a previous one."""
+
+        detour_message = None
+        if process_state.detour_trails:
+            # check if previous layouts that caused detour are not completed anymore
+            previous_detour_trails = deepcopy(process_state.detour_trails)
+            last_detour_trail = previous_detour_trails.pop(-1)
+            for detour_trail in previous_detour_trails:
+                if not process_state.building_instructions[detour_trail].layout_completed:
+                    process_state.detour_trails.remove(detour_trail)
+            # check if layout that caused last detour is not completed anymore
+            if not process_state.building_instructions[last_detour_trail].layout_completed:
+                process_state.detour_trails.pop(-1)
+                if process_state.detour_trails:
+                    # there are still complete detour layouts
+                    last_detour_trail = process_state.detour_trails[-1]
+
+                    last_detour_instruction = process_state.building_instructions[last_detour_trail]
+                    detour_event = {last_detour_trail: last_detour_instruction}
+                    solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
+                                                            process_state=process_state,
+                                                            detour_event=detour_event)
+                    process_state.adjust_motion_dict_to_solution(solution, detour_event)
+                    detour_message = str.format(
+                        f"Deviating layout incomplete, returning to solution for last deviating layout.")
+                else:
+                    # return to optimal solution
+                    detour_event = {None: "Returned to optimal solution"}
+                    process_state.adjust_motion_dict_to_solution(self.optimal_solution)
+
+                    detour_message = str.format(
+                        f"No complete deviating layouts left, returning to optimal solution.")
+
+                process_state.last_event_info.detour_event = detour_event
+        return detour_message
+
+    def handle_detour_event(self, detour_event: dict[Trail:BuildingInstruction], process_state: ProcessState) -> tuple[
+        str, ProcessState]:
+        """Handles the detour event, applies new solution if found.
+
+        :param process_state: The current process state.
+        :param detour_event: Dictionary containing a trail and building instruction of the deviated layout.
+        :return: A tuple containing a string message and a modified state with the new solution applied.
+        """
+        detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
+        detour_process_state = deepcopy(process_state)
+        detour_process_state.building_instructions.update(detour_event)
+        detour_process_state.detour_trails.append(list(detour_event)[0])
+        # update state grid
+        for pos in list(detour_event.keys())[0]:
+            detour_process_state.state_grid[pos] = 2
+        solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
+                                                process_state=detour_process_state,
+                                                detour_event=detour_event)
+        if solution:
+            detour_message = str.format(f"detour event confirmed, applying alternative solution!")
+            detour_process_state.adjust_motion_dict_to_solution(solution, detour_event)
+
+            # clean up remaining detour trails
+            for detour_trail in detour_process_state.detour_trails:
+                if not detour_trail in detour_process_state.building_instructions.keys():
+                    # detour trail is not in current solution anymore
+                    detour_process_state.detour_trails.remove(detour_trail)
+        return detour_message, detour_process_state
+
+    @staticmethod
     def determine_fastening_robot_commands(worker_event: tuple[Pos, int], event_info):
 
         event_code = worker_event[1]
@@ -368,8 +351,15 @@ class ProcessPlanner:
 
         return tuple(fastening_robot_commands)
 
-    def determine_picking_robot_commands(self, worker_event: tuple[Pos, int], process_state:ProcessState, layout: Trail = None,):
-        """Evaluates the current process state and issues robot commands."""
+    @staticmethod
+    def determine_picking_robot_commands(worker_event: tuple[Pos, int], process_state: ProcessState,
+                                         layout: Trail = None, ) -> tuple:
+        """Evaluates the current process state and makes robot commands.
+
+        :param layout: Optional last event layout if worker event code is 3.
+        :param process_state: The current process state.
+        :param worker_event: See :obj:`ProcessPlanner.worker_event`.
+        """
 
         picking_robot_commands = []
 
@@ -406,6 +396,6 @@ class ProcessPlanner:
         """Returns to previous state."""
         if self.previous_states:
             self.last_process_state = self.previous_states.pop(0)
-            print("Latest action was undone!")
+            print("Returned to previous state!")
         else:
             print("There is no last state to return to!")

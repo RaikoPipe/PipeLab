@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import numpy as np
 
 Pos = tuple[int, int]
@@ -14,9 +15,9 @@ NodePath = list[Node]
 """Ordered list of nodes from start to goal."""
 
 Trail = tuple[Pos]
-"""Contains each node visited (in a path for example)."""
+"""Contains each node visited (in a path for example). In specific contexts also called a layout."""
 
-AbsoluteTrail = dict[Pos,int]
+AbsoluteTrail = dict[Pos, int]
 """Trail where each position points to a part ID."""
 
 DirectedConnection = tuple[Pos, Pos]
@@ -25,7 +26,12 @@ DirectedConnection = tuple[Pos, Pos]
 UndirectedConnection = frozenset
 """Two node positions in a non-directed relationship."""
 
-Layouts = list[Trail]
-"""List containing trails in order from start to goal."""
-
 StateGrid = np.ndarray
+"""
+A grid array where each position in the grid points to an integer value representing a state.
+States:
+0: Free position
+1: occupied by obstacle
+2: occupied by part
+3: transition
+"""

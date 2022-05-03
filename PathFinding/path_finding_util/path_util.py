@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from typing import Optional
 
+from PathFinding.path_finding_util.path_math import diff_pos, get_direction, sum_pos
 from PathFinding.pf_data_class.Predecessor import Predecessor
 from PathFinding.pf_data_class.Solution import Solution
-from PathFinding.util.path_math import diff_pos, get_direction, sum_pos
 from type_dictionary.common_types import *
-from typing import Optional
 
 
 def construct_solution(predecessors: dict[Pos:Predecessor], current_node, state_grid, score,

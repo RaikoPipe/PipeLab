@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Optional
 
 from PathFinding.pf_data_class.Weights import Weights
-
 from type_dictionary.common_types import *  #
-from typing import Optional
 
 
 # todo: documentation
@@ -31,7 +30,7 @@ class PathProblem:
         weights:
 
     """
-    state_grid: np.ndarray
+    state_grid: StateGrid
     start_pos: Pos
     goal_pos: Pos
 

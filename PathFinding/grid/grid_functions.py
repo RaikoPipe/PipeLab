@@ -18,7 +18,7 @@ def get_empty_stategrid(x_nodes: int, y_nodes: int):
     return state_grid
 
 
-def change_grid_states(state_grid: np.ndarray, node_states: list[Node]):
+def change_grid_states(state_grid: StateGrid, node_states: list[Node]):
     """Modify grid states according to items in node_states
     Args:
         node_states: list containing Nodes

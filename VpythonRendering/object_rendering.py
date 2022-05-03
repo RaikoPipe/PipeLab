@@ -3,10 +3,10 @@ from typing import Optional
 import numpy as np
 import vpython as vpy
 
-from type_dictionary import constants as cs
 from VpythonRendering import object_data_classes as odc
 from VpythonRendering.default_data import default_mounting_wall, default_scene, default_obstacle, \
     pipe_corner, default_pipes
+from type_dictionary import constants as cs
 
 """functions for VpythonRendering single objects (or compound objects)"""
 

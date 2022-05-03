@@ -1,20 +1,26 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Optional
+from typing import Optional, Union
 
-from type_dictionary.constants import horizontal_directions, vertical_directions
-from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
-from PathFinding.pf_data_class.Solution import Solution
 from PathFinding import partial_solver
-from PathFinding.util.path_math import get_direction, diff_pos
+from PathFinding.path_finding_util.path_math import get_direction, diff_pos
+from PathFinding.pf_data_class.PathProblem import PathProblem
+from PathFinding.pf_data_class.Solution import Solution
 from ProcessPlanning.ProcessState import ProcessState
+from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
+from type_dictionary import constants
 from type_dictionary.common_types import Trail, Pos
+from type_dictionary.constants import horizontal_directions, vertical_directions
 
 message_dict = {1: "fitting", 2: "pipe", 3: "attachment"}
 
 
 def determine_next_part(process_state: ProcessState, layout: Trail):
+    """Determines which part should be picked next according to the current build progress.
+
+    :param layout: Layout that is currently being built.
+    :param process_state: The current process state."""
     next_part_id = None
 
     building_instruction = process_state.building_instructions.get(layout)
@@ -32,25 +38,12 @@ def determine_next_part(process_state: ProcessState, layout: Trail):
     return next_part_id
 
 
-def get_absolute_trail_from_building_instructions(building_instructions: dict[Trail:BuildingInstruction]) -> dict[
-                                                                                                             Pos:int]:
-    absolute_trail = {}
-    for trail in building_instructions.keys():
-        layout_state = building_instructions[trail]
-        if layout_state.layout_completed:
-            for pos in layout_state.fit_set:
-                absolute_trail[pos] = 0
+def get_completed_instructions(building_instructions: dict[Trail, BuildingInstruction]) -> dict[
+    Trail, BuildingInstruction]:
+    """Looks for completed instructions inside building_instructions and returns them.
 
-            for idx, pos in enumerate(trail, start=1):
-                if idx >= len(trail) - 1:
-                    break
-                absolute_trail[pos] = layout_state.part_id
-
-    return absolute_trail
-
-
-def get_completed_instructions(building_instructions) -> dict[Trail:BuildingInstruction]:
-    """Returns all completed instructions."""
+    :param building_instructions: See :attr:`ProcessState.building_instructions`
+    :return All completed instructions"""
     completed_instructions = {}
     for layout_trail in building_instructions.keys():
         instruction = building_instructions[layout_trail]
@@ -60,9 +53,13 @@ def get_completed_instructions(building_instructions) -> dict[Trail:BuildingInst
     return completed_instructions
 
 
-def get_outgoing_node_pairs(building_instructions: dict[Trail:BuildingInstruction]):
-    """Returns all outgoing points in building instructions as a connection. Interpolates them if they are
-    connected."""
+def get_outgoing_node_pairs(building_instructions: dict[Trail, BuildingInstruction]) -> set[tuple[Pos, Pos]]:
+    """Returns all outgoing points in building_instructions as a connection. Interpolates them if they are
+    connected.
+
+    :param building_instructions: See :attr:`ProcessState.building_instructions`.
+    :return Set with all outgoing node pairs.
+    """
 
     outgoing_node_pairs_set = set()
     for layout_state in building_instructions.values():
@@ -96,8 +93,12 @@ def get_outgoing_node_pairs(building_instructions: dict[Trail:BuildingInstructio
     return outgoing_node_pairs_set
 
 
-def get_outgoing_node_directions(building_instructions: dict[Trail:BuildingInstruction]):
-    """Returns the connecting directions the fittings of each building instruction requires."""
+def get_outgoing_node_directions(building_instructions: dict[Trail, BuildingInstruction]):
+    """Returns the connecting directions the fittings of each building instruction requires.
+
+    :param building_instructions: See :attr:`ProcessState.building_instructions`.
+    :return Set with all outgoing node directions.
+    """
 
     direction_dict = {}
 
@@ -113,8 +114,12 @@ def get_outgoing_node_directions(building_instructions: dict[Trail:BuildingInstr
     return direction_dict
 
 
-def adjust_pos_in_node_pairs_set(node_pairs_set, pos):
-    """remove pos from first connection that contains it. If not found, then add as a connection containing only pos."""
+def adjust_pos_in_node_pairs_set(node_pairs_set: set[tuple[Pos, Union[Pos, tuple]]], pos: Pos):
+    """Remove pos from first node pair tuple in node_pairs_set that contains it. If not found,
+    then add as a node pair tuple containing only pos.
+
+    :param pos: Pos to be evaluated.
+    :param node_pairs_set: Set with all outgoing node pairs."""
     for connection in node_pairs_set:
         if pos in connection:
             set_connection = set(connection)
@@ -126,8 +131,13 @@ def adjust_pos_in_node_pairs_set(node_pairs_set, pos):
         node_pairs_set.add((pos, ()))
 
 
-def get_solution_on_detour_event(initial_path_problem, process_state, detour_event) -> Optional[Solution]:
-    """Tries to get a new solution on a detour event."""
+def get_solution_on_detour_event(initial_path_problem: PathProblem, process_state: ProcessState, detour_event) -> \
+Optional[Solution]:
+    """Tries to get a new solution on a detour event.
+
+    :param initial_path_problem: The original path problem.
+    :param process_state: The current process state.
+    """
     completed_instructions = get_completed_instructions(process_state.building_instructions)
 
     path_problem = deepcopy(initial_path_problem)
@@ -188,7 +198,7 @@ def get_solution_on_detour_event(initial_path_problem, process_state, detour_eve
 
 
 def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pipe_id: int) -> str:
-    """Returns a message as string, confirming a placement or removal event."""
+    """Returns a message as string confirming a placement or removal event."""
     object_name = message_dict[event_code]
     motion_type = "placement"
     if removal:
@@ -218,3 +228,55 @@ def make_error_message(event_pos: Pos, additional_message: str):
     information regarding the reason for the error."""
     message = str.format(f"Process Planner: Process error at Position {event_pos}: {additional_message}")
     return message
+
+
+def get_next_recommended_action(process_state, building_instruction) -> tuple[Pos, int, int]:
+    """Calculates the completion for the building instruction and determines the next recommended action.
+
+
+    :param building_instruction: Building instruction currently being followed.
+    :param process_state: The current process state.
+    :return Tuple containing the position, motion event code and part id for the next recommended action.
+    """
+
+    completed = process_state.completed_instruction(building_instruction)
+    rec_pos = None
+    rec_event = None
+    rec_part_id = None
+
+    if completed[1] == 3:
+        rec_pos = building_instruction.recommended_attachment_pos
+        rec_event = 3
+        rec_part_id = -1
+
+    if completed[1] == 2:
+        # pipe next
+        rec_event = 2
+        rec_part_id = building_instruction.pipe_id
+        # get attachment that is not deviated
+        for pos in building_instruction.possible_att_pipe_positions:
+            pos, construction_state = process_state.get_construction_state(pos, [3])
+            if construction_state:
+                if not construction_state.deviated:
+                    rec_pos = pos
+                    break
+    elif completed[1] == 1:
+        # fittings next
+        rec_event = 1
+        rec_part_id = constants.fitting_id
+
+        for pos in building_instruction.required_fit_positions:
+            # get required fit pos
+            if None in process_state.get_construction_state(pos, [1]):
+                rec_pos = pos
+                break
+
+    elif completed[0]:
+        # layout complete, get next incomplete layout
+
+        for layout in process_state.aimed_solution.ordered_trails:
+            building_instruction = process_state.building_instructions.get(layout)
+            if not building_instruction.layout_completed:
+                return get_next_recommended_action(process_state, building_instruction)
+
+    return rec_pos, rec_event, rec_part_id

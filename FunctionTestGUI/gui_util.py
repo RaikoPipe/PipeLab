@@ -5,7 +5,6 @@ import tkinter as tk
 from copy import deepcopy
 from idlelib.tooltip import Hovertip
 from tkinter import ttk
-
 from typing import Optional
 
 import numpy as np
@@ -17,8 +16,11 @@ from ProcessPlanning.ProcessPlanner import ProcessPlanner
 from ProcessPlanning.ProcessState import ProcessState
 from ProcessPlanning.pp_data_class.ConstructionState import ConstructionState
 from ProcessPlanning.pp_data_class.EventInfo import EventInfo
+from type_dictionary.common_types import StateGrid
 
 message_count = 0
+
+
 def get_style_from_construction_state(construction_state: Optional[ConstructionState]):
     style = free_style
     if construction_state:
@@ -194,12 +196,12 @@ def update_solution_grid(tentative_state: ProcessState, button_grid, initial_sty
             button_grid[pos].configure(style=pipe_style)
 
 
-def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, tree, style_grid,
-                             initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid):
+def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, process_message_tree,
+                             style_grid,
+                             initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid, root=None):
     output = process_planner.main((pos, event_code), handle_detour_events=True,
                                   ignore_part_check=False)
     pprint.pprint(output)
-    global previous_detour_trails
     process_state = output.process_state
     messages = output.messages
     next_recommended_action = output.next_recommended_action
@@ -216,13 +218,13 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
     global message_count
     if message:
-        tree.insert("", index=tk.END, tag=message_count, iid=message_count,
-                    text=message.replace("Process Planner: ", ""))
+        process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count,
+                                    text=message.replace("Process Planner: ", ""))
         if any((event_info.deviated, event_info.unnecessary, event_info.misplaced)):
             if not event_info.removal:
-                tree.tag_configure(tagname=message_count, background="yellow2")
+                process_message_tree.tag_configure(tagname=message_count, background="yellow2")
         else:
-            tree.tag_configure(tagname=message_count, background="green2")
+            process_message_tree.tag_configure(tagname=message_count, background="green2")
 
         #     else:
         #         tree.tag_configure(tagname=message_count, background="green2")
@@ -230,19 +232,19 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
         #     tree.tag_configure(tagname=message_count, background="yellow")
 
         if event_info.error:
-            tree.tag_configure(tagname=message_count, background="red3", foreground="white")
+            process_message_tree.tag_configure(tagname=message_count, background="red3", foreground="white")
 
         extra_message_ids = [message_count]
         message_count += 1
 
         if special_message:
-            tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=special_message)
+            process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=special_message)
             extra_message_ids.append(message_count)
             message_count += 1
 
         if next_recommended_action:
-            tree.insert("", index=tk.END, tag=message_count, iid=message_count,
-                        text="Next recommended action: " + str(next_recommended_action))
+            process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count,
+                                        text="Next recommended action: " + str(next_recommended_action))
             extra_message_ids.append(message_count)
             message_count += 1
 
@@ -258,8 +260,8 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
                 value = tuple(value)  # tkinter gets key error on sets
             if value:
                 value = str(value)
-                tree.insert("", index=tk.END, iid=message_count, tag=message_count,
-                            text=str.format(f"{attribute}: {value}"))
+                process_message_tree.insert("", index=tk.END, iid=message_count, tag=message_count,
+                                            text=str.format(f"{attribute}: {value}"))
                 extra_message_ids.append(message_count)
                 message_count += 1
 
@@ -267,11 +269,11 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
         for idx, child_message_id in enumerate(extra_message_ids):
             if idx == 0:
                 continue
-            tree.move(child_message_id, parent_message_id, idx - 1)
+            process_message_tree.move(child_message_id, parent_message_id, idx - 1)
 
     if detour_message:
-        tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=detour_message)
-        tree.tag_configure(tagname=message_count, background="maroon1")
+        process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=detour_message)
+        process_message_tree.tag_configure(tagname=message_count, background="maroon1")
         message_count += 1
 
         # todo: make tidier information output
@@ -302,15 +304,16 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
 
     part_id = event_info.part_id
     if process_planner.last_process_state.completion == 1:
-        tree.insert("", index=tk.END, tag=message_count, iid=message_count, text="Construction complete!")
-        tree.tag_configure(tagname=message_count, background="gold")
+        process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count,
+                                    text="Construction complete!")
+        process_message_tree.tag_configure(tagname=message_count, background="gold")
         message_count += 1
 
     for p_id in process_planner.last_process_state.part_stock.keys():
         item = part_stock_tree.get_children()[p_id]
         part_stock_tree.item(item, values=(p_id, process_planner.last_process_state.picked_parts.count(p_id),
                                            process_planner.last_process_state.part_stock[p_id]))
-    tree.yview_moveto(1)
+    process_message_tree.yview_moveto(1)
 
 
 def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree):
@@ -325,7 +328,7 @@ def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_sto
     tree.yview_moveto(1)
 
 
-def get_button_grid(state_grid: np.ndarray, absolute_trail, start, goal, button_grid_frame,
+def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_grid_frame,
                     process_planner: Optional[ProcessPlanner],
                     part_select_option: Optional[tk.IntVar], tree, part_stock_tree, solution_button_grid):
     # Grid Button

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from type_dictionary.constants import fitting_id
-from PathFinding.util.path_math import sum_pos, get_direction
+from PathFinding.path_finding_util.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
-from PathFinding.util.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, get_transition
+from PathFinding.path_finding_util.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, \
+    get_transition
 from type_dictionary.common_types import Pos
+from type_dictionary.constants import fitting_id
 
 
 def out_of_bounds(neighbor_node: tuple, state_grid):

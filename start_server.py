@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from path_problem_example import path_problem
-from OPC_UA import Server
-
 import asyncio
 import logging
+
+from OPC_UA import Server
+from pathfinding_example import path_problem
 
 logging.basicConfig(level=logging.INFO)
 asyncio.run(Server.main(path_problem))

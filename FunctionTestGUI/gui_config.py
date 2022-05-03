@@ -19,8 +19,9 @@ treeview_style = "TREESTYLE.Treeview"
 
 dark_theme = False
 
+
 def set_visualization_style(button_height, button_width, font, style):
-    """visualization settings"""
+    """GUI visualization settings"""
     style.configure(free_style, background="white", width=button_width, height=button_height, font=font)
     style.configure(pipe_style, background="blue", width=button_width, height=button_height, font=font)
     style.configure(obs_style, background="orange", width=button_width, height=button_height, font=font)
