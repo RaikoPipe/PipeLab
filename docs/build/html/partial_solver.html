@@ -82,7 +82,7 @@
 <span id="partial-solver-module"></span><h1>partial_solver module<a class="headerlink" href="#module-partial_solver" title="Permalink to this headline"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="partial_solver.fuse_partial_solutions">
-<span class="sig-prename descclassname"><span class="pre">partial_solver.</span></span><span class="sig-name descname"><span class="pre">fuse_partial_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partial_solutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_layouts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_path_problem</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/partial_solver.html#fuse_partial_solutions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#partial_solver.fuse_partial_solutions" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">partial_solver.</span></span><span class="sig-name descname"><span class="pre">fuse_partial_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partial_solutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_layouts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#partial_solver.fuse_partial_solutions" title="Permalink to this definition"></a></dt>
 <dd><p>Fuses partial solutions and completed layouts into a complete solution from start to goal of the initial path problem.
 Only partially checks the validity of the complete solution. Partial solutions and completed layouts must therefore
 be compatible and equal to a valid assembly layout.</p>
@@ -90,21 +90,24 @@ be compatible and equal to a valid assembly layout.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="partial_solver.get_partial_solutions">
-<span class="sig-prename descclassname"><span class="pre">partial_solver.</span></span><span class="sig-name descname"><span class="pre">get_partial_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outgoing_node_pairs_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closed_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outgoing_node_directions_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/partial_solver.html#get_partial_solutions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#partial_solver.get_partial_solutions" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">partial_solver.</span></span><span class="sig-name descname"><span class="pre">get_partial_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outgoing_node_pairs_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closed_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outgoing_node_directions_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#partial_solver.get_partial_solutions" title="Permalink to this definition"></a></dt>
 <dd><p>Tries to generate partial solutions with the given node pairs. Node pairs may be excluded if
 no solution to any other node is found. Node pairs in the same tuple are prevented from connecting.</p>
-<p>Args:</p>
-<blockquote>
-<div><p>outgoing_node_pairs_set: Set of node pairs that represent the end points of a layout
-closed_list: List of node pairs that are excluded from connecting.
-outgoing_node_directions_dict: Dictionary containing the directions each node can be connected to.
-state_grid: #todo: reference
-part_stock: todo: reference
-path_problem: :class: ‘classes.PathProblem.PathProblem’</p>
-</div></blockquote>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>]</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.outgoing_node_pairs_set"></span><strong>outgoing_node_pairs_set</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.outgoing_node_pairs_set">¶</a> – Set of node pairs that represent the end points of a layout</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.closed_list"></span><strong>closed_list</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.closed_list">¶</a> – List of node pairs that are excluded from connecting.</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.outgoing_node_directions_dict"></span><strong>outgoing_node_directions_dict</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.outgoing_node_directions_dict">¶</a> – Dictionary containing the directions each node can be connected to.</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.state_grid">¶</a> – #todo: reference</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.part_stock"></span><strong>part_stock</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.part_stock">¶</a> – todo: reference</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.path_problem">¶</a> – <dl class="field-list simple">
+<dt class="field-odd">class</dt>
+<dd class="field-odd"><p>’classes.PathProblem.PathProblem’</p>
+</dd>
+</dl>
+</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

@@ -86,114 +86,96 @@
 <span id="ps-util-module"></span><h1>ps_util module<a class="headerlink" href="#module-ps_util" title="Permalink to this headline"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="ps_util.construct_building_instructions_from_solution">
-<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">construct_building_instructions_from_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps_util.html#construct_building_instructions_from_solution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ps_util.construct_building_instructions_from_solution" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">construct_building_instructions_from_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ps_util.construct_building_instructions_from_solution" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs building instructions from the given solution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="ps_util.construct_building_instructions_from_solution.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_building_instructions_from_solution.params.solution">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>) – See <a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a></p>
+<dd class="field-odd"><p><span class="target" id="ps_util.construct_building_instructions_from_solution.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_building_instructions_from_solution.params.solution">¶</a> – See <a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a></p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessState.building_instructions</span></code></p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessState.building_instructions</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ps_util.construct_detour_building_instruction">
-<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">construct_detour_building_instruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_tup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">possible_att_pipe_positions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps_util.html#construct_detour_building_instruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ps_util.construct_detour_building_instruction" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">construct_detour_building_instruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_tup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">possible_att_pipe_positions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ps_util.construct_detour_building_instruction" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a building instruction from given parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ps_util.construct_detour_building_instruction.params.length"></span><strong>length</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_detour_building_instruction.params.length">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Length of the trail.</p></li>
-<li><p><span class="target" id="ps_util.construct_detour_building_instruction.params.fit_tup"></span><strong>fit_tup</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_detour_building_instruction.params.fit_tup">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Tuple containing two positions</p></li>
-<li><p><span class="target" id="ps_util.construct_detour_building_instruction.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_detour_building_instruction.params.state_grid">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – See type</p></li>
-<li><p><span class="target" id="ps_util.construct_detour_building_instruction.params.possible_att_pipe_positions"></span><strong>possible_att_pipe_positions</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_detour_building_instruction.params.possible_att_pipe_positions">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Trail containing positions the pipe of this new layout needs to occupy.</p></li>
+<li><p><span class="target" id="ps_util.construct_detour_building_instruction.params.length"></span><strong>length</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_detour_building_instruction.params.length">¶</a> – Length of the trail.</p></li>
+<li><p><span class="target" id="ps_util.construct_detour_building_instruction.params.fit_tup"></span><strong>fit_tup</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_detour_building_instruction.params.fit_tup">¶</a> – Tuple containing two positions</p></li>
+<li><p><span class="target" id="ps_util.construct_detour_building_instruction.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_detour_building_instruction.params.state_grid">¶</a> – See type</p></li>
+<li><p><span class="target" id="ps_util.construct_detour_building_instruction.params.possible_att_pipe_positions"></span><strong>possible_att_pipe_positions</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_detour_building_instruction.params.possible_att_pipe_positions">¶</a> – Trail containing positions the pipe of this new layout needs to occupy.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ps_util.construct_trail">
-<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">construct_trail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps_util.html#construct_trail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ps_util.construct_trail" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">construct_trail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ps_util.construct_trail" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs and returns a trail by iterating through length starting from fit_pos towards direction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ps_util.construct_trail.params.length"></span><strong>length</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_trail.params.length">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Length of the trail.</p></li>
-<li><p><span class="target" id="ps_util.construct_trail.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_trail.params.direction">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Direction from fit_pos.</p></li>
-<li><p><span class="target" id="ps_util.construct_trail.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_trail.params.pos">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Starting position.</p></li>
+<li><p><span class="target" id="ps_util.construct_trail.params.length"></span><strong>length</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_trail.params.length">¶</a> – Length of the trail.</p></li>
+<li><p><span class="target" id="ps_util.construct_trail.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_trail.params.direction">¶</a> – Direction from fit_pos.</p></li>
+<li><p><span class="target" id="ps_util.construct_trail.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#ps_util.construct_trail.params.pos">¶</a> – Starting position.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ps_util.get_completion_proportion">
-<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">get_completion_proportion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instructions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps_util.html#get_completion_proportion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ps_util.get_completion_proportion" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">get_completion_proportion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instructions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ps_util.get_completion_proportion" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates the proportion of building instructions with a true state in the attribute layout_completed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="ps_util.get_completion_proportion.params.building_instructions"></span><strong>building_instructions</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_completion_proportion.params.building_instructions">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code>]) – See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessState.building_instructions</span></code></p>
+<dd class="field-odd"><p><span class="target" id="ps_util.get_completion_proportion.params.building_instructions"></span><strong>building_instructions</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_completion_proportion.params.building_instructions">¶</a> – See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessState.building_instructions</span></code></p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Completion Proportion</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Completion Proportion</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ps_util.get_neighboring_layouts">
-<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">get_neighboring_layouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trail</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered_trails</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps_util.html#get_neighboring_layouts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ps_util.get_neighboring_layouts" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">get_neighboring_layouts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trail</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered_trails</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ps_util.get_neighboring_layouts" title="Permalink to this definition"></a></dt>
 <dd><p>Returns all trails that are neighbors to current_layout according to ordered_trails.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ps_util.get_neighboring_layouts.params.trail"></span><strong>trail</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_neighboring_layouts.params.trail">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – The layout to which neighbors are to be found</p></li>
-<li><p><span class="target" id="ps_util.get_neighboring_layouts.params.ordered_trails"></span><strong>ordered_trails</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_neighboring_layouts.params.ordered_trails">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]) – See ordered_trails in <code class="xref py py-attr docutils literal notranslate"><span class="pre">ordered_trails</span></code></p></li>
+<li><p><span class="target" id="ps_util.get_neighboring_layouts.params.trail"></span><strong>trail</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_neighboring_layouts.params.trail">¶</a> – The layout to which neighbors are to be found</p></li>
+<li><p><span class="target" id="ps_util.get_neighboring_layouts.params.ordered_trails"></span><strong>ordered_trails</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_neighboring_layouts.params.ordered_trails">¶</a> – See ordered_trails in <code class="xref py py-attr docutils literal notranslate"><span class="pre">ordered_trails</span></code></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>List containing neighboring trails</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List containing neighboring trails</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="ps_util.get_optimal_attachment_pos">
-<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">get_optimal_attachment_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/ps_util.html#get_optimal_attachment_pos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ps_util.get_optimal_attachment_pos" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">ps_util.</span></span><span class="sig-name descname"><span class="pre">get_optimal_attachment_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ps_util.get_optimal_attachment_pos" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the best attachment position. This is evaluated by two factors: The amount of obstacles surrounding the position
 and the distance relative to the middle of the part.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ps_util.get_optimal_attachment_pos.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_optimal_attachment_pos.params.part_id">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Part ID</p></li>
-<li><p><span class="target" id="ps_util.get_optimal_attachment_pos.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_optimal_attachment_pos.params.direction">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The direction though which positions are iterated through the function</p></li>
-<li><p><span class="target" id="ps_util.get_optimal_attachment_pos.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_optimal_attachment_pos.params.pos">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Starting position of a pipe.</p></li>
-<li><p><span class="target" id="ps_util.get_optimal_attachment_pos.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_optimal_attachment_pos.params.state_grid">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – See type for explanation. Only parts and obstacles are considered as obstacles.</p></li>
+<li><p><span class="target" id="ps_util.get_optimal_attachment_pos.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_optimal_attachment_pos.params.part_id">¶</a> – Part ID</p></li>
+<li><p><span class="target" id="ps_util.get_optimal_attachment_pos.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_optimal_attachment_pos.params.direction">¶</a> – The direction though which positions are iterated through the function</p></li>
+<li><p><span class="target" id="ps_util.get_optimal_attachment_pos.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_optimal_attachment_pos.params.pos">¶</a> – Starting position of a pipe.</p></li>
+<li><p><span class="target" id="ps_util.get_optimal_attachment_pos.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#ps_util.get_optimal_attachment_pos.params.state_grid">¶</a> – See type for explanation. Only parts and obstacles are considered as obstacles.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>rec_att_pos: Optimal attachment position</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>rec_att_pos: Optimal attachment position</p>
 </dd>
 </dl>
 </dd></dl>

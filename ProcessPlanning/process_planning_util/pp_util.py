@@ -1,17 +1,13 @@
-from __future__ import annotations
-
 from copy import deepcopy
-from typing import Optional, Union
+from typing import Optional
 
 from PathFinding import partial_solver
 from PathFinding.path_finding_util.path_math import get_direction, diff_pos
 from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Solution import Solution
 from ProcessPlanning.ProcessState import ProcessState
-from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
 from type_dictionary import constants
-from type_dictionary.common_types import Trail, Pos
-from type_dictionary.special_types import BuildingInstructions
+from type_dictionary.special_types import *
 from type_dictionary.constants import horizontal_directions, vertical_directions
 
 message_dict = {1: "fitting", 2: "pipe", 3: "attachment"}
@@ -55,12 +51,12 @@ def get_completed_instructions(building_instructions: BuildingInstructions) -> \
     return completed_instructions
 
 
-def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> set[tuple[Pos, Pos]]:
+def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> NodePairSet:
     """Returns all outgoing points in building_instructions as a connection. Interpolates them if they are
     connected.
 
     :param building_instructions: See :attr:`ProcessState.building_instructions`.
-    :return: Set with all outgoing node pairs.
+    :return: :obj:`NodePairSet`
     """
 
     outgoing_node_pairs_set = set()
@@ -116,12 +112,13 @@ def get_outgoing_node_directions(building_instructions: BuildingInstructions):
     return direction_dict
 
 
-def adjust_pos_in_node_pairs_set(node_pairs_set: set[tuple[Pos, Union[Pos, tuple]]], pos: Pos):
+def adjust_pos_in_node_pairs_set(node_pairs_set: NodePairSet, pos: Pos):
     """Remove pos from first node pair tuple in node_pairs_set that contains it. If not found,
     then add as a node pair tuple containing only pos.
 
-    :param pos: Pos to be evaluated.
-    :param node_pairs_set: Set with all outgoing node pairs."""
+    Args:
+        pos(:obj:`~common_types.Pos`): Pos to be evaluated.
+        node_pairs_set(:obj:`~special_types.NodePairSet`): Set with all outgoing node pairs."""
     for connection in node_pairs_set:
         if pos in connection:
             set_connection = set(connection)
@@ -136,9 +133,13 @@ def adjust_pos_in_node_pairs_set(node_pairs_set: set[tuple[Pos, Union[Pos, tuple
 def get_solution_on_detour_event(initial_path_problem: PathProblem, process_state: ProcessState, detour_event) -> \
         Optional[Solution]:
     """Tries to get a new solution on a detour event.
+    Args:
 
-    :param initial_path_problem: The original path problem.
-    :param process_state: The current process state.
+    initial_path_problem (:class:`PathProblem`): The original path problem.
+    process_state (:class:`ProcessState`): The current process state.
+
+    Returns:
+        Optional[:class:`Solution`]
     """
     completed_instructions = get_completed_instructions(process_state.building_instructions)
 
@@ -232,7 +233,7 @@ def make_error_message(event_pos: Pos, additional_message: str):
     return message
 
 
-def get_next_recommended_action(process_state, building_instruction) -> tuple[Pos, int, int]:
+def get_next_recommended_action(process_state, building_instruction) -> Action:
     """Calculates the completion for the building instruction and determines the next recommended action.
 
     :param building_instruction: Building instruction currently being followed.

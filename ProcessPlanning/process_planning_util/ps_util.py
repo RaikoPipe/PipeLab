@@ -3,8 +3,7 @@ from __future__ import annotations
 import PathFinding.path_finding_util.restrictions
 from PathFinding.path_finding_util.path_math import get_direction, diff_pos, manhattan_distance
 from PathFinding.pf_data_class.Solution import Solution
-from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
-from type_dictionary.common_types import Pos, Trail, StateGrid
+from type_dictionary.special_types import *
 
 
 def get_optimal_attachment_pos(state_grid: StateGrid, pos: Pos, part_id: int, direction: Pos) -> Pos:
@@ -67,7 +66,7 @@ def get_optimal_attachment_pos(state_grid: StateGrid, pos: Pos, part_id: int, di
         return rec_att_pos
 
 
-def get_neighboring_layouts(trail: Trail, ordered_trails: list[Trail]) -> list[Trail]:
+def get_neighboring_layouts(trail: Trail, ordered_trails: OrderedTrails) -> TrailList:
     """Returns all trails that are neighbors to current_layout according to ordered_trails.
 
     :param trail: The layout to which neighbors are to be found
@@ -100,7 +99,7 @@ def construct_trail(length: int, direction: Pos, pos: Pos) -> Trail:
     return tuple(trail)
 
 
-def construct_detour_building_instruction(length: int, fit_tup: tuple[Pos], state_grid: StateGrid,
+def construct_detour_building_instruction(length: int, fit_tup: NodePair, state_grid: StateGrid,
                                           possible_att_pipe_positions: Trail) -> BuildingInstruction:
     """Constructs a building instruction from given parameters.
 
@@ -125,7 +124,7 @@ def construct_detour_building_instruction(length: int, fit_tup: tuple[Pos], stat
     return layout_state
 
 
-def construct_building_instructions_from_solution(solution: Solution) -> dict[Trail, BuildingInstruction]:
+def construct_building_instructions_from_solution(solution: Solution) -> BuildingInstructions:
     """Constructs building instructions from the given solution.
 
     :param solution: See :class:`~Solution`
@@ -158,7 +157,7 @@ def construct_building_instructions_from_solution(solution: Solution) -> dict[Tr
     return building_instructions
 
 
-def get_completion_proportion(building_instructions: dict[Trail, BuildingInstruction]) -> float:
+def get_completion_proportion(building_instructions: BuildingInstructions) -> float:
     """Calculates the proportion of building instructions with a true state in the attribute layout_completed.
 
     :param building_instructions: See :attr:`ProcessState.building_instructions`

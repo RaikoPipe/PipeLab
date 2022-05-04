@@ -1,20 +1,20 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import Union, Optional
+from typing import Optional
 
 from PathFinding.path_finding_util.path_math import get_direction, diff_pos
 from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Weights import Weights
 from PathFinding.search_algorithm import find_path
 from ProcessPlanning.ProcessState import ProcessState
-from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
 from ProcessPlanning.pp_data_class.EventInfo import EventInfo
 from ProcessPlanning.pp_data_class.ProcessOutput import ProcessOutput
 from ProcessPlanning.process_planning_util.pp_util import determine_next_part, get_solution_on_detour_event, \
     make_registration_message, \
     make_error_message, message_dict, get_next_recommended_action
 from type_dictionary.common_types import *
+from type_dictionary.special_types import MotionEvent, BuildingInstructions
 
 standard_weights = Weights(1, 1, 1)
 standard_algorithm = "mcsa*"
@@ -97,7 +97,7 @@ class ProcessPlanner:
         self.weights = optimization_weights
         self.algorithm = algorithm
 
-    def main(self, motion_event: , handle_detour_events: bool = True,
+    def main(self, motion_event: MotionEvent, handle_detour_events: bool = True,
              ignore_part_check: bool = False, ignore_obstructions: bool = False) -> ProcessOutput:
         """Main method of ProcessPlanning. Takes worker_event as input and sends information about the event to
         ProcessState. Prints message output of ProcessState and handles detour events.
@@ -141,7 +141,7 @@ class ProcessPlanner:
                 # correct worker event pos
                 motion_event = ((motion_event[0][0] - direction[0], motion_event[0][1] - direction[1]), motion_event[1])
 
-        messages = self.send_placement_event(worker_event=motion_event,
+        messages = self.send_placement_event(event_pos=motion_event[0], event_code=motion_event[1],
                                              ignore_part_check=ignore_part_check, process_state=tentative_process_state,
                                              ignore_obstructions=ignore_obstructions)
 
@@ -188,11 +188,11 @@ class ProcessPlanner:
         return process_output
 
     @staticmethod
-    def send_placement_event(worker_event: tuple[Pos, int], process_state: ProcessState,
+    def send_placement_event(event_pos: Pos, event_code:int, process_state: ProcessState,
                              ignore_part_check: bool = False, ignore_obstructions: bool = False):
         """Sends a new placement/removal event to be evaluated and registered in current ProcessState."""
 
-        event_info: EventInfo = process_state.evaluate_placement(event_pos=worker_event[0], event_code=worker_event[1],
+        event_info: EventInfo = process_state.evaluate_placement(event_pos=event_pos, event_code=event_code,
                                                                  ignore_part_check=ignore_part_check,
                                                                  ignore_obstructions=ignore_obstructions)
 
@@ -297,7 +297,7 @@ class ProcessPlanner:
                 process_state.last_event_info.detour_event = detour_event
         return detour_message
 
-    def handle_detour_event(self, detour_event: dict[Trail, BuildingInstruction], process_state: ProcessState) -> tuple[
+    def handle_detour_event(self, detour_event: BuildingInstructions, process_state: ProcessState) -> tuple[
         str, ProcessState]:
         """Handles the detour event, applies new solution if found.
 

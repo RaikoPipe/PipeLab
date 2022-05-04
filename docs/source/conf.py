@@ -13,7 +13,6 @@
 import os
 import sys
 
-
 sys.path.insert(0, os.path.abspath('../../../'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab/FunctionTestGUI'))
@@ -25,9 +24,9 @@ sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding/path_finding_ut
 sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning/pp_data_class'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning/process_planning_util'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab/type_dictionary'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/type_dictionary/common_types.py'))
 
-from type_dictionary.common_types import *
+# from type_dictionary.common_types import *
+# from type_dictionary.special_types import *
 
 print(sys.path[0])
 
@@ -47,14 +46,17 @@ html_theme = "sphinx_rtd_theme"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.napoleon", "sphinx.ext.autodoc", "sphinx_autodoc_typehints", "sphinx.ext.coverage",
-              "sphinx.ext.viewcode",
-              "sphinx.ext.autosectionlabel", "sphinx_paramlinks","sphinx_toolbox.more_autodoc.genericalias"]#, "sphinx_autodoc_typehints"]
+extensions = ['sphinx.ext.napoleon',
+              "sphinx.ext.autodoc",
+              "sphinx_paramlinks",
+              # "sphinx.ext.coverage",
+              # "sphinx.ext.viewcode",
+              "sphinx.ext.autosectionlabel",
+              ]  # "]#, "sphinx_autodoc_typehints"]
 
-#autodoc_typehints = "none"
+napoleon_use_param = True
 
-
-napoleon_google_docstring = False
+autodoc_typehints = "none"
 
 # extensions.append("autoapi.extension")
 #
@@ -70,15 +72,24 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 autodoc_type_aliases = {
-    "Pos": Pos,
-    "Node": Node,
-    "Path": Path,
-    "NodePath": NodePath,
-    "Trail": Trail,
-    "NodeTrail": NodeTrail,
-    "DirectedConnection": DirectedConnection,
-    "UndirectedConnection": UndirectedConnection,
-    "StateGrid": StateGrid
+    "Pos": "common_types.Pos",
+    "Node": "common_types.Node",
+    "Path": "common_types.Path",
+    "NodePath": "common_types.NodePath",
+    "Trail": "common_types.Trail",
+    "NodeTrail": "common_types.NodeTrail",
+    "DirectedConnection": "common_types.DirectedConnection",
+    "UndirectedConnection": "common_types.UndirectedConnection",
+    "StateGrid": "common_types.StateGrid",
+    "MotionEvent": "special_types.MotionEvent",
+    "BuildingInstructions": "special_types.BuildingInstructions",
+    "Action": "special_types.Action",
+    "NodePair": "special_types.NodePair",
+    "NodePairSet": "special_types.NodePairSet",
+    "OrderedTrails": "special_types.OrderedTrails",
+    "TrailList": "special_types.TrailList",
+    "DirectionDict": "special_types.DirectionDict",
+    "PosSet": "special_types.PosSet"
 }
 
 # -- Options for HTML output -------------------------------------------------

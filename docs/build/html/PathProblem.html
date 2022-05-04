@@ -89,75 +89,78 @@
 <span id="pathproblem-module"></span><h1>PathProblem module<a class="headerlink" href="#module-PathProblem" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="PathProblem.PathProblem">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PathProblem.</span></span><span class="sig-name descname"><span class="pre">PathProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_part</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/PathProblem.html#PathProblem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#PathProblem.PathProblem" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PathProblem.</span></span><span class="sig-name descname"><span class="pre">PathProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_part</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PathProblem.PathProblem" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Dataclass that contains detailed information about the path problem.</p>
-<dl>
-<dt>Args:</dt><dd><p>state_grid:
-start_pos:
-goal_pos:</p>
-<p>start_directions: directions that start is restricted to
-goal_directions: directions that goal is restricted to (i.e. last part that is linked to the goal)
-transition_points: Contains border markings, beyond which nodes lie in different plane</p>
-<p>starting_part: signifies if there is a starting part; None: No part; 0: Corner; 1: Pipe</p>
-<p>part_stock: amount of parts available for assembling a solution
-part_cost: dictionary that contains the replacement costs (or opportunity costs) of parts</p>
-<p>weights:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="PathProblem.PathProblem.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.state_grid">¶</a> – </p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.start_pos"></span><strong>start_pos</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.start_pos">¶</a> – </p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.goal_pos"></span><strong>goal_pos</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.goal_pos">¶</a> – </p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.start_directions"></span><strong>start_directions</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.start_directions">¶</a> – directions that start is restricted to</p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.goal_directions"></span><strong>goal_directions</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.goal_directions">¶</a> – directions that goal is restricted to (i.e. last part that is linked to the goal)</p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.transition_points"></span><strong>transition_points</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.transition_points">¶</a> – Contains border markings, beyond which nodes lie in different plane</p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.starting_part"></span><strong>starting_part</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.starting_part">¶</a> – signifies if there is a starting part; None: No part; 0: Corner; 1: Pipe</p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.part_stock"></span><strong>part_stock</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.part_stock">¶</a> – amount of parts available for assembling a solution</p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.part_cost"></span><strong>part_cost</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.part_cost">¶</a> – dictionary that contains the replacement costs (or opportunity costs) of parts</p></li>
+<li><p><span class="target" id="PathProblem.PathProblem.params.weights"></span><strong>weights</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.weights">¶</a> – </p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.algorithm">
-<span class="sig-name descname"><span class="pre">algorithm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#PathProblem.PathProblem.algorithm" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">algorithm</span></span><a class="headerlink" href="#PathProblem.PathProblem.algorithm" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.goal_directions">
-<span class="sig-name descname"><span class="pre">goal_directions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">Pos</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#PathProblem.PathProblem.goal_directions" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">goal_directions</span></span><a class="headerlink" href="#PathProblem.PathProblem.goal_directions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.goal_pos">
-<span class="sig-name descname"><span class="pre">goal_pos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Pos</span></em><a class="headerlink" href="#PathProblem.PathProblem.goal_pos" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">goal_pos</span></span><a class="headerlink" href="#PathProblem.PathProblem.goal_pos" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.part_cost">
-<span class="sig-name descname"><span class="pre">part_cost</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#PathProblem.PathProblem.part_cost" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">part_cost</span></span><a class="headerlink" href="#PathProblem.PathProblem.part_cost" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.part_stock">
-<span class="sig-name descname"><span class="pre">part_stock</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span></em><a class="headerlink" href="#PathProblem.PathProblem.part_stock" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">part_stock</span></span><a class="headerlink" href="#PathProblem.PathProblem.part_stock" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.start_directions">
-<span class="sig-name descname"><span class="pre">start_directions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">Pos</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#PathProblem.PathProblem.start_directions" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">start_directions</span></span><a class="headerlink" href="#PathProblem.PathProblem.start_directions" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.start_pos">
-<span class="sig-name descname"><span class="pre">start_pos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Pos</span></em><a class="headerlink" href="#PathProblem.PathProblem.start_pos" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">start_pos</span></span><a class="headerlink" href="#PathProblem.PathProblem.start_pos" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.starting_part">
-<span class="sig-name descname"><span class="pre">starting_part</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#PathProblem.PathProblem.starting_part" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">starting_part</span></span><a class="headerlink" href="#PathProblem.PathProblem.starting_part" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.state_grid">
-<span class="sig-name descname"><span class="pre">state_grid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StateGrid</span></em><a class="headerlink" href="#PathProblem.PathProblem.state_grid" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">state_grid</span></span><a class="headerlink" href="#PathProblem.PathProblem.state_grid" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.transition_points">
-<span class="sig-name descname"><span class="pre">transition_points</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">set</span><span class="p"><span class="pre">[</span></span><span class="pre">Pos</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#PathProblem.PathProblem.transition_points" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">transition_points</span></span><a class="headerlink" href="#PathProblem.PathProblem.transition_points" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.weights">
-<span class="sig-name descname"><span class="pre">weights</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="Weights.html#module-Weights" title="Weights"><span class="pre">Weights</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#PathProblem.PathProblem.weights" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#PathProblem.PathProblem.weights" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </dd></dl>

@@ -6,6 +6,7 @@ from PathFinding.path_finding_util.path_util import get_corner_neighbors, get_pi
     get_transition
 from type_dictionary.common_types import Pos
 from type_dictionary.constants import fitting_id
+from type_dictionary.special_types import DirectionDict, PosSet
 
 
 def out_of_bounds(neighbor_node: tuple, state_grid):
@@ -59,7 +60,7 @@ def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid, pa
     return False
 
 
-def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: dict[Pos, Pos]) -> bool:
+def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: DirectionDict) -> bool:
     """Checks if the direction restriction of the goal is violated."""
 
     restricted = True
@@ -82,7 +83,7 @@ def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: dict[Pos, Pos]
     return restricted
 
 
-def restrict_neighbor_pos(directions: set[Pos], goal_dict: dict[Pos:Pos], current_pos: tuple,
+def restrict_neighbor_pos(directions: PosSet, goal_dict: DirectionDict, current_pos: tuple,
                           pipe_stock, predecessors, fast_mode, key, start_pos, transition_points) -> set:
     """Determines what neighbors are reachable from the current position and with the available parts. Removes neighbors
     that violate goal restrictions."""

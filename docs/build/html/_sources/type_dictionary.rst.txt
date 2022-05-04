@@ -6,3 +6,4 @@ type_dictionary
 
    common_types
    constants
+   special_types

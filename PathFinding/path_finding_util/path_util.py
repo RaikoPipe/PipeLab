@@ -9,7 +9,7 @@ from PathFinding.pf_data_class.Solution import Solution
 from type_dictionary.common_types import *
 
 
-def construct_solution(predecessors: dict[Pos,Predecessor], current_node, state_grid, score,
+def construct_solution(predecessors, current_node, state_grid, score,
                        algorithm, path_problem, fast_mode, goal_pos, goal_part) -> Solution:
     """Returns a solution based on given parameters. """
 

@@ -3,9 +3,7 @@ from __future__ import annotations
 import numpy as np
 from typing import TypeAlias
 
-
-Pos: TypeAlias = tuple[int, int]
-"""2d coordinates/position of a node."""
+Pos = tuple[int, int] #: 2d coordinates/position of a node.
 
 Node: TypeAlias = tuple[Pos, int]
 """Node contains 2D coordinates and an ID (state or part ID)."""
@@ -37,3 +35,4 @@ States:
 2: occupied by part
 3: transition
 """
+

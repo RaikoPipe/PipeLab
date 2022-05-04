@@ -85,37 +85,20 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Data class that contains information about a process state</p>
 <dl class="field-list simple">
-<dt class="field-odd">Variables</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>state_grid</strong> – Numpy array that shows where obstacles and completed layouts occupy nodes</p></li>
-<li><p><strong>aimed_solution</strong> – Solution that contains information of the desired construction./</p></li>
-</ul>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.params.solution">¶</a> (<a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>) – <a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a></p>
 </dd>
-</dl>
-<p>Is recalculated after a detour event.
-:ivar last_event_trail: Layout trail at which the last non deviated event occurred.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Variables</dt>
-<dd class="field-odd"><ul class="simple">
+<dt class="field-even">Variables</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>state_grid</strong> – <a class="reference internal" href="common_types.html#common_types.StateGrid" title="common_types.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a> that shows where obstacles and completed layouts occupy nodes</p></li>
+<li><p><strong>aimed_solution</strong> – <a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> that contains information of the desired construction. Is recalculated after a detour event.</p></li>
+<li><p><strong>last_event_trail</strong> – <a class="reference internal" href="common_types.html#common_types.Trail" title="common_types.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a> at which the last non deviated event occurred.</p></li>
 <li><p><strong>part_stock</strong> – Dictionary containing the number of available parts in stock.</p></li>
 <li><p><strong>picked_parts</strong> – List containing parts picked from stock. Parts will be removed upon usage.</p></li>
-<li><p><strong>building_instructions</strong> – Dictionary containing information about the required placements and IDs of parts to</p></li>
+<li><p><strong>building_instructions</strong> – (See <a class="reference internal" href="special_types.html#special_types.BuildingInstructions" title="special_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) Dictionary containing information about the required placements and IDs of parts to complete the construction process. Is recalculated after a detour event.</p></li>
+<li><p><strong>motion_dict</strong> – Dictionary containing all registered motion events that are valid (non-error) that point to a ConstructionState. The keys for pipe events are of the type Trail, while other events are of the type Pos.</p></li>
+<li><p><strong>last_event_info</strong> – (See <a class="reference internal" href="special_types.html#special_types.BuildingInstructions" title="special_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) Dictionary  containing information of the last event that occurred.</p></li>
 </ul>
-</dd>
-</dl>
-<p>:ivar complete the construction process. Is recalculated after a detour event.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Variables</dt>
-<dd class="field-odd"><p><strong>motion_dict</strong> – Dictionary containing all registered motion events that are valid (non-error) that point to</p>
-</dd>
-</dl>
-<p>a ConstructionState. The keys for pipe events are of the type Trail, while other events are of the type Pos.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Variables</dt>
-<dd class="field-odd"><p><strong>last_event_info</strong> – Dictionary containing information of the last event that occurred.</p>
-</dd>
-<dt class="field-even">Parameters</dt>
-<dd class="field-even"><p><span class="target" id="ProcessState.ProcessState.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.params.solution">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>) – :class:”~Solution”</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -125,8 +108,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessState.ProcessState.adjust_motion_dict_to_solution.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.adjust_motion_dict_to_solution.params.solution">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code>) – New solution.</p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.adjust_motion_dict_to_solution.params.detour_event"></span><strong>detour_event</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.adjust_motion_dict_to_solution.params.detour_event">¶</a> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]) – Element that caused detour event: Dictionary containing a trail and building instruction.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.adjust_motion_dict_to_solution.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.adjust_motion_dict_to_solution.params.solution">¶</a> – New solution.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.adjust_motion_dict_to_solution.params.detour_event"></span><strong>detour_event</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.adjust_motion_dict_to_solution.params.detour_event">¶</a> – Element that caused detour event: Dictionary containing a trail and building instruction.</p></li>
 </ul>
 </dd>
 </dl>
@@ -141,6 +124,16 @@
 <dt class="sig sig-object py" id="ProcessState.ProcessState.attachment_placed">
 <span class="sig-name descname"><span class="pre">attachment_placed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.attachment_placed" title="Permalink to this definition"></a></dt>
 <dd><p>Evaluates the placement of an attachment. Notes findings into event_info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessState.ProcessState.attachment_placed.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.attachment_placed.params.event_info">¶</a> – See <a class="reference internal" href="EventInfo.html#module-EventInfo" title="EventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventInfo</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.attachment_placed.params.building_instruction"></span><strong>building_instruction</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.attachment_placed.params.building_instruction">¶</a> – See <a class="reference internal" href="BuildingInstruction.html#module-BuildingInstruction" title="BuildingInstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.attachment_placed.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.attachment_placed.params.event_pos">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.attachment_placed.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.attachment_placed.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -163,9 +156,6 @@ Detour event occurs if:
 <li><p><span class="target" id="ProcessState.ProcessState.check_detour_event.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.check_detour_event.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
-</dd>
 </dl>
 </dd></dl>
 
@@ -174,34 +164,21 @@ Detour event occurs if:
 <span class="sig-name descname"><span class="pre">completed_instruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.completed_instruction" title="Permalink to this definition"></a></dt>
 <dd><p>Checks if the building instruction was completed.
 and returns event code corresponding to its completion state.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ProcessState.ProcessState.evaluate_placement">
 <span class="sig-name descname"><span class="pre">evaluate_placement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_part_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_obstructions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_pipe_id_from_solution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.evaluate_placement" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Evaluates a placement event and registers changes to motion_dict according to building_instructions.</dt><dd><p>Also registers if an instruction has been completed.</p>
-</dd>
-</dl>
+<dd><p>Evaluates a placement event and registers changes to motion_dict according to building_instructions. Also registers if an instruction has been completed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Position where motion event occurred.</p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Event code of motion event.</p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_part_check"></span><strong>ignore_part_check</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_part_check">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Option for ignoring part restrictions. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessPlanner.ignore_part_check</span></code></p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions"></span><strong>ignore_obstructions</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Option for ignoring obstructions. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessPlanner.ignore_obstructions</span></code></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos">¶</a> – Position where motion event occurred.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code">¶</a> – Event code of motion event.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_part_check"></span><strong>ignore_part_check</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_part_check">¶</a> – Option for ignoring part restrictions. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessPlanner.ignore_part_check</span></code></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions"></span><strong>ignore_obstructions</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions">¶</a> – Option for ignoring obstructions. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessPlanner.ignore_obstructions</span></code></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.assume_pipe_id_from_solution"></span><strong>assume_pipe_id_from_solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.assume_pipe_id_from_solution">¶</a> – todo: doc</p></li>
 </ul>
-</dd>
-</dl>
-<p>:param assume_pipe_id_from_solution</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">EventInfo</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -234,18 +211,12 @@ and returns event code corresponding to its completion state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.find_me"></span><strong>find_me</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.find_me">¶</a> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]) – Position or trail to find in motion_dict.</p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.event_codes"></span><strong>event_codes</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.event_codes">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – List containing event codes valid for search.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.find_me"></span><strong>find_me</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.find_me">¶</a> (<em>Union</em><em>[</em><em>Pos</em><em>,</em><em>Trail</em><em>]</em>) – Position or trail to find in motion_dict.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.event_codes"></span><strong>event_codes</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.event_codes">¶</a> – List containing event codes valid for search.</p></li>
 </ul>
 </dd>
-</dl>
-<dl class="simple">
-<dt>:return If nothing was found, returns a tuple containing None, otherwise returns a tuple containing the position</dt><dd><p>or trail and its construction state</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]]</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If nothing was found, returns a tuple containing None, otherwise returns a tuple containing the position or trail and its construction state</p>
 </dd>
 </dl>
 </dd></dl>
@@ -261,14 +232,10 @@ and returns event code corresponding to its completion state.</p>
 <li><p><span class="target" id="ProcessState.ProcessState.get_current_layout_and_building_instruction.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_current_layout_and_building_instruction.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Tuple containing the current layout and building instruction and a value that signifies if the layout has</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple containing the current layout and building instruction and a value that signifies if the layout has changed from the previous one.</p>
 </dd>
 </dl>
-<p>changed from the previous one.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -282,10 +249,7 @@ and returns event code corresponding to its completion state.</p>
 <dd><p>Checks state grid if motion event obstructed obstacle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.obstructed_obstacle.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_obstacle.params.event_pos">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.obstructed_obstacle.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_obstacle.params.event_pos">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -297,15 +261,12 @@ and returns event code corresponding to its completion state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessState.ProcessState.obstructed_part.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_part.params.event_pos">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.obstructed_part.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_part.params.event_code">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.obstructed_part.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_part.params.event_pos">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.obstructed_part.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.obstructed_part.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Event code of part that was obstructed or None if no part was obstructed.</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Event code of part that was obstructed or None if no part was obstructed.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -321,9 +282,6 @@ and returns event code corresponding to its completion state.</p>
 <li><p><span class="target" id="ProcessState.ProcessState.part_removed.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.part_removed.params.event_code">¶</a> – See <a class="reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code" title="ProcessState.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code>]]</p>
-</dd>
 </dl>
 </dd></dl>
 
@@ -333,7 +291,7 @@ and returns event code corresponding to its completion state.</p>
 <dd><p>Handling of a pick event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.pick_part.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.pick_part.params.part_id">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Part ID that was picked.</p>
+<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.pick_part.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.pick_part.params.part_id">¶</a> – Part ID that was picked.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -379,11 +337,6 @@ and returns event code corresponding to its completion state.</p>
 <dt class="sig sig-object py" id="ProcessState.ProcessState.set_completion_state">
 <span class="sig-name descname"><span class="pre">set_completion_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.set_completion_state" title="Permalink to this definition"></a></dt>
 <dd><p>sets completion state of current layout and neighboring layouts. Updates state grid on completed layouts.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
