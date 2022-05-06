@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>search_algorithm module &mdash; PipeLab 2022 documentation</title>
+  <title>Search Algorithm module &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="solution_manager module" href="solution_manager.html" />
+    <link rel="next" title="Solution Manager Module" href="solution_manager.html" />
     <link rel="prev" title="PathFinding" href="PathFinding.html" /> 
 </head>
 
@@ -43,14 +43,14 @@
 <li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">search_algorithm module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">solution_manager module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">partial_solver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">pf_data_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">path_finding_util</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Search Algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -68,7 +68,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-      <li>search_algorithm module</li>
+      <li>Search Algorithm module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/search_algorithm.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -78,15 +78,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-search_algorithm">
-<span id="search-algorithm-module"></span><h1>search_algorithm module<a class="headerlink" href="#module-search_algorithm" title="Permalink to this headline"></a></h1>
-<dl class="py function">
+  <div class="section" id="search-algorithm-module">
+<h1>Search Algorithm module<a class="headerlink" href="#search-algorithm-module" title="Permalink to this headline"></a></h1>
+<p>Contains the search algorithm used for solving path problems (See <a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) (in the context of pipe assembly).
+Using MCSA* as the score calculation method is recommended.</p>
+<span class="target" id="module-search_algorithm"></span><dl class="py function">
 <dt class="sig sig-object py" id="search_algorithm.find_path">
-<span class="sig-prename descclassname"><span class="pre">search_algorithm.</span></span><span class="sig-name descname"><span class="pre">find_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#search_algorithm.find_path" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">search_algorithm.</span></span><span class="sig-name descname"><span class="pre">find_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#search_algorithm.find_path" title="Permalink to this definition"></a></dt>
 <dd><p>Searches for a solution for the given path problem.</p>
+<p>Args:
+path_problem(<a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>): Path problem to solve.
+fast_mode(<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>): Slightly faster, but incomplete search. Not recommended.
+draw_debug(<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>): Debug option. If set to True, shows path drawn via matplotlib.pyplot after each node expansion.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="search_algorithm.find_path.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#search_algorithm.find_path.params.path_problem">¶</a> – <code class="xref py py-class docutils literal notranslate"><span class="pre">PathFinding.pf_data_class.PathProblem.PathProblem</span></code></p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a> when a solution was found, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -103,7 +109,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="PathFinding.html" class="btn btn-neutral float-left" title="PathFinding" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="solution_manager.html" class="btn btn-neutral float-right" title="solution_manager module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="solution_manager.html" class="btn btn-neutral float-right" title="Solution Manager Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

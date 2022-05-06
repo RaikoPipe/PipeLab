@@ -25,8 +25,7 @@ sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning/pp_data_cla
 sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning/process_planning_util'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab/type_dictionary'))
 
-# from type_dictionary.common_types import *
-# from type_dictionary.special_types import *
+
 
 print(sys.path[0])
 
@@ -72,24 +71,24 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 autodoc_type_aliases = {
-    "Pos": "common_types.Pos",
-    "Node": "common_types.Node",
-    "Path": "common_types.Path",
-    "NodePath": "common_types.NodePath",
-    "Trail": "common_types.Trail",
-    "NodeTrail": "common_types.NodeTrail",
-    "DirectedConnection": "common_types.DirectedConnection",
-    "UndirectedConnection": "common_types.UndirectedConnection",
-    "StateGrid": "common_types.StateGrid",
-    "MotionEvent": "special_types.MotionEvent",
-    "BuildingInstructions": "special_types.BuildingInstructions",
-    "Action": "special_types.Action",
-    "NodePair": "special_types.NodePair",
-    "NodePairSet": "special_types.NodePairSet",
-    "OrderedTrails": "special_types.OrderedTrails",
-    "TrailList": "special_types.TrailList",
-    "DirectionDict": "special_types.DirectionDict",
-    "PosSet": "special_types.PosSet"
+    "Pos": "type_aliases.Pos",
+    "Node": "type_aliases.Node",
+    "Path": "type_aliases.Path",
+    "NodePath": "type_aliases.NodePath",
+    "Trail": "type_aliases.Trail",
+    "NodeTrail": "type_aliases.NodeTrail",
+    "DirectedConnection": "type_aliases.DirectedConnection",
+    "UndirectedConnection": "type_aliases.UndirectedConnection",
+    "StateGrid": "type_aliases.StateGrid",
+    "MotionEvent": "type_aliases.MotionEvent",
+    "BuildingInstructions": "class_types.BuildingInstructions",
+    "Action": "type_aliases.Action",
+    "NodePair": "type_aliases.NodePair",
+    "NodePairSet": "type_aliases.NodePairSet",
+    "OrderedTrails": "type_aliases.OrderedTrails",
+    "TrailList": "type_aliases.TrailList",
+    "DirectionDict": "type_aliases.DirectionDict",
+    "PosSet": "type_aliases.PosSet"
 }
 
 # -- Options for HTML output -------------------------------------------------

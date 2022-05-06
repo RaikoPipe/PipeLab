@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pp_data_class" href="pp_data_class.html" />
+    <link rel="next" title="PP Dataclass" href="pp_data_class.html" />
     <link rel="prev" title="ProcessPlanner class" href="ProcessPlanner.html" /> 
 </head>
 
@@ -44,12 +44,12 @@
 <li class="toctree-l1 current"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="ProcessPlanner.html">ProcessPlanner class</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">ProcessState class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">pp_data_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">process_planning_util</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">PP Dataclass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Util Module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -90,14 +90,14 @@
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>state_grid</strong> – <a class="reference internal" href="common_types.html#common_types.StateGrid" title="common_types.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a> that shows where obstacles and completed layouts occupy nodes</p></li>
+<li><p><strong>state_grid</strong> – <a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a> that shows where obstacles and completed layouts occupy nodes</p></li>
 <li><p><strong>aimed_solution</strong> – <a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> that contains information of the desired construction. Is recalculated after a detour event.</p></li>
-<li><p><strong>last_event_trail</strong> – <a class="reference internal" href="common_types.html#common_types.Trail" title="common_types.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a> at which the last non deviated event occurred.</p></li>
-<li><p><strong>part_stock</strong> – Dictionary containing the number of available parts in stock.</p></li>
-<li><p><strong>picked_parts</strong> – List containing parts picked from stock. Parts will be removed upon usage.</p></li>
-<li><p><strong>building_instructions</strong> – (See <a class="reference internal" href="special_types.html#special_types.BuildingInstructions" title="special_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) Dictionary containing information about the required placements and IDs of parts to complete the construction process. Is recalculated after a detour event.</p></li>
+<li><p><strong>last_event_trail</strong> – <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a> at which the last non deviated event occurred.</p></li>
+<li><p><strong>part_stock</strong> – See <code class="xref py py-obj docutils literal notranslate"><span class="pre">PartStock</span></code></p></li>
+<li><p><strong>picked_parts</strong> – <code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>] containing part IDs picked from stock. Parts will be removed upon assembly.</p></li>
+<li><p><strong>building_instructions</strong> – (See <a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) Dictionary containing information about the required placements and IDs of parts to complete the construction process. Is recalculated after a detour event.</p></li>
 <li><p><strong>motion_dict</strong> – Dictionary containing all registered motion events that are valid (non-error) that point to a ConstructionState. The keys for pipe events are of the type Trail, while other events are of the type Pos.</p></li>
-<li><p><strong>last_event_info</strong> – (See <a class="reference internal" href="special_types.html#special_types.BuildingInstructions" title="special_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) Dictionary  containing information of the last event that occurred.</p></li>
+<li><p><strong>last_event_info</strong> – (See <a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) Dictionary containing information of the last event that occurred.</p></li>
 </ul>
 </dd>
 </dl>
@@ -173,11 +173,14 @@ and returns event code corresponding to its completion state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos">¶</a> – Position where motion event occurred.</p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code">¶</a> – Event code of motion event.</p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_part_check"></span><strong>ignore_part_check</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_part_check">¶</a> – Option for ignoring part restrictions. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessPlanner.ignore_part_check</span></code></p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions"></span><strong>ignore_obstructions</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions">¶</a> – Option for ignoring obstructions. See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessPlanner.ignore_obstructions</span></code></p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.assume_pipe_id_from_solution"></span><strong>assume_pipe_id_from_solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.assume_pipe_id_from_solution">¶</a> – todo: doc</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_pos">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.pos</span></code>) – Position where motion event occurred.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.event_code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Event code of motion event. (<a class="reference internal" href="type_aliases.html#type_aliases.MotionEvent" title="type_aliases.MotionEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MotionEvent</span></code></a>)</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_part_check"></span><strong>ignore_part_check</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_part_check">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Option for ignoring part restrictions.
+See <a class="reference internal" href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main" title="ProcessPlanner.ProcessPlanner.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">ignore_part_check</span> <span class="pre">in</span> <span class="pre">ProcessPlanner</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions"></span><strong>ignore_obstructions</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Option for ignoring obstructions.
+See <a class="reference internal" href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main" title="ProcessPlanner.ProcessPlanner.main"><code class="xref py py-func docutils literal notranslate"><span class="pre">ignore_obstruction</span> <span class="pre">in</span> <span class="pre">ProcessPlanner</span></code></a></p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.evaluate_placement.params.assume_pipe_id_from_solution"></span><strong>assume_pipe_id_from_solution</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.evaluate_placement.params.assume_pipe_id_from_solution">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Option for assuming a certain pipe ID has been placed, if motion
+event occured on solution and pipe ID is among the parts that have been picked.</p></li>
 </ul>
 </dd>
 </dl>
@@ -211,8 +214,8 @@ and returns event code corresponding to its completion state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.find_me"></span><strong>find_me</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.find_me">¶</a> (<em>Union</em><em>[</em><em>Pos</em><em>,</em><em>Trail</em><em>]</em>) – Position or trail to find in motion_dict.</p></li>
-<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.event_codes"></span><strong>event_codes</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.event_codes">¶</a> – List containing event codes valid for search.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.find_me"></span><strong>find_me</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.find_me">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>, <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>]) – Position or trail to find in motion_dict.</p></li>
+<li><p><span class="target" id="ProcessState.ProcessState.get_construction_state.params.event_codes"></span><strong>event_codes</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.get_construction_state.params.event_codes">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]) – List containing event codes valid for search.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -288,12 +291,9 @@ and returns event code corresponding to its completion state.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ProcessState.ProcessState.pick_part">
 <span class="sig-name descname"><span class="pre">pick_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessState.ProcessState.pick_part" title="Permalink to this definition"></a></dt>
-<dd><p>Handling of a pick event.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="ProcessState.ProcessState.pick_part.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#ProcessState.ProcessState.pick_part.params.part_id">¶</a> – Part ID that was picked.</p>
-</dd>
-</dl>
+<dd><p>Handling of a pick event.
+Args:</p>
+<p>part_id (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>): Part ID that was picked.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -348,7 +348,7 @@ and returns event code corresponding to its completion state.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="ProcessPlanner.html" class="btn btn-neutral float-left" title="ProcessPlanner class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pp_data_class.html" class="btn btn-neutral float-right" title="pp_data_class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pp_data_class.html" class="btn btn-neutral float-right" title="PP Dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

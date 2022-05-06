@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ProcessOutput module &mdash; PipeLab 2022 documentation</title>
+  <title>ProcessOutput dataclass &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="process_planning_util" href="process_planning_util.html" />
-    <link rel="prev" title="EventInfo module" href="EventInfo.html" /> 
+    <link rel="next" title="Process Planning Util Module" href="process_planning_util.html" />
+    <link rel="prev" title="EventInfo dataclass" href="EventInfo.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,18 +44,18 @@
 <li class="toctree-l1 current"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="ProcessPlanner.html">ProcessPlanner class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ProcessState.html">ProcessState class</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="pp_data_class.html">pp_data_class</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="BuildingInstruction.html">BuildingInstruction module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ConstructionState.html">ConstructionState module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="EventInfo.html">EventInfo module</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">ProcessOutput module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pp_data_class.html">PP Dataclass</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="BuildingInstruction.html">BuildingInstruction class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ConstructionState.html">ConstructionState dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EventInfo.html">EventInfo dataclass</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ProcessOutput dataclass</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">process_planning_util</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Util Module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -73,8 +73,8 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="ProcessPlanning.html">ProcessPlanning</a> &raquo;</li>
-          <li><a href="pp_data_class.html">pp_data_class</a> &raquo;</li>
-      <li>ProcessOutput module</li>
+          <li><a href="pp_data_class.html">PP Dataclass</a> &raquo;</li>
+      <li>ProcessOutput dataclass</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/ProcessOutput.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,9 +84,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-ProcessOutput">
-<span id="processoutput-module"></span><h1>ProcessOutput module<a class="headerlink" href="#module-ProcessOutput" title="Permalink to this headline"></a></h1>
-<dl class="py class">
+  <div class="section" id="processoutput-dataclass">
+<h1>ProcessOutput dataclass<a class="headerlink" href="#processoutput-dataclass" title="Permalink to this headline"></a></h1>
+<p>Dataclass for neatly outputting data returned from <a class="reference internal" href="ProcessPlanner.html#module-ProcessPlanner" title="ProcessPlanner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanner</span></code></a>.</p>
+<span class="target" id="module-ProcessOutput"></span><dl class="py class">
 <dt class="sig sig-object py" id="ProcessOutput.ProcessOutput">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ProcessOutput.</span></span><span class="sig-name descname"><span class="pre">ProcessOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picking_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastening_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_recommended_action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight_positions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessOutput.ProcessOutput" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -134,8 +135,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="EventInfo.html" class="btn btn-neutral float-left" title="EventInfo module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="process_planning_util.html" class="btn btn-neutral float-right" title="process_planning_util" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="EventInfo.html" class="btn btn-neutral float-left" title="EventInfo dataclass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="process_planning_util.html" class="btn btn-neutral float-right" title="Process Planning Util Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

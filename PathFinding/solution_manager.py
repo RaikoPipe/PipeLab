@@ -8,12 +8,18 @@ from PathFinding.pf_data_class.Solution import Solution
 from PathFinding.search_algorithm import find_path
 
 completed_solutions_stack = []
+"""List containing solved path problems."""
 
 
 def check_solution_stack(path_problem: PathProblem) -> Optional[Solution]:
-    """Returns a solution if one exists that solves the given path problem."""
-    # todo: add required_parts to Solution, check if part_stock >= required_parts
-    # fixme: check for all available solutions: has same state grid, has same start/goal pos, has enough parts
+    """Checks if this path problem was already solved and returns the solution to it.
+    Args:
+        path_problem (:class:`PathProblem`): Path problem to solve.
+
+    Returns:
+        :class`Solution` if found in stack, else None.
+        """
+
     for solution in completed_solutions_stack:
         solution: Solution
         same_state_grid = path_problem.state_grid == solution.path_problem.state_grid
@@ -25,7 +31,7 @@ def check_solution_stack(path_problem: PathProblem) -> Optional[Solution]:
             enough_parts = True
             parts = deepcopy(path_problem.part_stock)
 
-            for node in solution.absolute_path:
+            for node in solution.node_path:
                 parts[node[1]] -= 1
                 if parts[node[1]] < 0:
                     enough_parts = False
@@ -38,7 +44,15 @@ def check_solution_stack(path_problem: PathProblem) -> Optional[Solution]:
 
 
 def get_solution(path_problem: PathProblem, draw_debug: bool = False) -> Optional[Solution]:
-    """Returns a solution to the path problem, if solvable."""
+    """Wraps functions :func:`check_solution_stack` and find_path to look for a solution to the given path problem.
+
+    Args:
+        path_problem (:class:`PathProblem`): Path problem to solve.
+        draw_debug(:obj:`bool`): See draw_debug in :obj:`find_path<search_algorithm>`
+
+    Returns:
+        :class:`Solution` when a solution was found, else :obj:`None`.
+    """
     solution = check_solution_stack(path_problem=path_problem)
     if solution:
         return solution

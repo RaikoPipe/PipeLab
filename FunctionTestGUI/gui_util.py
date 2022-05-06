@@ -16,7 +16,7 @@ from ProcessPlanning.ProcessPlanner import ProcessPlanner
 from ProcessPlanning.ProcessState import ProcessState
 from ProcessPlanning.pp_data_class.ConstructionState import ConstructionState
 from ProcessPlanning.pp_data_class.EventInfo import EventInfo
-from type_dictionary.common_types import StateGrid
+from type_dictionary.type_aliases import StateGrid
 
 message_count = 0
 

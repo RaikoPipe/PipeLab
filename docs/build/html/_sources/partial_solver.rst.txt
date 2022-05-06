@@ -1,4 +1,4 @@
-partial\_solver module
+Partial Solver module
 ======================
 
 .. automodule:: partial_solver

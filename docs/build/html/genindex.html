@@ -41,7 +41,7 @@
 <li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -71,7 +71,8 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
+ <a href="#Symbols"><strong>Symbols</strong></a>
+ | <a href="#A"><strong>A</strong></a>
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
@@ -92,14 +93,24 @@
  | <a href="#W"><strong>W</strong></a>
  
 </div>
+<h2 id="Symbols">Symbols</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.(">( (partial_solver.get_partial_solutions parameter)</a>
+
+      <ul>
+        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main.params.(">(ProcessPlanner.ProcessPlanner.main parameter)</a>, <a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main.params.(">[1]</a>, <a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main.params.(">[2]</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="path_math.html#path_math.manhattan_distance.params.a">a (path_math.manhattan_distance parameter)</a>
 </li>
-      <li><a href="Solution.html#Solution.Solution.absolute_path">absolute_path (Solution.Solution attribute)</a>
-</li>
-      <li><a href="special_types.html#special_types.Action">Action (in module special_types)</a>
+      <li><a href="type_aliases.html#type_aliases.Action">Action (in module type_aliases)</a>
 </li>
       <li><a href="ProcessState.html#ProcessState.ProcessState.adjust_motion_dict_to_solution">adjust_motion_dict_to_solution() (ProcessState.ProcessState method)</a>
 </li>
@@ -162,7 +173,7 @@
       </ul></li>
       <li><a href="BuildingInstruction.html#BuildingInstruction.BuildingInstruction">BuildingInstruction (class in BuildingInstruction)</a>
 </li>
-      <li><a href="special_types.html#special_types.BuildingInstructions">BuildingInstructions (in module special_types)</a>
+      <li><a href="class_types.html#class_types.BuildingInstructions">BuildingInstructions (in module class_types)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -178,20 +189,24 @@
 </li>
       <li><a href="solution_manager.html#solution_manager.check_solution_stack">check_solution_stack() (in module solution_manager)</a>
 </li>
-      <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.closed_list">closed_list (partial_solver.get_partial_solutions parameter)</a>
-</li>
-      <li><a href="restrictions.html#restrictions.collided_obstacle">collided_obstacle() (in module restrictions)</a>
-</li>
       <li>
-    common_types
+    class_types
 
       <ul>
-        <li><a href="common_types.html#module-common_types">module</a>
+        <li><a href="class_types.html#module-class_types">module</a>
 </li>
       </ul></li>
+      <li><a href="restrictions.html#restrictions.collided_obstacle">collided_obstacle() (in module restrictions)</a>
+</li>
       <li><a href="ProcessState.html#ProcessState.ProcessState.completed_instruction">completed_instruction() (ProcessState.ProcessState method)</a>
 </li>
       <li><a href="EventInfo.html#EventInfo.EventInfo.completed_layouts">completed_layouts (EventInfo.EventInfo attribute)</a>
+
+      <ul>
+        <li><a href="partial_solver.html#partial_solver.fuse_partial_solutions.params.completed_layouts">(partial_solver.fuse_partial_solutions parameter)</a>
+</li>
+      </ul></li>
+      <li><a href="solution_manager.html#solution_manager.completed_solutions_stack">completed_solutions_stack (in module solution_manager)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -255,7 +270,7 @@
 </li>
       <li><a href="path_math.html#path_math.diff_pos">diff_pos() (in module path_math)</a>
 </li>
-      <li><a href="common_types.html#common_types.DirectedConnection">DirectedConnection (in module common_types)</a>
+      <li><a href="type_aliases.html#type_aliases.DirectedConnection">DirectedConnection (in module type_aliases)</a>
 </li>
       <li><a href="Predecessor.html#Predecessor.Predecessor.direction">direction (Predecessor.Predecessor attribute)</a>
 
@@ -265,9 +280,11 @@
         <li><a href="ps_util.html#ps_util.get_optimal_attachment_pos.params.direction">(ps_util.get_optimal_attachment_pos parameter)</a>
 </li>
       </ul></li>
-      <li><a href="special_types.html#special_types.DirectionDict">DirectionDict (in module special_types)</a>
+      <li><a href="type_aliases.html#type_aliases.DirectionDict">DirectionDict (in module type_aliases)</a>
 </li>
       <li><a href="Weights.html#Weights.Weights.distance_to_obstacles">distance_to_obstacles (Weights.Weights attribute)</a>
+</li>
+      <li><a href="solution_manager.html#solution_manager.get_solution.params.draw_debug">draw_debug (solution_manager.get_solution parameter)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -283,6 +300,12 @@
 
       <ul>
         <li><a href="EventInfo.html#EventInfo.EventInfo.event_code">(EventInfo.EventInfo attribute)</a>
+</li>
+        <li><a href="pp_util.html#pp_util.make_registration_message.params.event_code">(pp_util.make_registration_message parameter)</a>
+</li>
+        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_code">(ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands parameter)</a>
+</li>
+        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.event_code">(ProcessPlanner.ProcessPlanner.determine_picking_robot_commands parameter)</a>
 </li>
         <li><a href="ProcessState.html#ProcessState.ProcessState.attachment_placed.params.event_code">(ProcessState.ProcessState.attachment_placed parameter)</a>
 </li>
@@ -304,6 +327,8 @@
       <li><a href="ProcessOutput.html#ProcessOutput.ProcessOutput.event_info">event_info (ProcessOutput.ProcessOutput attribute)</a>
 
       <ul>
+        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_info">(ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands parameter)</a>
+</li>
         <li><a href="ProcessState.html#ProcessState.ProcessState.attachment_placed.params.event_info">(ProcessState.ProcessState.attachment_placed parameter)</a>
 </li>
       </ul></li>
@@ -313,6 +338,10 @@
 
       <ul>
         <li><a href="EventInfo.html#EventInfo.EventInfo.event_pos">(EventInfo.EventInfo attribute)</a>
+</li>
+        <li><a href="pp_util.html#pp_util.make_registration_message.params.event_pos">(pp_util.make_registration_message parameter)</a>
+</li>
+        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_pos">(ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands parameter)</a>
 </li>
         <li><a href="ProcessState.html#ProcessState.ProcessState.attachment_placed.params.event_pos">(ProcessState.ProcessState.attachment_placed parameter)</a>
 </li>
@@ -342,6 +371,8 @@
       </ul></li>
       <li><a href="EventInfo.html#EventInfo.EventInfo">EventInfo (class in EventInfo)</a>
 </li>
+      <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.exclusion_list">exclusion_list (partial_solver.get_partial_solutions parameter)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -354,11 +385,13 @@
 </li>
       <li><a href="search_algorithm.html#search_algorithm.find_path">find_path() (in module search_algorithm)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ps_util.html#ps_util.construct_detour_building_instruction.params.fit_tup">fit_tup (ps_util.construct_detour_building_instruction parameter)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ProcessState.html#ProcessState.ProcessState.fitting_placed">fitting_placed() (ProcessState.ProcessState method)</a>
+</li>
+      <li><a href="type_aliases.html#type_aliases.FittingDirections">FittingDirections (in module type_aliases)</a>
 </li>
       <li><a href="GUI.html#GUI.FunctionTestGUI">FunctionTestGUI (class in GUI)</a>
 </li>
@@ -406,10 +439,10 @@
 </li>
       <li><a href="ps_util.html#ps_util.get_neighboring_layouts">get_neighboring_layouts() (in module ps_util)</a>
 </li>
-      <li><a href="pp_util.html#pp_util.get_next_recommended_action">get_next_recommended_action() (in module pp_util)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pp_util.html#pp_util.get_next_recommended_action">get_next_recommended_action() (in module pp_util)</a>
+</li>
       <li><a href="ProcessState.html#ProcessState.ProcessState.get_num_unknown_pipes">get_num_unknown_pipes() (ProcessState.ProcessState method)</a>
 </li>
       <li><a href="ps_util.html#ps_util.get_optimal_attachment_pos">get_optimal_attachment_pos() (in module ps_util)</a>
@@ -433,17 +466,9 @@
       <li><a href="score_calculation.html#score_calculation.get_worst_move_cost">get_worst_move_cost() (in module score_calculation)</a>
 </li>
       <li><a href="PathProblem.html#PathProblem.PathProblem.goal_directions">goal_directions (PathProblem.PathProblem attribute)</a>
-
-      <ul>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.goal_directions">(PathProblem.PathProblem parameter)</a>
 </li>
-      </ul></li>
       <li><a href="PathProblem.html#PathProblem.PathProblem.goal_pos">goal_pos (PathProblem.PathProblem attribute)</a>
-
-      <ul>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.goal_pos">(PathProblem.PathProblem parameter)</a>
 </li>
-      </ul></li>
       <li><a href="restrictions.html#restrictions.goal_restricted">goal_restricted() (in module restrictions)</a>
 </li>
       <li>
@@ -463,8 +488,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.handle_detour_event">handle_detour_event() (ProcessPlanner.ProcessPlanner method)</a>
 </li>
-      <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main.params.handle_detour_events">handle_detour_events (ProcessPlanner.ProcessPlanner.main parameter)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.handle_detour_trails">handle_detour_trails() (ProcessPlanner.ProcessPlanner method)</a>
@@ -477,24 +500,20 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main.params.ignore_obstructions">ignore_obstructions (ProcessPlanner.ProcessPlanner.main parameter)</a>
-
-      <ul>
-        <li><a href="ProcessState.html#ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions">(ProcessState.ProcessState.evaluate_placement parameter)</a>
+      <li><a href="ProcessState.html#ProcessState.ProcessState.evaluate_placement.params.ignore_obstructions">ignore_obstructions (ProcessState.ProcessState.evaluate_placement parameter)</a>
 </li>
-      </ul></li>
-      <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main.params.ignore_part_check">ignore_part_check (ProcessPlanner.ProcessPlanner.main parameter)</a>
-
-      <ul>
-        <li><a href="ProcessState.html#ProcessState.ProcessState.evaluate_placement.params.ignore_part_check">(ProcessState.ProcessState.evaluate_placement parameter)</a>
+      <li><a href="ProcessState.html#ProcessState.ProcessState.evaluate_placement.params.ignore_part_check">ignore_part_check (ProcessState.ProcessState.evaluate_placement parameter)</a>
 </li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="Server.html#Server.PipeLabServer.init">init() (Server.PipeLabServer method)</a>
 </li>
-      <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.params.initial_path_problem">initial_path_problem (ProcessPlanner.ProcessPlanner parameter)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="partial_solver.html#partial_solver.fuse_partial_solutions.params.initial_path_problem">initial_path_problem (partial_solver.fuse_partial_solutions parameter)</a>
+
+      <ul>
+        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.params.initial_path_problem">(ProcessPlanner.ProcessPlanner parameter)</a>
 </li>
+      </ul></li>
       <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.params.initial_process_state">initial_process_state (ProcessPlanner.ProcessPlanner parameter)</a>
 </li>
       <li><a href="path_util.html#path_util.is_between">is_between() (in module path_util)</a>
@@ -537,6 +556,8 @@
       </ul></li>
       <li><a href="pp_util.html#pp_util.make_error_message">make_error_message() (in module pp_util)</a>
 </li>
+      <li><a href="ProcessPlanner.html#ProcessPlanner.make_placement_messages">make_placement_messages() (in module ProcessPlanner)</a>
+</li>
       <li><a href="pp_util.html#pp_util.make_registration_message">make_registration_message() (in module pp_util)</a>
 </li>
       <li><a href="pp_util.html#pp_util.make_special_message">make_special_message() (in module pp_util)</a>
@@ -557,7 +578,7 @@
       <ul>
         <li><a href="BuildingInstruction.html#module-BuildingInstruction">BuildingInstruction</a>
 </li>
-        <li><a href="common_types.html#module-common_types">common_types</a>
+        <li><a href="class_types.html#module-class_types">class_types</a>
 </li>
         <li><a href="constants.html#module-constants">constants</a>
 </li>
@@ -599,7 +620,7 @@
 </li>
         <li><a href="solution_manager.html#module-solution_manager">solution_manager</a>
 </li>
-        <li><a href="special_types.html#module-special_types">special_types</a>
+        <li><a href="type_aliases.html#module-type_aliases">type_aliases</a>
 </li>
         <li><a href="Weights.html#module-Weights">Weights</a>
 </li>
@@ -608,9 +629,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.main.params.motion_event">motion_event (ProcessPlanner.ProcessPlanner.main parameter)</a>
 </li>
-      <li><a href="special_types.html#special_types.MotionDict">MotionDict (in module special_types)</a>
+      <li><a href="class_types.html#class_types.MotionDict">MotionDict (in module class_types)</a>
 </li>
-      <li><a href="special_types.html#special_types.MotionEvent">MotionEvent (in module special_types)</a>
+      <li><a href="type_aliases.html#type_aliases.MotionEvent">MotionEvent (in module type_aliases)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -622,21 +643,23 @@
 </li>
       <li><a href="ProcessOutput.html#ProcessOutput.ProcessOutput.next_recommended_action">next_recommended_action (ProcessOutput.ProcessOutput attribute)</a>
 </li>
-      <li><a href="common_types.html#common_types.Node">Node (in module common_types)</a>
+      <li><a href="type_aliases.html#type_aliases.Node">Node (in module type_aliases)</a>
 </li>
       <li><a href="pp_util.html#pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set">node_pairs_set (pp_util.adjust_pos_in_node_pairs_set parameter)</a>
+</li>
+      <li><a href="Solution.html#Solution.Solution.node_path">node_path (Solution.Solution attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="Solution.html#Solution.Solution.node_trail">node_trail (Solution.Solution attribute)</a>
 </li>
-      <li><a href="special_types.html#special_types.NodePair">NodePair (in module special_types)</a>
+      <li><a href="type_aliases.html#type_aliases.NodePair">NodePair (in module type_aliases)</a>
 </li>
-      <li><a href="special_types.html#special_types.NodePairSet">NodePairSet (in module special_types)</a>
+      <li><a href="type_aliases.html#type_aliases.NodePairSet">NodePairSet (in module type_aliases)</a>
 </li>
-      <li><a href="common_types.html#common_types.NodePath">NodePath (in module common_types)</a>
+      <li><a href="type_aliases.html#type_aliases.NodePath">NodePath (in module type_aliases)</a>
 </li>
-      <li><a href="common_types.html#common_types.NodeTrail">NodeTrail (in module common_types)</a>
+      <li><a href="type_aliases.html#type_aliases.NodeTrail">NodeTrail (in module type_aliases)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -664,7 +687,7 @@
         <li><a href="Solution.html#Solution.Solution.ordered_trails">(Solution.Solution attribute)</a>
 </li>
       </ul></li>
-      <li><a href="special_types.html#special_types.OrderedTrails">OrderedTrails (in module special_types)</a>
+      <li><a href="type_aliases.html#type_aliases.OrderedTrails">OrderedTrails (in module type_aliases)</a>
 </li>
       <li><a href="restrictions.html#restrictions.out_of_bounds">out_of_bounds() (in module restrictions)</a>
 </li>
@@ -679,19 +702,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="PathProblem.html#PathProblem.PathProblem.part_cost">part_cost (PathProblem.PathProblem attribute)</a>
-
-      <ul>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.part_cost">(PathProblem.PathProblem parameter)</a>
 </li>
-      </ul></li>
       <li><a href="ConstructionState.html#ConstructionState.ConstructionState.part_id">part_id (ConstructionState.ConstructionState attribute)</a>
 
       <ul>
         <li><a href="EventInfo.html#EventInfo.EventInfo.part_id">(EventInfo.EventInfo attribute)</a>
-</li>
-        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.send_pick_event.params.part_id">(ProcessPlanner.ProcessPlanner.send_pick_event parameter)</a>
-</li>
-        <li><a href="ProcessState.html#ProcessState.ProcessState.pick_part.params.part_id">(ProcessState.ProcessState.pick_part parameter)</a>
 </li>
         <li><a href="ps_util.html#ps_util.get_optimal_attachment_pos.params.part_id">(ps_util.get_optimal_attachment_pos parameter)</a>
 </li>
@@ -707,8 +722,6 @@
       <ul>
         <li><a href="PathProblem.html#PathProblem.PathProblem.part_stock">(PathProblem.PathProblem attribute)</a>
 </li>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.part_stock">(PathProblem.PathProblem parameter)</a>
-</li>
         <li><a href="Predecessor.html#Predecessor.Predecessor.part_stock">(Predecessor.Predecessor attribute)</a>
 </li>
         <li><a href="Solution.html#Solution.Solution.part_stock">(Solution.Solution attribute)</a>
@@ -718,6 +731,8 @@
 </li>
       <li><a href="Predecessor.html#Predecessor.Predecessor.part_to_successor">part_to_successor (Predecessor.Predecessor attribute)</a>
 </li>
+      <li><a href="partial_solver.html#partial_solver.fuse_partial_solutions.params.partial_solutions">partial_solutions (partial_solver.fuse_partial_solutions parameter)</a>
+</li>
       <li>
     partial_solver
 
@@ -725,7 +740,7 @@
         <li><a href="partial_solver.html#module-partial_solver">module</a>
 </li>
       </ul></li>
-      <li><a href="common_types.html#common_types.Path">Path (in module common_types)</a>
+      <li><a href="type_aliases.html#type_aliases.Path">Path (in module type_aliases)</a>
 </li>
       <li><a href="Predecessor.html#Predecessor.Predecessor.path">path (Predecessor.Predecessor attribute)</a>
 </li>
@@ -738,12 +753,12 @@
         <li><a href="path_math.html#module-path_math">module</a>
 </li>
       </ul></li>
-      <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.path_problem">path_problem (partial_solver.get_partial_solutions parameter)</a>
+      <li><a href="Solution.html#Solution.Solution.path_problem">path_problem (Solution.Solution attribute)</a>
 
       <ul>
-        <li><a href="search_algorithm.html#search_algorithm.find_path.params.path_problem">(search_algorithm.find_path parameter)</a>
+        <li><a href="solution_manager.html#solution_manager.check_solution_stack.params.path_problem">(solution_manager.check_solution_stack parameter)</a>
 </li>
-        <li><a href="Solution.html#Solution.Solution.path_problem">(Solution.Solution attribute)</a>
+        <li><a href="solution_manager.html#solution_manager.get_solution.params.path_problem">(solution_manager.get_solution parameter)</a>
 </li>
       </ul></li>
       <li>
@@ -770,17 +785,17 @@
 </li>
       <li><a href="ProcessState.html#ProcessState.ProcessState.pipe_placed">pipe_placed() (ProcessState.ProcessState method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ProcessState.html#ProcessState.ProcessState.pipe_placed_detour_event">pipe_placed_detour_event() (ProcessState.ProcessState method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ProcessState.html#ProcessState.ProcessState.pipe_placed_deviated_route">pipe_placed_deviated_route() (ProcessState.ProcessState method)</a>
 </li>
       <li><a href="path_util.html#path_util.pipe_stock_check">pipe_stock_check() (in module path_util)</a>
 </li>
       <li><a href="Server.html#Server.PipeLabServer">PipeLabServer (class in Server)</a>
 </li>
-      <li><a href="common_types.html#common_types.Pos">Pos (in module common_types)</a>
+      <li><a href="type_aliases.html#type_aliases.Pos">Pos (in module type_aliases)</a>
 </li>
       <li><a href="path_math.html#path_math.get_direction.params.pos">pos (path_math.get_direction parameter)</a>
 
@@ -794,7 +809,7 @@
         <li><a href="ps_util.html#ps_util.get_optimal_attachment_pos.params.pos">(ps_util.get_optimal_attachment_pos parameter)</a>
 </li>
       </ul></li>
-      <li><a href="special_types.html#special_types.PosSet">PosSet (in module special_types)</a>
+      <li><a href="type_aliases.html#type_aliases.PosSet">PosSet (in module type_aliases)</a>
 </li>
       <li><a href="BuildingInstruction.html#BuildingInstruction.BuildingInstruction.possible_att_pipe_positions">possible_att_pipe_positions (BuildingInstruction.BuildingInstruction attribute)</a>
 
@@ -820,6 +835,8 @@
 </li>
       <li><a href="Server.html#Server.process_planner">process_planner (in module Server)</a>
 </li>
+      <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.handle_detour_trails.params.process_state ">process_state  (ProcessPlanner.ProcessPlanner.handle_detour_trails parameter)</a>
+</li>
       <li><a href="pp_util.html#pp_util.determine_next_part.params.process_state">process_state (pp_util.determine_next_part parameter)</a>
 
       <ul>
@@ -827,13 +844,7 @@
 </li>
         <li><a href="ProcessOutput.html#ProcessOutput.ProcessOutput.process_state">(ProcessOutput.ProcessOutput attribute)</a>
 </li>
-        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.process_state">(ProcessPlanner.ProcessPlanner.determine_picking_robot_commands parameter)</a>
-</li>
         <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.handle_detour_event.params.process_state">(ProcessPlanner.ProcessPlanner.handle_detour_event parameter)</a>
-</li>
-        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.handle_detour_trails.params.process_state">(ProcessPlanner.ProcessPlanner.handle_detour_trails parameter)</a>
-</li>
-        <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.send_pick_event.params.process_state">(ProcessPlanner.ProcessPlanner.send_pick_event parameter)</a>
 </li>
       </ul></li>
       <li>
@@ -894,6 +905,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="Solution.html#Solution.Solution.rendering_dict">rendering_dict (Solution.Solution attribute)</a>
 </li>
+      <li><a href="type_aliases.html#type_aliases.RenderingDict">RenderingDict (in module type_aliases)</a>
+</li>
       <li><a href="BuildingInstruction.html#BuildingInstruction.BuildingInstruction.required_fit_positions">required_fit_positions (BuildingInstruction.BuildingInstruction attribute)</a>
 </li>
       <li><a href="restrictions.html#restrictions.restrict_neighbor_pos">restrict_neighbor_pos() (in module restrictions)</a>
@@ -929,10 +942,6 @@
         <li><a href="search_algorithm.html#module-search_algorithm">module</a>
 </li>
       </ul></li>
-      <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.send_pick_event">send_pick_event() (ProcessPlanner.ProcessPlanner static method)</a>
-</li>
-      <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.send_placement_event">send_placement_event() (ProcessPlanner.ProcessPlanner static method)</a>
-</li>
       <li>
     Server
 
@@ -959,6 +968,8 @@
         <li><a href="ps_util.html#ps_util.construct_building_instructions_from_solution.params.solution">(ps_util.construct_building_instructions_from_solution parameter)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     solution_manager
 
@@ -966,39 +977,16 @@
         <li><a href="solution_manager.html#module-solution_manager">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li>
-    special_types
-
-      <ul>
-        <li><a href="special_types.html#module-special_types">module</a>
-</li>
-      </ul></li>
       <li><a href="PathProblem.html#PathProblem.PathProblem.start_directions">start_directions (PathProblem.PathProblem attribute)</a>
-
-      <ul>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.start_directions">(PathProblem.PathProblem parameter)</a>
 </li>
-      </ul></li>
       <li><a href="PathProblem.html#PathProblem.PathProblem.start_pos">start_pos (PathProblem.PathProblem attribute)</a>
-
-      <ul>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.start_pos">(PathProblem.PathProblem parameter)</a>
 </li>
-      </ul></li>
       <li><a href="PathProblem.html#PathProblem.PathProblem.starting_part">starting_part (PathProblem.PathProblem attribute)</a>
-
-      <ul>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.starting_part">(PathProblem.PathProblem parameter)</a>
 </li>
-      </ul></li>
       <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.state_grid">state_grid (partial_solver.get_partial_solutions parameter)</a>
 
       <ul>
         <li><a href="PathProblem.html#PathProblem.PathProblem.state_grid">(PathProblem.PathProblem attribute)</a>
-</li>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.state_grid">(PathProblem.PathProblem parameter)</a>
 </li>
         <li><a href="Predecessor.html#Predecessor.Predecessor.state_grid">(Predecessor.Predecessor attribute)</a>
 </li>
@@ -1009,7 +997,7 @@
         <li><a href="Solution.html#Solution.Solution.state_grid">(Solution.Solution attribute)</a>
 </li>
       </ul></li>
-      <li><a href="common_types.html#common_types.StateGrid">StateGrid (in module common_types)</a>
+      <li><a href="type_aliases.html#type_aliases.StateGrid">StateGrid (in module type_aliases)</a>
 </li>
       <li><a href="path_math.html#path_math.sum_abs_pos">sum_abs_pos() (in module path_math)</a>
 </li>
@@ -1029,18 +1017,21 @@
         <li><a href="EventInfo.html#EventInfo.EventInfo.time_registered">(EventInfo.EventInfo attribute)</a>
 </li>
       </ul></li>
-      <li><a href="common_types.html#common_types.Trail">Trail (in module common_types)</a>
+      <li><a href="type_aliases.html#type_aliases.Trail">Trail (in module type_aliases)</a>
+</li>
+      <li><a href="ps_util.html#ps_util.get_neighboring_layouts.params.trail">trail (ps_util.get_neighboring_layouts parameter)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="ps_util.html#ps_util.get_neighboring_layouts.params.trail">trail (ps_util.get_neighboring_layouts parameter)</a>
-</li>
-      <li><a href="special_types.html#special_types.TrailList">TrailList (in module special_types)</a>
+      <li><a href="type_aliases.html#type_aliases.TrailSet">TrailSet (in module type_aliases)</a>
 </li>
       <li><a href="PathProblem.html#PathProblem.PathProblem.transition_points">transition_points (PathProblem.PathProblem attribute)</a>
+</li>
+      <li>
+    type_aliases
 
       <ul>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.transition_points">(PathProblem.PathProblem parameter)</a>
+        <li><a href="type_aliases.html#module-type_aliases">module</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1048,10 +1039,6 @@
 
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="common_types.html#common_types.UndirectedConnection">UndirectedConnection (in module common_types)</a>
-</li>
-  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="ConstructionState.html#ConstructionState.ConstructionState.unnecessary">unnecessary (ConstructionState.ConstructionState attribute)</a>
 
@@ -1072,17 +1059,11 @@
         <li><a href="Weights.html#module-Weights">module</a>
 </li>
       </ul></li>
-      <li><a href="Weights.html#Weights.Weights">Weights (class in Weights)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="PathProblem.html#PathProblem.PathProblem.weights">weights (PathProblem.PathProblem attribute)</a>
-
-      <ul>
-        <li><a href="PathProblem.html#PathProblem.PathProblem.params.weights">(PathProblem.PathProblem parameter)</a>
+      <li><a href="Weights.html#Weights.Weights">Weights (class in Weights)</a>
 </li>
-      </ul></li>
-      <li><a href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.worker_event">worker_event (ProcessPlanner.ProcessPlanner.determine_picking_robot_commands parameter)</a>
+      <li><a href="PathProblem.html#PathProblem.PathProblem.weights">weights (PathProblem.PathProblem attribute)</a>
 </li>
   </ul></td>
 </tr></table>

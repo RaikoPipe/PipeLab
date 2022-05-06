@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>partial_solver module &mdash; PipeLab 2022 documentation</title>
+  <title>Partial Solver module &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="pf_data_class" href="pf_data_class.html" />
-    <link rel="prev" title="solution_manager module" href="solution_manager.html" /> 
+    <link rel="next" title="PF Dataclass" href="pf_data_class.html" />
+    <link rel="prev" title="Solution Manager Module" href="solution_manager.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,14 +43,14 @@
 <li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">search_algorithm module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">solution_manager module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">partial_solver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">pf_data_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">path_finding_util</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Partial Solver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -68,7 +68,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-      <li>partial_solver module</li>
+      <li>Partial Solver module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/partial_solver.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -79,34 +79,41 @@
            <div itemprop="articleBody">
              
   <div class="section" id="module-partial_solver">
-<span id="partial-solver-module"></span><h1>partial_solver module<a class="headerlink" href="#module-partial_solver" title="Permalink to this headline"></a></h1>
+<span id="partial-solver-module"></span><h1>Partial Solver module<a class="headerlink" href="#module-partial_solver" title="Permalink to this headline"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="partial_solver.fuse_partial_solutions">
 <span class="sig-prename descclassname"><span class="pre">partial_solver.</span></span><span class="sig-name descname"><span class="pre">fuse_partial_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partial_solutions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_layouts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#partial_solver.fuse_partial_solutions" title="Permalink to this definition"></a></dt>
 <dd><p>Fuses partial solutions and completed layouts into a complete solution from start to goal of the initial path problem.
 Only partially checks the validity of the complete solution. Partial solutions and completed layouts must therefore
 be compatible and equal to a valid assembly layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="partial_solver.fuse_partial_solutions.params.partial_solutions"></span><strong>partial_solutions</strong><a class="paramlink headerlink reference internal" href="#partial_solver.fuse_partial_solutions.params.partial_solutions">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> [<a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>]) – A list of solutions that (presumably) form a complete solution.</p></li>
+<li><p><span class="target" id="partial_solver.fuse_partial_solutions.params.completed_layouts"></span><strong>completed_layouts</strong><a class="paramlink headerlink reference internal" href="#partial_solver.fuse_partial_solutions.params.completed_layouts">¶</a> (<a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) – Dictionary containing only layouts that are fully completed.</p></li>
+<li><p><span class="target" id="partial_solver.fuse_partial_solutions.params.initial_path_problem"></span><strong>initial_path_problem</strong><a class="paramlink headerlink reference internal" href="#partial_solver.fuse_partial_solutions.params.initial_path_problem">¶</a> (<a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – The original path problem.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> that is a fusion of all partial solutions.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="partial_solver.get_partial_solutions">
-<span class="sig-prename descclassname"><span class="pre">partial_solver.</span></span><span class="sig-name descname"><span class="pre">get_partial_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outgoing_node_pairs_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closed_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outgoing_node_directions_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#partial_solver.get_partial_solutions" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">partial_solver.</span></span><span class="sig-name descname"><span class="pre">get_partial_solutions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outgoing_node_pairs_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclusion_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outgoing_node_directions_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#partial_solver.get_partial_solutions" title="Permalink to this definition"></a></dt>
 <dd><p>Tries to generate partial solutions with the given node pairs. Node pairs may be excluded if
 no solution to any other node is found. Node pairs in the same tuple are prevented from connecting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="partial_solver.get_partial_solutions.params.outgoing_node_pairs_set"></span><strong>outgoing_node_pairs_set</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.outgoing_node_pairs_set">¶</a> – Set of node pairs that represent the end points of a layout</p></li>
-<li><p><span class="target" id="partial_solver.get_partial_solutions.params.closed_list"></span><strong>closed_list</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.closed_list">¶</a> – List of node pairs that are excluded from connecting.</p></li>
-<li><p><span class="target" id="partial_solver.get_partial_solutions.params.outgoing_node_directions_dict"></span><strong>outgoing_node_directions_dict</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.outgoing_node_directions_dict">¶</a> – Dictionary containing the directions each node can be connected to.</p></li>
-<li><p><span class="target" id="partial_solver.get_partial_solutions.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.state_grid">¶</a> – #todo: reference</p></li>
-<li><p><span class="target" id="partial_solver.get_partial_solutions.params.part_stock"></span><strong>part_stock</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.part_stock">¶</a> – todo: reference</p></li>
-<li><p><span class="target" id="partial_solver.get_partial_solutions.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.path_problem">¶</a> – <dl class="field-list simple">
-<dt class="field-odd">class</dt>
-<dd class="field-odd"><p>’classes.PathProblem.PathProblem’</p>
-</dd>
-</dl>
-</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.outgoing_node_pairs_set"></span><strong>outgoing_node_pairs_set</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.outgoing_node_pairs_set">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">NodePairset</span></code>) – Set of node pairs that represent the end points of a layout</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.exclusion_list"></span><strong>exclusion_list</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.exclusion_list">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code>]) – List of node pairs that are excluded from connecting.</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.outgoing_node_directions_dict"></span><strong>outgoing_node_directions_dict</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.outgoing_node_directions_dict">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.FittingDirections" title="type_aliases.FittingDirections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FittingDirections</span></code></a>) – Dictionary containing the directions each node can be connected to.</p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.state_grid">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a>) – See <a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a></p></li>
+<li><p><span class="target" id="partial_solver.get_partial_solutions.params.part_stock"></span><strong>part_stock</strong><a class="paramlink headerlink reference internal" href="#partial_solver.get_partial_solutions.params.part_stock">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]) – See <a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">part_stock</span> <span class="pre">in</span> <span class="pre">ProcessState</span></code></a></p></li>
+<li><p><span class="target" id="partial_solver.params.get_partial_solutions."></span><strong>get_partial_solutions.</strong><a class="paramlink headerlink reference internal" href="#partial_solver.params.get_partial_solutions.">¶</a><strong>(</strong> (<em>path_problem</em>) – class`PathProblem`): See :class: ‘classes.PathProblem.PathProblem’</p></li>
 </ul>
 </dd>
 </dl>
@@ -118,8 +125,8 @@ no solution to any other node is found. Node pairs in the same tuple are prevent
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="solution_manager.html" class="btn btn-neutral float-left" title="solution_manager module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pf_data_class.html" class="btn btn-neutral float-right" title="pf_data_class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="solution_manager.html" class="btn btn-neutral float-left" title="Solution Manager Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pf_data_class.html" class="btn btn-neutral float-right" title="PF Dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

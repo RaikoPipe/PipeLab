@@ -1,9 +1,9 @@
-type_dictionary
+Type Dictionary
 ===============
 
 .. toctree::
    :maxdepth: 4
 
-   common_types
+   type_aliases
    constants
-   special_types
+   class_types

@@ -13,8 +13,8 @@ from ProcessPlanning.pp_data_class.ProcessOutput import ProcessOutput
 from ProcessPlanning.process_planning_util.pp_util import determine_next_part, get_solution_on_detour_event, \
     make_registration_message, \
     make_error_message, message_dict, get_next_recommended_action
-from type_dictionary.common_types import *
-from type_dictionary.special_types import MotionEvent, BuildingInstructions
+from type_dictionary.type_aliases import *
+from type_dictionary.class_types import MotionEvent, BuildingInstructions
 
 standard_weights = Weights(1, 1, 1)
 standard_algorithm = "mcsa*"
@@ -48,6 +48,59 @@ example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will prob
 #   - Output next recommended action
 
 
+def make_placement_messages(event_info: EventInfo):
+    """Sends a new placement/removal event to be evaluated and registered in current ProcessState."""
+
+
+
+    note = None
+
+    if event_info.obstructed_obstacle:
+        note = str.format(f"Obstructed obstacle while placing {message_dict[event_info.event_code]}")
+
+    if event_info.obstructed_part:
+        note = str.format(
+            f"Obstructed {message_dict[event_info.obstructed_part]} while placing {message_dict[event_info.event_code]}")
+
+    if event_info.removal:
+        if event_info.unnecessary:
+            note = str.format(f"Removed unnecessary {message_dict[event_info.event_code]}")
+        elif event_info.misplaced:
+            note = str.format(f"Removed misplaced {message_dict[event_info.event_code]}")
+        elif event_info.deviated:
+            note = str.format(f"Removed deviating {message_dict[event_info.event_code]}")
+    else:
+        if event_info.unnecessary:
+            note = str.format(f"Unnecessary {message_dict[event_info.event_code]} detected!")
+        elif event_info.deviated:
+            note = str.format(f"Deviating {message_dict[event_info.event_code]} detected!")
+        elif event_info.misplaced:
+            note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
+
+    if event_info.part_not_picked:
+        if event_info.part_id == -99:
+            note = str.format(f"Placed {message_dict[event_info.event_code]}"
+                              f", but part was not picked!")
+        else:
+            note = str.format(f"Placed id {event_info.part_id} "
+                              f", but not picked!")
+
+    # make messages
+    if event_info.error:
+        message = make_error_message(event_pos=event_info.event_pos,
+                                     additional_message=note)
+    elif event_info.deviated:
+        message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
+                                            removal=event_info.removal, pipe_id=event_info.part_id)
+
+    else:
+        message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
+                                            removal=event_info.removal, pipe_id=event_info.part_id)
+
+
+    return message, note
+
+
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process with the:class:`~ProcessState`
     class and provides robot commands.
@@ -55,13 +108,11 @@ class ProcessPlanner:
 
     :param initial_path_problem: Todo: Documentation
     :param initial_process_state: Todo: Documentation
-    :param optimization_weights: Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
-    :param algorithm: The search algorithm to be used for calculating any solutions to a path problem.
+    :param optimization_weights:
+    :param algorithm:
     """
 
-    def __init__(self, initial_path_problem: PathProblem, initial_process_state: ProcessState = None,
-                 optimization_weights: Weights = standard_weights,
-                 algorithm: str = standard_algorithm):
+    def __init__(self, initial_path_problem: PathProblem, initial_process_state: ProcessState = None):
 
         self._initial_path_problem = initial_path_problem  #: original path problem
         self.optimal_solution = find_path(self._initial_path_problem)  #: optimal solution for the initial path problem
@@ -92,28 +143,32 @@ class ProcessPlanner:
 
         self.last_process_state = self.initial_process_state  # last valid state
 
-        self.is_optimal = True  # if path of current state is on optimal solution
-
-        self.weights = optimization_weights
-        self.algorithm = algorithm
-
     def main(self, motion_event: MotionEvent, handle_detour_events: bool = True,
              ignore_part_check: bool = False, ignore_obstructions: bool = False) -> ProcessOutput:
         """Main method of ProcessPlanning. Takes worker_event as input and sends information about the event to
         ProcessState. Prints message output of ProcessState and handles detour events.
 
-        :param motion_event: A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.
-        :param handle_detour_events: If set to true, detour events will result in the process planner looking for a new solution.
-        :param ignore_part_check: If set to true, part restrictions will be ignored. Could lead to unexpected behaviour.
-        :param ignore_obstructions: If set to true, obstructions will be ignored. Untested. Could lead to unexpected behaviour.
-        :return: A dataclass containing processed information regarding the event and current process state (See :class:`ProcessOutput`)."""
+        Args:
+            motion_event (:obj:`special_type.MotionEvent`): A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.
+            handle_detour_events (:obj`bool`): If set to true, detour events will result in the process planner looking for a new solution.
+            ignore_part_check (:obj`bool`): If set to true, part restrictions will be ignored. Will lead to unwanted behaviour.
+            ignore_obstructions (:obj`bool`): If set to true, obstructions will be ignored. Untested. Will lead to unwanted behaviour.
+
+        Returns:
+             :class:`ProcessOutput` containing processed information regarding the event and current process state."""
+
+        event_pos = motion_event[0]
+        event_code = motion_event[1]
+
 
         tentative_process_state = deepcopy(self.last_process_state)
         # check if worker event is pick event
         if motion_event[1] == 4:
-            picking_robot_commands = self.determine_picking_robot_commands(worker_event=motion_event,
+            picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
                                                                            process_state=tentative_process_state)
-            messages = self.send_pick_event(motion_event[0], process_state=tentative_process_state)
+            part_id = event_pos
+            tentative_process_state.pick_part(part_id)
+            messages = str.format(f"Process Planner: Picked part with id {part_id}")
             self.previous_states.insert(0, deepcopy(tentative_process_state))
             self.last_process_state = tentative_process_state
 
@@ -141,9 +196,13 @@ class ProcessPlanner:
                 # correct worker event pos
                 motion_event = ((motion_event[0][0] - direction[0], motion_event[0][1] - direction[1]), motion_event[1])
 
-        messages = self.send_placement_event(event_pos=motion_event[0], event_code=motion_event[1],
-                                             ignore_part_check=ignore_part_check, process_state=tentative_process_state,
-                                             ignore_obstructions=ignore_obstructions)
+        event_info: EventInfo = tentative_process_state.evaluate_placement(event_pos=event_pos, event_code=event_code,
+                                                                 ignore_part_check=ignore_part_check,
+                                                                 ignore_obstructions=ignore_obstructions)
+
+        tentative_process_state.last_event_info = event_info
+
+        messages = make_placement_messages(event_info=event_info)
 
         # extract messages
         message = messages[0]
@@ -169,7 +228,7 @@ class ProcessPlanner:
                                                                            event_code=motion_event[1],
                                                                            event_info=tentative_process_state.last_event_info)
 
-        picking_robot_commands = self.determine_picking_robot_commands(worker_event=motion_event,
+        picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
                                                                        layout=tentative_process_state.last_event_info.layout,
                                                                        process_state=tentative_process_state)
 
@@ -187,80 +246,14 @@ class ProcessPlanner:
 
         return process_output
 
-    @staticmethod
-    def send_placement_event(event_pos: Pos, event_code:int, process_state: ProcessState,
-                             ignore_part_check: bool = False, ignore_obstructions: bool = False):
-        """Sends a new placement/removal event to be evaluated and registered in current ProcessState."""
-
-        event_info: EventInfo = process_state.evaluate_placement(event_pos=event_pos, event_code=event_code,
-                                                                 ignore_part_check=ignore_part_check,
-                                                                 ignore_obstructions=ignore_obstructions)
-
-        note = None
-
-        if event_info.obstructed_obstacle:
-            note = str.format(f"Obstructed obstacle while placing {message_dict[event_info.event_code]}")
-
-        if event_info.obstructed_part:
-            note = str.format(
-                f"Obstructed {message_dict[event_info.obstructed_part]} while placing {message_dict[event_info.event_code]}")
-
-        if event_info.removal:
-            if event_info.unnecessary:
-                note = str.format(f"Removed unnecessary {message_dict[event_info.event_code]}")
-            elif event_info.misplaced:
-                note = str.format(f"Removed misplaced {message_dict[event_info.event_code]}")
-            elif event_info.deviated:
-                note = str.format(f"Removed deviating {message_dict[event_info.event_code]}")
-        else:
-            if event_info.unnecessary:
-                note = str.format(f"Unnecessary {message_dict[event_info.event_code]} detected!")
-            elif event_info.deviated:
-                note = str.format(f"Deviating {message_dict[event_info.event_code]} detected!")
-            elif event_info.misplaced:
-                note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
-
-        if event_info.part_not_picked:
-            if event_info.part_id == -99:
-                note = str.format(f"Placed {message_dict[event_info.event_code]}"
-                                  f", but part was not picked!")
-            else:
-                note = str.format(f"Placed id {event_info.part_id} "
-                                  f", but not picked!")
-
-        # make messages
-        if event_info.error:
-            message = make_error_message(event_pos=event_info.event_pos,
-                                         additional_message=note)
-        elif event_info.deviated:
-            message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
-                                                removal=event_info.removal, pipe_id=event_info.part_id)
-
-        else:
-            message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
-                                                removal=event_info.removal, pipe_id=event_info.part_id)
-
-        process_state.last_event_info = event_info
-
-        return message, note
-
-    @staticmethod
-    def send_pick_event(part_id: int, process_state: ProcessState) -> str:
-        """Sends a new pick event to be evaluated and registered in the current process state.
-
-        :param part_id: Part ID that was picked.
-        :param process_state: The current process state.
-        :return: A string containing a success message."""
-        process_state.pick_part(part_id)
-        message = str.format(f"Process Planner: Picked part with id {part_id}")
-
-        return message
-
     def handle_detour_trails(self, process_state: ProcessState) -> Optional[str]:
         """Handles current detour trails and decides if the currently aimed solution should return to a previous iteration.
 
-        :param process_state: The current process state
-        :return: An optional string message if the currently aimed solution was changed to a previous one.
+        Args:
+         process_state :class:`ProcessState`: The current process state.
+
+        Returns:
+            An optional :obj:`str` message if the currently aimed solution was changed to a previous one.
         """
 
         detour_message = None
@@ -300,10 +293,14 @@ class ProcessPlanner:
     def handle_detour_event(self, detour_event: BuildingInstructions, process_state: ProcessState) -> tuple[
         str, ProcessState]:
         """Handles the detour event, applies new solution if found.
+        Args:
 
-        :param process_state: The current process state.
-        :param detour_event: Dictionary containing a trail and building instruction of the deviated layout.
-        :return: A tuple containing a string message and a modified state with the new solution applied.
+            process_state(:class:`ProcessState`): The current process state.
+            detour_event(:obj:`class_types.BuildingInstructions`): Dictionary containing a trail and building instruction of the deviated layout.
+
+        Returns:
+            A tuple containing a string message and a modified state with the new solution applied (:obj:`tuple` [:obj:`str`], [:class:`ProcessState`]).
+
         """
         detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
         detour_process_state = deepcopy(process_state)
@@ -327,7 +324,16 @@ class ProcessPlanner:
         return detour_message, detour_process_state
 
     @staticmethod
-    def determine_fastening_robot_commands(event_pos: Pos, event_code: int, event_info):
+    def determine_fastening_robot_commands(event_pos: Pos, event_code: int, event_info) -> tuple:
+        """
+
+        Args:
+            event_pos (:obj:`type_aliases.Pos`): See :meth: `event_pos in ProcessState.evaluate_placement <~ProcessState.evaluate_placement>`
+            event_code (:obj:`int`): See :meth: `event_code in ProcessState.evaluate_placement <~ProcessState.evaluate_placement>`
+            event_info(:class:`EventInfo`):
+         Returns:
+             :obj:`tuple` containing robot commands for the fastening robot
+        """
 
         retrieve_part_id = None
 
@@ -351,20 +357,21 @@ class ProcessPlanner:
         return tuple(fastening_robot_commands)
 
     @staticmethod
-    def determine_picking_robot_commands(worker_event: tuple[Pos, int], process_state: ProcessState,
+    def determine_picking_robot_commands(event_code:int, process_state: ProcessState,
                                          layout: Trail = None, ) -> tuple:
-        """Evaluates the current process state and makes robot commands.
-
-        :param layout: Optional last event layout if worker event code is 3.
-        :param process_state: The current process state.
-        :param worker_event: See :obj:`ProcessPlanner.worker_event`.
+        """
+        Args:
+            event_code (:obj:`int`): See :meth: `event_code in ProcessState.evaluate_placement <~ProcessState.evaluate_placement>`
+            layout(:obj:`type_aliases.Trail`): The current layout.
+         Returns:
+             :obj:`tuple` containing robot commands for the fastening robot
         """
 
         picking_robot_commands = []
 
         if layout:
 
-            event_code = worker_event[1]
+
             # make picking robot commands
 
             # if event_info.layout_changed:  # last check is redundant

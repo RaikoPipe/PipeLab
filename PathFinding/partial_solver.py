@@ -9,11 +9,13 @@ from PathFinding.pf_data_class.Solution import Solution
 from PathFinding.solution_manager import get_solution
 from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
 from type_dictionary import constants as const
-from type_dictionary.common_types import Trail, StateGrid
+from type_dictionary.type_aliases import Trail, StateGrid, PartStock
+from type_dictionary.type_aliases import NodePairSet, FittingDirections
+from type_dictionary.class_types import BuildingInstructions
 
 
-def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
-                          outgoing_node_directions_dict: dict, state_grid: StateGrid, part_stock: dict,
+def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: list[set],
+                          outgoing_node_directions_dict: FittingDirections, state_grid: StateGrid, part_stock: PartStock,
                           path_problem: PathProblem,
                           ) -> list[Solution]:
     """
@@ -22,12 +24,12 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
 
     Args:
 
-        outgoing_node_pairs_set: Set of node pairs that represent the end points of a layout
-        closed_list: List of node pairs that are excluded from connecting.
-        outgoing_node_directions_dict: Dictionary containing the directions each node can be connected to.
-        state_grid: #todo: reference
-        part_stock: todo: reference
-        path_problem: :class: 'classes.PathProblem.PathProblem'
+        outgoing_node_pairs_set (:obj:`~type_aliases.NodePairset`): Set of node pairs that represent the end points of a layout
+        exclusion_list (:obj:`list` [:obj:`set`]): List of node pairs that are excluded from connecting.
+        outgoing_node_directions_dict (:obj:`~type_aliases.FittingDirections`): Dictionary containing the directions each node can be connected to.
+        state_grid(:obj:`~type_aliases.StateGrid`): See :obj:`~type_aliases.StateGrid`
+        part_stock(:obj:`dict` [:obj:`int`, :obj:`int`]): See :class:`part_stock in ProcessState<ProcessState>`
+        path_problem (:class`PathProblem`): See :class: 'classes.PathProblem.PathProblem'
 
     """
 
@@ -58,7 +60,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
         for neighbor in neighbors:
             if neighbor in point_outgoing_node_pairs_ref:
                 continue
-            if {point_pos, neighbor} in closed_list:
+            if {point_pos, neighbor} in exclusion_list:
                 continue
 
             partial_path_problem = PathProblem(algorithm=path_problem.algorithm, weights=path_problem.weights,
@@ -76,7 +78,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
 
             if not solution:
                 # try again, but exclude this connection combination
-                closed_list.append({point_pos, neighbor})
+                exclusion_list.append({point_pos, neighbor})
                 continue
 
             heapq.heappush(solution_list, (solution.score, neighbor, solution))
@@ -88,7 +90,7 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
             best = heapq.heappop(solution_list)
             best_point = best[1]
             best_solution = best[2]
-            closed_list.append({point_pos, best_point})
+            exclusion_list.append({point_pos, best_point})
             all_points_list.remove(best_point)
             neighbors.remove(best_point)
 
@@ -99,12 +101,21 @@ def get_partial_solutions(outgoing_node_pairs_set: set, closed_list: list[set],
     return partial_solutions
 
 
-def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: dict[Trail, BuildingInstruction],
-                           initial_path_problem: PathProblem):
+def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts: BuildingInstructions,
+                           initial_path_problem: PathProblem) -> Solution:
     """Fuses partial solutions and completed layouts into a complete solution from start to goal of the initial path problem.
     Only partially checks the validity of the complete solution. Partial solutions and completed layouts must therefore
-    be compatible and equal to a valid assembly layout."""
-    absolute_trail = {}
+    be compatible and equal to a valid assembly layout.
+
+    Args:
+        partial_solutions (:obj:`list` [:class:`Solution`]): A list of solutions that (presumably) form a complete solution.
+        completed_layouts (:obj:`~class_types.BuildingInstructions`): Dictionary containing only layouts that are fully completed.
+        initial_path_problem (:class:`PathProblem`): The original path problem.
+
+    Returns:
+        :class:`Solution` that is a fusion of all partial solutions.
+    """
+    node_trail = {}
 
     unordered_layouts = set()
     rendering_dict = {}
@@ -125,13 +136,13 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
 
         for pos in layout_trail:
             if pos in building_instruction.required_fit_positions:
-                absolute_trail[pos] = const.fitting_id
+                node_trail[pos] = const.fitting_id
             else:
-                absolute_trail[pos] = building_instruction.pipe_id
+                node_trail[pos] = building_instruction.pipe_id
 
     # also update total definite trail from partial solutions
     for partial_solution in partial_solutions:
-        absolute_trail.update(partial_solution.node_trail)
+        node_trail.update(partial_solution.node_trail)
 
     # get information from last partial solution iteration
     last_partial_solution = partial_solutions[0]
@@ -169,7 +180,7 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
 
     # todo: if needed, recalculate score
     score = last_partial_solution.score
-    fused_solution = Solution(part_stock=part_stock, path_problem=initial_path_problem, rendering_dict=rendering_dict,
-                              algorithm=algorithm, state_grid=state_grid, score=score, ordered_trails=ordered_layouts,
-                              absolute_trail=absolute_trail)
+    fused_solution: Solution = Solution(part_stock=part_stock, path_problem=initial_path_problem, rendering_dict=rendering_dict,
+                              algorithm=algorithm, state_grid=state_grid, score=score, ordered_trails=tuple(ordered_layouts),
+                              node_trail=node_trail)
     return fused_solution

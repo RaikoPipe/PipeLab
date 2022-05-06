@@ -5,21 +5,26 @@ from typing import Tuple
 import vpython as vpy
 
 from VpythonRendering.object_data_classes import mounting_wall_data
-from type_dictionary.common_types import *
+from type_dictionary.type_aliases import *
 
 
-def get_empty_stategrid(x_nodes: int, y_nodes: int):
+def get_empty_stategrid(x_nodes: int, y_nodes: int) -> StateGrid:
     """Returns state grid according to parameters
+
     Args:
-        x_nodes: number of nodes on the x-axis
-        y_nodes: number of nodes on the y-axis
+        x_nodes(:obj:`int`): number of nodes on the x-axis
+        y_nodes(:obj:`int`): number of nodes on the y-axis
+
+    Returns:
+        :obj:`type_aliases.StateGrid` of shape(:paramref:`x_nodes`,:paramref:`y_nodes`) pointing to 0.
         """
     state_grid = np.tile(0, (x_nodes, y_nodes))
     return state_grid
 
 
 def change_grid_states(state_grid: StateGrid, node_states: list[Node]):
-    """Modify grid states according to items in node_states
+    """Modify grid states according to items in node_states.
+
     Args:
         node_states: list containing Nodes
         state_grid:
@@ -46,7 +51,8 @@ def get_rendering_grid(x_nodes: int, y_nodes: int, x_start: float = x_start_defa
                        y_start: float = y_start_default, z_start: float = z_start_default,
                        node_dist: float = dot_dist_default) -> \
         Tuple[np.ndarray, mounting_wall_data]:
-    """create a grid that contains 2D-coordinates for each position
+    """create a grid that contains 2D-coordinates for each position.
+
     Args:
         x_nodes: number of nodes on the x-axis
         y_nodes: number of nodes on the y-axis

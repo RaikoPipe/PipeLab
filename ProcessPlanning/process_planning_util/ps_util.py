@@ -3,7 +3,7 @@ from __future__ import annotations
 import PathFinding.path_finding_util.restrictions
 from PathFinding.path_finding_util.path_math import get_direction, diff_pos, manhattan_distance
 from PathFinding.pf_data_class.Solution import Solution
-from type_dictionary.special_types import *
+from type_dictionary.class_types import *
 
 
 def get_optimal_attachment_pos(state_grid: StateGrid, pos: Pos, part_id: int, direction: Pos) -> Pos:
@@ -66,19 +66,19 @@ def get_optimal_attachment_pos(state_grid: StateGrid, pos: Pos, part_id: int, di
         return rec_att_pos
 
 
-def get_neighboring_layouts(trail: Trail, ordered_trails: OrderedTrails) -> TrailList:
+def get_neighboring_layouts(trail: Trail, ordered_trails: OrderedTrails) -> TrailSet:
     """Returns all trails that are neighbors to current_layout according to ordered_trails.
 
     :param trail: The layout to which neighbors are to be found
     :param ordered_trails: See ordered_trails in :attr:`~Solution.ordered_trails`
     :return: List containing neighboring trails"""
-    neighboring_layouts = []
+    neighboring_layouts = set()
     idx = ordered_trails.index(trail)
 
     if idx + 1 < len(ordered_trails):
-        neighboring_layouts.append(ordered_trails[idx + 1])
+        neighboring_layouts.add(ordered_trails[idx + 1])
     if idx - 1 >= 0:
-        neighboring_layouts.append(ordered_trails[idx - 1])
+        neighboring_layouts.add(ordered_trails[idx - 1])
 
     return neighboring_layouts
 

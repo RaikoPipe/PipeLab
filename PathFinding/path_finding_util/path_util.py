@@ -6,27 +6,28 @@ from typing import Optional
 from PathFinding.path_finding_util.path_math import diff_pos, get_direction, sum_pos
 from PathFinding.pf_data_class.Predecessor import Predecessor
 from PathFinding.pf_data_class.Solution import Solution
-from type_dictionary.common_types import *
+
+from type_dictionary.class_types import *
 
 
 def construct_solution(predecessors, current_node, state_grid, score,
                        algorithm, path_problem, fast_mode, goal_pos, goal_part) -> Solution:
     """Returns a solution based on given parameters. """
 
-    absolute_path = []
-    rendering_dict = {}
+    node_path: NodePath = []
+    rendering_dict: RenderingDict = {}
     part_stock = deepcopy(path_problem.part_stock)
-    absolute_path.append((goal_pos, goal_part))
+    node_path.append((goal_pos, goal_part))
     rendering_dict[goal_pos] = goal_part
     part_stock[goal_part] -= 1
     while current_node in predecessors:
         part_id = predecessors.get(current_node).part_to_successor
 
-        if current_node == Pos:  # fixme: doesn't work, fix exists
-            absolute_path.append((current_node, part_id))
+        if current_node == Pos:
+            node_path.append((current_node, part_id))
             rendering_dict[current_node] = part_id
         else:
-            absolute_path.append((current_node[0], part_id))
+            node_path.append((current_node[0], part_id))
             rendering_dict[current_node[0]] = part_id
 
         part_stock[part_id] -= 1
@@ -38,23 +39,23 @@ def construct_solution(predecessors, current_node, state_grid, score,
         if current_node is None:
             break
 
-    absolute_path = absolute_path[::-1]  # reverse order
+    node_path = node_path[::-1]  # reverse order
 
     absolute_trail = {}
     ordered_trails = []
     fc_set = set()
     fit_start_pos = None
     i = 0
-    while i < len(absolute_path) - 1:
-        start_node = absolute_path[i]
+    while i < len(node_path) - 1:
+        start_node = node_path[i]
 
         if start_node[1] == 0 or start_node[1] is None:
             trail_list = []
             absolute_trail[start_node[0]] = start_node[1]
             trail_list.append(start_node[0])
             # get id of straight pipe
-            pipe_node = absolute_path[i + 1]
-            end_node = absolute_path[i + 2]
+            pipe_node = node_path[i + 1]
+            end_node = node_path[i + 2]
             direction = get_direction(diff_pos(start_node[0], end_node[0]))
 
             pos = start_node[0]
@@ -76,8 +77,8 @@ def construct_solution(predecessors, current_node, state_grid, score,
             # definite path must start with None or 0
             raise Exception
 
-    return Solution(absolute_path=absolute_path, node_trail=absolute_trail,
-                    ordered_trails=ordered_trails, state_grid=state_grid, score=score, algorithm=algorithm,
+    return Solution(node_path=node_path, node_trail=absolute_trail,
+                    ordered_trails=tuple(ordered_trails), state_grid=state_grid, score=score, algorithm=algorithm,
                     path_problem=path_problem, part_stock=part_stock,
                     rendering_dict=rendering_dict)
 

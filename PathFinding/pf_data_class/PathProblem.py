@@ -4,39 +4,82 @@ from dataclasses import dataclass
 from typing import Optional
 
 from PathFinding.pf_data_class import Weights
-from type_dictionary.common_types import *
+from type_dictionary.type_aliases import *
 
 
-@dataclass
+@dataclass(slots=True)
 class PathProblem:
-    """Dataclass that contains detailed information about the path problem.
-
-    Args:
-        state_grid:
-        start_pos:
-        goal_pos:
-
-        start_directions: directions that start is restricted to
-        goal_directions: directions that goal is restricted to (i.e. last part that is linked to the goal)
-        transition_points: Contains border markings, beyond which nodes lie in different plane
-
-        starting_part: signifies if there is a starting part; None: No part; 0: Corner; 1: Pipe
-
-        part_stock: amount of parts available for assembling a solution
-        part_cost: dictionary that contains the replacement costs (or opportunity costs) of parts
-
-        weights:
-
+    """Dataclass that contains detailed information about a path problem.
     """
 
-    state_grid: StateGrid
+    state_grid: StateGrid  #:
+    """See :obj:`~type_aliases.StateGrid`"""
+
     start_pos: Pos
+    """
+    Start position of the search.
+    
+    Type: (:obj:`~type_aliases.Pos`) 
+    """
+
     goal_pos: Pos
+    """
+    Goal position that needs to be reached
+    
+    Type: (:obj:`~type_aliases.Pos`) 
+    """
+
     start_directions: set[Pos]
+    """
+    Set containing directions that restrict in which direction the search algorithm can start the search.
+    
+    Type: (set[:obj:`~type_aliases.Pos`]) """
+
     goal_directions: set[Pos]
+    """
+    Set containing directions that restrict in which direction the search algorithm can append to the goal.
+    
+    Type: (set[:obj:`~type_aliases.Pos`])
+    """
     transition_points: set[Pos]
+    """
+    Set containing transition points that show where a transition from one wall to another occurs.
+    
+    Type: (set[:obj:`~type_aliases.Pos`]) 
+    """
+
     starting_part: Optional[int]
-    part_stock: dict
-    part_cost: dict
+    """
+    Part ID that is placed at the start point (Error will be raised, if this is not a fitting ID, since this is a 
+    placeholder for potential features implemented in the future)
+    
+    Type: (:obj:`Optional` [:obj:`int`]) 
+    """
+
+    part_stock: PartStock
+    """
+    Part IDs pointing the amount of parts available for assembly.
+    
+    Type: (set[:obj:`~type_aliases.PartStock`]) 
+    """
+
+    part_cost: dict[int, float]
+    """
+    Part IDs pointing to their cost value.
+    
+    Type: (:obj:`dict` [:obj:`int`, :obj:`float`]) 
+    """
+
     weights: Optional[Weights]
-    algorithm: Optional[str]
+    """
+    Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
+    
+    Type: (:obj`Optional` [:class:`Weights`])
+    """
+
+    algorithm: str = "mcsa*"
+    """
+    Defines how scores are calculated and therefore how nodes are evaluated in the search.
+    
+    Type: (:obj: `str`) 
+    """

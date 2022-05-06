@@ -1,4 +1,4 @@
-restrictions module
+Restrictions module
 ===================
 
 .. automodule:: restrictions

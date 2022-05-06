@@ -3,14 +3,15 @@ from copy import deepcopy
 
 import numpy as np
 
-from type_dictionary.common_types import StateGrid
+from type_dictionary.type_aliases import StateGrid
 
 
 def set_random_obstacles(probability: float, state_grid: StateGrid) -> np.ndarray:
     """Randomly changes nodes on the state grid to 1 according to the frequency.
+
     Args:
-        probability: probability of a node on the state grid receiving the state 1 (obstacle)
-        state_grid:
+        probability(obj:`float`): probability of a node on the state grid receiving the state 1 (obstacle)
+        state_grid(obj:`~type_aliased.StateGrid`): An empty state grid.
     """
     new_state_grid = deepcopy(state_grid)
 

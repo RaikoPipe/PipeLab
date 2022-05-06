@@ -4,7 +4,7 @@ import vpython as vpy
 
 from PathFinding.path_finding_util.path_math import diff_pos, get_direction
 from VpythonRendering.object_rendering import render_obstacle, render_pipe, render_corner, render_marker
-from type_dictionary.common_types import *
+from type_dictionary.type_aliases import *
 
 """functions for VpythonRendering a group of objects"""
 

@@ -1,4 +1,4 @@
-path\_math module
+Path Math module
 =================
 
 .. automodule:: path_math

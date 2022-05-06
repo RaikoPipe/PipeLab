@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PathProblem module &mdash; PipeLab 2022 documentation</title>
+  <title>PathProblem dataclass &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Weights module" href="Weights.html" />
+    <link rel="next" title="Weights dataclass" href="Weights.html" />
     <link rel="prev" title="Solution dataclass" href="Solution.html" /> 
 </head>
 
@@ -43,20 +43,20 @@
 <li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">search_algorithm module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">solution_manager module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">partial_solver module</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="pf_data_class.html">pf_data_class</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="Predecessor.html">Predecessor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Predecessor.html">Predecessor dataclass</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Solution.html">Solution dataclass</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">PathProblem module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Weights.html">Weights module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">PathProblem dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Weights.html">Weights dataclass</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">path_finding_util</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -74,8 +74,8 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-          <li><a href="pf_data_class.html">pf_data_class</a> &raquo;</li>
-      <li>PathProblem module</li>
+          <li><a href="pf_data_class.html">PF Dataclass</a> &raquo;</li>
+      <li>PathProblem dataclass</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/PathProblem.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -85,83 +85,90 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-PathProblem">
-<span id="pathproblem-module"></span><h1>PathProblem module<a class="headerlink" href="#module-PathProblem" title="Permalink to this headline"></a></h1>
-<dl class="py class">
+  <div class="section" id="pathproblem-dataclass">
+<h1>PathProblem dataclass<a class="headerlink" href="#pathproblem-dataclass" title="Permalink to this headline"></a></h1>
+<p>Describes a path problem to be solved by <a class="reference internal" href="solution_manager.html#module-solution_manager"><span class="std std-ref">Link</span></a>.</p>
+<span class="target" id="module-PathProblem"></span><dl class="py class">
 <dt class="sig sig-object py" id="PathProblem.PathProblem">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PathProblem.</span></span><span class="sig-name descname"><span class="pre">PathProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_part</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PathProblem.PathProblem" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PathProblem.</span></span><span class="sig-name descname"><span class="pre">PathProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_part</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mcsa*'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PathProblem.PathProblem" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Dataclass that contains detailed information about the path problem.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="PathProblem.PathProblem.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.state_grid">¶</a> – </p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.start_pos"></span><strong>start_pos</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.start_pos">¶</a> – </p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.goal_pos"></span><strong>goal_pos</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.goal_pos">¶</a> – </p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.start_directions"></span><strong>start_directions</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.start_directions">¶</a> – directions that start is restricted to</p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.goal_directions"></span><strong>goal_directions</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.goal_directions">¶</a> – directions that goal is restricted to (i.e. last part that is linked to the goal)</p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.transition_points"></span><strong>transition_points</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.transition_points">¶</a> – Contains border markings, beyond which nodes lie in different plane</p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.starting_part"></span><strong>starting_part</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.starting_part">¶</a> – signifies if there is a starting part; None: No part; 0: Corner; 1: Pipe</p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.part_stock"></span><strong>part_stock</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.part_stock">¶</a> – amount of parts available for assembling a solution</p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.part_cost"></span><strong>part_cost</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.part_cost">¶</a> – dictionary that contains the replacement costs (or opportunity costs) of parts</p></li>
-<li><p><span class="target" id="PathProblem.PathProblem.params.weights"></span><strong>weights</strong><a class="paramlink headerlink reference internal" href="#PathProblem.PathProblem.params.weights">¶</a> – </p></li>
-</ul>
-</dd>
-</dl>
+<p>Dataclass that contains detailed information about a path problem.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.algorithm">
-<span class="sig-name descname"><span class="pre">algorithm</span></span><a class="headerlink" href="#PathProblem.PathProblem.algorithm" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">algorithm</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mcsa*'</span></em><a class="headerlink" href="#PathProblem.PathProblem.algorithm" title="Permalink to this definition"></a></dt>
+<dd><p>Defines how scores are calculated and therefore how nodes are evaluated in the search.</p>
+<p>Type: (:obj: <cite>str</cite>)</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.goal_directions">
 <span class="sig-name descname"><span class="pre">goal_directions</span></span><a class="headerlink" href="#PathProblem.PathProblem.goal_directions" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Set containing directions that restrict in which direction the search algorithm can append to the goal.</p>
+<p>Type: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.goal_pos">
 <span class="sig-name descname"><span class="pre">goal_pos</span></span><a class="headerlink" href="#PathProblem.PathProblem.goal_pos" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Goal position that needs to be reached</p>
+<p>Type: (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.part_cost">
 <span class="sig-name descname"><span class="pre">part_cost</span></span><a class="headerlink" href="#PathProblem.PathProblem.part_cost" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Part IDs pointing to their cost value.</p>
+<p>Type: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>])</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.part_stock">
 <span class="sig-name descname"><span class="pre">part_stock</span></span><a class="headerlink" href="#PathProblem.PathProblem.part_stock" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Part IDs pointing the amount of parts available for assembly.</p>
+<p>Type: (set[<code class="xref py py-obj docutils literal notranslate"><span class="pre">PartStock</span></code>])</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.start_directions">
 <span class="sig-name descname"><span class="pre">start_directions</span></span><a class="headerlink" href="#PathProblem.PathProblem.start_directions" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Set containing directions that restrict in which direction the search algorithm can start the search.</p>
+<p>Type: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.start_pos">
 <span class="sig-name descname"><span class="pre">start_pos</span></span><a class="headerlink" href="#PathProblem.PathProblem.start_pos" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Start position of the search.</p>
+<p>Type: (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.starting_part">
 <span class="sig-name descname"><span class="pre">starting_part</span></span><a class="headerlink" href="#PathProblem.PathProblem.starting_part" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Part ID that is placed at the start point (Error will be raised, if this is not a fitting ID, since this is a
+placeholder for potential features implemented in the future)</p>
+<p>Type: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>])</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.state_grid">
 <span class="sig-name descname"><span class="pre">state_grid</span></span><a class="headerlink" href="#PathProblem.PathProblem.state_grid" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>See <a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.transition_points">
 <span class="sig-name descname"><span class="pre">transition_points</span></span><a class="headerlink" href="#PathProblem.PathProblem.transition_points" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Set containing transition points that show where a transition from one wall to another occurs.</p>
+<p>Type: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.weights">
 <span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#PathProblem.PathProblem.weights" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)</p>
+<p>Type: (:obj`Optional` [<a class="reference internal" href="Weights.html#module-Weights" title="Weights"><code class="xref py py-class docutils literal notranslate"><span class="pre">Weights</span></code></a>])</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -172,7 +179,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="Solution.html" class="btn btn-neutral float-left" title="Solution dataclass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Weights.html" class="btn btn-neutral float-right" title="Weights module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Weights.html" class="btn btn-neutral float-right" title="Weights dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

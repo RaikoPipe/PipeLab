@@ -4,9 +4,8 @@ from PathFinding.path_finding_util.path_math import sum_pos, get_direction
 # todo: put non restriction functions into support functions
 from PathFinding.path_finding_util.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, \
     get_transition
-from type_dictionary.common_types import Pos
 from type_dictionary.constants import fitting_id
-from type_dictionary.special_types import DirectionDict, PosSet
+from type_dictionary.type_aliases import DirectionDict, PosSet, Pos
 
 
 def out_of_bounds(neighbor_node: tuple, state_grid):

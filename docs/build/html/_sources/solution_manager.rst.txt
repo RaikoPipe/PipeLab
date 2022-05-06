@@ -1,4 +1,4 @@
-solution\_manager module
+Solution Manager Module
 ========================
 
 .. automodule:: solution_manager

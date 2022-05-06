@@ -6,7 +6,7 @@
 Welcome to PipeLab ProcessPlanner Documentation!
 =================================================
 The PipeLab Module consists of several submodules and classes. It uses type aliases for easier comprehension of complex types,
-which can be found in :ref:`type dictionary <type_dictionary>`. The most important modules are the :ref:`OPC-UA server <OPC_UA>`
+which can be found in :ref:`type dictionary <Type Dictionary>`. The most important modules are the :ref:`OPC-UA server <OPC_UA>`
 and the :ref:`GUI for debugging and visualization <FunctionTestGUI>`.
 
 .. toctree::

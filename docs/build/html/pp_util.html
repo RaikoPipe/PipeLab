@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pp_util module &mdash; PipeLab 2022 documentation</title>
+  <title>PP Util module &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ps_util module" href="ps_util.html" />
-    <link rel="prev" title="process_planning_util" href="process_planning_util.html" /> 
+    <link rel="next" title="PS Util module" href="ps_util.html" />
+    <link rel="prev" title="Process Planning Util Module" href="process_planning_util.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,16 +44,16 @@
 <li class="toctree-l1 current"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="ProcessPlanner.html">ProcessPlanner class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ProcessState.html">ProcessState class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">pp_data_class</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="process_planning_util.html">process_planning_util</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">pp_util module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ps_util.html">ps_util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">PP Dataclass</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="process_planning_util.html">Process Planning Util Module</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">PP Util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ps_util.html">PS Util module</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -71,8 +71,8 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="ProcessPlanning.html">ProcessPlanning</a> &raquo;</li>
-          <li><a href="process_planning_util.html">process_planning_util</a> &raquo;</li>
-      <li>pp_util module</li>
+          <li><a href="process_planning_util.html">Process Planning Util Module</a> &raquo;</li>
+      <li>PP Util module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/pp_util.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -83,7 +83,7 @@
            <div itemprop="articleBody">
              
   <div class="section" id="module-pp_util">
-<span id="pp-util-module"></span><h1>pp_util module<a class="headerlink" href="#module-pp_util" title="Permalink to this headline"></a></h1>
+<span id="pp-util-module"></span><h1>PP Util module<a class="headerlink" href="#module-pp_util" title="Permalink to this headline"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="pp_util.adjust_pos_in_node_pairs_set">
 <span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">adjust_pos_in_node_pairs_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_pairs_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.adjust_pos_in_node_pairs_set" title="Permalink to this definition"></a></dt>
@@ -92,8 +92,8 @@ then add as a node pair tuple containing only pos.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.pos">¶</a> (<a class="reference internal" href="common_types.html#common_types.Pos" title="common_types.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Pos to be evaluated.</p></li>
-<li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set"></span><strong>node_pairs_set</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set">¶</a> (<a class="reference internal" href="special_types.html#special_types.NodePairSet" title="special_types.NodePairSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodePairSet</span></code></a>) – Set with all outgoing node pairs.</p></li>
+<li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Pos to be evaluated.</p></li>
+<li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set"></span><strong>node_pairs_set</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.NodePairSet" title="type_aliases.NodePairSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodePairSet</span></code></a>) – Set with all outgoing node pairs.</p></li>
 </ul>
 </dd>
 </dl>
@@ -109,6 +109,9 @@ then add as a node pair tuple containing only pos.</p>
 <li><p><span class="target" id="pp_util.determine_next_part.params.layout"></span><strong>layout</strong><a class="paramlink headerlink reference internal" href="#pp_util.determine_next_part.params.layout">¶</a> – Layout that is currently being built.</p></li>
 <li><p><span class="target" id="pp_util.determine_next_part.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.determine_next_part.params.process_state">¶</a> – The current process state.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Part ID (int) of the determined part</p>
 </dd>
 </dl>
 </dd></dl>
@@ -168,7 +171,7 @@ connected.</p>
 <dd class="field-odd"><p><span class="target" id="pp_util.get_outgoing_node_pairs.params.building_instructions"></span><strong>building_instructions</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_outgoing_node_pairs.params.building_instructions">¶</a> – See <code class="xref py py-attr docutils literal notranslate"><span class="pre">ProcessState.building_instructions</span></code>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Set with all outgoing node pairs.</p>
+<dd class="field-even"><p><a class="reference internal" href="type_aliases.html#type_aliases.NodePairSet" title="type_aliases.NodePairSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodePairSet</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -182,7 +185,7 @@ Args:</p>
 process_state (<a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>): The current process state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Optional[<a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if one was found, else None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -198,6 +201,14 @@ information regarding the reason for the error.</p>
 <dt class="sig sig-object py" id="pp_util.make_registration_message">
 <span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_registration_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_registration_message" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a message as string confirming a placement or removal event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="pp_util.make_registration_message.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_registration_message.params.event_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.Pos</span></code></a>) – See <code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></p></li>
+<li><p><span class="target" id="pp_util.make_registration_message.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_registration_message.params.event_code">¶</a> (<em>int</em>) – See <code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -212,8 +223,8 @@ information regarding the reason for the error.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="process_planning_util.html" class="btn btn-neutral float-left" title="process_planning_util" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="ps_util.html" class="btn btn-neutral float-right" title="ps_util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="process_planning_util.html" class="btn btn-neutral float-left" title="Process Planning Util Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ps_util.html" class="btn btn-neutral float-right" title="PS Util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

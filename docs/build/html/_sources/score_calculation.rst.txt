@@ -1,4 +1,4 @@
-score\_calculation module
+Score Calculation module
 =========================
 
 .. automodule:: score_calculation

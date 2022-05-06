@@ -1,4 +1,4 @@
-pp_data_class
+PP Dataclass
 =============
 
 .. toctree::

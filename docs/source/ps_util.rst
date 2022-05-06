@@ -1,4 +1,4 @@
-ps\_util module
+PS Util module
 ===============
 
 .. automodule:: ps_util

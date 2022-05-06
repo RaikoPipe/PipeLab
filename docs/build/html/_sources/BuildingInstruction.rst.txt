@@ -1,4 +1,4 @@
-BuildingInstruction module
+BuildingInstruction class
 ==========================
 
 .. automodule:: BuildingInstruction

@@ -1,5 +1,5 @@
-pf_data_class
-=============
+PF Dataclass
+===============
 
 .. toctree::
    :maxdepth: 4

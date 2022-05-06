@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weights module &mdash; PipeLab 2022 documentation</title>
+  <title>Weights dataclass &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="path_finding_util" href="path_finding_util.html" />
-    <link rel="prev" title="PathProblem module" href="PathProblem.html" /> 
+    <link rel="next" title="Path Finding Util module" href="path_finding_util.html" />
+    <link rel="prev" title="PathProblem dataclass" href="PathProblem.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,20 +43,20 @@
 <li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">search_algorithm module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">solution_manager module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">partial_solver module</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="pf_data_class.html">pf_data_class</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="Predecessor.html">Predecessor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Predecessor.html">Predecessor dataclass</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Solution.html">Solution dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="PathProblem.html">PathProblem module</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Weights module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PathProblem.html">PathProblem dataclass</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Weights dataclass</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">path_finding_util</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -74,8 +74,8 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-          <li><a href="pf_data_class.html">pf_data_class</a> &raquo;</li>
-      <li>Weights module</li>
+          <li><a href="pf_data_class.html">PF Dataclass</a> &raquo;</li>
+      <li>Weights dataclass</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/Weights.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -86,7 +86,7 @@
            <div itemprop="articleBody">
              
   <div class="section" id="module-Weights">
-<span id="weights-module"></span><h1>Weights module<a class="headerlink" href="#module-Weights" title="Permalink to this headline"></a></h1>
+<span id="weights-dataclass"></span><h1>Weights dataclass<a class="headerlink" href="#module-Weights" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="Weights.Weights">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Weights.</span></span><span class="sig-name descname"><span class="pre">Weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_to_obstacles</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Weights.Weights" title="Permalink to this definition"></a></dt>
@@ -95,17 +95,23 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="Weights.Weights.cost">
 <span class="sig-name descname"><span class="pre">cost</span></span><a class="headerlink" href="#Weights.Weights.cost" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Value of impact the cost of assembled parts have on the score calculation.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="Weights.Weights.distance_to_obstacles">
 <span class="sig-name descname"><span class="pre">distance_to_obstacles</span></span><a class="headerlink" href="#Weights.Weights.distance_to_obstacles" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Value of impact of spacing between nodes/parts and obstacles.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="Weights.Weights.path_length">
 <span class="sig-name descname"><span class="pre">path_length</span></span><a class="headerlink" href="#Weights.Weights.path_length" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Value of impact distance between nodes has on the score calculation.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -115,8 +121,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="PathProblem.html" class="btn btn-neutral float-left" title="PathProblem module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="path_finding_util.html" class="btn btn-neutral float-right" title="path_finding_util" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="PathProblem.html" class="btn btn-neutral float-left" title="PathProblem dataclass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="path_finding_util.html" class="btn btn-neutral float-right" title="Path Finding Util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -25,7 +25,6 @@ fastening robot event codes:
 2: move to a fastening position and fasten pipe at pos x
 - if fastening robot command pipeline is empty, robot should go to neutral state
 
-
 part ids:
 -99: Placeholder
 -2: Unknown straight pipe

@@ -1,5 +1,5 @@
-Weights module
-==============
+Weights dataclass
+=================
 
 .. automodule:: Weights
    :members:

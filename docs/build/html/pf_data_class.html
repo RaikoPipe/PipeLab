@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pf_data_class &mdash; PipeLab 2022 documentation</title>
+  <title>PF Dataclass &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Predecessor module" href="Predecessor.html" />
-    <link rel="prev" title="partial_solver module" href="partial_solver.html" /> 
+    <link rel="next" title="Predecessor dataclass" href="Predecessor.html" />
+    <link rel="prev" title="Partial Solver module" href="partial_solver.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -43,20 +43,20 @@
 <li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">search_algorithm module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">solution_manager module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">partial_solver module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">pf_data_class</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Predecessor.html">Predecessor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PF Dataclass</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Predecessor.html">Predecessor dataclass</a></li>
 <li class="toctree-l3"><a class="reference internal" href="Solution.html">Solution dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="PathProblem.html">PathProblem module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Weights.html">Weights module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="PathProblem.html">PathProblem dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Weights.html">Weights dataclass</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">path_finding_util</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -74,7 +74,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-      <li>pf_data_class</li>
+      <li>PF Dataclass</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/pf_data_class.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -84,14 +84,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="pf-data-class">
-<h1>pf_data_class<a class="headerlink" href="#pf-data-class" title="Permalink to this headline"></a></h1>
+  <div class="section" id="pf-dataclass">
+<h1>PF Dataclass<a class="headerlink" href="#pf-dataclass" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Predecessor.html">Predecessor module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Predecessor.html">Predecessor dataclass</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Solution.html">Solution dataclass</a></li>
-<li class="toctree-l1"><a class="reference internal" href="PathProblem.html">PathProblem module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Weights.html">Weights module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PathProblem.html">PathProblem dataclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Weights.html">Weights dataclass</a></li>
 </ul>
 </div>
 </div>
@@ -100,8 +100,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="partial_solver.html" class="btn btn-neutral float-left" title="partial_solver module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Predecessor.html" class="btn btn-neutral float-right" title="Predecessor module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="partial_solver.html" class="btn btn-neutral float-left" title="Partial Solver module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Predecessor.html" class="btn btn-neutral float-right" title="Predecessor dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

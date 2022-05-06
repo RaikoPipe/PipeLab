@@ -7,17 +7,19 @@ from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Solution import Solution
 from ProcessPlanning.ProcessState import ProcessState
 from type_dictionary import constants
-from type_dictionary.special_types import *
+from type_dictionary.class_types import *
 from type_dictionary.constants import horizontal_directions, vertical_directions
 
 message_dict = {1: "fitting", 2: "pipe", 3: "attachment"}
 
 
-def determine_next_part(process_state: ProcessState, layout: Trail):
+def determine_next_part(process_state: ProcessState, layout: Trail) -> Optional[int]:
     """Determines which part should be picked next according to the current build progress.
 
     :param layout: Layout that is currently being built.
-    :param process_state: The current process state."""
+    :param process_state: The current process state.
+
+    :return: Part ID (int) of the determined part"""
     next_part_id = None
 
     building_instruction = process_state.building_instructions.get(layout)
@@ -56,7 +58,7 @@ def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> Node
     connected.
 
     :param building_instructions: See :attr:`ProcessState.building_instructions`.
-    :return: :obj:`NodePairSet`
+    :return: :obj:`~type_aliases.NodePairSet`
     """
 
     outgoing_node_pairs_set = set()
@@ -91,7 +93,7 @@ def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> Node
     return outgoing_node_pairs_set
 
 
-def get_outgoing_node_directions(building_instructions: BuildingInstructions):
+def get_outgoing_node_directions(building_instructions: BuildingInstructions) -> FittingDirections:
     """Returns the connecting directions the fittings of each building instruction requires.
 
     :param building_instructions: See :paramref:`~ProcessState.building_instructions`.
@@ -117,8 +119,8 @@ def adjust_pos_in_node_pairs_set(node_pairs_set: NodePairSet, pos: Pos):
     then add as a node pair tuple containing only pos.
 
     Args:
-        pos(:obj:`~common_types.Pos`): Pos to be evaluated.
-        node_pairs_set(:obj:`~special_types.NodePairSet`): Set with all outgoing node pairs."""
+        pos(:obj:`~type_aliases.Pos`): Pos to be evaluated.
+        node_pairs_set(:obj:`~type_aliases.NodePairSet`): Set with all outgoing node pairs."""
     for connection in node_pairs_set:
         if pos in connection:
             set_connection = set(connection)
@@ -139,7 +141,7 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     process_state (:class:`ProcessState`): The current process state.
 
     Returns:
-        Optional[:class:`Solution`]
+        :class:`Solution` if one was found, else None.
     """
     completed_instructions = get_completed_instructions(process_state.building_instructions)
 
@@ -179,7 +181,7 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     partial_solutions = partial_solver.get_partial_solutions(
         outgoing_node_pairs_set=layout_outgoing_node_pairs_set,
         outgoing_node_directions_dict=layout_outgoing_directions_dict,
-        closed_list=exclusion_list,
+        exclusion_list=exclusion_list,
         part_stock=current_part_stock,
         state_grid=current_state_grid,
         path_problem=path_problem)
@@ -201,7 +203,12 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
 
 
 def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pipe_id: int) -> str:
-    """Returns a message as string confirming a placement or removal event."""
+    """Returns a message as string confirming a placement or removal event.
+
+    Args:
+        event_pos (:obj:`type_aliases.Pos`): See :paramref:`~ProcessPlanning.ProcessState.evaluate_placement.event_pos`
+        event_code (int): See :paramref:`~ProcessPlanning.ProcessState.evaluate_placement.event_code`"""
+
     object_name = message_dict[event_code]
     motion_type = "placement"
     if removal:

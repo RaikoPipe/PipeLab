@@ -1,5 +1,3 @@
-
-
 import heapq
 from copy import copy
 from typing import Optional
@@ -15,16 +13,18 @@ from PathFinding.path_finding_util.score_calculation import get_worst_move_cost,
 from PathFinding.pf_data_class.PathProblem import PathProblem
 
 
-# idea: make a separate function for search showcase
-# optimization idea: save pipe stock in each node, save state grid in each node (reduce pipe stock, occupy path from current node to neighbor node on state grid)
-# todo: assign current pipe stock to predecessor, use pipe stock of predecessor to determine current pipe stock
-
-
 # fixme: mca* doesn't work, mcsa* doesn't include extra score
-def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=False) -> Optional[Solution]:
+def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=False) -> Optional[Solution]:
     """Searches for a solution for the given path problem.
 
-        :param path_problem: :class:`PathFinding.pf_data_class.PathProblem.PathProblem`
+        Args:
+        path_problem(:class:`PathProblem`): Path problem to solve.
+        fast_mode(:obj:`bool`): Slightly faster, but incomplete search. Not recommended.
+        draw_debug(:obj:`bool`): Debug option. If set to True, shows path drawn via matplotlib.pyplot after each node expansion.
+
+        Returns:
+            :class:`PathProblem` when a solution was found, else :obj:`None`.
+
 
     """
     starting_part = path_problem.starting_part
@@ -105,7 +105,7 @@ def find_path(path_problem: PathProblem, draw_debug: bool = False, fast_mode=Fal
                                                          pipe_stock=pipe_stock, predecessors=predecessors,
                                                          fast_mode=fast_mode, key=key_dict.get(fast_mode))
 
-        if draw_debug:
+        if draw_path:
             data = current_state_grid.tolist()
             plt.imshow(data)
             plt.show()

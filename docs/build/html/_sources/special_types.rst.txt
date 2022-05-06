@@ -1,4 +1,4 @@
-special\_types module
+Special Types module
 =====================
 
 .. automodule:: special_types

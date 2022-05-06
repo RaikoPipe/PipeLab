@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from math import copysign
 
-from type_dictionary.common_types import *
+from type_dictionary.type_aliases import *
 from type_dictionary.constants import *
 
 

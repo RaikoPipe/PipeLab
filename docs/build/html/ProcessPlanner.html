@@ -44,12 +44,12 @@
 <li class="toctree-l1 current"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">ProcessPlanner class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="ProcessState.html">ProcessState class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">pp_data_class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">process_planning_util</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">PP Dataclass</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Util Module</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">type_dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 </ul>
 
         </div>
@@ -81,7 +81,7 @@
 <span id="processplanner-class"></span><h1>ProcessPlanner class<a class="headerlink" href="#module-ProcessPlanner" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="ProcessPlanner.ProcessPlanner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ProcessPlanner.</span></span><span class="sig-name descname"><span class="pre">ProcessPlanner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_process_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimization_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">Weights(path_length=1,</span> <span class="pre">cost=1,</span> <span class="pre">distance_to_obstacles=1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mcsa*'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ProcessPlanner.</span></span><span class="sig-name descname"><span class="pre">ProcessPlanner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_process_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Acts as an interface for handling events. Keeps track of the building process with the:class:<cite>~ProcessState</cite>
 class and provides robot commands.
@@ -91,26 +91,33 @@ Handles calculation of a new solution in case of a detour event.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.initial_path_problem"></span><strong>initial_path_problem</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.initial_path_problem">¶</a> – Todo: Documentation</p></li>
 <li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.initial_process_state"></span><strong>initial_process_state</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.initial_process_state">¶</a> – Todo: Documentation</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.optimization_weights"></span><strong>optimization_weights</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.optimization_weights">¶</a> – Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.algorithm"></span><strong>algorithm</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.algorithm">¶</a> – The search algorithm to be used for calculating any solutions to a path problem.</p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.optimization_weights"></span><strong>optimization_weights</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.optimization_weights">¶</a> – </p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.algorithm"></span><strong>algorithm</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.algorithm">¶</a> – </p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">determine_fastening_robot_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.Pos</span></code></a>) – See :meth: <cite>event_pos in ProcessState.evaluate_placement &lt;~ProcessState.evaluate_placement&gt;</cite></p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – See :meth: <cite>event_code in ProcessState.evaluate_placement &lt;~ProcessState.evaluate_placement&gt;</cite></p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands.params.event_info">¶</a> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="ProcessPlanner.ProcessPlanner.determine_picking_robot_commands">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">determine_picking_robot_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">worker_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands" title="Permalink to this definition"></a></dt>
-<dd><p>Evaluates the current process state and makes robot commands.</p>
-<dl class="field-list simple">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">determine_picking_robot_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.layout"></span><strong>layout</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.layout">¶</a> – Optional last event layout if worker event code is 3.</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.process_state">¶</a> – The current process state.</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.worker_event"></span><strong>worker_event</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.worker_event">¶</a> – See <code class="xref py py-obj docutils literal notranslate"><span class="pre">ProcessPlanner.worker_event</span></code>.</p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.event_code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – See :meth: <cite>event_code in ProcessState.evaluate_placement &lt;~ProcessState.evaluate_placement&gt;</cite></p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.layout"></span><strong>layout</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands.params.layout">¶</a> – The current layout.</p></li>
 </ul>
 </dd>
 </dl>
@@ -119,16 +126,14 @@ Handles calculation of a new solution in case of a detour event.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ProcessPlanner.ProcessPlanner.handle_detour_event">
 <span class="sig-name descname"><span class="pre">handle_detour_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">detour_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner.handle_detour_event" title="Permalink to this definition"></a></dt>
-<dd><p>Handles the detour event, applies new solution if found.</p>
+<dd><p>Handles the detour event, applies new solution if found.
+:param _sphinx_paramlinks_ProcessPlanner.ProcessPlanner.handle_detour_event.process_state: The current process state.
+:type _sphinx_paramlinks_ProcessPlanner.ProcessPlanner.handle_detour_event.process_state: <a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>
+:param _sphinx_paramlinks_ProcessPlanner.ProcessPlanner.handle_detour_event.detour_event: Dictionary containing a trail and building instruction of the deviated layout.
+:type _sphinx_paramlinks_ProcessPlanner.ProcessPlanner.handle_detour_event.detour_event: <a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_types.BuildingInstructions</span></code></a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.handle_detour_event.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.handle_detour_event.params.process_state">¶</a> – The current process state.</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.handle_detour_event.params.detour_event"></span><strong>detour_event</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.handle_detour_event.params.detour_event">¶</a> – Dictionary containing a trail and building instruction of the deviated layout.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A tuple containing a string message and a modified state with the new solution applied.</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple containing a string message and a modified state with the new solution applied (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>], [<a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>]).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -137,12 +142,10 @@ Handles calculation of a new solution in case of a detour event.</p>
 <dt class="sig sig-object py" id="ProcessPlanner.ProcessPlanner.handle_detour_trails">
 <span class="sig-name descname"><span class="pre">handle_detour_trails</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner.handle_detour_trails" title="Permalink to this definition"></a></dt>
 <dd><p>Handles current detour trails and decides if the currently aimed solution should return to a previous iteration.</p>
+<p>:param _sphinx_paramlinks_ProcessPlanner.ProcessPlanner.handle_detour_trails.process_state <a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>: The current process state.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="ProcessPlanner.ProcessPlanner.handle_detour_trails.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.handle_detour_trails.params.process_state">¶</a> – The current process state</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An optional string message if the currently aimed solution was changed to a previous one.</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> message if the currently aimed solution was changed to a previous one.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -155,14 +158,14 @@ ProcessState. Prints message output of ProcessState and handles detour events.</
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.main.params.motion_event"></span><strong>motion_event</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.main.params.motion_event">¶</a> – A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.main.params.handle_detour_events"></span><strong>handle_detour_events</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.main.params.handle_detour_events">¶</a> – If set to true, detour events will result in the process planner looking for a new solution.</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.main.params.ignore_part_check"></span><strong>ignore_part_check</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.main.params.ignore_part_check">¶</a> – If set to true, part restrictions will be ignored. Could lead to unexpected behaviour.</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.main.params.ignore_obstructions"></span><strong>ignore_obstructions</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.main.params.ignore_obstructions">¶</a> – If set to true, obstructions will be ignored. Untested. Could lead to unexpected behaviour.</p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.main.params.motion_event"></span><strong>motion_event</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.main.params.motion_event">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">special_type.MotionEvent</span></code>) – A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.</p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.main."></span><strong>main.</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.main.">¶</a><strong>(</strong> (<em>ignore_obstructions</em>) – obj`bool`): If set to true, detour events will result in the process planner looking for a new solution.</p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.main."></span><strong>main.</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.main.">¶</a><strong>(</strong> – obj`bool`): If set to true, part restrictions will be ignored. Will lead to unwanted behaviour.</p></li>
+<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.params.main."></span><strong>main.</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.params.main.">¶</a><strong>(</strong> – obj`bool`): If set to true, obstructions will be ignored. Untested. Will lead to unwanted behaviour.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A dataclass containing processed information regarding the event and current process state (See <a class="reference internal" href="ProcessOutput.html#module-ProcessOutput" title="ProcessOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessOutput</span></code></a>).</p>
+<dd class="field-even"><p><a class="reference internal" href="ProcessOutput.html#module-ProcessOutput" title="ProcessOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessOutput</span></code></a> containing processed information regarding the event and current process state.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -179,29 +182,12 @@ ProcessState. Prints message output of ProcessState and handles detour events.</
 <dd><p>Returns to previous state.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="ProcessPlanner.ProcessPlanner.send_pick_event">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send_pick_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner.send_pick_event" title="Permalink to this definition"></a></dt>
-<dd><p>Sends a new pick event to be evaluated and registered in the current process state.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.send_pick_event.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.send_pick_event.params.part_id">¶</a> – Part ID that was picked.</p></li>
-<li><p><span class="target" id="ProcessPlanner.ProcessPlanner.send_pick_event.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#ProcessPlanner.ProcessPlanner.send_pick_event.params.process_state">¶</a> – The current process state.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A string containing a success message.</p>
-</dd>
-</dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="ProcessPlanner.ProcessPlanner.send_placement_event">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send_placement_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_part_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_obstructions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.ProcessPlanner.send_placement_event" title="Permalink to this definition"></a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="ProcessPlanner.make_placement_messages">
+<span class="sig-prename descclassname"><span class="pre">ProcessPlanner.</span></span><span class="sig-name descname"><span class="pre">make_placement_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ProcessPlanner.make_placement_messages" title="Permalink to this definition"></a></dt>
 <dd><p>Sends a new placement/removal event to be evaluated and registered in current ProcessState.</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>

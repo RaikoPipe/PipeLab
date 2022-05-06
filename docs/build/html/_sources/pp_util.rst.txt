@@ -1,4 +1,4 @@
-pp\_util module
+PP Util module
 ===============
 
 .. automodule:: pp_util
