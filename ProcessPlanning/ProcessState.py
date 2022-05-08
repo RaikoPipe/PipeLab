@@ -13,28 +13,36 @@ from ProcessPlanning.pp_data_class.EventInfo import EventInfo
 from ProcessPlanning.process_planning_util.ps_util import get_neighboring_layouts, construct_trail, \
     construct_detour_building_instruction, construct_building_instructions_from_solution, get_completion_proportion
 from type_dictionary.type_aliases import *
-from type_dictionary.class_types import MotionDict
+from type_dictionary.class_types import MotionDict, BuildingInstructions
 
 
 class ProcessState:
     """Data class that contains information about a process state
 
-        :param solution: :class:`~Solution`
-        :type solution: :class:`~Solution`
+    Args:
 
-        :ivar state_grid: :obj:`~type_aliases.StateGrid` that shows where obstacles and completed layouts occupy nodes
+        solution(:class:`~Solution`):
 
-        :ivar aimed_solution: :class:`~Solution` that contains information of the desired construction. Is recalculated after a detour event.
-        :ivar last_event_trail: :obj:`~type_aliases.Trail` at which the last non deviated event occurred.
 
-        :ivar part_stock: See :obj:`~type_aliases.PartStock`
-        :ivar picked_parts: :obj:`list` [:obj:`int`] containing part IDs picked from stock. Parts will be removed upon assembly.
+    :ivar state_grid: :obj:`~type_aliases.StateGrid` that shows where obstacles and completed layouts occupy nodes
 
-        :ivar building_instructions: (See :obj:`~class_types.BuildingInstructions`) Dictionary containing information about the required placements and IDs of parts to complete the construction process. Is recalculated after a detour event.
+    :ivar aimed_solution: :class:`~Solution` that contains information of the desired construction. Is recalculated
+        after a detour event.
 
-        :ivar motion_dict: Dictionary containing all registered motion events that are valid (non-error) that point to a ConstructionState. The keys for pipe events are of the type Trail, while other events are of the type Pos.
+    :ivar last_event_trail: :obj:`~type_aliases.Trail` at which the last non deviated event occurred.
 
-        :ivar last_event_info: (See :obj:`~class_types.BuildingInstructions`) Dictionary containing information of the last event that occurred.
+    :ivar part_stock: See :obj:`~type_aliases.PartStock` :ivar picked_parts: :obj:`list` [:obj:`int`] containing
+        part IDs picked from stock. Parts will be removed upon assembly.
+
+    :ivar building_instructions: (See :obj:`~class_types.BuildingInstructions`) Dictionary containing information
+        about the required placements and IDs of parts to complete the construction process. Is recalculated after a
+        detour event.
+
+    :ivar motion_dict: Dictionary (See :obj:`~class_types.MotionDict`) containing all registered motion events that are
+        valid (non-error) that point to a ConstructionState. The keys for pipe events are of the type :obj:`~type_aliases.Trail`, while other
+        events are of the type :obj:`~type_aliases.Pos`.
+
+    :ivar last_event_info: Dictionary (See :obj:`~class_types.BuildingInstructions`) containing information of the last event that occurred.
         """
 
     def __init__(self, solution: Solution):
@@ -65,7 +73,7 @@ class ProcessState:
             event_codes (:obj:`list` [:obj:`int`]): List containing event codes valid for search.
 
         Returns:
-            If nothing was found, returns a tuple containing None, otherwise returns a tuple containing the position or trail and its construction state"""
+            If nothing was found, returns a :obj:`tuple` containing :obj:`None`, otherwise returns a :obj:`tuple` containing a :obj:`~type_aliases.Pos` or :obj:`~type_aliases.Trail` and its :class:`ConstructionState`"""
         if 2 in event_codes:
             for trail, construction_state in self.motion_dict.items():
                 if (find_me in trail or find_me == trail) and construction_state.event_code == 2:
@@ -82,9 +90,9 @@ class ProcessState:
     # events
     def pick_part(self, part_id: int):
         """Handling of a pick event.
-        Args:
 
-        part_id (:obj:`int`): Part ID that was picked."""
+        Args:
+            part_id (:obj:`int`): Part ID that was picked."""
         self.picked_parts.append(part_id)
         self.part_stock[part_id] -= 1
 
@@ -174,9 +182,7 @@ class ProcessState:
 
         elif event_code == 1:
             self.fitting_placed(event_pos=event_pos, building_instruction=building_instruction,
-                                event_info=event_info, ignore_part_check=ignore_part_check,
-                                assume_pipe_id_from_solution=assume_pipe_id_from_solution,
-                                current_layout=current_layout)
+                                event_info=event_info, ignore_part_check=ignore_part_check)
 
         if not event_info.error:
             # register placement
@@ -190,8 +196,8 @@ class ProcessState:
             if not event_info.deviated:
 
                 if not assume_pipe_id_from_solution:
-                    # check if pipe ids can be assumed from fittings
-                    self.check_assignment_pipe_id(current_layout, event_info)
+                    # check if pipe ids can be assumed based on placed fittings
+                    self.check_assignment_pipe_id(current_layout)
                 # check completion state of this and neighboring layouts
                 event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
                 self.completion = get_completion_proportion(self.building_instructions)
@@ -199,7 +205,7 @@ class ProcessState:
             # else:
             if event_code == 1:
                 # check for detour events
-                detour_event = self.check_detour_event(event_pos=event_pos, event_code=event_code)
+                detour_event = self.get_detour_event(event_pos=event_pos, event_code=event_code)
                 event_info.detour_event = detour_event
 
             # modify parts_picked
@@ -208,12 +214,17 @@ class ProcessState:
 
         return event_info
 
-    def get_current_layout_and_building_instruction(self, event_code: int, event_pos: Pos) -> tuple:
+    def get_current_layout_and_building_instruction(self, event_code: int, event_pos: Pos) -> tuple[BuildingInstruction, Trail, bool]:
         """Returns the current layout and building instruction if event occurred inside solution.
 
-        :param event_pos: See :paramref:`~evaluate_placement.event_pos`
-        :param event_code: See :paramref:`~evaluate_placement.event_code`
-        :return: Tuple containing the current layout and building instruction and a value that signifies if the layout has changed from the previous one."""
+        Args:
+            event_pos(:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_placement.event_pos`
+            event_code(:obj:`int`): See :paramref:`~evaluate_placement.event_code`
+
+        Returns:
+            :obj:`tuple` [:class:`BuildingInstruction`, :obj:`~type_aliases.Trail`, :obj:`bool`] containing the
+            current layout (:obj:`~type_aliases.Trail`), :class:`BuildingInstruction` and a value that signifies if the layout has changed from the previous
+            one. """
 
         current_layout = self.last_event_trail
         building_instruction = self.building_instructions.get(current_layout)
@@ -249,17 +260,20 @@ class ProcessState:
             current_layout = None
             building_instruction = None
 
-            # todo: check recommended att pos
         return building_instruction, current_layout, layout_changed
 
     def register_placement(self, building_instruction, construction_state, event_code,
                            event_pos):
-        """Registers placement event into motion_dict.
+        """Registers placement event to motion_dict.
 
-        :param event_pos: See :paramref:`~evaluate_placement.event_pos`
-        :param event_code: See :paramref:`~evaluate_placement.event_code`
-        :param building_instruction: The current building instruction.
-        :param construction_state: Construction state of the current motion event."""
+        Args:
+
+            event_pos(:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_placement.event_pos`
+            event_code(:obj:`int`): See :paramref:`~evaluate_placement.event_code`
+            building_instruction(:class:`BuildingInstruction`): The current building instruction.
+            construction_state(:class:`ConstructionState`): Construction state of the current motion event.
+
+        """
         # make construction state
         if event_code == 2:
             if not construction_state.deviated and construction_state.part_id != -2:
@@ -272,9 +286,14 @@ class ProcessState:
     def part_removed(self, event_pos, event_code, event_info) -> Optional[tuple[Pos, ConstructionState]]:
         """Removes event_pos from the motion dict, if already in motion dict.
 
-        :param event_pos: See :paramref:`~evaluate_placement.event_pos`
-        :param event_code: See :paramref:`~evaluate_placement.event_code`
-        """
+        Args:
+            event_pos(:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_placement.event_pos`
+            event_code(:obj:`int`): See :paramref:`~evaluate_placement.event_code`
+
+        Returns:
+
+            :obj:`tuple` [:obj:`~type_aliases.Pos`, :class:`ConstructionState`] containing the :obj:`~type_aliases.Pos` and :class:`ConstructionState`
+            of the motion event of the part that was removed, else :obj:`None`."""
         pos, construction_state = self.get_construction_state(find_me=event_pos, event_codes=[event_code])
 
         if construction_state:
@@ -292,12 +311,13 @@ class ProcessState:
 
     def attachment_placed(self, event_pos: Pos, event_code: int, building_instruction: BuildingInstruction,
                           event_info: EventInfo):
-        """Evaluates the placement of an attachment. Notes findings into event_info.
+        """Evaluates the placement of an attachment. Notes findings to event_info.
 
-        :param event_info: See :class:`EventInfo`
-        :param building_instruction: See :class:`BuildingInstruction`
-        :param event_pos: See :paramref:`~evaluate_placement.event_pos`
-        :param event_code: See :paramref:`~evaluate_placement.event_code`"""
+        Args:
+            event_info(:class:`EventInfo`): Event info being modified.
+            building_instruction(:class:`BuildingInstruction`): Building instruction of the current layout.
+            event_pos(:obj:`type_aliases.Pos`): See :paramref:`~evaluate_placement.event_pos`
+            event_code(:obj:`int`): See :paramref:`~evaluate_placement.event_code`"""
         # todo: check recommended att_pos
         if event_pos in self.aimed_solution.node_trail.keys():
             if event_pos not in building_instruction.required_fit_positions:
@@ -319,7 +339,15 @@ class ProcessState:
                     assume_pipe_id_from_solution):
         """Evaluates the placement of a pipe. Notes findings in event_info.
 
-        :param event_pos: See :paramref:`~evaluate_placement.event_pos`"""
+        Args:
+            event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_placement.event_pos`
+            event_info(:class:`EventInfo`): Event info being modified
+            building_instruction(:class:`BuildingInstruction`): Building instruction of the current layout.
+            ignore_part_check (:obj:`bool`): Option for ignoring part restrictions.
+             See :paramref:`~ProcessPlanner.ProcessPlanner.main.ignore_part_check`
+            assume_pipe_id_from_solution(:obj:`bool`): See :paramref:`~ProcessState.ProcessState.evaluate_placement.assume_pipe_id_from_solution`
+
+            """
         if event_pos in self.aimed_solution.node_trail.keys():
             part_id = building_instruction.pipe_id
             if not assume_pipe_id_from_solution:
@@ -338,6 +366,19 @@ class ProcessState:
             self.pipe_placed_deviated_route(event_info, ignore_part_check)
 
     def pipe_placed_deviated_route(self, event_info, ignore_part_check):
+        """
+        Pipe placement evaluation if either motion event occurred outside solution or if :paramref:`~ProcessState.ProcessState.evaluate_placement.assume_pipe_id_from_solution` has been set to True in :meth:`~ProcessState.ProcessState.evaluate_placement`.
+
+
+        Args:
+
+            event_info(:class:`EventInfo`): Event info being modified.
+            ignore_part_check (:obj:`bool`): Option for ignoring part restrictions.
+                 See :paramref:`~ProcessPlanner.ProcessPlanner.main.ignore_part_check`
+
+
+
+        """
         picked_parts = self.picked_parts
         # find the part id
         picked_pipes = [i for i in picked_parts if i != 0]
@@ -360,9 +401,17 @@ class ProcessState:
 
         return event_info.part_id
 
-    def fitting_placed(self, event_pos, building_instruction, event_info, assume_pipe_id_from_solution,
-                       ignore_part_check, current_layout):
-        """Evaluates the placement of a fitting. Notes findings in event_info. If picked_parts is set to None, part restrictions will be ignored"""
+    def fitting_placed(self, event_pos, building_instruction, event_info, ignore_part_check):
+        """Evaluates the placement of a fitting. Notes findings in event_info.
+
+        Args:
+            event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_placement.event_pos`
+            event_info(:class:`EventInfo`): Event info being modified
+            building_instruction(:class:`BuildingInstruction`): Building instruction of the current layout.
+            ignore_part_check (:obj:`bool`): Option for ignoring part restrictions.
+             See :paramref:`~ProcessPlanner.ProcessPlanner.main.ignore_part_check`
+
+         """
         if 0 in self.picked_parts or ignore_part_check:
             event_info.part_id = 0
             if event_pos in self.aimed_solution.node_trail.keys():
@@ -377,7 +426,13 @@ class ProcessState:
             event_info.error = event_info.part_not_picked = True
             event_info.part_id = -99
 
-    def check_assignment_pipe_id(self, current_layout, event_info):
+    def check_assignment_pipe_id(self, current_layout:Trail):
+        """Identifies and assigns IDs to motion events with unidentified pipe IDs based on placed fittings.
+
+        Args:
+            current_layout(:obj:`~type_aliases.Trail`): The current layout.
+
+        """
         neighboring_layouts = get_neighboring_layouts(current_layout, self.aimed_solution.ordered_trails)
         neighboring_layouts.add(current_layout)
 
@@ -422,16 +477,20 @@ class ProcessState:
 
                 return pipe_id
 
-    def check_detour_event(self, event_pos, event_code) -> dict:
-
+    def get_detour_event(self, event_pos, event_code) -> BuildingInstructions:
         """Checks if conditions for a detour event are met.
-        Detour event occurs if:
-        1. 2 fittings in proximity (connectable by available parts)
-        2. 1 attachment in between those 2 fittings
+        Detour event occurs if:\n
+        1. 2 fittings in proximity (connectable by available parts)\n
+        2. 1 attachment in between those 2 fittings\n
         3. 1 pipe (with correct or unknown id) in between those fittings
 
-        :param event_pos: See :paramref:`~evaluate_placement.event_pos`
-        :param event_code: See :paramref:`~evaluate_placement.event_code`
+        Args:
+
+            event_pos (:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_placement.event_pos`
+            event_code (:obj:`int`): See :paramref:`~evaluate_placement.event_code`
+
+        Return: :obj:`~class_types.BuildingInstructions` containing the detour event.
+
         """
 
         check_fit_set = self.get_all_fit_positions()
@@ -504,11 +563,12 @@ class ProcessState:
 
                 return {detour_trail: detour_instruction}
 
-    def adjust_motion_dict_to_solution(self, solution: Solution, detour_event: dict = None):
+    def adjust_motion_dict_to_solution(self, solution: Solution, detour_event: BuildingInstructions = None):
         """Reevaluates all entries in the motion dict according to the given solution.
 
-        :param solution: New solution.
-        :param detour_event: Element that caused detour event: Dictionary containing a trail and building instruction.
+        Args:
+            solution(:class:`Solution`): New solution.
+            detour_event(:obj:`~class_types.BuildingInstructions`): Cause of the detour event.
         """
         self.aimed_solution = solution
         self.building_instructions = construct_building_instructions_from_solution(solution)
@@ -559,8 +619,7 @@ class ProcessState:
 
             elif construction_state.event_code == 1:
                 self.fitting_placed(event_pos=construction_state.event_pos, building_instruction=building_instruction,
-                                    event_info=event_info, ignore_part_check=True, assume_pipe_id_from_solution=False,
-                                    current_layout=current_layout)
+                                    event_info=event_info, ignore_part_check=True)
 
             new_construction_state.part_id = event_info.part_id
             new_construction_state.deviated = event_info.deviated
@@ -583,9 +642,13 @@ class ProcessState:
     def obstructed_part(self, event_pos: Pos, event_code: int) -> Optional[int]:
         """Checks if motion event obstructed an already placed part.
 
-        :param event_pos: See :paramref:`~evaluate_placement.event_pos`
-        :param event_code: See :paramref:`~evaluate_placement.event_code`
-        :return: Event code of part that was obstructed or None if no part was obstructed."""
+        Args:
+
+            event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_placement.event_pos`
+            event_code(:obj:`int`): See parameter :paramref:`~evaluate_placement.event_code`
+
+        Returns:
+            Event code (:obj:`int`) of part that was obstructed or :obj:`None` if no part was obstructed."""
         pos, construction_state = self.get_construction_state(find_me=event_pos, event_codes=[2])
         if construction_state and event_code != 2:
             # obstructed pipe
@@ -607,15 +670,25 @@ class ProcessState:
     def obstructed_obstacle(self, event_pos: Pos) -> bool:
         """Checks state grid if motion event obstructed obstacle.
 
-        :param event_pos: See :paramref:`~evaluate_placement.event_pos`"""
+        Args:
+            event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_placement.event_pos`
+
+        Returns:
+            :obj:`bool` if motion event obstructed obstacle.
+            """
         if self.state_grid[event_pos] == 1 or self.state_grid[event_pos] == 3:
             return True
         else:
             return False
 
     # utilities
-    def set_completion_state(self, current_layout, event_info) -> set:
-        """sets completion state of current layout and neighboring layouts. Updates state grid on completed layouts."""
+    def set_completion_state(self, current_layout:Trail, event_info) -> set:
+        """Sets completion state of current layout and neighboring layouts. Updates state grid on completed layouts.
+
+        Args:
+            current_layout(:obj:`Trail`):
+
+        """
         neighboring_layouts = get_neighboring_layouts(current_layout, self.aimed_solution.ordered_trails)
         neighboring_layouts.add(current_layout)
         completed_layouts = set()
@@ -638,9 +711,15 @@ class ProcessState:
 
         return completed_layouts
 
-    def completed_instruction(self, building_instruction) -> tuple[bool, int]:
+    def completed_instruction(self, building_instruction: BuildingInstruction) -> tuple[bool, int]:
         """Checks if the building instruction was completed.
-        and returns event code corresponding to its completion state."""
+
+        Args:
+            building_instruction(:obj:`type_aliases.BuildingInstruction`): Building instruction of the current layout.
+
+        Returns:
+            Tuple containing if building instruction was completed and event code corresponding to its completion state.
+            """
 
         # check if required pipe placed
         pipe_positions = building_instruction.possible_att_pipe_positions
@@ -666,6 +745,10 @@ class ProcessState:
         return True, 0
 
     def get_all_fit_positions(self):
+        """
+        Returns:
+            A set containing all fitting positions in the motion dictionary.
+        """
         fit_set = set()
         for pos, construction_state in self.motion_dict.items():
             if construction_state.event_code == 1:
@@ -673,6 +756,10 @@ class ProcessState:
         return fit_set
 
     def get_all_att_positions(self):
+        """
+        Returns:
+            A set containing all attachment positions in the motion dictionary.
+        """
         att_set = set()
         for pos, construction_state in self.motion_dict.items():
             if construction_state.event_code == 3:
@@ -680,13 +767,28 @@ class ProcessState:
         return att_set
 
     def get_all_pipe_positions(self):
+        """
+        Returns:
+            A set containing all pipe positions in the motion dictionary.
+        """
         pipe_set = set()
         for pos, construction_state in self.motion_dict.items():
             if construction_state.event_code == 2:
                 pipe_set.add(pos)
         return pipe_set
 
-    def pipe_placed_detour_event(self, event_pos, event_info, building_instruction, pipe_id):
+    def pipe_placed_detour_event(self, event_pos: Pos, event_info:EventInfo, building_instruction:BuildingInstruction, pipe_id:int) -> EventInfo:
+        """Pipe placement reevaluation for detour events. Similar to :meth:`pipe_placed`.
+
+        Args:
+            event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_placement.event_pos`
+            event_info(:class:`EventInfo`): Event info being modified
+            building_instruction(:obj:`~type_aliases.BuildingInstruction`): Building instruction of the current layout.
+            pipe_id(:obj:`int`): Pipe ID of the construction state being reevaluated.
+        Return:
+
+
+        """
         if event_pos in self.aimed_solution.node_trail.keys():
             # if pipe placement occurred somewhere inside the trail of building instruction, then it's valid
             part_id = building_instruction.pipe_id
@@ -699,10 +801,17 @@ class ProcessState:
         else:
             event_info.part_id = pipe_id
             event_info.deviated = True
+        return event_info
 
-        pass
 
-    def get_num_unknown_pipes(self):
+
+    def get_num_unknown_pipes(self) -> int:
+        """
+
+        Returns: Amount of pipes with unknown ID in motion dictionary (-2).
+
+        """
+
         counter = 0
         for pos, construction_state in self.motion_dict.items():
             if construction_state.event_code == 2:

@@ -26,9 +26,6 @@ sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning/process_pla
 sys.path.insert(0, os.path.abspath('../../../PipeLab/type_dictionary'))
 
 
-
-print(sys.path[0])
-
 # -- Project information -----------------------------------------------------
 
 project = 'PipeLab'

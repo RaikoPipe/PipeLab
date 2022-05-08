@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from copy import deepcopy
 from typing import Optional
 
@@ -6,6 +8,7 @@ from PathFinding.path_finding_util.path_math import get_direction, diff_pos
 from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Solution import Solution
 from ProcessPlanning.ProcessState import ProcessState
+from ProcessPlanning.pp_data_class.EventInfo import EventInfo
 from type_dictionary import constants
 from type_dictionary.class_types import *
 from type_dictionary.constants import horizontal_directions, vertical_directions
@@ -289,3 +292,56 @@ def get_next_recommended_action(process_state, building_instruction) -> Action:
                 return get_next_recommended_action(process_state, building_instruction)
 
     return rec_pos, rec_event, rec_part_id
+
+
+def make_placement_messages(event_info: EventInfo):
+    """Sends a new placement/removal event to be evaluated and registered in current ProcessState."""
+
+
+
+    note = None
+
+    if event_info.obstructed_obstacle:
+        note = str.format(f"Obstructed obstacle while placing {message_dict[event_info.event_code]}")
+
+    if event_info.obstructed_part:
+        note = str.format(
+            f"Obstructed {message_dict[event_info.obstructed_part]} while placing {message_dict[event_info.event_code]}")
+
+    if event_info.removal:
+        if event_info.unnecessary:
+            note = str.format(f"Removed unnecessary {message_dict[event_info.event_code]}")
+        elif event_info.misplaced:
+            note = str.format(f"Removed misplaced {message_dict[event_info.event_code]}")
+        elif event_info.deviated:
+            note = str.format(f"Removed deviating {message_dict[event_info.event_code]}")
+    else:
+        if event_info.unnecessary:
+            note = str.format(f"Unnecessary {message_dict[event_info.event_code]} detected!")
+        elif event_info.deviated:
+            note = str.format(f"Deviating {message_dict[event_info.event_code]} detected!")
+        elif event_info.misplaced:
+            note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
+
+    if event_info.part_not_picked:
+        if event_info.part_id == -99:
+            note = str.format(f"Placed {message_dict[event_info.event_code]}"
+                              f", but part was not picked!")
+        else:
+            note = str.format(f"Placed id {event_info.part_id} "
+                              f", but not picked!")
+
+    # make messages
+    if event_info.error:
+        message = make_error_message(event_pos=event_info.event_pos,
+                                     additional_message=note)
+    elif event_info.deviated:
+        message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
+                                            removal=event_info.removal, pipe_id=event_info.part_id)
+
+    else:
+        message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
+                                            removal=event_info.removal, pipe_id=event_info.part_id)
+
+
+    return message, note

@@ -49,7 +49,7 @@ class FunctionTestGUI:
             state_grid=self.process_planner.last_process_state.aimed_solution.state_grid,
             button_grid_frame=self.solution_button_grid_frame,
             start=start, goal=goal,
-            absolute_trail=self.process_planner.optimal_solution.node_trail,
+            absolute_trail=self.process_planner._optimal_solution.node_trail,
             process_planner=None,
             part_select_option=None, tree=None, part_stock_tree=None,
             solution_button_grid=None)

@@ -7,7 +7,7 @@ from PathFinding.pf_data_class import Weights
 from type_dictionary.type_aliases import *
 
 
-@dataclass(slots=True)
+@dataclass(slots=True) # slots increase property access performance by ~20% compared to dictionaries.
 class PathProblem:
     """Dataclass that contains detailed information about a path problem.
     """

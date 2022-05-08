@@ -89,83 +89,69 @@
 <p>Used to describe a motion event in detail after evaluated by <a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a></p>
 <span class="target" id="module-EventInfo"></span><dl class="py class">
 <dt class="sig sig-object py" id="EventInfo.EventInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">EventInfo.</span></span><span class="sig-name descname"><span class="pre">EventInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deviated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">misplaced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnecessary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_layouts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detour_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_not_picked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstructed_obstacle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstructed_part</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_registered</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EventInfo.EventInfo" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">EventInfo.</span></span><span class="sig-name descname"><span class="pre">EventInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deviated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">misplaced</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unnecessary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_registered</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_layouts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detour_event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_not_picked</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstructed_obstacle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstructed_part</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#EventInfo.EventInfo" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanning.pp_data_class.ConstructionState.ConstructionState</span></code></p>
 <p>Dataclass containing information about a placement/removal/error event.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="EventInfo.EventInfo.completed_layouts">
 <span class="sig-name descname"><span class="pre">completed_layouts</span></span><a class="headerlink" href="#EventInfo.EventInfo.completed_layouts" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>The layouts that were completed by that action.</p>
+<p>Type: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="EventInfo.EventInfo.detour_event">
 <span class="sig-name descname"><span class="pre">detour_event</span></span><a class="headerlink" href="#EventInfo.EventInfo.detour_event" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="EventInfo.EventInfo.deviated">
-<span class="sig-name descname"><span class="pre">deviated</span></span><a class="headerlink" href="#EventInfo.EventInfo.deviated" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p><a href="#id1"><span class="problematic" id="id2">:ob:`Optional`</span></a> [<a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Type</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="EventInfo.EventInfo.error">
 <span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#EventInfo.EventInfo.error" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="EventInfo.EventInfo.event_code">
-<span class="sig-name descname"><span class="pre">event_code</span></span><a class="headerlink" href="#EventInfo.EventInfo.event_code" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="EventInfo.EventInfo.event_pos">
-<span class="sig-name descname"><span class="pre">event_pos</span></span><a class="headerlink" href="#EventInfo.EventInfo.event_pos" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>If an error occurred.
+Errors signify that an action occurred that should have been impossible in the context of the current process state.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="EventInfo.EventInfo.layout">
 <span class="sig-name descname"><span class="pre">layout</span></span><a class="headerlink" href="#EventInfo.EventInfo.layout" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="EventInfo.EventInfo.misplaced">
-<span class="sig-name descname"><span class="pre">misplaced</span></span><a class="headerlink" href="#EventInfo.EventInfo.misplaced" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Layout where motion event happened.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>]</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="EventInfo.EventInfo.obstructed_obstacle">
 <span class="sig-name descname"><span class="pre">obstructed_obstacle</span></span><a class="headerlink" href="#EventInfo.EventInfo.obstructed_obstacle" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Error specifier. If an obstacle was obstructed by a placement.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="EventInfo.EventInfo.obstructed_part">
 <span class="sig-name descname"><span class="pre">obstructed_part</span></span><a class="headerlink" href="#EventInfo.EventInfo.obstructed_part" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="EventInfo.EventInfo.part_id">
-<span class="sig-name descname"><span class="pre">part_id</span></span><a class="headerlink" href="#EventInfo.EventInfo.part_id" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Error specifier. If another part was obstructed by a placement.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="EventInfo.EventInfo.part_not_picked">
 <span class="sig-name descname"><span class="pre">part_not_picked</span></span><a class="headerlink" href="#EventInfo.EventInfo.part_not_picked" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Error specifier. If a part was not picked.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="EventInfo.EventInfo.removal">
 <span class="sig-name descname"><span class="pre">removal</span></span><a class="headerlink" href="#EventInfo.EventInfo.removal" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="EventInfo.EventInfo.time_registered">
-<span class="sig-name descname"><span class="pre">time_registered</span></span><a class="headerlink" href="#EventInfo.EventInfo.time_registered" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="EventInfo.EventInfo.unnecessary">
-<span class="sig-name descname"><span class="pre">unnecessary</span></span><a class="headerlink" href="#EventInfo.EventInfo.unnecessary" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>If a part was removed.</p>
+<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd></dl>
 
 </dd></dl>
 
