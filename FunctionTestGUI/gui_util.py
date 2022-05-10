@@ -1,5 +1,4 @@
 
-
 import pprint
 import tkinter as tk
 from copy import deepcopy
@@ -15,8 +14,9 @@ from FunctionTestGUI.gui_config import free_style, pipe_style, obs_style, att_st
 from ProcessPlanning.ProcessPlanner import ProcessPlanner
 from ProcessPlanning.ProcessState import ProcessState
 from ProcessPlanning.pp_data_class.ConstructionState import ConstructionState
-from ProcessPlanning.pp_data_class.EventInfo import EventInfo
-from type_dictionary.type_aliases import StateGrid
+from ProcessPlanning.pp_data_class.PickEventInfo import PickEventInfo
+from ProcessPlanning.pp_data_class.PlacementEventInfo import PlacementEventInfo
+from TypeDictionary.type_aliases import StateGrid
 
 message_count = 0
 
@@ -199,13 +199,13 @@ def update_solution_grid(tentative_state: ProcessState, button_grid, initial_sty
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, process_message_tree,
                              style_grid,
                              initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid, root=None):
-    output = process_planner.main((pos, event_code), handle_detour_events=True,
-                                  ignore_part_check=False)
-    pprint.pprint(output)
+    output = process_planner.handle_motion_event((pos, event_code), handle_detour_events=True,
+                                                 ignore_part_check=False)
+    # pprint.pprint(output)
     process_state = output.process_state
     messages = output.messages
     next_recommended_action = output.next_recommended_action
-    event_info: EventInfo = process_state.last_event_info
+    event_info: PlacementEventInfo = process_state.last_placement_event_info
     update_button_grid(button_grid, process_planner, style_grid, tool_tip_text_grid)
 
     if event_info.detour_event or process_state.detour_trails:
@@ -248,28 +248,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
             extra_message_ids.append(message_count)
             message_count += 1
 
-        for attribute in vars(event_info):
-            value = event_info.__getattribute__(attribute)
-            if attribute == "detour_event" and value:
-                value = True
-            elif attribute == "time_registered":
-                value = str(value.replace(microsecond=0))
-            elif attribute == "part_id":
-                value = str(value)
-            elif attribute == "completed_layouts":
-                value = tuple(value)  # tkinter gets key error on sets
-            if value:
-                value = str(value)
-                process_message_tree.insert("", index=tk.END, iid=message_count, tag=message_count,
-                                            text=str.format(f"{attribute}: {value}"))
-                extra_message_ids.append(message_count)
-                message_count += 1
-
-        parent_message_id = extra_message_ids[0]
-        for idx, child_message_id in enumerate(extra_message_ids):
-            if idx == 0:
-                continue
-            process_message_tree.move(child_message_id, parent_message_id, idx - 1)
+        append_texts_to_message(event_info, extra_message_ids, process_message_tree)
 
     if detour_message:
         process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=detour_message)
@@ -316,16 +295,61 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
     process_message_tree.yview_moveto(1)
 
 
-def send_new_pick_event(part_id, process_planner: ProcessPlanner, tree, part_stock_tree):
-    output = process_planner.main((part_id, 4))
-    pprint.pprint(output)
+def append_texts_to_message(event_info, extra_message_ids, process_message_tree):
+    global message_count
+    for attribute in vars(event_info):
+        value = event_info.__getattribute__(attribute)
+        if attribute == "detour_event" and value:
+            value = True
+        elif attribute == "time_registered":
+            value = str(value.replace(microsecond=0))
+        elif attribute == "part_id":
+            value = str(value)
+        elif attribute in {"completed_layouts", "stock_empty"}:
+            value = tuple(value)  # tkinter gets key error on sets
+        if value:
+            value = str(value)
+            process_message_tree.insert("", index=tk.END, iid=message_count, tag=message_count,
+                                        text=str.format(f"{attribute}: {value}"))
+            extra_message_ids.append(message_count)
+            message_count += 1
+    parent_message_id = extra_message_ids[0]
+    for idx, child_message_id in enumerate(extra_message_ids):
+        if idx == 0:
+            continue
+        process_message_tree.move(child_message_id, parent_message_id, idx - 1)
+
+
+def send_new_pick_event(part_id, process_planner: ProcessPlanner, process_message_tree, part_stock_tree):
+    global message_count
+    output = process_planner.handle_motion_event((part_id, 4))
+    event_info: PickEventInfo = output.current_event_info
+    # pprint.pprint(output)
     message = output.messages[0]
-    tree.insert("", index=tk.END, text=message.replace("Process Planner: ", ""))
+    special_message = output.messages[1]
+
+    process_message_tree.insert("", index=tk.END, tag= message_count,iid=message_count, text=message.replace("Process Planner: ", ""))
+
+    if event_info.error:
+        process_message_tree.tag_configure(tagname=message_count, background="red3", foreground="white")
+    else:
+        process_message_tree.tag_configure(tagname=message_count, background ="green2")
+
+    extra_message_ids = [message_count]
+    message_count += 1
+
+    if special_message:
+        process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=special_message)
+        extra_message_ids.append(message_count)
+        message_count += 1
+
+    append_texts_to_message(event_info, extra_message_ids, process_message_tree)
+
     item = part_stock_tree.get_children()[part_id]
     part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
                                        process_planner.last_process_state.part_stock[part_id]))
     # previous_style_grids.insert(0, deepcopy(style_grid))
-    tree.yview_moveto(1)
+    process_message_tree.yview_moveto(1)
 
 
 def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_grid_frame,

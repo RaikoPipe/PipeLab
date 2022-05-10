@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>object_data_classes module &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="object_rendering module" href="object_rendering.html" />
+    <link rel="prev" title="group_rendering module" href="group_rendering.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="coordinate_transformations.html">coordinate_transformations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debug_rendering.html">debug_rendering module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default_data.html">default_data module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_rendering.html">group_rendering module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">object_data_classes module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="object_rendering.html">object_rendering module</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="VpythonRendering.html">VpythonRendering module</a> &raquo;</li>
+      <li>object_data_classes module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/object_data_classes.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-object_data_classes">
+<span id="object-data-classes-module"></span><h1>object_data_classes module<a class="headerlink" href="#module-object_data_classes" title="Permalink to this headline"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="object_data_classes.SceneData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">object_data_classes.</span></span><span class="sig-name descname"><span class="pre">SceneData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera_fov:</span> <span class="pre">float</span> <span class="pre">=</span> <span class="pre">0.6283185307179586</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_pos:</span> <span class="pre">vpython.vector.vector</span> <span class="pre">=</span> <span class="pre">&lt;500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">75&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">2048</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_res:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1152</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ambient_light:</span> <span class="pre">vpython.vector.vector</span> <span class="pre">=</span> <span class="pre">&lt;1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distant_lights:</span> <span class="pre">tuple</span> <span class="pre">=</span> <span class="pre">((&lt;0.22</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.44</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.88&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1&gt;)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">(&lt;-0.88</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">-0.22</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">-0.44&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">&lt;1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1&gt;))</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_color:</span> <span class="pre">vpython.vector.vector</span> <span class="pre">=</span> <span class="pre">&lt;0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#object_data_classes.SceneData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.SceneData.camera_fov">
+<span class="sig-name descname"><span class="pre">camera_fov</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.6283185307179586</span></em><a class="headerlink" href="#object_data_classes.SceneData.camera_fov" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.SceneData.camera_pos">
+<span class="sig-name descname"><span class="pre">camera_pos</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;500,</span> <span class="pre">1000,</span> <span class="pre">75&gt;</span></em><a class="headerlink" href="#object_data_classes.SceneData.camera_pos" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.SceneData.x_res">
+<span class="sig-name descname"><span class="pre">x_res</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2048</span></em><a class="headerlink" href="#object_data_classes.SceneData.x_res" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.SceneData.y_res">
+<span class="sig-name descname"><span class="pre">y_res</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1152</span></em><a class="headerlink" href="#object_data_classes.SceneData.y_res" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.SceneData.ambient_light">
+<span class="sig-name descname"><span class="pre">ambient_light</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;1,</span> <span class="pre">1,</span> <span class="pre">1&gt;</span></em><a class="headerlink" href="#object_data_classes.SceneData.ambient_light" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.SceneData.distant_lights">
+<span class="sig-name descname"><span class="pre">distant_lights</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">((&lt;0.22,</span> <span class="pre">0.44,</span> <span class="pre">0.88&gt;,</span> <span class="pre">&lt;1,</span> <span class="pre">1,</span> <span class="pre">1&gt;),</span> <span class="pre">(&lt;-0.88,</span> <span class="pre">-0.22,</span> <span class="pre">-0.44&gt;,</span> <span class="pre">&lt;1,</span> <span class="pre">1,</span> <span class="pre">1&gt;))</span></em><a class="headerlink" href="#object_data_classes.SceneData.distant_lights" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.SceneData.background_color">
+<span class="sig-name descname"><span class="pre">background_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;0,</span> <span class="pre">0,</span> <span class="pre">0&gt;</span></em><a class="headerlink" href="#object_data_classes.SceneData.background_color" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="object_data_classes.MountingWallData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">object_data_classes.</span></span><span class="sig-name descname"><span class="pre">MountingWallData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim=&lt;1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">150&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mount_color=&lt;0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.8&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mount_spot_color=&lt;0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mount_spot_radius=10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#object_data_classes.MountingWallData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data class that contains visual information of mounting_wall objects. Provides a default.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.MountingWallData.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;1000,</span> <span class="pre">2000,</span> <span class="pre">150&gt;</span></em><a class="headerlink" href="#object_data_classes.MountingWallData.dim" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.MountingWallData.mount_color">
+<span class="sig-name descname"><span class="pre">mount_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;0.8,</span> <span class="pre">0.8,</span> <span class="pre">0.8&gt;</span></em><a class="headerlink" href="#object_data_classes.MountingWallData.mount_color" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.MountingWallData.mount_spot_color">
+<span class="sig-name descname"><span class="pre">mount_spot_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;0,</span> <span class="pre">0,</span> <span class="pre">0&gt;</span></em><a class="headerlink" href="#object_data_classes.MountingWallData.mount_spot_color" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.MountingWallData.mount_spot_radius">
+<span class="sig-name descname"><span class="pre">mount_spot_radius</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#object_data_classes.MountingWallData.mount_spot_radius" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="object_data_classes.PipeData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">object_data_classes.</span></span><span class="sig-name descname"><span class="pre">PipeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overhang_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">45</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#object_data_classes.PipeData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data class that contains computational and visual information of pipe object. Provides no default values.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.PipeData.point_length">
+<span class="sig-name descname"><span class="pre">point_length</span></span><a class="headerlink" href="#object_data_classes.PipeData.point_length" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.PipeData.cost">
+<span class="sig-name descname"><span class="pre">cost</span></span><a class="headerlink" href="#object_data_classes.PipeData.cost" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.PipeData.length">
+<span class="sig-name descname"><span class="pre">length</span></span><a class="headerlink" href="#object_data_classes.PipeData.length" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.PipeData.color">
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#object_data_classes.PipeData.color" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.PipeData.radius">
+<span class="sig-name descname"><span class="pre">radius</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">25</span></em><a class="headerlink" href="#object_data_classes.PipeData.radius" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.PipeData.overhang_length">
+<span class="sig-name descname"><span class="pre">overhang_length</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">45</span></em><a class="headerlink" href="#object_data_classes.PipeData.overhang_length" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="object_data_classes.ObstacleData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">object_data_classes.</span></span><span class="sig-name descname"><span class="pre">ObstacleData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim=&lt;105</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">105</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">50&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color=&lt;1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0.6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">0&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#object_data_classes.ObstacleData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Data class that contains visual information of obstacle objects. Provides a default.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.ObstacleData.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;105,</span> <span class="pre">105,</span> <span class="pre">50&gt;</span></em><a class="headerlink" href="#object_data_classes.ObstacleData.dim" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="object_data_classes.ObstacleData.color">
+<span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;1,</span> <span class="pre">0.6,</span> <span class="pre">0&gt;</span></em><a class="headerlink" href="#object_data_classes.ObstacleData.color" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="group_rendering.html" class="btn btn-neutral float-left" title="group_rendering module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="object_rendering.html" class="btn btn-neutral float-right" title="object_rendering module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

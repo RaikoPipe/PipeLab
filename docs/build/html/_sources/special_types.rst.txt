@@ -1,7 +1,0 @@
-Special Types module
-=====================
-
-.. automodule:: special_types
-   :members:
-   :undoc-members:
-   :show-inheritance:

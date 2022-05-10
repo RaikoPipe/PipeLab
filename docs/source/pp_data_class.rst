@@ -6,5 +6,6 @@ PP Dataclass
 
    BuildingInstruction
    ConstructionState
-   EventInfo
+   PlacementEventInfo
+   PickEventInfo
    ProcessOutput

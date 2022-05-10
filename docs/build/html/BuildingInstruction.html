@@ -55,7 +55,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -92,41 +93,38 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Contains instructions for building a layout.</p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="BuildingInstruction.BuildingInstruction.layout_completed">
-<span class="sig-name descname"><span class="pre">layout_completed</span></span><a class="headerlink" href="#BuildingInstruction.BuildingInstruction.layout_completed" title="Permalink to this definition"></a></dt>
-<dd><p>If the layout is completed.</p>
-<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="BuildingInstruction.BuildingInstruction.pipe_id">
 <span class="sig-name descname"><span class="pre">pipe_id</span></span><a class="headerlink" href="#BuildingInstruction.BuildingInstruction.pipe_id" title="Permalink to this definition"></a></dt>
 <dd><p>ID of pipe that needs to be placed in the layout.</p>
-<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="BuildingInstruction.BuildingInstruction.possible_att_pipe_positions">
-<span class="sig-name descname"><span class="pre">possible_att_pipe_positions</span></span><a class="headerlink" href="#BuildingInstruction.BuildingInstruction.possible_att_pipe_positions" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Trail containing node positions that a pipe of this layout would occupy.</dt><dd><p>Used for checking if position of a motion event is valid for attachment or pipe placement.</p>
-</dd>
-</dl>
-<p>Type: <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="BuildingInstruction.BuildingInstruction.recommended_attachment_pos">
-<span class="sig-name descname"><span class="pre">recommended_attachment_pos</span></span><a class="headerlink" href="#BuildingInstruction.BuildingInstruction.recommended_attachment_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Recommended placement position of attachment, determined by an algorithm.</p>
-<p>Type: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="BuildingInstruction.BuildingInstruction.required_fit_positions">
 <span class="sig-name descname"><span class="pre">required_fit_positions</span></span><a class="headerlink" href="#BuildingInstruction.BuildingInstruction.required_fit_positions" title="Permalink to this definition"></a></dt>
 <dd><p>Position where fittings need to be placed.</p>
-<p>Type: <a class="reference internal" href="type_aliases.html#type_aliases.DirectedConnection" title="type_aliases.DirectedConnection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DirectedConnection</span></code></a></p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.DirectedConnection" title="type_aliases.DirectedConnection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DirectedConnection</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BuildingInstruction.BuildingInstruction.possible_att_pipe_positions">
+<span class="sig-name descname"><span class="pre">possible_att_pipe_positions</span></span><a class="headerlink" href="#BuildingInstruction.BuildingInstruction.possible_att_pipe_positions" title="Permalink to this definition"></a></dt>
+<dd><p>Trail containing node positions that a pipe of this layout would occupy. Used for checking if position of a motion event is valid for attachment or pipe placement.</p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BuildingInstruction.BuildingInstruction.recommended_attachment_pos">
+<span class="sig-name descname"><span class="pre">recommended_attachment_pos</span></span><a class="headerlink" href="#BuildingInstruction.BuildingInstruction.recommended_attachment_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Recommended placement position of attachment, determined by an algorithm.</p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="BuildingInstruction.BuildingInstruction.layout_completed">
+<span class="sig-name descname"><span class="pre">layout_completed</span></span><a class="headerlink" href="#BuildingInstruction.BuildingInstruction.layout_completed" title="Permalink to this definition"></a></dt>
+<dd><p>If the layout is completed.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd></dl>
 
 </dd></dl>

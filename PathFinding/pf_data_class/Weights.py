@@ -7,12 +7,12 @@ class Weights:
     path_length: float
     """Value of impact distance between nodes has on the score calculation.
     
-    Type: :obj:`float`"""
+    *Type*: :obj:`float`"""
     cost: float
     """Value of impact the cost of assembled parts have on the score calculation.
     
-    Type: :obj:`float`"""
+    *Type*: :obj:`float`"""
     distance_to_obstacles: float  #
     """Value of impact of spacing between nodes/parts and obstacles.
     
-    Type: :obj:`float`"""
+    *Type*: :obj:`float`"""

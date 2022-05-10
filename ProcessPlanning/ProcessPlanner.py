@@ -8,12 +8,12 @@ from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Weights import Weights
 from PathFinding.search_algorithm import find_path
 from ProcessPlanning.ProcessState import ProcessState
-from ProcessPlanning.pp_data_class.EventInfo import EventInfo
+from ProcessPlanning.pp_data_class.PickEventInfo import PickEventInfo
+from ProcessPlanning.pp_data_class.PlacementEventInfo import PlacementEventInfo
 from ProcessPlanning.pp_data_class.ProcessOutput import ProcessOutput
-from ProcessPlanning.process_planning_util.pp_util import determine_next_part, get_solution_on_detour_event, \
-    get_next_recommended_action, make_placement_messages
-from type_dictionary.type_aliases import *
-from type_dictionary.class_types import MotionEvent, BuildingInstructions
+from ProcessPlanning.process_util import pp_util
+from TypeDictionary.type_aliases import *
+from TypeDictionary.class_types import MotionEvent, BuildingInstructions
 
 standard_weights = Weights(1, 1, 1)
 standard_algorithm = "mcsa*"
@@ -42,9 +42,8 @@ example_motion_dict = {1: (1, 1)}  # considering motion capture speed, will prob
 #   Known Issues:
 #   -
 #   Planned Features:
-#   - Highlighting correct build spots
 #   - check score calculation of mcsa*
-#   - Output next recommended action
+#   - improve partial solutions
 
 
 class ProcessPlanner:
@@ -93,16 +92,18 @@ class ProcessPlanner:
 
         self.last_process_state = self.initial_process_state  # last valid state
 
-    def main(self, motion_event: MotionEvent, handle_detour_events: bool = True,
-             ignore_part_check: bool = False, ignore_obstructions: bool = False) -> ProcessOutput:
+    def handle_motion_event(self, motion_event: MotionEvent, handle_detour_events: bool = True,
+                            ignore_part_check: bool = False, ignore_empty_stock: bool = False,
+                            ignore_obstructions: bool = False) -> ProcessOutput:
         """Main method of ProcessPlanning. Takes worker_event as input and sends information about the event to
         ProcessState. Prints message output of ProcessState and handles detour events.
 
         Args:
             motion_event(:obj:`~type_aliases.MotionEvent`): A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.
             handle_detour_events(:obj:`bool`): If set to true, detour events will result in the process planner looking for a new solution.
-            ignore_part_check(:obj:`bool`): If set to true, part restrictions will be ignored. Will lead to unwanted behaviour.
-            ignore_obstructions(:obj:`bool`): If set to true, obstructions will be ignored. Untested. Will lead to unwanted behaviour.
+            ignore_part_check(:obj:`bool`): If set to true, part restrictions will be ignored. Could lead to unexpected behaviour.
+            ignore_obstructions(:obj:`bool`): If set to true, obstructions will be ignored. Could lead to unexpected behaviour.
+            ignore_empty_stock(:obj:`bool`): If set to true, parts with empty stock can be picked without error. Could lead to unexpected behaviour.
 
         Returns:
              :class:`ProcessOutput` containing processed information regarding the event and current process state."""
@@ -110,87 +111,101 @@ class ProcessPlanner:
         event_pos = motion_event[0]
         event_code = motion_event[1]
 
-
         tentative_process_state = deepcopy(self.last_process_state)
-        # check if worker event is pick event
-        if motion_event[1] == 4:
+        picking_robot_commands = []
+        fastening_robot_commands = []
+        valid_placement_positions = set()
+
+        if motion_event[1] in (4, 5):
+            # motion event was pick event
             picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
                                                                            process_state=tentative_process_state)
             part_id = event_pos
-            tentative_process_state.pick_part(part_id)
-            messages = str.format(f"Process Planner: Picked part with id {part_id}")
+            event_info: PickEventInfo = tentative_process_state.pick_part(part_id, ignore_empty_stock)
+            tentative_process_state.last_pick_event_info = event_info
+
+            messages = pp_util.make_pick_messages(event_info)
             self.previous_states.insert(0, deepcopy(tentative_process_state))
             self.last_process_state = tentative_process_state
 
-            process_output = ProcessOutput(process_state=tentative_process_state,
-                                           event_info=tentative_process_state.last_event_info,
-                                           messages=(messages,), next_recommended_action=self.next_recommended_action,
-                                           highlight_positions=(), picking_robot_commands=picking_robot_commands,
-                                           fastening_robot_commands=())
+            valid_placement_positions = pp_util.get_valid_placement_positions(process_state=tentative_process_state,
+                                                                              part_id=part_id)
+            print(valid_placement_positions)
 
-            return process_output
-
-        # check if worker event occurred on transition point, correct if necessary
-        start_pos = self._initial_path_problem.start_pos
-        for transition_point in self._initial_path_problem.transition_points:
-
-            check_pos = None
-            if motion_event[0][0] == transition_point[0]:
-                check_pos = (transition_point[0], start_pos[1])
-            elif motion_event[0][1] == transition_point[1]:
-                check_pos = (start_pos[0], transition_point[1])
-
-            if check_pos:
-                direction = get_direction(
-                    diff_pos(self._initial_path_problem.start_pos, check_pos))  # get direction relative to start pos
-                # correct worker event pos
-                motion_event = ((motion_event[0][0] - direction[0], motion_event[0][1] - direction[1]), motion_event[1])
-
-        event_info: EventInfo = tentative_process_state.evaluate_placement(event_pos=event_pos, event_code=event_code,
-                                                                 ignore_part_check=ignore_part_check,
-                                                                 ignore_obstructions=ignore_obstructions)
-
-        tentative_process_state.last_event_info = event_info
-
-        messages = make_placement_messages(event_info=event_info)
-
-        # extract messages
-        message = messages[0]
-        special_message = messages[1]
-
-        detour_event: dict = tentative_process_state.last_event_info.detour_event
-
-        # handle all detour events
-        if detour_event and handle_detour_events:
-            detour_message, tentative_process_state = self.handle_detour_event(detour_event, tentative_process_state)
         else:
-            detour_message = self.handle_detour_trails(process_state=tentative_process_state)
+            # motion event was placement event
 
-        # get next recommended action
-        building_instruction = tentative_process_state.building_instructions.get(
-            tentative_process_state.last_event_trail)
-        if building_instruction:
-            self.next_recommended_action = get_next_recommended_action(tentative_process_state,
-                                                                       building_instruction)
+            # check if worker event occurred on transition point, correct if necessary
+            start_pos = self._initial_path_problem.start_pos
+            for transition_point in self._initial_path_problem.transition_points:
 
-        # get fastening commands
-        fastening_robot_commands = self.determine_fastening_robot_commands(event_pos=motion_event[0],
-                                                                           event_code=motion_event[1],
-                                                                           event_info=tentative_process_state.last_event_info)
+                check_pos = None
+                if motion_event[0][0] == transition_point[0]:
+                    check_pos = (transition_point[0], start_pos[1])
+                elif motion_event[0][1] == transition_point[1]:
+                    check_pos = (start_pos[0], transition_point[1])
 
-        picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
-                                                                       layout=tentative_process_state.last_event_info.layout,
-                                                                       process_state=tentative_process_state)
+                if check_pos:
+                    direction = get_direction(
+                        diff_pos(self._initial_path_problem.start_pos,
+                                 check_pos))  # get direction relative to start pos
+                    # correct worker event pos
+                    motion_event = (
+                        (motion_event[0][0] - direction[0], motion_event[0][1] - direction[1]), motion_event[1])
 
-        messages = (message, special_message, detour_message)
+            event_info: PlacementEventInfo = tentative_process_state.evaluate_placement(event_pos=event_pos,
+                                                                                        event_code=event_code,
+                                                                                        ignore_part_check=ignore_part_check,
+                                                                                        ignore_obstructions=ignore_obstructions)
 
-        self.previous_states.insert(0, deepcopy(tentative_process_state))
-        self.last_process_state = tentative_process_state
+            tentative_process_state.last_placement_event_info = event_info
+
+            messages = pp_util.make_placement_messages(event_info=event_info)
+
+            # extract messages
+            message = messages[0]
+            special_message = messages[1]
+
+            detour_event: dict = tentative_process_state.last_placement_event_info.detour_event
+
+            # handle all detour events
+            if detour_event and handle_detour_events:
+                detour_message, tentative_process_state = self.handle_detour_event(detour_event,
+                                                                                   tentative_process_state)
+            else:
+                detour_message = self.handle_detour_trails(process_state=tentative_process_state)
+
+            # get next recommended action
+            building_instruction = tentative_process_state.building_instructions.get(
+                tentative_process_state.last_event_trail)
+            if building_instruction:
+                self.next_recommended_action = pp_util.get_next_recommended_action(tentative_process_state,
+                                                                                   building_instruction)
+
+            # get fastening commands
+            fastening_robot_commands = self.determine_fastening_robot_commands(event_pos=motion_event[0],
+                                                                               event_code=motion_event[1],
+                                                                               event_info=tentative_process_state.last_placement_event_info)
+            # get picking robot commands
+            picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
+                                                                           layout=tentative_process_state.last_placement_event_info.layout,
+                                                                           process_state=tentative_process_state)
+
+            # get valid placement positions
+            if tentative_process_state.picked_parts:
+                valid_placement_positions = pp_util.get_valid_placement_positions(tentative_process_state,
+                                                                                  tentative_process_state.picked_parts[
+                                                                                      0])
+
+            messages = (message, special_message, detour_message)
+
+            self.previous_states.insert(0, deepcopy(tentative_process_state))
+            self.last_process_state = tentative_process_state
 
         process_output = ProcessOutput(process_state=tentative_process_state,
-                                       event_info=tentative_process_state.last_event_info,
+                                       current_event_info=event_info,
                                        messages=messages, next_recommended_action=self.next_recommended_action,
-                                       highlight_positions=(),
+                                       valid_placement_positions=valid_placement_positions,
                                        picking_robot_commands=picking_robot_commands,
                                        fastening_robot_commands=fastening_robot_commands)
 
@@ -223,9 +238,9 @@ class ProcessPlanner:
 
                     last_detour_instruction = process_state.building_instructions[last_detour_trail]
                     detour_event = {last_detour_trail: last_detour_instruction}
-                    solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
-                                                            process_state=process_state,
-                                                            detour_event=detour_event)
+                    solution = pp_util.get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
+                                                                    process_state=process_state,
+                                                                    detour_event=detour_event)
                     process_state.adjust_motion_dict_to_solution(solution, detour_event)
                     detour_message = str.format(
                         f"Deviating layout incomplete, returning to solution for last deviating layout.")
@@ -237,7 +252,7 @@ class ProcessPlanner:
                     detour_message = str.format(
                         f"No complete deviating layouts left, returning to optimal solution.")
 
-                process_state.last_event_info.detour_event = detour_event
+                process_state.last_placement_event_info.detour_event = detour_event
         return detour_message
 
     def handle_detour_event(self, detour_event: BuildingInstructions, process_state: ProcessState) -> tuple[
@@ -249,7 +264,7 @@ class ProcessPlanner:
             detour_event(:obj:`~class_types.BuildingInstructions`): Dictionary containing a trail and building instruction of the deviated layout.
 
         Returns:
-            A tuple containing a string message and a modified state with the new solution applied (:obj:`tuple` [:obj:`str`], [:class:`ProcessState`]).
+            A :obj:`tuple` containing :obj:`str` messages and a modified state with the new solution applied (:obj:`tuple` [:obj:`str`, :class:`ProcessState`]).
 
         """
         detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
@@ -259,9 +274,9 @@ class ProcessPlanner:
         # update state grid
         for pos in list(detour_event.keys())[0]:
             detour_process_state.state_grid[pos] = 2
-        solution = get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
-                                                process_state=detour_process_state,
-                                                detour_event=detour_event)
+        solution = pp_util.get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
+                                                        process_state=detour_process_state,
+                                                        detour_event=detour_event)
         if solution:
             detour_message = str.format(f"detour event confirmed, applying alternative solution!")
             detour_process_state.adjust_motion_dict_to_solution(solution, detour_event)
@@ -280,7 +295,7 @@ class ProcessPlanner:
         Args:
             event_pos (:obj:`~type_aliases.Pos`): See parameter :paramref:`~ProcessState.ProcessState.evaluate_placement.event_pos`
             event_code (:obj:`int`): See parameter :paramref:`~ProcessState.ProcessState.evaluate_placement.event_code`
-            event_info(:class:`EventInfo`): See :class:`EventInfo`
+            event_info(:class:`PlacementEventInfo`): See :class:`PlacementEventInfo`
          Returns:
              :obj:`tuple` containing robot commands for the fastening robot
         """
@@ -305,10 +320,11 @@ class ProcessPlanner:
         return tuple(fastening_robot_commands)
 
     @staticmethod
-    def determine_picking_robot_commands(event_code:int, process_state: ProcessState,
-                                         layout: Trail = None, ) -> tuple:
+    def determine_picking_robot_commands(event_code: int, process_state: ProcessState,
+                                         layout: Trail = None) -> tuple:
         """
         Args:
+            process_state(:class:`ProcessState`): The current process state.
             event_code (:obj:`int`): See parameter :paramref:`~ProcessState.ProcessState.evaluate_placement.event_code`
             layout(:obj:`type_aliases.Trail`): The current layout.
          Returns:
@@ -319,7 +335,6 @@ class ProcessPlanner:
 
         if layout:
 
-
             # make picking robot commands
 
             # if event_info.layout_changed:  # last check is redundant
@@ -328,7 +343,7 @@ class ProcessPlanner:
             if event_code == 4:
                 picking_robot_commands.append(0)
 
-            next_part_id = determine_next_part(process_state=process_state, layout=layout)
+            next_part_id = pp_util.determine_next_part(process_state=process_state, layout=layout)
 
             if event_code == 3:
                 if next_part_id:

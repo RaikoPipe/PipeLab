@@ -21,9 +21,11 @@ sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding/pf_data_class'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding/path_finding_util'))
+sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding/grid'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning/pp_data_class'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning/process_planning_util'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/type_dictionary'))
+sys.path.insert(0, os.path.abspath('../../ProcessPlanning/process_util'))
+sys.path.insert(0, os.path.abspath('../../TypeDictionary'))
+sys.path.insert(0, os.path.abspath('../../../PipeLab/VpythonRendering'))
 
 
 # -- Project information -----------------------------------------------------
@@ -36,6 +38,8 @@ author = 'Richard Reider'
 release = '2022'
 
 html_theme = "sphinx_rtd_theme"
+
+autodoc_member_order = 'bysource'
 
 # -- General configuration ---------------------------------------------------
 
@@ -85,7 +89,9 @@ autodoc_type_aliases = {
     "OrderedTrails": "type_aliases.OrderedTrails",
     "TrailList": "type_aliases.TrailList",
     "DirectionDict": "type_aliases.DirectionDict",
-    "PosSet": "type_aliases.PosSet"
+    "PosSet": "type_aliases.PosSet",
+    "PartStock": "type_aliases.PartStock",
+    "MountingWallData": "object_data_classes.MountingWallData"
 }
 
 # -- Options for HTML output -------------------------------------------------

@@ -4,15 +4,33 @@ from copy import deepcopy
 from typing import Optional
 
 from PathFinding.path_finding_util.path_math import diff_pos, get_direction, sum_pos
+from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Predecessor import Predecessor
 from PathFinding.pf_data_class.Solution import Solution
 
-from type_dictionary.class_types import *
+from TypeDictionary.class_types import *
 
 
-def construct_solution(predecessors, current_node, state_grid, score,
-                       algorithm, path_problem, fast_mode, goal_pos, goal_part) -> Solution:
-    """Returns a solution based on given parameters. """
+def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tuple[Pos, int, Pos]],
+                       state_grid: StateGrid, score: float,
+                       algorithm: str, path_problem: PathProblem, fast_mode: bool, goal_pos: Pos,
+                       goal_part: int) -> Solution:
+    """Constructs a solution based on given parameters.
+
+    Args:
+        state_grid(:obj`~type_aliases.State`): State grid with applied solution path
+        current_node(:obj`~type_aliases.Pos`): Last visited node in search.
+        predecessors(:obj:`~special_types.Predecessors`): All visited predecessors.
+        score(:obj`float`): The final solution score.
+        algorithm(:obj`str`): Algorithm used in prior search.
+        path_problem(:class:`PathProblem`)
+        fast_mode(:obj`bool`): See :paramref:`~search_algorithm.find_path.fast_mode`
+        goal_pos(:obj`~type_aliases.Pos`): The reached goal position.
+        goal_part(:obj`int`): Part that should be appended to reach actual goal position.
+
+    Returns:
+        :class:`Solution`
+        """
 
     node_path: NodePath = []
     rendering_dict: RenderingDict = {}
@@ -23,7 +41,7 @@ def construct_solution(predecessors, current_node, state_grid, score,
     while current_node in predecessors:
         part_id = predecessors.get(current_node).part_to_successor
 
-        if current_node == Pos:
+        if fast_mode:
             node_path.append((current_node, part_id))
             rendering_dict[current_node] = part_id
         else:
@@ -83,18 +101,23 @@ def construct_solution(predecessors, current_node, state_grid, score,
                     rendering_dict=rendering_dict)
 
 
-def get_corner_neighbors(axis: tuple, available_parts: list) -> set:
-    """Returns all the neighbors that are allowed as the next move by the currently available corner parts."""
+def get_corner_neighbors(direction: Pos, available_parts: set[int]) -> set[Node]:
+    """Returns all the neighbors that are allowed as the next move by the currently available corner parts.
+
+    Args:
+        direction(:obj:`~type_aliases.Pos`): Considered direction for pipe
+        available_parts(:obj:list [:obj:`int`]):
+    """
 
     # corner moves can ONLY go in one direction
     neighbors = set()
     if 0 in available_parts:
-        neighbors.add((axis, 0))
+        neighbors.add((direction, 0))
 
     return neighbors
 
 
-def get_pipe_neighbors(axis, available_parts, at_start, transition) -> set:
+def get_pipe_neighbors(axis: Pos, available_parts: set[int], at_start: bool, transition: tuple[Pos, Pos]) -> set[Node]:
     """Returns all neighbors that are allowed as the next move by the currently available pipe parts"""
 
     # pipe moves have two variants, depending on the current axis
@@ -121,7 +144,13 @@ def get_pipe_neighbors(axis, available_parts, at_start, transition) -> set:
     return neighbors
 
 
-def get_changed_nodes(predecessor_pos, current_pos):
+def get_changed_nodes(predecessor_pos: Pos, current_pos: Pos) -> tuple[Node]:
+    """Returns all nodes that have changed after a move.
+
+    Returns:
+        :obj:`tuple` [:obj:`~type_aliases.Node`]
+
+        """
     pos = diff_pos(predecessor_pos, current_pos)
 
     direction = get_direction(pos)
@@ -133,87 +162,63 @@ def get_changed_nodes(predecessor_pos, current_pos):
         pos = (predecessor_pos[0] + direction[0] * i, predecessor_pos[1] + direction[1] * i)
         occupied_nodes.append((pos, 2))
 
-    return occupied_nodes
+    return tuple(occupied_nodes)
 
 
-def build_path(current_node: tuple, predecessor: dict, start_node: tuple) -> list:
-    """Constructs a path from start to the current node."""
+def pipe_stock_check(part_stock: PartStock, predecessors: Predecessors, fast_mode: bool,
+                     key: Union[Pos, tuple[Pos, int, Pos]]) -> set[int]:
+    """Calculates availability of parts.
 
-    path = []
+    Returns:
+        :obj:`set` containing the part IDs (:obj:`int`) left in stock.
 
-    while current_node in predecessor:
-        path.append(current_node)
-        current_node = predecessor.get(current_node).predecessor_node
-    path.append(start_node)
-    path = path[::-1]  # reverses the path to correct order (from start to goal)
-    return path
-
-
-def get_current_state_grid(current_path, state_grid):
-    """Returns the current state grid according to the current path."""
-    current_state_grid = deepcopy(state_grid)
-    for index, v in enumerate(current_path):
-        if index == len(current_path) - 1:
-            break
-        a = current_path[index]
-        b = current_path[index + 1]
-        pos = (b[0] - a[0], b[1] - a[1])
-        direction = get_direction(pos)
-        length = abs(pos[0] - pos[1])
-        for i in range(1, length + 1):
-            pos = (a[0] + direction[0] * i, a[1] + direction[1] * i)
-            current_state_grid[pos] = 2  # 2: occupied by pipe
-    return current_state_grid
-
-
-def pipe_stock_check(pipe_stock: dict, predecessors: dict, fast_mode, key) -> list:
-    """Checks how many parts are available."""
-    available_parts = []
-    pipe_stock_copy = deepcopy(pipe_stock)
+    """
+    available_parts = set()
+    pipe_stock_copy = deepcopy(part_stock)
     if len(predecessors) < 2:
         # no parts used, no need to check current path
         available_parts = get_available_parts(pipe_stock_copy)
-        return available_parts
+    else:
 
-    while key in predecessors:
-        part_id = predecessors.get(key).part_to_successor
+        while key in predecessors:
+            part_id = predecessors.get(key).part_to_successor
 
-        predecessor_node: Predecessor = predecessors.get(key)
+            predecessor_node: Predecessor = predecessors.get(key)
 
-        if fast_mode:
-            key = predecessor_node.pos
-        else:
-            key = (predecessor_node.pos, predecessor_node.part_to_predecessor, predecessor_node.direction)
+            if fast_mode:
+                key = predecessor_node.pos
+            else:
+                key = (predecessor_node.pos, predecessor_node.part_to_predecessor, predecessor_node.direction)
 
-        pipe_stock_copy[part_id] -= 1
+            pipe_stock_copy[part_id] -= 1
 
-        available_parts = get_available_parts(pipe_stock_copy)
+    available_parts = get_available_parts(pipe_stock_copy)
 
     return available_parts
 
 
-def get_available_parts(pipe_stock: dict) -> list:
-    """Returns available parts as list."""
-    available_parts = []
-    for _, (part_id, amount) in enumerate(pipe_stock.items()):
+def get_available_parts(pipe_stock: PartStock) -> set[int]:
+    """Returns available parts as set.
+
+    Returns:
+        :obj:`set` [:obj:`int`]
+    """
+    available_parts = set()
+    for part_id, amount in pipe_stock.items():
         if amount > 0:
             if part_id in available_parts:
                 continue
             else:
-                available_parts.append(part_id)
+                available_parts.add(part_id)
     return available_parts
 
 
-def is_between(a: Pos, b: Pos, pos: Pos) -> bool:
-    # todo: change frozenset to tuple, because iterating through frozenset might be slow
+def get_transition(pos, direction, transition_points) -> Optional[tuple[Pos, Pos]]:
+    """Checks if transition points lie in the node in direction of the given node position.
 
-    fit_dir = get_direction(diff_pos(a, b))
-    con_dir = get_direction(diff_pos(pos, a))
-
-    return fit_dir == con_dir
-
-
-def get_transition(pos, direction, transition_points) -> Optional[tuple]:
+    Returns:
+        :obj:`tuple` [:obj:`~type_aliases.Pos`,:obj:`~type_aliases.Pos`] if transition point found, else None.
+    """
     for transition_point in transition_points:
         check_pos = sum_pos(pos, direction)
         if check_pos[0] == transition_point[0] or check_pos[1] == transition_point[1]:

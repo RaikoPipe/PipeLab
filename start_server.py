@@ -3,8 +3,12 @@
 import asyncio
 import logging
 
-from OPC_UA import Server
+from OPC_UA.Server import main
 from pathfinding_example import path_problem
+from ProcessPlanning.ProcessPlanner import ProcessPlanner
 
 logging.basicConfig(level=logging.INFO)
-asyncio.run(Server.main(path_problem))
+
+if __name__ == "__main__":
+    process_planner = ProcessPlanner(initial_path_problem=path_problem)
+    asyncio.run(main(process_planner))

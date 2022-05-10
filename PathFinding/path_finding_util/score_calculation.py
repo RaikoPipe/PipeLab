@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from PathFinding.path_finding_util import path_math
 from PathFinding.path_finding_util.path_math import manhattan_distance, get_direction
 from PathFinding.path_finding_util.restrictions import out_of_bounds
 from PathFinding.pf_data_class.Weights import Weights
+from TypeDictionary import constants
+from TypeDictionary.type_aliases import StateGrid, Pos
 
 
 def get_min_o_reduction(current_node, length: int, relative_direction: tuple, axis: tuple, state_grid) -> int:
@@ -19,12 +22,12 @@ def get_min_o_reduction(current_node, length: int, relative_direction: tuple, ax
     return reduction
 
 
-def calculate_distance_to_obstacles(state_grid, current_node: tuple, neighbor_pos: tuple) -> float:
+def calculate_distance_to_obstacles(state_grid, current_pos: Pos, neighbor_pos: Pos) -> float:
     """Calculates the amount of obstacles next to the move divided by the maximum possible amount of obstacles next to
      the move."""
 
     axis = get_direction(neighbor_pos)
-    length = abs(neighbor_pos[0] - neighbor_pos[1])
+    length = path_math.get_length_same_axis(current_pos,neighbor_pos)
     min_o = length * 2
     upper_bound = min_o
 
@@ -32,11 +35,11 @@ def calculate_distance_to_obstacles(state_grid, current_node: tuple, neighbor_po
     relative_left = (axis[1], axis[0])
 
     # check positions next to the move
-    min_o = min_o - get_min_o_reduction(relative_direction=relative_right, current_node=current_node, axis=axis,
+    min_o = min_o - get_min_o_reduction(relative_direction=relative_right, current_node=current_pos, axis=axis,
                                         length=length,
                                         state_grid=state_grid)
 
-    min_o = min_o - get_min_o_reduction(relative_direction=relative_left, current_node=current_node, axis=axis,
+    min_o = min_o - get_min_o_reduction(relative_direction=relative_left, current_node=current_pos, axis=axis,
                                         length=length,
                                         state_grid=state_grid)
 
@@ -73,21 +76,20 @@ def get_m_score(algorithm: str, weights: Weights, neighbor_pos: tuple, goal_pos:
     """Calculates normalized M Score."""
     # M Score: Distance score to goal node
     score = 0
-    if algorithm != "dijkstra":  # dijkstra doesn't include M score
+    if algorithm != constants.dijkstra:  # dijkstra doesn't include M score
         score = manhattan_distance(neighbor_pos, goal_pos) * weights.path_length / upper_bound
 
     return score
 
 
-def get_e_score(algorithm: str, weights: Weights, current_pos: tuple, neighbor_pos: tuple, part_id: int,
-                part_cost: dict, worst_move_cost: float, current_state_grid) -> float:
-    """Calculates normalized E Score for MCA*/MCSA*."""
-    # E Score: Extra Score (additional score values)
+def get_e_score(algorithm: str, weights: Weights, current_pos: Pos, neighbor_pos: Pos, part_id: int,
+                part_cost: dict, worst_move_cost: float, current_state_grid: StateGrid) -> float:
+    """Calculates normalized E Score (extra score) for MCA*/MCSA*. E score includes additional costs such as part cost and distance to obstacles."""
 
     score = 0
-    # suggestion: add a dict containing part id:length to explicitly differentiate between length and id
-    if algorithm == "mca*":
-        if part_id == 0:
+
+    if algorithm in {constants.mca_star, constants.mcsa_star}:
+        if part_id == constants.fitting_id:
             length = 1
         else:
             length = part_id

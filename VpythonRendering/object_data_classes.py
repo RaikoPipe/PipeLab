@@ -7,7 +7,7 @@ default_mounting_wall_dim = vpy.vector(1000, 2000, 150)
 
 
 @dataclass
-class scene_data:
+class SceneData:
     # camera
     camera_fov: float = vpy.pi / 5
     camera_pos: vpy.vector = .5 * default_mounting_wall_dim
@@ -26,7 +26,7 @@ class scene_data:
 
 
 @dataclass
-class mounting_wall_data:
+class MountingWallData:
     """Data class that contains visual information of mounting_wall objects. Provides a default."""
     dim: vpy.vector = default_mounting_wall_dim
     # wrap_color: vpy.vector = vpy.vector(0.689, 0.515, 0.412)
@@ -36,7 +36,7 @@ class mounting_wall_data:
 
 
 @dataclass
-class pipe_data:
+class PipeData:
     """Data class that contains computational and visual information of pipe object. Provides no default values."""
     # computational values
     point_length: int
@@ -62,7 +62,7 @@ class pipe_data:
 #     color: vpy.vector = vpy.color.gray
 
 @dataclass
-class obstacle_data:
+class ObstacleData:
     """Data class that contains visual information of obstacle objects. Provides a default."""
     dim: vpy.vector = vpy.vector(105, 105, 50)
     color: vpy.vector = vpy.color.orange

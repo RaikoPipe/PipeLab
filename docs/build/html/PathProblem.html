@@ -54,9 +54,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -87,69 +89,12 @@
              
   <div class="section" id="pathproblem-dataclass">
 <h1>PathProblem dataclass<a class="headerlink" href="#pathproblem-dataclass" title="Permalink to this headline"></a></h1>
-<p>Describes a path problem to be solved by <a class="reference internal" href="solution_manager.html#module-solution_manager"><span class="std std-ref">Link</span></a>.</p>
+<p>Describes a path problem to be solved by the <a class="reference internal" href="solution_manager.html#module-solution_manager"><span class="std std-ref">Solution Manager Module</span></a>.</p>
 <span class="target" id="module-PathProblem"></span><dl class="py class">
 <dt class="sig sig-object py" id="PathProblem.PathProblem">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">PathProblem.</span></span><span class="sig-name descname"><span class="pre">PathProblem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">starting_part</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mcsa*'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#PathProblem.PathProblem" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Dataclass that contains detailed information about a path problem.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="PathProblem.PathProblem.algorithm">
-<span class="sig-name descname"><span class="pre">algorithm</span></span><a class="headerlink" href="#PathProblem.PathProblem.algorithm" title="Permalink to this definition"></a></dt>
-<dd><p>Defines how scores are calculated and therefore how nodes are evaluated in the search.</p>
-<p>Type: (:obj: <cite>str</cite>)</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="PathProblem.PathProblem.goal_directions">
-<span class="sig-name descname"><span class="pre">goal_directions</span></span><a class="headerlink" href="#PathProblem.PathProblem.goal_directions" title="Permalink to this definition"></a></dt>
-<dd><p>Set containing directions that restrict in which direction the search algorithm can append to the goal.</p>
-<p>Type: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="PathProblem.PathProblem.goal_pos">
-<span class="sig-name descname"><span class="pre">goal_pos</span></span><a class="headerlink" href="#PathProblem.PathProblem.goal_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Goal position that needs to be reached</p>
-<p>Type: (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="PathProblem.PathProblem.part_cost">
-<span class="sig-name descname"><span class="pre">part_cost</span></span><a class="headerlink" href="#PathProblem.PathProblem.part_cost" title="Permalink to this definition"></a></dt>
-<dd><p>Part IDs pointing to their cost value.</p>
-<p>Type: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>])</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="PathProblem.PathProblem.part_stock">
-<span class="sig-name descname"><span class="pre">part_stock</span></span><a class="headerlink" href="#PathProblem.PathProblem.part_stock" title="Permalink to this definition"></a></dt>
-<dd><p>Part IDs pointing the amount of parts available for assembly.</p>
-<p>Type: (set[<code class="xref py py-obj docutils literal notranslate"><span class="pre">PartStock</span></code>])</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="PathProblem.PathProblem.start_directions">
-<span class="sig-name descname"><span class="pre">start_directions</span></span><a class="headerlink" href="#PathProblem.PathProblem.start_directions" title="Permalink to this definition"></a></dt>
-<dd><p>Set containing directions that restrict in which direction the search algorithm can start the search.</p>
-<p>Type: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="PathProblem.PathProblem.start_pos">
-<span class="sig-name descname"><span class="pre">start_pos</span></span><a class="headerlink" href="#PathProblem.PathProblem.start_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Start position of the search.</p>
-<p>Type: (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="PathProblem.PathProblem.starting_part">
-<span class="sig-name descname"><span class="pre">starting_part</span></span><a class="headerlink" href="#PathProblem.PathProblem.starting_part" title="Permalink to this definition"></a></dt>
-<dd><p>Part ID that is placed at the start point (Error will be raised, if this is not a fitting ID, since this is a
-placeholder for potential features implemented in the future)</p>
-<p>Type: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>])</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.state_grid">
 <span class="sig-name descname"><span class="pre">state_grid</span></span><a class="headerlink" href="#PathProblem.PathProblem.state_grid" title="Permalink to this definition"></a></dt>
@@ -157,17 +102,74 @@ placeholder for potential features implemented in the future)</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="PathProblem.PathProblem.start_pos">
+<span class="sig-name descname"><span class="pre">start_pos</span></span><a class="headerlink" href="#PathProblem.PathProblem.start_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Start position of the search.</p>
+<p><em>Type</em>: (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PathProblem.PathProblem.goal_pos">
+<span class="sig-name descname"><span class="pre">goal_pos</span></span><a class="headerlink" href="#PathProblem.PathProblem.goal_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Goal position that needs to be reached</p>
+<p><em>Type</em>: (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PathProblem.PathProblem.start_directions">
+<span class="sig-name descname"><span class="pre">start_directions</span></span><a class="headerlink" href="#PathProblem.PathProblem.start_directions" title="Permalink to this definition"></a></dt>
+<dd><p>Set containing directions that restrict in which direction the search algorithm can start the search.</p>
+<p><em>Type</em>: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PathProblem.PathProblem.goal_directions">
+<span class="sig-name descname"><span class="pre">goal_directions</span></span><a class="headerlink" href="#PathProblem.PathProblem.goal_directions" title="Permalink to this definition"></a></dt>
+<dd><p>Set containing directions that restrict in which direction the search algorithm can append to the goal.</p>
+<p><em>Type</em>: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.transition_points">
 <span class="sig-name descname"><span class="pre">transition_points</span></span><a class="headerlink" href="#PathProblem.PathProblem.transition_points" title="Permalink to this definition"></a></dt>
 <dd><p>Set containing transition points that show where a transition from one wall to another occurs.</p>
-<p>Type: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
+<p><em>Type</em>: (set[<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>])</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PathProblem.PathProblem.starting_part">
+<span class="sig-name descname"><span class="pre">starting_part</span></span><a class="headerlink" href="#PathProblem.PathProblem.starting_part" title="Permalink to this definition"></a></dt>
+<dd><p>Part ID that is placed at the start point (Error will be raised, if this is not a fitting ID, since this is a
+placeholder for potential features implemented in the future)</p>
+<p><em>Type</em>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>])</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PathProblem.PathProblem.part_stock">
+<span class="sig-name descname"><span class="pre">part_stock</span></span><a class="headerlink" href="#PathProblem.PathProblem.part_stock" title="Permalink to this definition"></a></dt>
+<dd><p>Part IDs pointing the amount of parts available for assembly.</p>
+<p><em>Type</em>: (set[<a class="reference internal" href="type_aliases.html#type_aliases.PartStock" title="type_aliases.PartStock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartStock</span></code></a>])</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PathProblem.PathProblem.part_cost">
+<span class="sig-name descname"><span class="pre">part_cost</span></span><a class="headerlink" href="#PathProblem.PathProblem.part_cost" title="Permalink to this definition"></a></dt>
+<dd><p>Part IDs pointing to their cost value.</p>
+<p><em>Type</em>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>])</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="PathProblem.PathProblem.weights">
 <span class="sig-name descname"><span class="pre">weights</span></span><a class="headerlink" href="#PathProblem.PathProblem.weights" title="Permalink to this definition"></a></dt>
 <dd><p>Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)</p>
-<p>Type: (:obj`Optional` [<a class="reference internal" href="Weights.html#module-Weights" title="Weights"><code class="xref py py-class docutils literal notranslate"><span class="pre">Weights</span></code></a>])</p>
+<p><em>Type</em>: (:obj`Optional` [<a class="reference internal" href="Weights.html#module-Weights" title="Weights"><code class="xref py py-class docutils literal notranslate"><span class="pre">Weights</span></code></a>])</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="PathProblem.PathProblem.algorithm">
+<span class="sig-name descname"><span class="pre">algorithm</span></span><a class="headerlink" href="#PathProblem.PathProblem.algorithm" title="Permalink to this definition"></a></dt>
+<dd><p>Defines how scores are calculated and therefore how nodes are evaluated in the search.</p>
+<p><em>Type</em>: (:obj: <cite>str</cite>)</p>
 </dd></dl>
 
 </dd></dl>

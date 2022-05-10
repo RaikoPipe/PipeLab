@@ -18,6 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="VpythonRendering module" href="VpythonRendering.html" />
     <link rel="prev" title="Constants module" href="constants.html" /> 
 </head>
 
@@ -42,12 +43,13 @@
 <li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="type_aliases.html">Type Aliases module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="constants.html">Constants module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Class Types module</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -64,7 +66,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="type_dictionary.html">Type Dictionary</a> &raquo;</li>
+          <li><a href="TypeDictionary.html">Type Dictionary</a> &raquo;</li>
       <li>Class Types module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/class_types.rst.txt" rel="nofollow"> View page source</a>
@@ -79,17 +81,17 @@
 <h1>Class Types module<a class="headerlink" href="#class-types-module" title="Permalink to this headline"></a></h1>
 <p>This module contains type aliases using dataclasses (to prevent circular imports).</p>
 <span class="target" id="module-class_types"></span><dl class="py attribute">
-<dt class="sig sig-object py" id="class_types.BuildingInstructions">
-<span class="sig-prename descclassname"><span class="pre">class_types.</span></span><span class="sig-name descname"><span class="pre">BuildingInstructions</span></span><a class="headerlink" href="#class_types.BuildingInstructions" title="Permalink to this definition"></a></dt>
-<dd><p>Dictionary containing trails pointing to their <a class="reference internal" href="BuildingInstruction.html#module-BuildingInstruction" title="BuildingInstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>.</p>
-<p><em>Type</em>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>, <a class="reference internal" href="BuildingInstruction.html#module-BuildingInstruction" title="BuildingInstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>])</p>
-</dd></dl>
-
-<dl class="py attribute">
 <dt class="sig sig-object py" id="class_types.MotionDict">
 <span class="sig-prename descclassname"><span class="pre">class_types.</span></span><span class="sig-name descname"><span class="pre">MotionDict</span></span><a class="headerlink" href="#class_types.MotionDict" title="Permalink to this definition"></a></dt>
 <dd><p>See <a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">motion_dict</span> <span class="pre">in</span> <span class="pre">ProcessState</span></code></a></p>
 <p><em>Type</em>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>, <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>], <a class="reference internal" href="ConstructionState.html#module-ConstructionState" title="ConstructionState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code></a>])</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="class_types.BuildingInstructions">
+<span class="sig-prename descclassname"><span class="pre">class_types.</span></span><span class="sig-name descname"><span class="pre">BuildingInstructions</span></span><a class="headerlink" href="#class_types.BuildingInstructions" title="Permalink to this definition"></a></dt>
+<dd><p>Dictionary containing trails pointing to their <a class="reference internal" href="BuildingInstruction.html#module-BuildingInstruction" title="BuildingInstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>.</p>
+<p><em>Type</em>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>, <a class="reference internal" href="BuildingInstruction.html#module-BuildingInstruction" title="BuildingInstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>])</p>
 </dd></dl>
 
 </div>
@@ -99,6 +101,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="constants.html" class="btn btn-neutral float-left" title="Constants module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VpythonRendering.html" class="btn btn-neutral float-right" title="VpythonRendering module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

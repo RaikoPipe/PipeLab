@@ -55,7 +55,8 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -93,39 +94,46 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Output class used by process planner.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.process_state">
+<span class="sig-name descname"><span class="pre">process_state</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.process_state" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.event_info">
 <span class="sig-name descname"><span class="pre">event_info</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.event_info" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.fastening_robot_commands">
-<span class="sig-name descname"><span class="pre">fastening_robot_commands</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.fastening_robot_commands" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.highlight_positions">
-<span class="sig-name descname"><span class="pre">highlight_positions</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.highlight_positions" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>See <a class="reference internal" href="EventInfo.html#module-EventInfo" title="EventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventInfo</span></code></a></p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.messages">
 <span class="sig-name descname"><span class="pre">messages</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.messages" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.next_recommended_action">
-<span class="sig-name descname"><span class="pre">next_recommended_action</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.next_recommended_action" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> messages and a modified state with the new solution applied (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="ProcessState.html#module-ProcessState" title="ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>]).</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.picking_robot_commands">
 <span class="sig-name descname"><span class="pre">picking_robot_commands</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.picking_robot_commands" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>See <a class="reference internal" href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_picking_robot_commands" title="ProcessPlanner.ProcessPlanner.determine_picking_robot_commands"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_picking_robot_commands()</span></code></a></p>
+</dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.process_state">
-<span class="sig-name descname"><span class="pre">process_state</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.process_state" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.fastening_robot_commands">
+<span class="sig-name descname"><span class="pre">fastening_robot_commands</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.fastening_robot_commands" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands" title="ProcessPlanner.ProcessPlanner.determine_fastening_robot_commands"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_fastening_robot_commands()</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.next_recommended_action">
+<span class="sig-name descname"><span class="pre">next_recommended_action</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.next_recommended_action" title="Permalink to this definition"></a></dt>
+<dd><p>See parameter <a class="reference internal" href="ProcessPlanner.html#ProcessPlanner.ProcessPlanner.params.next_recommended_action" title="ProcessPlanner.ProcessPlanner"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">next_recommended_action</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ProcessOutput.ProcessOutput.highlight_positions">
+<span class="sig-name descname"><span class="pre">highlight_positions</span></span><a class="headerlink" href="#ProcessOutput.ProcessOutput.highlight_positions" title="Permalink to this definition"></a></dt>
+<dd><p>Not implemented</p>
+</dd></dl>
 
 </dd></dl>
 

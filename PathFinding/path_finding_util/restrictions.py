@@ -1,17 +1,21 @@
 from __future__ import annotations
 
 from PathFinding.path_finding_util.path_math import sum_pos, get_direction
-# todo: put non restriction functions into support functions
 from PathFinding.path_finding_util.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, \
     get_transition
-from type_dictionary.constants import fitting_id
-from type_dictionary.type_aliases import DirectionDict, PosSet, Pos
+from TypeDictionary.class_types import Predecessors
+from TypeDictionary.constants import fitting_id
+from TypeDictionary.type_aliases import DirectionDict, PosSet, Pos, StateGrid, PartStock, Node
 
 
-def out_of_bounds(neighbor_node: tuple, state_grid):
-    """Checks if neighbor is outside of the boundaries of the state grid."""
-    if 0 <= neighbor_node[0] < state_grid.shape[0]:
-        if 0 <= neighbor_node[1] < state_grid.shape[1]:
+def out_of_bounds(neighbor_pos: Pos, state_grid: StateGrid):
+    """Checks if neighbor is outside of the boundaries of the state grid.
+
+    Returns:
+        :obj:`bool`
+    """
+    if 0 <= neighbor_pos[0] < state_grid.shape[0]:
+        if 0 <= neighbor_pos[1] < state_grid.shape[1]:
             return False
         else:
             return True  # array bound y walls
@@ -21,17 +25,19 @@ def out_of_bounds(neighbor_node: tuple, state_grid):
 
 collision_set = {1, 2}
 
-
-def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid, part_id) -> bool:
+def collided_obstacle(current_pos: Pos, neighbor_pos: Pos, state_grid:StateGrid, part_id:int) -> bool:
     """Checks if the path from current_node to neighbor_node obstructs any obstacles or transitions.
+
+    Returns:
+        :obj:`bool`
     """
 
-    length = abs(neighbor_node[0] - neighbor_node[1])
-    direction = get_direction(neighbor_node)
+    length = abs(neighbor_pos[0] - neighbor_pos[1])
+    direction = get_direction(neighbor_pos)
     # collision_nodes = []
     # check collision with obstacles
     for i in range(1, length + 1):
-        node = (current_node[0] + direction[0] * i, current_node[1] + direction[1] * i)
+        node = (current_pos[0] + direction[0] * i, current_pos[1] + direction[1] * i)
         # collision_nodes.append(node)
         if state_grid[node] in collision_set:
             return True
@@ -46,12 +52,15 @@ def collided_obstacle(current_node: tuple, neighbor_node: tuple, state_grid, par
     #             return True
 
 
-def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid, part_id) -> bool:
+def neighbor_restricted(current_pos:Pos, neighbor_pos:Pos, pos:Pos, state_grid:StateGrid, part_id:int) -> bool:
     """Contains restriction set that checks if neighbor is restricted.
-    :param part_id:
+
+    Returns:
+        :obj:`bool`
+
     """
-    if not out_of_bounds(neighbor_node, current_state_grid):
-        if collided_obstacle(current_node, pos, current_state_grid, part_id):
+    if not out_of_bounds(neighbor_pos, state_grid):
+        if collided_obstacle(current_pos, pos, state_grid, part_id):
             return True
     else:
         return True
@@ -60,7 +69,10 @@ def neighbor_restricted(current_node, neighbor_node, pos, current_state_grid, pa
 
 
 def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: DirectionDict) -> bool:
-    """Checks if the direction restriction of the goal is violated."""
+    """Checks if the direction restriction of the goal is violated.
+
+    Returns:
+        :obj:`bool`"""
 
     restricted = True
 
@@ -82,8 +94,8 @@ def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: DirectionDict)
     return restricted
 
 
-def restrict_neighbor_pos(directions: PosSet, goal_dict: DirectionDict, current_pos: tuple,
-                          pipe_stock, predecessors, fast_mode, key, start_pos, transition_points) -> set:
+def restrict_neighbor_pos(directions: PosSet, goal_dict: DirectionDict, current_pos: Pos,
+                          pipe_stock:PartStock, predecessors:Predecessors, fast_mode:bool, key, start_pos: Pos, transition_points:set[Pos]) -> set[Node]:
     """Determines what neighbors are reachable from the current position and with the available parts. Removes neighbors
     that violate goal restrictions."""
 

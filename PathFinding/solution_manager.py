@@ -13,11 +13,12 @@ completed_solutions_stack = []
 
 def check_solution_stack(path_problem: PathProblem) -> Optional[Solution]:
     """Checks if this path problem was already solved and returns the solution to it.
+
     Args:
-        path_problem (:class:`PathProblem`): Path problem to solve.
+        path_problem(:class:`PathProblem`): Path problem to solve.
 
     Returns:
-        :class`Solution` if found in stack, else None.
+        :class:`Solution` if found in stack, else :obj:`None`.
         """
 
     for solution in completed_solutions_stack:

@@ -3,7 +3,7 @@ from copy import deepcopy
 
 import numpy as np
 
-from type_dictionary.type_aliases import StateGrid
+from TypeDictionary.type_aliases import StateGrid
 
 
 def set_random_obstacles(probability: float, state_grid: StateGrid) -> np.ndarray:

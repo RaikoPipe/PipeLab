@@ -6,7 +6,7 @@ import vpython as vpy
 from VpythonRendering import object_data_classes as odc
 from VpythonRendering.default_data import default_mounting_wall, default_scene, default_obstacle, \
     pipe_corner, default_pipes
-from type_dictionary import constants as cs
+from TypeDictionary import constants as cs
 
 """functions for VpythonRendering single objects (or compound objects)"""
 
@@ -23,7 +23,7 @@ corner_rotations = {
 
 
 def render_corner(pos: vpy.vector, scene: vpy.canvas, course: tuple, opacity: float,
-                  corner_data: odc.pipe_data = pipe_corner) -> list:
+                  corner_data: odc.PipeData = pipe_corner) -> list:
     # prototype corner
     pos += vpy.vector(0, 0, corner_data.radius)
     size = vpy.vector(corner_data.length, corner_data.radius * 2, corner_data.radius * 2)
@@ -39,7 +39,7 @@ def render_corner(pos: vpy.vector, scene: vpy.canvas, course: tuple, opacity: fl
     return corner
 
 
-def create_new_scene(scene_data: odc.scene_data = default_scene) -> vpy.canvas:
+def create_new_scene(scene_data: odc.SceneData = default_scene) -> vpy.canvas:
     """returns a new vpython scene with ambient light and basic distant light."""
 
     # create scene
@@ -58,7 +58,7 @@ def create_new_scene(scene_data: odc.scene_data = default_scene) -> vpy.canvas:
 
 
 def render_mounting_wall(scene: vpy.canvas, rendering_grid: np.ndarray,
-                         mounting_wall_data: odc.mounting_wall_data = default_mounting_wall) -> (vpy.box, list):
+                         mounting_wall_data: odc.MountingWallData = default_mounting_wall) -> (vpy.box, list):
     """Renders a basic mounting wall."""
 
     # initialise wall, set position, size, color
@@ -79,7 +79,7 @@ def render_mounting_wall(scene: vpy.canvas, rendering_grid: np.ndarray,
     return mounting_wall, dot_objects
 
 
-def render_obstacle(scene: vpy.canvas, pos: vpy.vector, obstacle_data: odc.obstacle_data = default_obstacle) -> vpy.box:
+def render_obstacle(scene: vpy.canvas, pos: vpy.vector, obstacle_data: odc.ObstacleData = default_obstacle) -> vpy.box:
     """Renders an obstacle object."""
 
     obstacle = vpy.box(scene=scene, pos=pos, size=obstacle_data.dim, color=obstacle_data.color)
@@ -89,7 +89,7 @@ def render_obstacle(scene: vpy.canvas, pos: vpy.vector, obstacle_data: odc.obsta
 
 # todo: handle corners
 def render_pipe(scene: vpy.canvas, pos: vpy.vector, direction: tuple[int, int], opacity: float,
-                pipe_data: odc.pipe_data = default_pipes[1], part_id: Optional[int] = None,
+                pipe_data: odc.PipeData = default_pipes[1], part_id: Optional[int] = None,
                 ) \
         -> vpy.cylinder:
     """Renders a pipe object."""

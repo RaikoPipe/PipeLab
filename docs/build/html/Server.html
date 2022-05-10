@@ -46,7 +46,8 @@
 <li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -80,33 +81,23 @@
 In its current state, it’s only an example placeholder for a more fleshed out opc-ua server.</p>
 <span class="target" id="module-Server"></span><dl class="py class">
 <dt class="sig sig-object py" id="Server.PipeLabServer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Server.</span></span><span class="sig-name descname"><span class="pre">PipeLabServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Server.PipeLabServer" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Server.</span></span><span class="sig-name descname"><span class="pre">PipeLabServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Server.PipeLabServer" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="Server.PipeLabServer.init">
 <em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Server.PipeLabServer.init" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="Server.PipeLabServer.send_motion_event">
+<span class="sig-name descname"><span class="pre">send_motion_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Server.PipeLabServer.send_motion_event" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
 </dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="Server.app">
-<span class="sig-prename descclassname"><span class="pre">Server.</span></span><span class="sig-name descname"><span class="pre">app</span></span><a class="headerlink" href="#Server.app" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="Server.gui_thread">
-<span class="sig-prename descclassname"><span class="pre">Server.</span></span><span class="sig-name descname"><span class="pre">gui_thread</span></span><a class="headerlink" href="#Server.gui_thread" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="Server.main">
-<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Server.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Server.main" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py data">
-<dt class="sig sig-object py" id="Server.process_planner">
-<span class="sig-prename descclassname"><span class="pre">Server.</span></span><span class="sig-name descname"><span class="pre">process_planner</span></span><a class="headerlink" href="#Server.process_planner" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Server.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#Server.main" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 </div>

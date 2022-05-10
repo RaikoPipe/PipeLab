@@ -18,11 +18,10 @@ previous_detour_trails = set()
 class FunctionTestGUI:
     """GUI for debugging and visualisation of the process planner. Initializes and uses an instance of a process planner."""
 
-    def __init__(self, path_problem: PathProblem, initial_state: Optional[ProcessState]):
-        root = tk.Tk()
+    def __init__(self, path_problem: PathProblem, initial_state: Optional[ProcessState], process_planner:ProcessPlanner, controlled_from_outside= False):
+        self.root = tk.Tk()
 
-        self.process_planner: ProcessPlanner = ProcessPlanner(initial_path_problem=path_problem,
-                                                              initial_process_state=initial_state)
+        self.process_planner: ProcessPlanner = process_planner
 
         start = path_problem.start_pos
         goal = path_problem.goal_pos
@@ -39,7 +38,7 @@ class FunctionTestGUI:
 
         # Solution Display
 
-        layout_frame = ttk.Frame(root)
+        layout_frame = ttk.Frame(self.root)
         layout_frame.pack(anchor=tk.W)
 
         self.solution_button_grid_frame = ttk.LabelFrame(layout_frame, text="Solution Grid:")
@@ -118,7 +117,7 @@ class FunctionTestGUI:
             pick_part_button = ttk.Button(part_pick_frame, text="Pick ID " + str(part_id),
                                           command=lambda t=part_id: send_new_pick_event(t,
                                                                                         process_planner=self.process_planner,
-                                                                                        tree=self.process_message_tree,
+                                                                                        process_message_tree=self.process_message_tree,
                                                                                         part_stock_tree=self.part_stock_tree))
             pick_part_button.pack(anchor=tk.W)
             self.part_stock_tree.insert("", tk.END,
@@ -126,8 +125,6 @@ class FunctionTestGUI:
                                             part_id,
                                             self.process_planner.last_process_state.picked_parts.count(part_id),
                                             self.process_planner.last_process_state.part_stock[part_id]))
-
-        # todo: Construction Build Information Frame with picked_parts, current stock, deviation, solution scores etc.
 
         self.construction_button_grid, self.style_grid, self.tool_tip_text_grid = get_button_grid(
             state_grid=self.process_planner.last_process_state.state_grid, start=start,
@@ -150,6 +147,13 @@ class FunctionTestGUI:
         return_to_previous_state.grid(row=2, column=0)
 
         # setting title
-        root.title("Pipe Lab 2.0")
+        self.root.title("Pipe Lab 2.0")
         # setting window size
-        root.mainloop()
+        if controlled_from_outside:
+            # update once
+
+            self.root.update_idletasks()
+            self.root.update()
+        else:
+            self.root.mainloop()
+

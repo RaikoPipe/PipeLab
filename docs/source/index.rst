@@ -17,7 +17,8 @@ and the :ref:`GUI for debugging and visualization <FunctionTestGUI>`.
    FunctionTestGUI
    ProcessPlanning
    PathFinding
-   type_dictionary
+   TypeDictionary
+   VpythonRendering
 
 
 Indices and tables

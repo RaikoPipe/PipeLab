@@ -14,6 +14,9 @@ from PathFinding.pf_data_class.PathProblem import PathProblem
 
 
 # fixme: mca* doesn't work, mcsa* doesn't include extra score
+from TypeDictionary import constants
+
+
 def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=False) -> Optional[Solution]:
     """Searches for a solution for the given path problem.
 
@@ -48,8 +51,6 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
         g_pos = (goal_pos[0] + goal_direction[0], goal_pos[1] + goal_direction[1])
         goal_set.add(g_pos)
         goal_dict[g_pos] = (-goal_direction[0], -goal_direction[1])
-
-    # todo: restrict start and goal: only connectable by pipe
 
     closed_list = set()
     open_list = []
@@ -133,7 +134,7 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
 
             return construct_solution(predecessors=predecessors, current_node=current_node,
                                       state_grid=current_state_grid,
-                                      score=end_score, goal_pos=goal_pos, goal_part=0,
+                                      score=end_score, goal_pos=goal_pos, goal_part=constants.fitting_id,
                                       algorithm=algorithm, path_problem=path_problem, fast_mode=fast_mode)
 
         closed_list.add(key_dict.get(fast_mode))
@@ -143,9 +144,7 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
             neighbor_direction = get_direction(neighbor)
             neighbor_node = (neighbor_pos, neighbor_part_id, neighbor_direction)
 
-            current_score_start_distance = score_start[current_pos] + \
-                                           manhattan_distance(current_pos, neighbor_pos) / total_score[
-                                               start_pos]
+            current_score_start_distance = score_start[current_pos] + manhattan_distance(current_pos, neighbor_pos) / total_score[start_pos]
 
             key_dict[0] = (neighbor_pos, neighbor_part_id, neighbor_direction)
             key_dict[1] = neighbor_pos
@@ -153,14 +152,15 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
             if key_dict.get(fast_mode) in closed_list:  # and current_score_start >= score_start.get(neighbor_pos, 0):
                 continue
 
-            if neighbor_restricted(current_node=current_pos, neighbor_node=neighbor_pos, pos=neighbor,
-                                   current_state_grid=current_state_grid, part_id=neighbor_part_id):
+            if neighbor_restricted(current_pos=current_pos, neighbor_pos=neighbor_pos, pos=neighbor,
+                                   state_grid=current_state_grid, part_id=neighbor_part_id):
                 continue
 
             p_list = [p[1] for p in open_list]
 
             if current_score_start_distance < score_start.get(neighbor_pos, 0) or (
                     neighbor_pos, neighbor_part_id, neighbor_direction) not in p_list:
+
                 predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_to_successor=neighbor_part_id,
                                                                     part_to_predecessor=current_part_id,
                                                                     direction=current_direction, path=current_path,
@@ -180,6 +180,7 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
 
                 total_score[neighbor_pos] = get_f_score(current_score_start_distance, current_score_goal_distance,
                                                         current_score_extra, total_score[current_pos], algorithm)
+
                 heapq.heappush(open_list, (total_score[neighbor_pos], neighbor_node))
     else:
         # no solution found!

@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Type Dictionary" href="type_dictionary.html" />
+    <link rel="next" title="Grid module" href="grid.html" />
     <link rel="prev" title="Restrictions module" href="restrictions.html" /> 
 </head>
 
@@ -54,9 +54,11 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Score Calculation module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -88,6 +90,12 @@
   <div class="section" id="module-score_calculation">
 <span id="score-calculation-module"></span><h1>Score Calculation module<a class="headerlink" href="#module-score_calculation" title="Permalink to this headline"></a></h1>
 <dl class="py function">
+<dt class="sig sig-object py" id="score_calculation.get_min_o_reduction">
+<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_min_o_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_min_o_reduction" title="Permalink to this definition"></a></dt>
+<dd><p>Counts free positions next to the move.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="score_calculation.calculate_distance_to_obstacles">
 <span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">calculate_distance_to_obstacles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.calculate_distance_to_obstacles" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates the amount of obstacles next to the move divided by the maximum possible amount of obstacles next to
@@ -95,9 +103,9 @@ the move.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="score_calculation.get_e_score">
-<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_e_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worst_move_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_e_score" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates normalized E Score for MCA*/MCSA*.</p>
+<dt class="sig sig-object py" id="score_calculation.get_worst_move_cost">
+<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_worst_move_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_worst_move_cost" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the cost of the worst move.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -112,15 +120,9 @@ the move.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="score_calculation.get_min_o_reduction">
-<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_min_o_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_min_o_reduction" title="Permalink to this definition"></a></dt>
-<dd><p>Counts free positions next to the move.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="score_calculation.get_worst_move_cost">
-<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_worst_move_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_worst_move_cost" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the cost of the worst move.</p>
+<dt class="sig sig-object py" id="score_calculation.get_e_score">
+<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_e_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worst_move_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_e_score" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates normalized E Score for MCA*/MCSA*.</p>
 </dd></dl>
 
 </div>
@@ -130,7 +132,7 @@ the move.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="restrictions.html" class="btn btn-neutral float-left" title="Restrictions module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="type_dictionary.html" class="btn btn-neutral float-right" title="Type Dictionary" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="grid.html" class="btn btn-neutral float-right" title="Grid module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

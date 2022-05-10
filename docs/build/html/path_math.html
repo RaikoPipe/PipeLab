@@ -54,9 +54,11 @@
 <li class="toctree-l3"><a class="reference internal" href="score_calculation.html">Score Calculation module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -88,9 +90,9 @@
   <div class="section" id="module-path_math">
 <span id="path-math-module"></span><h1>Path Math module<a class="headerlink" href="#module-path_math" title="Permalink to this headline"></a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="path_math.diff_absolute_a_b">
-<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">diff_absolute_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.diff_absolute_a_b" title="Permalink to this definition"></a></dt>
-<dd><p>Sums up absolute a and absolute b.</p>
+<dt class="sig sig-object py" id="path_math.sum_pos">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Sums up two pos element wise.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -100,10 +102,21 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="path_math.get_direction">
-<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.get_direction" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the direction of a relative position.
-:param _sphinx_paramlinks_path_math.get_direction.pos: Relative position</p>
+<dt class="sig sig-object py" id="path_math.sum_abs_pos">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_abs_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_abs_pos" title="Permalink to this definition"></a></dt>
+<dd><p>Sums up two absolute pos element wise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.sum_absolute_a_b">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_absolute_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_absolute_a_b" title="Permalink to this definition"></a></dt>
+<dd><p>Sums up absolute a and absolute b.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_math.diff_absolute_a_b">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">diff_absolute_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.diff_absolute_a_b" title="Permalink to this definition"></a></dt>
+<dd><p>Sums up absolute a and absolute b.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -127,26 +140,10 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="path_math.random">
-<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">x</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">interval</span> <span class="pre">[0,</span> <span class="pre">1).</span></span></span><a class="headerlink" href="#path_math.random" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="path_math.sum_abs_pos">
-<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_abs_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_abs_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Sums up two absolute pos element wise.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="path_math.sum_absolute_a_b">
-<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_absolute_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_absolute_a_b" title="Permalink to this definition"></a></dt>
-<dd><p>Sums up absolute a and absolute b.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="path_math.sum_pos">
-<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Sums up two pos element wise.</p>
+<dt class="sig sig-object py" id="path_math.get_direction">
+<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.get_direction" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the direction of a relative position.
+:param _sphinx_paramlinks_path_math.get_direction.pos: Relative position</p>
 </dd></dl>
 
 </div>

@@ -48,9 +48,11 @@
 <li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a></li>
 <li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -80,23 +82,24 @@
              
   <div class="section" id="module-solution_manager">
 <span id="solution-manager-module"></span><h1>Solution Manager Module<a class="headerlink" href="#module-solution_manager" title="Permalink to this headline"></a></h1>
-<dl class="py function">
-<dt class="sig sig-object py" id="solution_manager.check_solution_stack">
-<span class="sig-prename descclassname"><span class="pre">solution_manager.</span></span><span class="sig-name descname"><span class="pre">check_solution_stack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solution_manager.check_solution_stack" title="Permalink to this definition"></a></dt>
-<dd><p>Checks if this path problem was already solved and returns the solution to it.
-:param _sphinx_paramlinks_solution_manager.check_solution_stack.path_problem: Path problem to solve.
-:type _sphinx_paramlinks_solution_manager.check_solution_stack.path_problem: <a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>class`Solution` if found in stack, else None.</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py data">
 <dt class="sig sig-object py" id="solution_manager.completed_solutions_stack">
 <span class="sig-prename descclassname"><span class="pre">solution_manager.</span></span><span class="sig-name descname"><span class="pre">completed_solutions_stack</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#solution_manager.completed_solutions_stack" title="Permalink to this definition"></a></dt>
 <dd><p>List containing solved path problems.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="solution_manager.check_solution_stack">
+<span class="sig-prename descclassname"><span class="pre">solution_manager.</span></span><span class="sig-name descname"><span class="pre">check_solution_stack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solution_manager.check_solution_stack" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if this path problem was already solved and returns the solution to it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="solution_manager.check_solution_stack.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.check_solution_stack.params.path_problem">¶</a> (<a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if found in stack, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

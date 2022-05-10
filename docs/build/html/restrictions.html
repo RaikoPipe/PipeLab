@@ -54,9 +54,11 @@
 <li class="toctree-l3"><a class="reference internal" href="score_calculation.html">Score Calculation module</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -88,15 +90,15 @@
   <div class="section" id="module-restrictions">
 <span id="restrictions-module"></span><h1>Restrictions module<a class="headerlink" href="#module-restrictions" title="Permalink to this headline"></a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="restrictions.collided_obstacle">
-<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">collided_obstacle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.collided_obstacle" title="Permalink to this definition"></a></dt>
-<dd><p>Checks if the path from current_node to neighbor_node obstructs any obstacles or transitions.</p>
+<dt class="sig sig-object py" id="restrictions.out_of_bounds">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">out_of_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.out_of_bounds" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if neighbor is outside of the boundaries of the state grid.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="restrictions.goal_restricted">
-<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">goal_restricted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.goal_restricted" title="Permalink to this definition"></a></dt>
-<dd><p>Checks if the direction restriction of the goal is violated.</p>
+<dt class="sig sig-object py" id="restrictions.collided_obstacle">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">collided_obstacle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.collided_obstacle" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the path from current_node to neighbor_node obstructs any obstacles or transitions.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -107,9 +109,9 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="restrictions.out_of_bounds">
-<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">out_of_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.out_of_bounds" title="Permalink to this definition"></a></dt>
-<dd><p>Checks if neighbor is outside of the boundaries of the state grid.</p>
+<dt class="sig sig-object py" id="restrictions.goal_restricted">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">goal_restricted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.goal_restricted" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the direction restriction of the goal is violated.</p>
 </dd></dl>
 
 <dl class="py function">

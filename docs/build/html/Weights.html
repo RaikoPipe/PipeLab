@@ -54,9 +54,11 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
 </ul>
 
         </div>
@@ -93,24 +95,24 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Dataclass that contains values for the weights used in a multi criteria a* search.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="Weights.Weights.path_length">
+<span class="sig-name descname"><span class="pre">path_length</span></span><a class="headerlink" href="#Weights.Weights.path_length" title="Permalink to this definition"></a></dt>
+<dd><p>Value of impact distance between nodes has on the score calculation.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="Weights.Weights.cost">
 <span class="sig-name descname"><span class="pre">cost</span></span><a class="headerlink" href="#Weights.Weights.cost" title="Permalink to this definition"></a></dt>
 <dd><p>Value of impact the cost of assembled parts have on the score calculation.</p>
-<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="Weights.Weights.distance_to_obstacles">
 <span class="sig-name descname"><span class="pre">distance_to_obstacles</span></span><a class="headerlink" href="#Weights.Weights.distance_to_obstacles" title="Permalink to this definition"></a></dt>
 <dd><p>Value of impact of spacing between nodes/parts and obstacles.</p>
-<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="Weights.Weights.path_length">
-<span class="sig-name descname"><span class="pre">path_length</span></span><a class="headerlink" href="#Weights.Weights.path_length" title="Permalink to this definition"></a></dt>
-<dd><p>Value of impact distance between nodes has on the score calculation.</p>
-<p>Type: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd></dl>
 
 </dd></dl>

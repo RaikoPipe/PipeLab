@@ -8,10 +8,10 @@ from PathFinding.pf_data_class.PathProblem import PathProblem
 from PathFinding.pf_data_class.Solution import Solution
 from PathFinding.solution_manager import get_solution
 from ProcessPlanning.pp_data_class.BuildingInstruction import BuildingInstruction
-from type_dictionary import constants as const
-from type_dictionary.type_aliases import Trail, StateGrid, PartStock
-from type_dictionary.type_aliases import NodePairSet, FittingDirections
-from type_dictionary.class_types import BuildingInstructions
+from TypeDictionary import constants as const
+from TypeDictionary.type_aliases import Trail, StateGrid, PartStock
+from TypeDictionary.type_aliases import NodePairSet, FittingDirections
+from TypeDictionary.class_types import BuildingInstructions
 
 
 def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: list[set],
@@ -28,8 +28,8 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
         exclusion_list (:obj:`list` [:obj:`set`]): List of node pairs that are excluded from connecting.
         outgoing_node_directions_dict (:obj:`~type_aliases.FittingDirections`): Dictionary containing the directions each node can be connected to.
         state_grid(:obj:`~type_aliases.StateGrid`): See :obj:`~type_aliases.StateGrid`
-        part_stock(:obj:`dict` [:obj:`int`, :obj:`int`]): See :class:`part_stock in ProcessState<ProcessState>`
-        path_problem (:class`PathProblem`): See :class: 'classes.PathProblem.PathProblem'
+        part_stock(:obj:`type_aliases.PartStock`): See :paramref:`~ProcessState.ProcessState.part_stock`.
+        path_problem(:class:`PathProblem`): See :class:'PathProblem'.
 
     """
 

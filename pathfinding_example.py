@@ -22,9 +22,9 @@ while solution is None:
     state_grid[start_node] = 0
     state_grid[goal_node] = 0
 
-    pipe_stock = {0: 100, 1: 100, 2: 100, 3: 100, 4: 100, 5: 100, 6: 100}
+    pipe_stock = {0: 10, 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 0}
 
-    part_cost = {0: 5.32, 1: 3.00, 2: 3.00, 3: 3.00, 4: 3.00, 5: 3.00, 6: 3.00}
+    part_cost = {0: 5.32, 1: 1.15, 2: 1.38, 3: 1.60, 4: 1.82, 5: 2.04, 6: 2.50}
 
     weights = Weights(path_length=1, cost=1, distance_to_obstacles=0)
 
