@@ -140,8 +140,6 @@ def get_restricted_neighbor_nodes(directions: PosSet, goal_dict: DirectionDict, 
     Returns:
         A :obj:`set` of restricted neighbor :obj`Nodes<type_aliases.Node>`.
 
-
-
     """
 
     neighbor_relative_nodes = set()
@@ -163,6 +161,7 @@ def get_restricted_neighbor_nodes(directions: PosSet, goal_dict: DirectionDict, 
             neighbor_relative_nodes.update(get_corner_neighbors(direction, available_parts))
 
         for relative_node in neighbor_relative_nodes:
+
             neighbor_pos = sum_pos(current_pos, relative_node[0])
             if neighbor_pos in goal_dict.keys():
                 # restriction check necessary, neighbor reaches goal

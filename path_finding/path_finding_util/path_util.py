@@ -138,7 +138,7 @@ def get_pipe_neighbors(direction: Pos, available_parts: set[int], at_start: bool
             continue
 
         if transition:
-            neighbors.add(((direction[0] * (part_id + direction[0]), (direction[1] * (part_id + direction[1]))), part_id))
+            neighbors.add(((direction[0] * (part_id + abs(direction[0])), (direction[1] * (part_id + abs(direction[1])))), part_id))
             if not at_start:
                 neighbors.add(((part_id * direction[1], part_id * direction[0]), part_id))
                 neighbors.add(((part_id * -direction[1], part_id * -direction[0]), part_id))
