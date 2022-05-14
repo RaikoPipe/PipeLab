@@ -1,5 +1,5 @@
-Path Finding Util module
-========================
+Path Finding Utility module
+===========================
 
 .. toctree::
    :maxdepth: 4

@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Path Util module" href="path_util.html" />
-    <link rel="prev" title="Path Finding Util module" href="path_finding_util.html" /> 
+    <link rel="next" title="Path Utility module" href="path_util.html" />
+    <link rel="prev" title="Path Finding Utility module" href="path_finding_util.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,17 +39,17 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">Path Finding Dataclasses</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">Path Finding Utility module</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Path Math module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="path_util.html">Path Util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_util.html">Path Utility module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="restrictions.html">Restrictions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="score_calculation.html">Score Calculation module</a></li>
 </ul>
@@ -57,8 +57,8 @@
 <li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 </ul>
 
         </div>
@@ -75,8 +75,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-          <li><a href="path_finding_util.html">Path Finding Util module</a> &raquo;</li>
+          <li><a href="path_finding.html">Path Finding</a> &raquo;</li>
+          <li><a href="path_finding_util.html">Path Finding Utility module</a> &raquo;</li>
       <li>Path Math module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/path_math.rst.txt" rel="nofollow"> View page source</a>
@@ -92,58 +92,116 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="path_math.sum_pos">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Sums up two pos element wise.</p>
+<dd><p>Sums up a and b elementwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_math.sum_pos.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#path_math.sum_pos.params.a">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+<li><p><span class="target" id="path_math.sum_pos.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#path_math.sum_pos.params.b">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_math.diff_pos">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">diff_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.diff_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Subtracts two pos element wise. -&gt; relative distance between two nodes</p>
+<dd><p>Subtracts two pos element wise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_math.diff_pos.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#path_math.diff_pos.params.a">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+<li><p><span class="target" id="path_math.diff_pos.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#path_math.diff_pos.params.b">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) -&gt; Relative distance between two nodes.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_math.sum_abs_pos">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_abs_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_abs_pos" title="Permalink to this definition"></a></dt>
 <dd><p>Sums up two absolute pos element wise.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="path_math.sum_absolute_a_b">
-<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_absolute_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_absolute_a_b" title="Permalink to this definition"></a></dt>
-<dd><p>Sums up absolute a and absolute b.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="path_math.diff_absolute_a_b">
-<span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">diff_absolute_a_b</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.diff_absolute_a_b" title="Permalink to this definition"></a></dt>
-<dd><p>Sums up absolute a and absolute b.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_math.sum_abs_pos.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#path_math.sum_abs_pos.params.a">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+<li><p><span class="target" id="path_math.sum_abs_pos.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#path_math.sum_abs_pos.params.b">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_math.get_length_same_axis">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_length_same_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.get_length_same_axis" title="Permalink to this definition"></a></dt>
-<dd><p>return length and of a and b if row xor column are the same</p>
+<dd><p>return length of a and b if row xor column are the same</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_math.get_length_same_axis.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#path_math.get_length_same_axis.params.a">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+<li><p><span class="target" id="path_math.get_length_same_axis.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#path_math.get_length_same_axis.params.b">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_math.get_rel_dist_same_axis">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_rel_dist_same_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.get_rel_dist_same_axis" title="Permalink to this definition"></a></dt>
-<dd><p>return relative distance of a to b if row xor column are the same</p>
+<dd><p>Returns relative distance of a to b if row xor column are the same.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_math.get_rel_dist_same_axis.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#path_math.get_rel_dist_same_axis.params.a">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+<li><p><span class="target" id="path_math.get_rel_dist_same_axis.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#path_math.get_rel_dist_same_axis.params.b">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_math.manhattan_distance">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">manhattan_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.manhattan_distance" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the distance between to nodes in horizontal/vertical steps required.
-:param _sphinx_paramlinks_path_math.manhattan_distance.a: Position of a node.
-:param _sphinx_paramlinks_path_math.manhattan_distance.b: Position of another node.</p>
+<dd><p>Calculates the distance between to nodes in horizontal/vertical steps required.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_math.manhattan_distance.params.a"></span><strong>a</strong><a class="paramlink headerlink reference internal" href="#path_math.manhattan_distance.params.a">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+<li><p><span class="target" id="path_math.manhattan_distance.params.b"></span><strong>b</strong><a class="paramlink headerlink reference internal" href="#path_math.manhattan_distance.params.b">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_math.get_direction">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.get_direction" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the direction of a relative position.
-:param _sphinx_paramlinks_path_math.get_direction.pos: Relative position</p>
+:param _sphinx_paramlinks_path_math.get_direction.pos: Some relative position
+:type _sphinx_paramlinks_path_math.get_direction.pos: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>(<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -152,8 +210,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="path_finding_util.html" class="btn btn-neutral float-left" title="Path Finding Util module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="path_util.html" class="btn btn-neutral float-right" title="Path Util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="path_finding_util.html" class="btn btn-neutral float-left" title="Path Finding Utility module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="path_util.html" class="btn btn-neutral float-right" title="Path Utility module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,4 +1,4 @@
-debug\_rendering module
+Debug Rendering module
 =======================
 
 .. automodule:: debug_rendering

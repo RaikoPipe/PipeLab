@@ -15,17 +15,17 @@ import sys
 
 sys.path.insert(0, os.path.abspath('../../../'))
 sys.path.insert(0, os.path.abspath('../../../PipeLab'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/FunctionTestGUI'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/OPC_UA'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding/pf_data_class'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding/path_finding_util'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/PathFinding/grid'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/ProcessPlanning/pp_data_class'))
-sys.path.insert(0, os.path.abspath('../../ProcessPlanning/process_util'))
-sys.path.insert(0, os.path.abspath('../../TypeDictionary'))
-sys.path.insert(0, os.path.abspath('../../../PipeLab/VpythonRendering'))
+sys.path.insert(0, os.path.abspath('../../function_test'))
+sys.path.insert(0, os.path.abspath('../../opc_ua'))
+sys.path.insert(0, os.path.abspath('../../path_finding'))
+sys.path.insert(0, os.path.abspath('../../process_planning'))
+sys.path.insert(0, os.path.abspath('../../path_finding/pf_data_class'))
+sys.path.insert(0, os.path.abspath('../../path_finding/path_finding_util'))
+sys.path.insert(0, os.path.abspath('../../path_finding/grid'))
+sys.path.insert(0, os.path.abspath('../../process_planning/pp_data_class'))
+sys.path.insert(0, os.path.abspath('../../process_planning/process_util'))
+sys.path.insert(0, os.path.abspath('../../type_dictionary'))
+sys.path.insert(0, os.path.abspath('../../vpython_rendering'))
 
 
 # -- Project information -----------------------------------------------------
@@ -53,6 +53,8 @@ extensions = ['sphinx.ext.napoleon',
               # "sphinx.ext.viewcode",
               "sphinx.ext.autosectionlabel",
               ]  # "]#, "sphinx_autodoc_typehints"]
+
+autoclass_content = 'both'
 
 napoleon_use_param = True
 

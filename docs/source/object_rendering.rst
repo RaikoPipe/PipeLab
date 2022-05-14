@@ -1,4 +1,4 @@
-object\_rendering module
+Object Rendering module
 ========================
 
 .. automodule:: object_rendering

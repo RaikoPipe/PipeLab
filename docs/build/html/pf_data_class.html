@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PF Dataclass &mdash; PipeLab 2022 documentation</title>
+  <title>Path Finding Dataclasses &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Predecessor dataclass" href="Predecessor.html" />
+    <link rel="next" title="Predecessor dataclass" href="predecessor.html" />
     <link rel="prev" title="Partial Solver module" href="partial_solver.html" /> 
 </head>
 
@@ -39,26 +39,26 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">PF Dataclass</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Predecessor.html">Predecessor dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Solution.html">Solution dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="PathProblem.html">PathProblem dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="Weights.html">Weights dataclass</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Path Finding Dataclasses</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="predecessor.html">Predecessor dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solution.html">Solution dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_problem.html">PathProblem dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="weights.html">Weights dataclass</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Utility module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 </ul>
 
         </div>
@@ -75,8 +75,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-      <li>PF Dataclass</li>
+          <li><a href="path_finding.html">Path Finding</a> &raquo;</li>
+      <li>Path Finding Dataclasses</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/pf_data_class.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -86,14 +86,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="pf-dataclass">
-<h1>PF Dataclass<a class="headerlink" href="#pf-dataclass" title="Permalink to this headline"></a></h1>
+  <div class="section" id="path-finding-dataclasses">
+<h1>Path Finding Dataclasses<a class="headerlink" href="#path-finding-dataclasses" title="Permalink to this headline"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Predecessor.html">Predecessor dataclass</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Solution.html">Solution dataclass</a></li>
-<li class="toctree-l1"><a class="reference internal" href="PathProblem.html">PathProblem dataclass</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Weights.html">Weights dataclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predecessor.html">Predecessor dataclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solution.html">Solution dataclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="path_problem.html">PathProblem dataclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="weights.html">Weights dataclass</a></li>
 </ul>
 </div>
 </div>
@@ -103,7 +103,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="partial_solver.html" class="btn btn-neutral float-left" title="Partial Solver module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Predecessor.html" class="btn btn-neutral float-right" title="Predecessor dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="predecessor.html" class="btn btn-neutral float-right" title="Predecessor dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

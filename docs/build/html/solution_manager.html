@@ -39,20 +39,20 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Solution Manager Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a></li>
-<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">Path Finding Dataclasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Utility module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 </ul>
 
         </div>
@@ -69,7 +69,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
+          <li><a href="path_finding.html">Path Finding</a> &raquo;</li>
       <li>Solution Manager Module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/solution_manager.rst.txt" rel="nofollow"> View page source</a>
@@ -94,10 +94,10 @@
 <dd><p>Checks if this path problem was already solved and returns the solution to it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="solution_manager.check_solution_stack.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.check_solution_stack.params.path_problem">¶</a> (<a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p>
+<dd class="field-odd"><p><span class="target" id="solution_manager.check_solution_stack.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.check_solution_stack.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if found in stack, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dd class="field-even"><p><a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if found in stack, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -109,12 +109,12 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="solution_manager.get_solution.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.get_solution.params.path_problem">¶</a> (<a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p></li>
+<li><p><span class="target" id="solution_manager.get_solution.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.get_solution.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p></li>
 <li><p><span class="target" id="solution_manager.get_solution.params.draw_debug"></span><strong>draw_debug</strong><a class="paramlink headerlink reference internal" href="#solution_manager.get_solution.params.draw_debug">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – See draw_debug in <a class="reference internal" href="search_algorithm.html#module-search_algorithm" title="search_algorithm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_path</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference internal" href="Solution.html#module-Solution" title="Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> when a solution was found, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dd class="field-even"><p><a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> when a solution was found, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -1,4 +1,4 @@
-coordinate\_transformations module
+Coordinate Transformations module
 ==================================
 
 .. automodule:: coordinate_transformations

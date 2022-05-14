@@ -1,5 +1,5 @@
-Process Planning Util Module
-============================
+Process Planning Utility Module
+===============================
 
 .. toctree::
    :maxdepth: 4

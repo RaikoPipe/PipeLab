@@ -1,5 +1,5 @@
-default\_data module
-====================
+Default Data configuration
+============================
 
 .. automodule:: default_data
    :members:

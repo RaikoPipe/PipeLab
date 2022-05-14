@@ -39,17 +39,17 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">Path Finding Dataclasses</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">Path Finding Utility module</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="path_math.html">Path Math module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="path_util.html">Path Util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_util.html">Path Utility module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="restrictions.html">Restrictions module</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Score Calculation module</a></li>
 </ul>
@@ -57,8 +57,8 @@
 <li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 </ul>
 
         </div>
@@ -75,8 +75,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-          <li><a href="path_finding_util.html">Path Finding Util module</a> &raquo;</li>
+          <li><a href="path_finding.html">Path Finding</a> &raquo;</li>
+          <li><a href="path_finding_util.html">Path Finding Utility module</a> &raquo;</li>
       <li>Score Calculation module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/score_calculation.rst.txt" rel="nofollow"> View page source</a>
@@ -97,7 +97,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="score_calculation.calculate_distance_to_obstacles">
-<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">calculate_distance_to_obstacles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.calculate_distance_to_obstacles" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">calculate_distance_to_obstacles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.calculate_distance_to_obstacles" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates the amount of obstacles next to the move divided by the maximum possible amount of obstacles next to
 the move.</p>
 </dd></dl>
@@ -122,7 +122,7 @@ the move.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="score_calculation.get_e_score">
 <span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_e_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worst_move_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_e_score" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates normalized E Score for MCA*/MCSA*.</p>
+<dd><p>Calculates normalized E Score (extra score) for MCA*/MCSA*. E score includes additional costs such as part cost and distance to obstacles.</p>
 </dd></dl>
 
 </div>

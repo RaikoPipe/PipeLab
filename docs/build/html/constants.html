@@ -39,17 +39,18 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="type_aliases.html">Type Aliases module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Constants module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class_types.html">Class Types module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="encoding_information.html">Encoding information</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 </ul>
 
         </div>
@@ -66,7 +67,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="TypeDictionary.html">Type Dictionary</a> &raquo;</li>
+          <li><a href="type_dictionary.html">Type Dictionary</a> &raquo;</li>
       <li>Constants module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/constants.rst.txt" rel="nofollow"> View page source</a>
@@ -79,6 +80,12 @@
              
   <div class="section" id="module-constants">
 <span id="constants-module"></span><h1>Constants module<a class="headerlink" href="#module-constants" title="Permalink to this headline"></a></h1>
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.mca_star">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">mca_star</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'mca*'</span></em><a class="headerlink" href="#constants.mca_star" title="Permalink to this definition"></a></dt>
+<dd><p>algorithms</p>
+</dd></dl>
+
 <dl class="py data">
 <dt class="sig sig-object py" id="constants.up">
 <span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">up</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0,</span> <span class="pre">1)</span></em><a class="headerlink" href="#constants.up" title="Permalink to this definition"></a></dt>
@@ -173,6 +180,36 @@
 <dt class="sig sig-object py" id="constants.fitting_id">
 <span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">fitting_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#constants.fitting_id" title="Permalink to this definition"></a></dt>
 <dd><p>fitting id convention</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.fit_event_code">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">fit_event_code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#constants.fit_event_code" title="Permalink to this definition"></a></dt>
+<dd><p>Fitting placed</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.pipe_event_code">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">pipe_event_code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#constants.pipe_event_code" title="Permalink to this definition"></a></dt>
+<dd><p>Pipe placed</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.att_event_code">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">att_event_code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#constants.att_event_code" title="Permalink to this definition"></a></dt>
+<dd><p>Attachment placed</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.pick_event_code">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">pick_event_code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#constants.pick_event_code" title="Permalink to this definition"></a></dt>
+<dd><p>Part picked from robot</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="constants.pick_manual_event_code">
+<span class="sig-prename descclassname"><span class="pre">constants.</span></span><span class="sig-name descname"><span class="pre">pick_manual_event_code</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#constants.pick_manual_event_code" title="Permalink to this definition"></a></dt>
+<dd><p>Part picked manually</p>
 </dd></dl>
 
 </div>

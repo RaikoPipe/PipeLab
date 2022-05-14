@@ -1,0 +1,167 @@
+import tkinter as tk
+from tkinter import ttk
+
+from function_test.app_config import treeview_style, configure_visualization_style
+from function_test.app_util import undo_action, send_new_pick_event, get_button_grid
+from path_finding.pf_data_class.path_problem import PathProblem
+from process_planning.process_planner import ProcessPlanner
+
+button_dict = {}
+
+previous_detour_trails = set()
+
+
+class FunctionTestApp:
+    """Provides a UI for the process planner, mainly for debugging purposes. Visualizes the process state.
+    Initializes and uses an instance of a process planner.
+
+    """
+
+    def __init__(self, path_problem: PathProblem, process_planner: ProcessPlanner, controlled_from_outside=False):
+        """
+
+        Args:
+            path_problem:
+            process_planner:
+            controlled_from_outside:
+        """
+        self.root = tk.Tk()
+
+        self.process_planner: ProcessPlanner = process_planner
+
+        start = path_problem.start_pos
+        goal = path_problem.goal_pos
+
+        part_select_option = tk.IntVar(value=1)
+
+        # set visualization style
+        style = ttk.Style()
+        button_width = 5
+        button_height = 8
+        font = ('Tahoma', 7)
+        configure_visualization_style(button_height, button_width, font, style)
+
+        # make app widgets
+
+        layout_frame = ttk.Frame(self.root)
+        layout_frame.pack(anchor=tk.W)
+
+        self.solution_button_grid_frame = ttk.LabelFrame(layout_frame, text="Solution Grid:")
+        self.solution_button_grid_frame.grid(row=0, column=0)
+
+        # Button grid where solution is visualized
+        self.solution_button_grid, _, _ = get_button_grid(
+            state_grid=self.process_planner.last_process_state.aimed_solution.state_grid,
+            button_grid_frame=self.solution_button_grid_frame,
+            start=start, goal=goal,
+            absolute_trail=self.process_planner.optimal_solution.node_trail,
+            process_planner=None,
+            part_select_option=None, tree=None, part_stock_tree=None,
+            solution_button_grid=None)
+
+        self.construction_button_grid_frame = ttk.LabelFrame(layout_frame, text="Current construction grid:")
+        self.construction_button_grid_frame.grid(row=1, column=0)
+
+        part_stock_frame = ttk.LabelFrame(layout_frame, text="Current Parts:")
+        part_stock_frame.grid(row=0, column=1)
+
+        # set a view for displaying part stock, picked parts
+        self.part_stock_tree = ttk.Treeview(part_stock_frame, columns=("part_id", "picked", "stock"), show="headings",
+                                            style=treeview_style)
+        self.part_stock_tree.heading("part_id", text="Part ID")
+        self.part_stock_tree.heading("picked", text="Picked")
+        self.part_stock_tree.heading("stock", text="Stock")
+        self.part_stock_tree.column("part_id", width=50)
+        self.part_stock_tree.column("picked", width=50)
+        self.part_stock_tree.column("stock", width=50)
+        self.part_stock_tree.grid(row=0, column=0)
+
+        # set a scrollbar for the part stock view
+        scrollbar = ttk.Scrollbar(part_stock_frame, orient=tk.VERTICAL, command=self.part_stock_tree.yview)
+        self.part_stock_tree.configure(yscroll=scrollbar.set)
+        scrollbar.grid(row=0, column=1, sticky='ns')
+
+        tool_frame = ttk.LabelFrame(layout_frame, text="Process tools:")
+        tool_frame.grid(row=1, column=1)
+
+        part_put_frame = ttk.LabelFrame(tool_frame, text="Placement:")
+        part_put_frame.grid(row=0, column=0)
+
+        att_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Attachment", variable=part_select_option,
+                                                 value=3)
+        att_option_radiobutton.pack(anchor=tk.W)
+
+        # place pipe choice radio button
+        pipe_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Pipe", variable=part_select_option, value=2)
+        pipe_option_radiobutton.pack(anchor=tk.W)
+
+        # place fitting choice radio button
+        fit_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Fitting", variable=part_select_option, value=1)
+        fit_option_radiobutton.pack(anchor=tk.W)
+
+        part_pick_frame = ttk.LabelFrame(tool_frame, text="Pick part:")
+        part_pick_frame.grid(row=0, column=1)
+
+        process_message_frame = ttk.LabelFrame(layout_frame, text="Process Planner Message Output:")
+        process_message_frame.grid(row=1, column=2)
+
+        # treeview for displaying process planner messages
+        self.process_message_tree = ttk.Treeview(process_message_frame, show="tree", columns=("message",),
+                                                 selectmode="none")
+        self.process_message_tree.column("#0", width=500)
+        self.process_message_tree.column("message", width=0, anchor=tk.W)
+        self.process_message_tree.grid(row=0, column=0)
+
+        # set a scrollbar for the process message view
+        scrollbar = ttk.Scrollbar(process_message_frame, orient=tk.VERTICAL, command=self.process_message_tree.yview)
+        self.process_message_tree.configure(style=treeview_style, yscroll=scrollbar.set)
+        scrollbar.grid(row=0, column=1, sticky='ns')
+
+        part_ids = [k for k in path_problem.part_stock.keys()]
+        # set a button for picking each part id
+        for part_id in part_ids:
+            pick_part_button = ttk.Button(part_pick_frame, text="Pick ID " + str(part_id),
+                                          command=lambda t=part_id: send_new_pick_event(
+                                              t,
+                                              process_planner=self.process_planner,
+                                              process_message_tree=self.process_message_tree,
+                                              part_stock_tree=self.part_stock_tree))
+            pick_part_button.pack(anchor=tk.W)
+            self.part_stock_tree.insert("", tk.END,
+                                        values=(
+                                            part_id,
+                                            self.process_planner.last_process_state.picked_parts.count(part_id),
+                                            self.process_planner.last_process_state.part_stock[part_id]))
+
+        # Button grid where current process state is visualized
+        self.construction_button_grid, self.style_grid, self.tool_tip_text_grid = get_button_grid(
+            state_grid=self.process_planner.last_process_state.state_grid, start=start,
+            goal=goal, button_grid_frame=self.construction_button_grid_frame,
+            absolute_trail=self.process_planner.last_process_state.aimed_solution.node_trail,
+            process_planner=self.process_planner,
+            part_select_option=part_select_option,
+            tree=self.process_message_tree, part_stock_tree=self.part_stock_tree,
+            solution_button_grid=self.solution_button_grid)
+
+        # set button to revert to a previous process state
+        return_to_previous_state = ttk.Button(tool_frame, text="Undo action",
+                                              command=lambda: undo_action(process_planner=self.process_planner,
+                                                                          part_stock_tree=self.part_stock_tree,
+                                                                          button_grid=self.construction_button_grid,
+                                                                          style_grid=self.style_grid,
+                                                                          tool_tip_text_grid=self.tool_tip_text_grid,
+                                                                          process_message_tree=self.process_message_tree,
+                                                                          solution_button_grid=self.solution_button_grid,
+                                                                          ))
+        return_to_previous_state.grid(row=2, column=0)
+
+        # setting title
+        self.root.title("Pipe Lab 2.0")
+        # setting window size
+        if controlled_from_outside:
+            # update once
+
+            self.root.update_idletasks()
+            self.root.update()
+        else:
+            self.root.mainloop()

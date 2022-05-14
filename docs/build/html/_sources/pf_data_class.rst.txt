@@ -1,10 +1,10 @@
-PF Dataclass
-===============
+Path Finding Dataclasses
+========================
 
 .. toctree::
    :maxdepth: 4
 
-   Predecessor
-   Solution
-   PathProblem
-   Weights
+   predecessor
+   solution
+   path_problem
+   weights

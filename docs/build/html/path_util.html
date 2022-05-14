@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Path Util module &mdash; PipeLab 2022 documentation</title>
+  <title>Path Utility module &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -39,17 +39,17 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">Path Finding Dataclasses</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">Path Finding Utility module</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="path_math.html">Path Math module</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Path Util module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Path Utility module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="restrictions.html">Restrictions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="score_calculation.html">Score Calculation module</a></li>
 </ul>
@@ -57,8 +57,8 @@
 <li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 </ul>
 
         </div>
@@ -75,9 +75,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
-          <li><a href="path_finding_util.html">Path Finding Util module</a> &raquo;</li>
-      <li>Path Util module</li>
+          <li><a href="path_finding.html">Path Finding</a> &raquo;</li>
+          <li><a href="path_finding_util.html">Path Finding Utility module</a> &raquo;</li>
+      <li>Path Utility module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/path_util.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -87,64 +87,134 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-path_util">
-<span id="path-util-module"></span><h1>Path Util module<a class="headerlink" href="#module-path_util" title="Permalink to this headline"></a></h1>
-<dl class="py function">
+  <div class="section" id="path-utility-module">
+<h1>Path Utility module<a class="headerlink" href="#path-utility-module" title="Permalink to this headline"></a></h1>
+<span class="target" id="module-path_util"></span><dl class="py function">
 <dt class="sig sig-object py" id="path_util.construct_solution">
 <span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">construct_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predecessors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_part</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.construct_solution" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a solution based on given parameters.</p>
+<dd><p>Constructs a solution based on given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_util.construct_solution.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.state_grid">¶</a><strong>(</strong> – obj`~type_aliases.State`): State grid with applied solution path</p></li>
+<li><p><span class="target" id="path_util.construct_solution.params.current_node"></span><strong>current_node</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.current_node">¶</a><strong>(</strong> – obj`~type_aliases.Pos`): Last visited node in search.</p></li>
+<li><p><span class="target" id="path_util.construct_solution.params.predecessors"></span><strong>predecessors</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.predecessors">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Predecessors</span></code>) – All visited predecessors.</p></li>
+<li><p><span class="target" id="path_util.construct_solution.params.score"></span><strong>score</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.score">¶</a><strong>(</strong> – obj`float`): The final solution score.</p></li>
+<li><p><span class="target" id="path_util.construct_solution.params.algorithm"></span><strong>algorithm</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.algorithm">¶</a><strong>(</strong> – obj`str`): Algorithm used in prior search.</p></li>
+<li><p><span class="target" id="path_util.construct_solution.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – </p></li>
+<li><p><span class="target" id="path_util.construct_solution.params.fast_mode"></span><strong>fast_mode</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.fast_mode">¶</a><strong>(</strong> – obj`bool`): See <a class="reference internal" href="search_algorithm.html#search_algorithm.find_path.params.fast_mode" title="search_algorithm.find_path"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">fast_mode</span></code></a></p></li>
+<li><p><span class="target" id="path_util.construct_solution.params.goal_pos"></span><strong>goal_pos</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.goal_pos">¶</a><strong>(</strong> – obj`~type_aliases.Pos`): The reached goal position.</p></li>
+<li><p><span class="target" id="path_util.construct_solution.params.goal_part"></span><strong>goal_part</strong><a class="paramlink headerlink reference internal" href="#path_util.construct_solution.params.goal_part">¶</a><strong>(</strong> – obj`int`): Part that should be appended to reach actual goal position.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_util.get_corner_neighbors">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_corner_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_parts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_corner_neighbors" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_corner_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_parts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_corner_neighbors" title="Permalink to this definition"></a></dt>
 <dd><p>Returns all the neighbors that are allowed as the next move by the currently available corner parts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_util.get_corner_neighbors.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#path_util.get_corner_neighbors.params.direction">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Considered direction for fitting</p></li>
+<li><p><span class="target" id="path_util.get_corner_neighbors.params.available_parts"></span><strong>available_parts</strong><a class="paramlink headerlink reference internal" href="#path_util.get_corner_neighbors.params.available_parts">¶</a><strong>(</strong> – obj:list [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]): See <a class="reference internal" href="#path_util.pipe_stock_check" title="path_util.pipe_stock_check"><code class="xref py py-func docutils literal notranslate"><span class="pre">pipe_stock_check()</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>obj`Nodes&lt;type_aliases.Node&gt;`.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> of neighbor</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_util.get_pipe_neighbors">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_pipe_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_parts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">at_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_pipe_neighbors" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_pipe_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_parts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">at_start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_pipe_neighbors" title="Permalink to this definition"></a></dt>
 <dd><p>Returns all neighbors that are allowed as the next move by the currently available pipe parts</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_util.get_pipe_neighbors.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#path_util.get_pipe_neighbors.params.direction">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Considered direction for pipe.</p></li>
+<li><p><span class="target" id="path_util.get_pipe_neighbors.params.available_parts"></span><strong>available_parts</strong><a class="paramlink headerlink reference internal" href="#path_util.get_pipe_neighbors.params.available_parts">¶</a><strong>(</strong> – obj:list [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]): See <a class="reference internal" href="#path_util.pipe_stock_check" title="path_util.pipe_stock_check"><code class="xref py py-func docutils literal notranslate"><span class="pre">pipe_stock_check()</span></code></a></p></li>
+<li><p><span class="target" id="path_util.get_pipe_neighbors.params.at_start"></span><strong>at_start</strong><a class="paramlink headerlink reference internal" href="#path_util.get_pipe_neighbors.params.at_start">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – If the current position is the start point.</p></li>
+<li><p><span class="target" id="path_util.get_pipe_neighbors.params.transition"></span><strong>transition</strong><a class="paramlink headerlink reference internal" href="#path_util.get_pipe_neighbors.params.transition">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>,:obj:<cite>~type_aliases.Pos</cite>]) – See <a class="reference internal" href="#path_util.get_transition" title="path_util.get_transition"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_transition()</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>obj`Nodes&lt;type_aliases.Node&gt;`.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> of neighbor</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_util.get_changed_nodes">
 <span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_changed_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predecessor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_changed_nodes" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="path_util.build_path">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">build_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_node</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.build_path" title="Permalink to this definition"></a></dt>
-<dd><p>Constructs a path from start to the current node.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="path_util.get_current_state_grid">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_current_state_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_current_state_grid" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the current state grid according to the current path.</p>
+<dd><p>Returns all nodes that have changed after a move.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_util.get_changed_nodes.params.predecessor_pos"></span><strong>predecessor_pos</strong><a class="paramlink headerlink reference internal" href="#path_util.get_changed_nodes.params.predecessor_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position opf the predecessor to the current node position.</p></li>
+<li><p><span class="target" id="path_util.get_changed_nodes.params.current_pos"></span><strong>current_pos</strong><a class="paramlink headerlink reference internal" href="#path_util.get_changed_nodes.params.current_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – The currently expanded node position.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Node" title="type_aliases.Node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Node</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_util.pipe_stock_check">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">pipe_stock_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipe_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.pipe_stock_check" title="Permalink to this definition"></a></dt>
-<dd><p>Checks how many parts are available.</p>
+<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">pipe_stock_check</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.pipe_stock_check" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates availability of parts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="path_util.pipe_stock_check.params.part_stock"></span><strong>part_stock</strong><a class="paramlink headerlink reference internal" href="#path_util.pipe_stock_check.params.part_stock">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.PartStock" title="type_aliases.PartStock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.PartStock</span></code></a>) – To the current path reduced part stock.</p></li>
+<li><p><span class="target" id="path_util.pipe_stock_check.params.predecessors"></span><strong>predecessors</strong><a class="paramlink headerlink reference internal" href="#path_util.pipe_stock_check.params.predecessors">¶</a> (<a class="reference internal" href="class_types.html#class_types.Predecessors" title="class_types.Predecessors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_types.Predecessors</span></code></a>) – See <a class="reference internal" href="class_types.html#class_types.Predecessors" title="class_types.Predecessors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_types.Predecessors</span></code></a></p></li>
+<li><p><span class="target" id="path_util.pipe_stock_check.params.fast_mode"></span><strong>fast_mode</strong><a class="paramlink headerlink reference internal" href="#path_util.pipe_stock_check.params.fast_mode">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – See <code class="xref py py-paramref docutils literal notranslate"><span class="pre">fast_mode</span></code></p></li>
+<li><p><span class="target" id="path_util.pipe_stock_check.params.key"></span><strong>key</strong><a class="paramlink headerlink reference internal" href="#path_util.pipe_stock_check.params.key">¶</a> – See <code class="xref py py-paramref docutils literal notranslate"><span class="pre">key</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> containing the part IDs (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) left in stock.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_util.get_available_parts">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_available_parts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipe_stock</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_available_parts" title="Permalink to this definition"></a></dt>
-<dd><p>Returns available parts as list.</p>
+<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_available_parts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_available_parts" title="Permalink to this definition"></a></dt>
+<dd><p>Returns available part IDs as set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="path_util.get_available_parts.params.part_stock"></span><strong>part_stock</strong><a class="paramlink headerlink reference internal" href="#path_util.get_available_parts.params.part_stock">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.PartStock" title="type_aliases.PartStock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartStock</span></code></a>) – To the current path reduced part stock.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]</p>
+</dd>
+</dl>
 </dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="path_util.is_between">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">is_between</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.is_between" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_util.get_transition">
 <span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_transition" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Checks if transition points lie in the node in direction of the given node position.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>,:obj:<cite>~type_aliases.Pos</cite>] if transition point found, else None.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 

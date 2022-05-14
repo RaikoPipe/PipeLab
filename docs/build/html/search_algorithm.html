@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Solution Manager Module" href="solution_manager.html" />
-    <link rel="prev" title="PathFinding" href="PathFinding.html" /> 
+    <link rel="prev" title="Path Finding" href="path_finding.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,20 +39,20 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="PathFinding.html">PathFinding</a><ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Search Algorithm module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">PF Dataclass</a></li>
-<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">Path Finding Dataclasses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Utility module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 </ul>
 
         </div>
@@ -69,7 +69,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="PathFinding.html">PathFinding</a> &raquo;</li>
+          <li><a href="path_finding.html">Path Finding</a> &raquo;</li>
       <li>Search Algorithm module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/search_algorithm.rst.txt" rel="nofollow"> View page source</a>
@@ -82,7 +82,7 @@
              
   <div class="section" id="search-algorithm-module">
 <h1>Search Algorithm module<a class="headerlink" href="#search-algorithm-module" title="Permalink to this headline"></a></h1>
-<p>Contains the search algorithm used for solving path problems (See <a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) (in the context of pipe assembly).
+<p>Contains the search algorithm used for solving path problems (See <code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code>) (in the context of pipe assembly).
 Using MCSA* as the score calculation method is recommended.</p>
 <span class="target" id="module-search_algorithm"></span><dl class="py function">
 <dt class="sig sig-object py" id="search_algorithm.find_path">
@@ -91,13 +91,13 @@ Using MCSA* as the score calculation method is recommended.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="search_algorithm.find_path.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#search_algorithm.find_path.params.path_problem">¶</a> (<a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p></li>
+<li><p><span class="target" id="search_algorithm.find_path.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#search_algorithm.find_path.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p></li>
 <li><p><span class="target" id="search_algorithm.find_path.params.fast_mode"></span><strong>fast_mode</strong><a class="paramlink headerlink reference internal" href="#search_algorithm.find_path.params.fast_mode">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Slightly faster, but incomplete search. Not recommended.</p></li>
 <li><p><span class="target" id="search_algorithm.find_path.params.draw_path"></span><strong>draw_path</strong><a class="paramlink headerlink reference internal" href="#search_algorithm.find_path.params.draw_path">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Debug option. If set to True, shows path drawn via <a class="reference external" href="https://matplotlib.org/3.5.0/api/_as_gen/matplotlib.pyplot.html">matplotlib.pyplot</a> after each node expansion.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference internal" href="PathProblem.html#module-PathProblem" title="PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a> when a solution was found, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dd class="field-even"><p><a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a> when a solution was found, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -108,7 +108,7 @@ Using MCSA* as the score calculation method is recommended.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="PathFinding.html" class="btn btn-neutral float-left" title="PathFinding" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="path_finding.html" class="btn btn-neutral float-left" title="Path Finding" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="solution_manager.html" class="btn btn-neutral float-right" title="Solution Manager Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

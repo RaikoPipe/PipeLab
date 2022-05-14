@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>coordinate_transformations module &mdash; PipeLab 2022 documentation</title>
+  <title>Coordinate Transformations module &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="debug_rendering module" href="debug_rendering.html" />
-    <link rel="prev" title="VpythonRendering module" href="VpythonRendering.html" /> 
+    <link rel="next" title="Debug Rendering module" href="debug_rendering.html" />
+    <link rel="prev" title="Vpython Rendering module" href="vpython_rendering.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,18 +39,18 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="OPC_UA.html">OPC_UA</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FunctionTestGUI.html">FunctionTestGUI</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ProcessPlanning.html">ProcessPlanning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="PathFinding.html">PathFinding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="TypeDictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="VpythonRendering.html">VpythonRendering module</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">coordinate_transformations module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="debug_rendering.html">debug_rendering module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="default_data.html">default_data module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="group_rendering.html">group_rendering module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="object_data_classes.html">object_data_classes module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="object_rendering.html">object_rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Coordinate Transformations module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="debug_rendering.html">Debug Rendering module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="default_data.html">Default Data configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="group_rendering.html">Group Rendering module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="object_data_classes.html">Object dataclasses module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="object_rendering.html">Object Rendering module</a></li>
 </ul>
 </li>
 </ul>
@@ -69,8 +69,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="VpythonRendering.html">VpythonRendering module</a> &raquo;</li>
-      <li>coordinate_transformations module</li>
+          <li><a href="vpython_rendering.html">Vpython Rendering module</a> &raquo;</li>
+      <li>Coordinate Transformations module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/coordinate_transformations.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -81,7 +81,7 @@
            <div itemprop="articleBody">
              
   <div class="section" id="module-coordinate_transformations">
-<span id="coordinate-transformations-module"></span><h1>coordinate_transformations module<a class="headerlink" href="#module-coordinate_transformations" title="Permalink to this headline"></a></h1>
+<span id="coordinate-transformations-module"></span><h1>Coordinate Transformations module<a class="headerlink" href="#module-coordinate_transformations" title="Permalink to this headline"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="coordinate_transformations.to_vector">
 <span class="sig-prename descclassname"><span class="pre">coordinate_transformations.</span></span><span class="sig-name descname"><span class="pre">to_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#coordinate_transformations.to_vector" title="Permalink to this definition"></a></dt>
@@ -93,8 +93,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="VpythonRendering.html" class="btn btn-neutral float-left" title="VpythonRendering module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="debug_rendering.html" class="btn btn-neutral float-right" title="debug_rendering module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="vpython_rendering.html" class="btn btn-neutral float-left" title="Vpython Rendering module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="debug_rendering.html" class="btn btn-neutral float-right" title="Debug Rendering module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

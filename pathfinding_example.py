@@ -1,9 +1,9 @@
 
 
-from PathFinding.grid import grid_functions, randomizer
-from PathFinding.pf_data_class.PathProblem import PathProblem
-from PathFinding.pf_data_class.Weights import Weights
-from PathFinding.search_algorithm import find_path
+from path_finding.grid import grid_functions, randomizer
+from path_finding.pf_data_class.path_problem import PathProblem
+from path_finding.pf_data_class.weights import Weights
+from path_finding.search_algorithm import find_path
 
 x = 10
 y = 20
@@ -44,7 +44,7 @@ while solution is None:
 # print(path_problem)
 # print(solution)
 
-# VpythonRendering
+# vpython_rendering
 
 # scene = object_rendering.create_new_scene()
 # mounting_wall, dot_object = \

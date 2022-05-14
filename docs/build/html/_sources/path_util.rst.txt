@@ -1,4 +1,4 @@
-Path Util module
+Path Utility module
 =================
 
 .. automodule:: path_util

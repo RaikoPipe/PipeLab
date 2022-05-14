@@ -1,4 +1,4 @@
-group\_rendering module
+Group Rendering module
 =======================
 
 .. automodule:: group_rendering

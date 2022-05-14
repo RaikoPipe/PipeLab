@@ -1,4 +1,4 @@
-randomizer module
+Randomizer module
 =================
 
 .. automodule:: randomizer

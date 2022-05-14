@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProcessOutput dataclass &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Process Planning Utility Module" href="process_planning_util.html" />
+    <link rel="prev" title="PickEventInfo dataclass" href="pick_event_info.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="process_planning.html">Process Planning</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="process_planner.html">ProcessPlanner class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_state.html">ProcessState class</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="building_instruction.html">BuildingInstruction class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="construction_state.html">ConstructionState dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="placement_event_info.html">PlacementEventInfo dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pick_event_info.html">PickEventInfo dataclass</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">ProcessOutput dataclass</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Utility Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_info.html">Code Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="process_planning.html">Process Planning</a> &raquo;</li>
+          <li><a href="pp_data_class.html">Process Planning Dataclasses</a> &raquo;</li>
+      <li>ProcessOutput dataclass</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/process_output.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="processoutput-dataclass">
+<h1>ProcessOutput dataclass<a class="headerlink" href="#processoutput-dataclass" title="Permalink to this headline"></a></h1>
+<p>Dataclass for neatly outputting data returned from <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner" title="process_planner.ProcessPlanner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanner</span></code></a>.</p>
+<span class="target" id="module-process_output"></span><dl class="py class">
+<dt class="sig sig-object py" id="process_output.ProcessOutput">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">process_output.</span></span><span class="sig-name descname"><span class="pre">ProcessOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picking_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastening_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_recommended_action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_placement_positions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_output.ProcessOutput" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Output class used by process planner.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="process_output.ProcessOutput.process_state">
+<span class="sig-name descname"><span class="pre">process_state</span></span><a class="headerlink" href="#process_output.ProcessOutput.process_state" title="Permalink to this definition"></a></dt>
+<dd><p>Modified process state after a motion event.</p>
+<p><em>Type</em>: <a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="process_output.ProcessOutput.current_event_info">
+<span class="sig-name descname"><span class="pre">current_event_info</span></span><a class="headerlink" href="#process_output.ProcessOutput.current_event_info" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluated information on the current event. Can be a placement or pick event depending on the motion event input.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a>, <a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventInfo</span></code></a>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="process_output.ProcessOutput.messages">
+<span class="sig-name descname"><span class="pre">messages</span></span><a class="headerlink" href="#process_output.ProcessOutput.messages" title="Permalink to this definition"></a></dt>
+<dd><p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> messages.
+These messages confirm a motion event or an error. For immediate comprehension.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="process_output.ProcessOutput.picking_robot_commands">
+<span class="sig-name descname"><span class="pre">picking_robot_commands</span></span><a class="headerlink" href="#process_output.ProcessOutput.picking_robot_commands" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.determine_picking_robot_commands" title="process_planner.ProcessPlanner.determine_picking_robot_commands"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_picking_robot_commands()</span></code></a></p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="process_output.ProcessOutput.fastening_robot_commands">
+<span class="sig-name descname"><span class="pre">fastening_robot_commands</span></span><a class="headerlink" href="#process_output.ProcessOutput.fastening_robot_commands" title="Permalink to this definition"></a></dt>
+<dd><p>See <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.determine_fastening_robot_commands" title="process_planner.ProcessPlanner.determine_fastening_robot_commands"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_fastening_robot_commands()</span></code></a></p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="process_output.ProcessOutput.next_recommended_action">
+<span class="sig-name descname"><span class="pre">next_recommended_action</span></span><a class="headerlink" href="#process_output.ProcessOutput.next_recommended_action" title="Permalink to this definition"></a></dt>
+<dd><p>Next recommended worker action (Place part with ID x at pos (x,x))
+See parameter <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.params.next_recommended_action" title="process_planner.ProcessPlanner"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">next_recommended_action</span></code></a></p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Action" title="type_aliases.Action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Action</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="process_output.ProcessOutput.valid_placement_positions">
+<span class="sig-name descname"><span class="pre">valid_placement_positions</span></span><a class="headerlink" href="#process_output.ProcessOutput.valid_placement_positions" title="Permalink to this definition"></a></dt>
+<dd><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> containing valid placement <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a> for the part ID that was picked.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>]</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pick_event_info.html" class="btn btn-neutral float-left" title="PickEventInfo dataclass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="process_planning_util.html" class="btn btn-neutral float-right" title="Process Planning Utility Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

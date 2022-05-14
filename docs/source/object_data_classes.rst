@@ -1,4 +1,4 @@
-object\_data\_classes module
+Object dataclasses module
 ============================
 
 .. automodule:: object_data_classes

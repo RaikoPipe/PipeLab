@@ -1,4 +1,4 @@
-grid\_functions module
+Grid Functions module
 ======================
 
 .. automodule:: grid_functions
