@@ -1,8 +1,10 @@
-import tkinter as tk
+
 from copy import deepcopy
 from idlelib.tooltip import Hovertip
-from tkinter import ttk
 from typing import Optional
+from function_test.app_config import GridButton, button_width, button_height
+import ttkbootstrap as ttk
+from ttkbootstrap.constants import *
 
 import numpy as np
 
@@ -90,15 +92,15 @@ def get_tool_tip_text_grid(process_planner, tool_tip_text_grid):
     # reset
     for pos, state in np.ndenumerate(process_planner.last_process_state.aimed_solution.path_problem.state_grid):
         if state == 0:
-            tool_tip_text_grid[pos] = "free"
+            tool_tip_text_grid[pos] = str(pos) + "\n" + "free"
         elif state == 1:
-            tool_tip_text_grid[pos] = "obstructed"
+            tool_tip_text_grid[pos] = str(pos) + "\n" + "obstructed"
         elif state == 3:
-            tool_tip_text_grid[pos] = "Transition"
+            tool_tip_text_grid[pos] = str(pos) + "\n" + "Transition"
 
         part_id = process_planner.last_process_state.aimed_solution.node_trail.get(pos)
         if part_id is not None:
-            text = str.format(f"Required part ID: {part_id}")
+            text = str.format(str(pos) + "\n" + f"Required part ID: {part_id}")
             tool_tip_text_grid[pos] = text
 
     # set
@@ -170,8 +172,8 @@ def undo_action(process_planner, button_grid, style_grid, part_stock_tree, tool_
         part_id += 1
 
     global message_count
-    process_message_tree.insert("", index=tk.END, text="Last Action was undone!")
-    process_message_tree.tag_configure(tagname=message_count, background="cyan")
+    process_message_tree.insert("", index=ttk.END,tag =message_count, text="Last Action was undone!")
+    process_message_tree.tag_configure(tagname=message_count, background="cyan", foreground = "black")
     message_count += 1
     process_state = process_planner.last_process_state
 
@@ -221,13 +223,13 @@ def update_process_message_tree(event_info, messages, next_recommended_action, p
     detour_message = messages[2]
     global message_count
     if message:
-        process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count,
+        process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
                                     text=message.replace("Process Planner: ", ""))
         if any((event_info.deviated, event_info.unnecessary, event_info.misplaced)):
             if not event_info.removal:
-                process_message_tree.tag_configure(tagname=message_count, background="yellow2")
+                process_message_tree.tag_configure(tagname=message_count, background="yellow2",foreground = "black")
         else:
-            process_message_tree.tag_configure(tagname=message_count, background="green2")
+            process_message_tree.tag_configure(tagname=message_count, background="green2",foreground = "black")
 
         if event_info.error:
             process_message_tree.tag_configure(tagname=message_count, background="red3", foreground="white")
@@ -236,25 +238,25 @@ def update_process_message_tree(event_info, messages, next_recommended_action, p
         message_count += 1
 
         if special_message:
-            process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=special_message)
+            process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=special_message)
             extra_message_ids.append(message_count)
             message_count += 1
 
         if next_recommended_action:
-            process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count,
+            process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
                                         text="Next recommended action: " + str(next_recommended_action))
             extra_message_ids.append(message_count)
             message_count += 1
 
         append_texts_to_message(event_info, extra_message_ids, process_message_tree)
     if detour_message:
-        process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=detour_message)
-        process_message_tree.tag_configure(tagname=message_count, background="maroon1")
+        process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=detour_message)
+        process_message_tree.tag_configure(tagname=message_count, background="maroon1",foreground = "black")
         message_count += 1
     if process_planner.last_process_state.completion == 1:
-        process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count,
+        process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
                                     text="Construction complete!")
-        process_message_tree.tag_configure(tagname=message_count, background="gold")
+        process_message_tree.tag_configure(tagname=message_count, background="gold",foreground = "black")
         message_count += 1
     for p_id in process_planner.last_process_state.part_stock.keys():
         item = part_stock_tree.get_children()[p_id]
@@ -277,7 +279,7 @@ def append_texts_to_message(event_info, extra_message_ids, process_message_tree)
             value = tuple(value)  # tkinter gets key error on sets
         if value:
             value = str(value)
-            process_message_tree.insert("", index=tk.END, iid=message_count, tag=message_count,
+            process_message_tree.insert("", index=ttk.END, iid=message_count, tag=message_count,
                                         text=str.format(f"{attribute}: {value}"))
             extra_message_ids.append(message_count)
             message_count += 1
@@ -296,18 +298,18 @@ def send_new_pick_event(part_id, process_planner: ProcessPlanner, process_messag
     message = output.messages[0]
     special_message = output.messages[1]
 
-    process_message_tree.insert("", index=tk.END, tag= message_count,iid=message_count, text=message.replace("Process Planner: ", ""))
+    process_message_tree.insert("", index=ttk.END, tag= message_count,iid=message_count, text=message.replace("Process Planner: ", ""))
 
     if event_info.error:
         process_message_tree.tag_configure(tagname=message_count, background="red3", foreground="white")
     else:
-        process_message_tree.tag_configure(tagname=message_count, background ="green2")
+        process_message_tree.tag_configure(tagname=message_count, background ="green2",foreground = "black")
 
     extra_message_ids = [message_count]
     message_count += 1
 
     if special_message:
-        process_message_tree.insert("", index=tk.END, tag=message_count, iid=message_count, text=special_message)
+        process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=special_message)
         extra_message_ids.append(message_count)
         message_count += 1
 
@@ -322,7 +324,7 @@ def send_new_pick_event(part_id, process_planner: ProcessPlanner, process_messag
 
 def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_grid_frame,
                     process_planner: Optional[ProcessPlanner],
-                    part_select_option: Optional[tk.IntVar], tree, part_stock_tree, solution_button_grid):
+                    part_select_option: Optional[ttk.IntVar], tree, part_stock_tree, solution_button_grid):
 
     # Grid Button
     button_grid = np.zeros((state_grid.shape[0], state_grid.shape[1]), dtype=ttk.Button)
@@ -333,11 +335,11 @@ def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_g
         if state == 0:
             style = free_style
             style_grid[pos] = free_style
-            tool_tip_text_grid[pos] = "free"
+            tool_tip_text_grid[pos] = str(pos) + "\n" + "free"
         elif state == 1:
             style = obs_style
             style_grid[pos] = obs_style
-            tool_tip_text_grid[pos] = "obstructed"
+            tool_tip_text_grid[pos] = str(pos) + "\n" + "obstructed"
         elif state == 2:
             # what part?
             if absolute_trail[pos] == 0:
@@ -349,7 +351,7 @@ def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_g
         elif state == 3:
             style = transition_style
             style_grid[pos] = transition_style
-            tool_tip_text_grid[pos] = "Transition"
+            tool_tip_text_grid[pos] = str(pos) + "\n" + "Transition"
 
         if pos == start:
             style = start_style
@@ -361,10 +363,10 @@ def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_g
         initial_style_grid = deepcopy(style_grid)
 
         if process_planner:
-            button = ttk.Button(button_grid_frame, text=str(pos), style=style)
+            button = ttk.Button(button_grid_frame, text=str(pos), style=style, bootstyle=OUTLINE )
             part_id = process_planner.initial_process_state.aimed_solution.node_trail.get(pos)
             if part_id is not None:
-                text = str.format(f"Required part ID: {part_id}")
+                text = str.format(str(pos) + "\n" + f"Required part ID: {part_id}")
                 tool_tip_text_grid[pos] = text
                 Hovertip(button, text, hover_delay=0)
             else:
@@ -379,9 +381,9 @@ def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_g
 
 
         else:
-            button = ttk.Button(button_grid_frame, text=str(pos), style=style)
+            button = ttk.Button(button_grid_frame, text=str(pos), style=style, bootstyle=OUTLINE)
 
-        button.grid(row=pos[0], column=pos[1], ipady=8, ipadx=3)
+        button.grid(row=pos[0], column=pos[1], ipady=button_height, padx=0, ipadx=0, sticky="nsew")
         button_grid[pos] = button
 
     # previous_style_grids.insert(0, deepcopy(style_grid))

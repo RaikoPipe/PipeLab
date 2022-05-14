@@ -4,3 +4,4 @@ vpython~=7.6.2
 pywin32~=302
 matplotlib~=3.5.1
 asyncua~=0.9.92
+ttkbootstrap~=1.7.6

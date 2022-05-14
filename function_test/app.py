@@ -1,7 +1,6 @@
-import tkinter as tk
-from tkinter import ttk
+import ttkbootstrap as ttk
 
-from function_test.app_config import treeview_style, configure_visualization_style
+from function_test.app_config import treeview_style, configure_style, dark_theme, dark_theme_use, light_theme_use
 from function_test.app_util import undo_action, send_new_pick_event, get_button_grid
 from path_finding.pf_data_class.path_problem import PathProblem
 from process_planning.process_planner import ProcessPlanner
@@ -25,26 +24,28 @@ class FunctionTestApp:
             process_planner:
             controlled_from_outside:
         """
-        self.root = tk.Tk()
+
+        if dark_theme:
+            theme = dark_theme_use
+        else:
+            theme = light_theme_use
+        self.root = ttk.Window(themename=theme)
+        style = ttk.Style(theme)
+        configure_style(style)
 
         self.process_planner: ProcessPlanner = process_planner
 
         start = path_problem.start_pos
         goal = path_problem.goal_pos
 
-        part_select_option = tk.IntVar(value=1)
+        part_select_option = ttk.IntVar(value=1)
 
-        # set visualization style
-        style = ttk.Style()
-        button_width = 5
-        button_height = 8
-        font = ('Tahoma', 7)
-        configure_visualization_style(button_height, button_width, font, style)
+
 
         # make app widgets
 
         layout_frame = ttk.Frame(self.root)
-        layout_frame.pack(anchor=tk.W)
+        layout_frame.grid(row=0,column=0)
 
         self.solution_button_grid_frame = ttk.LabelFrame(layout_frame, text="Solution Grid:")
         self.solution_button_grid_frame.grid(row=0, column=0)
@@ -62,8 +63,17 @@ class FunctionTestApp:
         self.construction_button_grid_frame = ttk.LabelFrame(layout_frame, text="Current construction grid:")
         self.construction_button_grid_frame.grid(row=1, column=0)
 
-        part_stock_frame = ttk.LabelFrame(layout_frame, text="Current Parts:")
-        part_stock_frame.grid(row=0, column=1)
+        pp_frame = ttk.LabelFrame(self.root, text="Menu")
+        pp_frame.grid(row=0, column=1, padx=10)
+
+        tool_frame = ttk.LabelFrame(pp_frame, text="Process tools:")
+        tool_frame.grid(row=0, column=0)
+
+        display_frame = ttk.LabelFrame(pp_frame, text="Placeholder")
+        display_frame.grid(row=1, column=0)
+
+        part_stock_frame = ttk.LabelFrame(tool_frame, text="Current Parts:")
+        part_stock_frame.grid(row=0, column=2, padx=5)
 
         # set a view for displaying part stock, picked parts
         self.part_stock_tree = ttk.Treeview(part_stock_frame, columns=("part_id", "picked", "stock"), show="headings",
@@ -71,49 +81,48 @@ class FunctionTestApp:
         self.part_stock_tree.heading("part_id", text="Part ID")
         self.part_stock_tree.heading("picked", text="Picked")
         self.part_stock_tree.heading("stock", text="Stock")
-        self.part_stock_tree.column("part_id", width=50)
-        self.part_stock_tree.column("picked", width=50)
-        self.part_stock_tree.column("stock", width=50)
+        self.part_stock_tree.column("part_id", width=60)
+        self.part_stock_tree.column("picked", width=60)
+        self.part_stock_tree.column("stock", width=60)
         self.part_stock_tree.grid(row=0, column=0)
 
         # set a scrollbar for the part stock view
-        scrollbar = ttk.Scrollbar(part_stock_frame, orient=tk.VERTICAL, command=self.part_stock_tree.yview)
+        scrollbar = ttk.Scrollbar(part_stock_frame, orient=ttk.VERTICAL, command=self.part_stock_tree.yview)
         self.part_stock_tree.configure(yscroll=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
-        tool_frame = ttk.LabelFrame(layout_frame, text="Process tools:")
-        tool_frame.grid(row=1, column=1)
+
 
         part_put_frame = ttk.LabelFrame(tool_frame, text="Placement:")
-        part_put_frame.grid(row=0, column=0)
+        part_put_frame.grid(row=0, column=0, padx=5)
 
         att_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Attachment", variable=part_select_option,
                                                  value=3)
-        att_option_radiobutton.pack(anchor=tk.W)
+        att_option_radiobutton.pack(anchor=ttk.W, pady=5)
 
         # place pipe choice radio button
         pipe_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Pipe", variable=part_select_option, value=2)
-        pipe_option_radiobutton.pack(anchor=tk.W)
+        pipe_option_radiobutton.pack(anchor=ttk.W, pady=5)
 
         # place fitting choice radio button
         fit_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Fitting", variable=part_select_option, value=1)
-        fit_option_radiobutton.pack(anchor=tk.W)
+        fit_option_radiobutton.pack(anchor=ttk.W, pady=5)
 
         part_pick_frame = ttk.LabelFrame(tool_frame, text="Pick part:")
         part_pick_frame.grid(row=0, column=1)
 
-        process_message_frame = ttk.LabelFrame(layout_frame, text="Process Planner Message Output:")
-        process_message_frame.grid(row=1, column=2)
+        process_message_frame = ttk.LabelFrame(display_frame, text="Process Planner Message Output:")
+        process_message_frame.grid(row=0, column=1)
 
         # treeview for displaying process planner messages
         self.process_message_tree = ttk.Treeview(process_message_frame, show="tree", columns=("message",),
                                                  selectmode="none")
         self.process_message_tree.column("#0", width=500)
-        self.process_message_tree.column("message", width=0, anchor=tk.W)
+        self.process_message_tree.column("message", width=0, anchor=ttk.W)
         self.process_message_tree.grid(row=0, column=0)
 
         # set a scrollbar for the process message view
-        scrollbar = ttk.Scrollbar(process_message_frame, orient=tk.VERTICAL, command=self.process_message_tree.yview)
+        scrollbar = ttk.Scrollbar(process_message_frame, orient=ttk.VERTICAL, command=self.process_message_tree.yview)
         self.process_message_tree.configure(style=treeview_style, yscroll=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
@@ -126,8 +135,8 @@ class FunctionTestApp:
                                               process_planner=self.process_planner,
                                               process_message_tree=self.process_message_tree,
                                               part_stock_tree=self.part_stock_tree))
-            pick_part_button.pack(anchor=tk.W)
-            self.part_stock_tree.insert("", tk.END,
+            pick_part_button.pack(anchor=ttk.W)
+            self.part_stock_tree.insert("", ttk.END,
                                         values=(
                                             part_id,
                                             self.process_planner.last_process_state.picked_parts.count(part_id),
@@ -144,7 +153,7 @@ class FunctionTestApp:
             solution_button_grid=self.solution_button_grid)
 
         # set button to revert to a previous process state
-        return_to_previous_state = ttk.Button(tool_frame, text="Undo action",
+        return_to_previous_state = ttk.Button(tool_frame, text="Undo action", style ="danger.TButton",
                                               command=lambda: undo_action(process_planner=self.process_planner,
                                                                           part_stock_tree=self.part_stock_tree,
                                                                           button_grid=self.construction_button_grid,

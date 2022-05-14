@@ -6,9 +6,9 @@ from path_finding.pf_data_class.weights import Weights
 from path_finding.search_algorithm import find_path
 
 x = 10
-y = 20
+y = 25
 
-transition_points_set = {(-2, 10)}
+transition_points_set = {(-2, 16)}
 
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
 solution = None
@@ -18,15 +18,15 @@ while solution is None:
     state_grid = randomizer.set_random_obstacles(0., state_grid)
     state_grid = grid_functions.set_transition_points(state_grid, transition_points_set)
     start_node = (0, 0)
-    goal_node = (9, 17)
+    goal_node = (9, 24)
     state_grid[start_node] = 0
     state_grid[goal_node] = 0
 
-    pipe_stock = {0: 10, 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 0}
+    pipe_stock = {0: 10, 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10}
 
     part_cost = {0: 5.32, 1: 1.15, 2: 1.38, 3: 1.60, 4: 1.82, 5: 2.04, 6: 2.50}
 
-    weights = Weights(path_length=1, cost=1, distance_to_obstacles=0)
+    weights = Weights(path_length=0, cost=1, distance_to_obstacles=0)
 
     path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node,
                                start_directions={(0, 1), (1, 0), (-1, 0), (0, -1)},

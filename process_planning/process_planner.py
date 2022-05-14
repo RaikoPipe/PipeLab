@@ -132,9 +132,9 @@ class ProcessPlanner:
             for transition_point in self._initial_path_problem.transition_points:
 
                 check_pos = None
-                if motion_event[0][0] == transition_point[0]:
+                if event_pos[0] == transition_point[0]:
                     check_pos = (transition_point[0], start_pos[1])
-                elif motion_event[0][1] == transition_point[1]:
+                elif event_pos[1] == transition_point[1]:
                     check_pos = (start_pos[0], transition_point[1])
 
                 if check_pos:
@@ -142,8 +142,7 @@ class ProcessPlanner:
                         diff_pos(self._initial_path_problem.start_pos,
                                  check_pos))  # get direction relative to start pos
                     # correct worker event pos
-                    motion_event = (
-                        (motion_event[0][0] - direction[0], motion_event[0][1] - direction[1]), motion_event[1])
+                    event_pos = (event_pos[0] - direction[0], event_pos[1] - direction[1])
 
             event_info: PlacementEventInfo = tentative_process_state.evaluate_placement(event_pos=event_pos,
                                                                                         event_code=event_code,
@@ -175,8 +174,8 @@ class ProcessPlanner:
                                                                                    building_instruction)
 
             # get fastening commands
-            fastening_robot_commands = self.determine_fastening_robot_commands(event_pos=motion_event[0],
-                                                                               event_code=motion_event[1],
+            fastening_robot_commands = self.determine_fastening_robot_commands(event_pos=event_pos,
+                                                                               event_code=event_code,
                                                                                event_info=tentative_process_state.last_placement_event_info)
             # get picking robot commands
             picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
