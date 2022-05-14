@@ -1,6 +1,6 @@
 import ttkbootstrap as ttk
 
-dark_theme = True
+dark_theme = False
 dark_theme_use = "darkly"
 light_theme_use = "litera"
 
@@ -15,6 +15,10 @@ transition_style = "tran.dark.TButton"
 
 start_style = str.format(f"start.{inherit_style}.TButton")
 goal_style = str.format(f"goal.{inherit_style}.TButton")
+start_success_style = str.format(f"start.success.TButton")
+goal_success_style = str.format(f"goal.success.TButton")
+start_warning_style = str.format(f"start.warning.TButton")
+goal_warning_style = str.format(f"goal.warning.TButton")
 
 pipe_style = "pipe.success.TButton"
 att_style = "att.success.TButton"
@@ -41,14 +45,14 @@ transition_active_color = "grey20"
 start_color = "green"
 start_active_color = "green2"
 goal_color = "red2"
-goal_active_color = "red3"
+goal_active_color = "orange red"
 
 pipe_color = "blue"
-pipe_active_color = "blue2"
+pipe_active_color = "dodger blue"
 fit_color = "saddle brown"
-fit_active_color = "sandy brown"
-att_color = "magenta"
-att_active_color = "magenta2"
+fit_active_color = "salmon3"
+att_color = "medium violet red"
+att_active_color = "magenta"
 
 deviated_color = "yellow"
 
@@ -64,8 +68,9 @@ def configure_style(style: ttk.Style):
     the look of the buttons will depend on the version and kind of operating system used!
 
     Args:
-        style(:obj:`tkinter.ttk.Style`): Tkinter Style object.
+        style(:obj:`ttk.Style`): Tkinter Style object.
     """
+
 
     style.configure(free_style,  width=button_width, height=button_height,  font=font)
     style.configure(pipe_style, background=pipe_color, width=button_width, height=button_height, font=font)
@@ -73,6 +78,10 @@ def configure_style(style: ttk.Style):
     style.configure(fit_style, background=fit_color, width=button_width, height=button_height, font=font)
     style.configure(start_style, background=start_color, width=button_width, height=button_height, font=font)
     style.configure(goal_style, background=goal_color, width=button_width, height=button_height, font=font)
+    style.configure(start_success_style, background=start_color, width=button_width, height=button_height, font=font)
+    style.configure(goal_success_style, background=goal_color, width=button_width, height=button_height, font=font)
+    style.configure(start_warning_style, background=start_color, width=button_width, height=button_height, font=font)
+    style.configure(goal_warning_style, background=goal_color, width=button_width, height=button_height, font=font)
     style.configure(transition_style, background=transition_color, width=button_width, height=button_height, font=font)
     style.configure(att_style, background=att_color, width=button_width, height=button_height, font=font)
     style.configure(fit_deviated_style, background=fit_color,  width=button_width,
@@ -99,6 +108,10 @@ def configure_style(style: ttk.Style):
     style.map(fit_style, background=[("active", fit_active_color)])
     style.map(start_style, background=[("active", start_active_color)])
     style.map(goal_style, background=[("active", goal_active_color)])
+    style.map(start_success_style, background=[("active", start_active_color)])
+    style.map(goal_success_style, background=[("active", goal_active_color)])
+    style.map(start_warning_style, background=[("active", start_active_color)])
+    style.map(goal_warning_style, background=[("active", goal_active_color)])
     style.map(transition_style, background=[("active", transition_active_color)])
     style.map(att_style, background=[("active", att_active_color)])
     style.map(fit_deviated_style, background=[("active", fit_active_color)])

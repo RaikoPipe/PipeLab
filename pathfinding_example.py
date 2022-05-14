@@ -6,19 +6,19 @@ from path_finding.pf_data_class.weights import Weights
 from path_finding.search_algorithm import find_path
 
 x = 10
-y = 25
+y = 10
 
-transition_points_set = {(-2, 16)}
+transition_points_set = {(-2, 5)}
 
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
 solution = None
 while solution is None:
     # mandatory adjustments to state grid
     state_grid = grid_functions.get_empty_stategrid(x, y)
-    state_grid = randomizer.set_random_obstacles(0., state_grid)
+    state_grid = randomizer.set_random_obstacles(0.1, state_grid)
     state_grid = grid_functions.set_transition_points(state_grid, transition_points_set)
     start_node = (0, 0)
-    goal_node = (9, 24)
+    goal_node = (9, 9)
     state_grid[start_node] = 0
     state_grid[goal_node] = 0
 

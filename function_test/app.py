@@ -63,14 +63,14 @@ class FunctionTestApp:
         self.construction_button_grid_frame = ttk.LabelFrame(layout_frame, text="Current construction grid:")
         self.construction_button_grid_frame.grid(row=1, column=0)
 
-        pp_frame = ttk.LabelFrame(self.root, text="Menu")
+        pp_frame = ttk.LabelFrame(self.root, text="Tool Window")
         pp_frame.grid(row=0, column=1, padx=10)
 
         tool_frame = ttk.LabelFrame(pp_frame, text="Process tools:")
         tool_frame.grid(row=0, column=0)
 
-        display_frame = ttk.LabelFrame(pp_frame, text="Placeholder")
-        display_frame.grid(row=1, column=0)
+        display_frame = ttk.LabelFrame(pp_frame, text="Process Planner Message Output:")
+        display_frame.grid(row=1, column=0, pady=10)
 
         part_stock_frame = ttk.LabelFrame(tool_frame, text="Current Parts:")
         part_stock_frame.grid(row=0, column=2, padx=5)
@@ -111,7 +111,7 @@ class FunctionTestApp:
         part_pick_frame = ttk.LabelFrame(tool_frame, text="Pick part:")
         part_pick_frame.grid(row=0, column=1)
 
-        process_message_frame = ttk.LabelFrame(display_frame, text="Process Planner Message Output:")
+        process_message_frame = ttk.LabelFrame(display_frame, text="")
         process_message_frame.grid(row=0, column=1)
 
         # treeview for displaying process planner messages
