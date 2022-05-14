@@ -240,13 +240,13 @@ def undo_action(process_planner: ProcessPlanner, button_grid: np.ndarray, style_
     message_count += 1
     process_state = process_planner.last_process_state
 
-    update_solution_grid(tentative_state=process_state, solution_button_grid=solution_button_grid,
+    update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
                          initial_style_grid=initial_style_grid)
 
     process_message_tree.yview_moveto(1)
 
 
-def update_solution_grid(tentative_state: ProcessState, solution_button_grid, initial_style_grid: np.ndarray):
+def update_solution_grid(process_state: ProcessState, solution_button_grid: np.ndarray, initial_style_grid: np.ndarray):
     """Updates buttons in :paramref:`button_grid` after updating :paramref:`style_grid` and
     :paramref:`tool_tip_text_grid`. Shape of each array must match.
 
@@ -256,16 +256,22 @@ def update_solution_grid(tentative_state: ProcessState, solution_button_grid, in
         style_grid(:obj:`numpy.ndarray`): Style grid to overwrite visualization configuration.
         tool_tip_text_grid(:obj:`numpy.ndarray`): Style grid to overwrite tool tip texts.
         """
-    #
+    # reset
     for pos, style in np.ndenumerate(initial_style_grid):
         if style != fit_style or style != pipe_style:
             solution_button_grid[pos].configure(style=style)
 
-    for pos, part_id in tentative_state.aimed_solution.node_trail.items():
+    for pos, part_id in process_state.aimed_solution.node_trail.items():
         if part_id == 0:
             solution_button_grid[pos].configure(style=fit_style)
         else:
             solution_button_grid[pos].configure(style=pipe_style)
+
+    start = process_state.aimed_solution.path_problem.start_pos
+    goal = process_state.aimed_solution.path_problem.goal_pos
+
+    solution_button_grid[start].configure(style=start_success_style)
+    solution_button_grid[goal].configure(style=goal_success_style)
 
 
 def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, process_message_tree,
@@ -281,7 +287,7 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
     update_button_grid(button_grid, process_planner.last_process_state, style_grid, tool_tip_text_grid)
 
     if event_info.detour_event or process_state.detour_trails:
-        update_solution_grid(tentative_state=process_state, solution_button_grid=solution_button_grid,
+        update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
                              initial_style_grid=initial_style_grid)
 
     update_process_message_tree(event_info, messages, next_recommended_action, part_stock_tree, process_message_tree,
@@ -428,11 +434,18 @@ def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_g
             tool_tip_text_grid[pos] = str(pos) + "\n" + "Transition"
 
         if pos == start:
-            style = start_style
-            style_grid[pos] = start_style
+            if not process_planner:
+                style = start_success_style
+            else:
+                style = start_style
+                style_grid[pos] = start_style
         elif pos == goal:
-            style_grid[pos] = start_style
-            style = goal_style
+            if not process_planner:
+                style = goal_success_style
+            else:
+                style = start_style
+                style_grid[pos] = goal_style
+
         global initial_style_grid
         initial_style_grid = deepcopy(style_grid)
 

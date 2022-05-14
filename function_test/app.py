@@ -134,7 +134,7 @@ class FunctionTestApp:
                                               t,
                                               process_planner=self.process_planner,
                                               process_message_tree=self.process_message_tree,
-                                              part_stock_tree=self.part_stock_tree))
+                                              part_stock_tree=self.part_stock_tree), style="primary.Outline.TButton")
             pick_part_button.pack(anchor=ttk.W)
             self.part_stock_tree.insert("", ttk.END,
                                         values=(

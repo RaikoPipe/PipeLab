@@ -1,6 +1,6 @@
 import ttkbootstrap as ttk
 
-dark_theme = False
+dark_theme = True
 dark_theme_use = "darkly"
 light_theme_use = "litera"
 
@@ -74,7 +74,7 @@ def configure_style(style: ttk.Style):
 
     style.configure(free_style,  width=button_width, height=button_height,  font=font)
     style.configure(pipe_style, background=pipe_color, width=button_width, height=button_height, font=font)
-    style.configure(obs_style, background=obs_color, width=button_width, height=button_height, font=font)
+    style.configure(obs_style, background=obs_color, width=button_width, height=button_height, font=font, foreground = "white")
     style.configure(fit_style, background=fit_color, width=button_width, height=button_height, font=font)
     style.configure(start_style, background=start_color, width=button_width, height=button_height, font=font)
     style.configure(goal_style, background=goal_color, width=button_width, height=button_height, font=font)
