@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predecessor dataclass &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Solution dataclass" href="solution.html" />
+    <link rel="prev" title="Path Finding Dataclasses" href="pf_data_class.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pf_data_class.html">Path Finding Dataclasses</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Predecessor dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solution.html">Solution dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_problem.html">PathProblem dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="weights.html">Weights dataclass</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="path_finding_util.html">Path Finding Utility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="path_finding.html">Path Finding</a> &raquo;</li>
+          <li><a href="pf_data_class.html">Path Finding Dataclasses</a> &raquo;</li>
+      <li>Predecessor dataclass</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/predecessor.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="predecessor-dataclass">
+<h1>Predecessor dataclass<a class="headerlink" href="#predecessor-dataclass" title="Permalink to this headline"></a></h1>
+<p>Used to describe the predecessor to a node in a path.</p>
+<span class="target" id="module-predecessor"></span><dl class="py class">
+<dt class="sig sig-object py" id="predecessor.Predecessor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">predecessor.</span></span><span class="sig-name descname"><span class="pre">Predecessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_to_successor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_to_predecessor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#predecessor.Predecessor" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Dataclass that contains information about the predecessor of a node</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="predecessor.Predecessor.pos">
+<span class="sig-name descname"><span class="pre">pos</span></span><a class="headerlink" href="#predecessor.Predecessor.pos" title="Permalink to this definition"></a></dt>
+<dd><p>Node position of the predecessor.</p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="predecessor.Predecessor.part_to_successor">
+<span class="sig-name descname"><span class="pre">part_to_successor</span></span><a class="headerlink" href="#predecessor.Predecessor.part_to_successor" title="Permalink to this definition"></a></dt>
+<dd><p>Part used at predecessor_node to get to successor.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="predecessor.Predecessor.part_to_predecessor">
+<span class="sig-name descname"><span class="pre">part_to_predecessor</span></span><a class="headerlink" href="#predecessor.Predecessor.part_to_predecessor" title="Permalink to this definition"></a></dt>
+<dd><p>Part used at predecessor_node to get to successor.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="predecessor.Predecessor.direction">
+<span class="sig-name descname"><span class="pre">direction</span></span><a class="headerlink" href="#predecessor.Predecessor.direction" title="Permalink to this definition"></a></dt>
+<dd><p>Direction the predecessor is facing.</p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="predecessor.Predecessor.state_grid">
+<span class="sig-name descname"><span class="pre">state_grid</span></span><a class="headerlink" href="#predecessor.Predecessor.state_grid" title="Permalink to this definition"></a></dt>
+<dd><p>State grid snapshot when predecessor was created.</p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="predecessor.Predecessor.part_stock">
+<span class="sig-name descname"><span class="pre">part_stock</span></span><a class="headerlink" href="#predecessor.Predecessor.part_stock" title="Permalink to this definition"></a></dt>
+<dd><p>Snapshot of the part stock when predecessor was created.</p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.PartStock" title="type_aliases.PartStock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartStock</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="predecessor.Predecessor.path">
+<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#predecessor.Predecessor.path" title="Permalink to this definition"></a></dt>
+<dd><p>Snapshot of path to predecessor</p>
+<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Path" title="type_aliases.Path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Path</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pf_data_class.html" class="btn btn-neutral float-left" title="Path Finding Dataclasses" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="solution.html" class="btn btn-neutral float-right" title="Solution dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

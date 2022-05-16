@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restrictions module &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Score Calculation module" href="score_calculation.html" />
+    <link rel="prev" title="Path Utility module" href="path_util.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="search_algorithm.html">Search Algorithm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solution_manager.html">Solution Manager Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partial_solver.html">Partial Solver module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pf_data_class.html">Path Finding Dataclasses</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="path_finding_util.html">Path Finding Utility module</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="path_math.html">Path Math module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="path_util.html">Path Utility module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Restrictions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="score_calculation.html">Score Calculation module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="grid.html">Grid module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="path_finding.html">Path Finding</a> &raquo;</li>
+          <li><a href="path_finding_util.html">Path Finding Utility module</a> &raquo;</li>
+      <li>Restrictions module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/restrictions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-restrictions">
+<span id="restrictions-module"></span><h1>Restrictions module<a class="headerlink" href="#module-restrictions" title="Permalink to this headline"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.out_of_bounds">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">out_of_bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.out_of_bounds" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if neighbor is outside of the boundaries of the state grid.
+Used in <code class="xref py py-func docutils literal notranslate"><span class="pre">neighbor_positions_restricted()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="restrictions.out_of_bounds.params.neighbor_pos"></span><strong>neighbor_pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.out_of_bounds.params.neighbor_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position of considered neighbor node.</p></li>
+<li><p><span class="target" id="restrictions.out_of_bounds.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#restrictions.out_of_bounds.params.state_grid">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.StateGrid</span></code></a>) – To the current path modified state grid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.collided_obstacle">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">collided_obstacle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.collided_obstacle" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the path from current_node to neighbor_node obstructs any obstacles or transitions.
+Used in <code class="xref py py-func docutils literal notranslate"><span class="pre">neighbor_positions_restricted()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="restrictions.collided_obstacle.params.current_pos"></span><strong>current_pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.collided_obstacle.params.current_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position of currently expanded node.</p></li>
+<li><p><span class="target" id="restrictions.collided_obstacle.params.neighbor_pos"></span><strong>neighbor_pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.collided_obstacle.params.neighbor_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position of considered neighbor node.</p></li>
+<li><p><span class="target" id="restrictions.collided_obstacle.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#restrictions.collided_obstacle.params.state_grid">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.StateGrid</span></code></a>) – To the current path modified state grid.</p></li>
+<li><p><span class="target" id="restrictions.collided_obstacle.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#restrictions.collided_obstacle.params.part_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Part ID of the neighbor node.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.neighbor_position_restricted">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">neighbor_position_restricted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.neighbor_position_restricted" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if neighbor violates positional restrictions. Used in <code class="xref py py-func docutils literal notranslate"><span class="pre">path_finding_util.search_algorithm.find_path()</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="restrictions.neighbor_position_restricted.params.current_pos"></span><strong>current_pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.neighbor_position_restricted.params.current_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position of currently expanded node.</p></li>
+<li><p><span class="target" id="restrictions.neighbor_position_restricted.params.neighbor_pos"></span><strong>neighbor_pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.neighbor_position_restricted.params.neighbor_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position of considered neighbor node.</p></li>
+<li><p><span class="target" id="restrictions.neighbor_position_restricted.params.relative_neighbor_pos"></span><strong>relative_neighbor_pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.neighbor_position_restricted.params.relative_neighbor_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Relative node position of neighbor</p></li>
+<li><p><span class="target" id="restrictions.neighbor_position_restricted.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#restrictions.neighbor_position_restricted.params.state_grid">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.StateGrid</span></code></a>) – To the current path modified state grid.</p></li>
+<li><p><span class="target" id="restrictions.neighbor_position_restricted.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#restrictions.neighbor_position_restricted.params.part_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Part ID of the neighbor node.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.goal_restricted">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">goal_restricted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.goal_restricted" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the direction restriction of the goal is violated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="restrictions.goal_restricted.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#restrictions.goal_restricted.params.part_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Part ID of Node.</p></li>
+<li><p><span class="target" id="restrictions.goal_restricted.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.goal_restricted.params.pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position to check.</p></li>
+<li><p><span class="target" id="restrictions.goal_restricted.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#restrictions.goal_restricted.params.direction">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Direction of node.</p></li>
+<li><p><span class="target" id="restrictions.goal_restricted.params.goal_dict"></span><strong>goal_dict</strong><a class="paramlink headerlink reference internal" href="#restrictions.goal_restricted.params.goal_dict">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">DirectionDict</span></code>) – See <a class="reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.goal_dict" title="restrictions.get_restricted_neighbor_nodes"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">goal_dict</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="restrictions.get_restricted_neighbor_nodes">
+<span class="sig-prename descclassname"><span class="pre">restrictions.</span></span><span class="sig-name descname"><span class="pre">get_restricted_neighbor_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#restrictions.get_restricted_neighbor_nodes" title="Permalink to this definition"></a></dt>
+<dd><p>Determines what neighbors are reachable from the current position and with the available parts. Removes neighbors
+that violate goal restrictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.part_stock"></span><strong>part_stock</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.part_stock">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.PartStock" title="type_aliases.PartStock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.PartStock</span></code></a>) – See <a class="reference internal" href="type_aliases.html#type_aliases.PartStock" title="type_aliases.PartStock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases.PartStock</span></code></a></p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.predecessors"></span><strong>predecessors</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.predecessors">¶</a> (<a class="reference internal" href="class_types.html#class_types.Predecessors" title="class_types.Predecessors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Predecessors</span></code></a>) – See <a class="reference internal" href="class_types.html#class_types.Predecessors" title="class_types.Predecessors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">class_types.Predecessors</span></code></a></p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.fast_mode"></span><strong>fast_mode</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.fast_mode">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – See <code class="xref py py-paramref docutils literal notranslate"><span class="pre">fast_mode</span></code></p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.key"></span><strong>key</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.key">¶</a> – Key for getting predecessor to the currently expanded node. Type depends on if fast_mode is set.</p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.directions"></span><strong>directions</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.directions">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>]) – Directions in which neighbors are considered.</p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.goal_dict"></span><strong>goal_dict</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.goal_dict">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.DirectionDict" title="type_aliases.DirectionDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DirectionDict</span></code></a>) – Directions in which the goal can be appended to.</p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.current_pos"></span><strong>current_pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.current_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – The position of the currently expanded node.</p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.predecessors"></span><strong>predecessors</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.predecessors">¶</a> – See <a class="reference internal" href="class_types.html#class_types.Predecessors" title="class_types.Predecessors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Predecessors</span></code></a></p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.start_pos"></span><strong>start_pos</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.start_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – See <code class="xref py py-obj docutils literal notranslate"><span class="pre">start_pos</span></code></p></li>
+<li><p><span class="target" id="restrictions.get_restricted_neighbor_nodes.params.transition_points"></span><strong>transition_points</strong><a class="paramlink headerlink reference internal" href="#restrictions.get_restricted_neighbor_nodes.params.transition_points">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>]) – Set of node positions that are marked as transition points.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>obj`Nodes&lt;type_aliases.Node&gt;`.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> of restricted neighbor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="path_util.html" class="btn btn-neutral float-left" title="Path Utility module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="score_calculation.html" class="btn btn-neutral float-right" title="Score Calculation module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

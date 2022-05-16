@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Process Planner Utility module &mdash; PipeLab 2022 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Process State Utility module" href="ps_util.html" />
+    <link rel="prev" title="Process Planning Utility Module" href="process_planning_util.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> PipeLab
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="process_planning.html">Process Planning</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="process_planner.html">ProcessPlanner class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="process_state.html">ProcessState class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="process_planning_util.html">Process Planning Utility Module</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Process Planner Utility module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ps_util.html">Process State Utility module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="code_info.html">Code Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
+<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PipeLab</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="process_planning.html">Process Planning</a> &raquo;</li>
+          <li><a href="process_planning_util.html">Process Planning Utility Module</a> &raquo;</li>
+      <li>Process Planner Utility module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pp_util.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="module-pp_util">
+<span id="process-planner-utility-module"></span><h1>Process Planner Utility module<a class="headerlink" href="#module-pp_util" title="Permalink to this headline"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.determine_next_part">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">determine_next_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.determine_next_part" title="Permalink to this definition"></a></dt>
+<dd><p>Determines which part should be picked next according to the current build progress.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="pp_util.determine_next_part.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.determine_next_part.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The current process state.</p></li>
+<li><p><span class="target" id="pp_util.determine_next_part.params.layout"></span><strong>layout</strong><a class="paramlink headerlink reference internal" href="#pp_util.determine_next_part.params.layout">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>) – The current layout.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Part ID <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> of the determined part.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.get_completed_instructions">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_completed_instructions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instructions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_completed_instructions" title="Permalink to this definition"></a></dt>
+<dd><p>Looks for completed instructions inside building_instructions and returns them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="pp_util.get_completed_instructions.params.building_instructions"></span><strong>building_instructions</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_completed_instructions.params.building_instructions">¶</a> (<a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) – See <a class="reference internal" href="process_state.html#process_state.ProcessState.params.building_instructions" title="process_state.ProcessState"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">building_instructions</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>All completed instructions (<a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.get_outgoing_node_pairs">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_outgoing_node_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instructions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_outgoing_node_pairs" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all outgoing points in building_instructions as a connection. Interpolates them if they are
+connected.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="pp_util.get_outgoing_node_pairs.params.building_instructions"></span><strong>building_instructions</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_outgoing_node_pairs.params.building_instructions">¶</a> (<a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) – See <a class="reference internal" href="process_state.html#process_state.ProcessState.params.building_instructions" title="process_state.ProcessState"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">building_instructions</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="type_aliases.html#type_aliases.NodePairSet" title="type_aliases.NodePairSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodePairSet</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.get_outgoing_node_directions">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_outgoing_node_directions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instructions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_outgoing_node_directions" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the connecting directions the fittings of each building instruction requires.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="pp_util.get_outgoing_node_directions.params.building_instructions"></span><strong>building_instructions</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_outgoing_node_directions.params.building_instructions">¶</a> (<a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) – See <a class="reference internal" href="process_state.html#process_state.ProcessState.params.building_instructions" title="process_state.ProcessState"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">building_instructions</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> with all outgoing node directions.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.adjust_pos_in_node_pairs_set">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">adjust_pos_in_node_pairs_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_pairs_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.adjust_pos_in_node_pairs_set" title="Permalink to this definition"></a></dt>
+<dd><p>Remove pos from first node pair tuple in node_pairs_set that contains it. If not found,
+then add as a node pair tuple containing only pos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Pos to be evaluated.</p></li>
+<li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set"></span><strong>node_pairs_set</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.NodePairSet" title="type_aliases.NodePairSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodePairSet</span></code></a>) – Set with all outgoing node pairs.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.get_solution_on_detour_event">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_solution_on_detour_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detour_event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_solution_on_detour_event" title="Permalink to this definition"></a></dt>
+<dd><p>Tries to get a new solution on a detour event.
+Args:</p>
+<p>initial_path_problem (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>): The original path problem.
+process_state (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>): The current process state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if one was found, else None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.make_registration_message">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_registration_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_registration_message" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a message as string confirming a placement or removal event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="pp_util.make_registration_message.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_registration_message.params.event_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – See <code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></p></li>
+<li><p><span class="target" id="pp_util.make_registration_message.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_registration_message.params.event_code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – See <a class="reference internal" href="process_state.html#process_state.ProcessState.evaluate_placement.params.event_code" title="process_state.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.make_special_message">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_special_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_special_message" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a special message as string, usually used in case of deviated placements.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.make_error_message">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_error_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">note</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_error_message" title="Permalink to this definition"></a></dt>
+<dd><p>Returns error messages as string containing the position where the error occurred as well as additional
+information regarding the reason for the error.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.get_next_recommended_action">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_next_recommended_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_next_recommended_action" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the completion for the building instruction and determines the next recommended action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="pp_util.get_next_recommended_action.params.building_instruction"></span><strong>building_instruction</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_next_recommended_action.params.building_instruction">¶</a> (<a class="reference internal" href="building_instruction.html#building_instruction.BuildingInstruction" title="building_instruction.BuildingInstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>) – Building instruction currently being followed.</p></li>
+<li><p><span class="target" id="pp_util.get_next_recommended_action.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_next_recommended_action.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The current process state.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="type_aliases.html#type_aliases.Action" title="type_aliases.Action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Action</span></code></a> containing the position, motion event code and part id for the next recommended action.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.make_placement_messages">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_placement_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_placement_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Produces a message according to the given event info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="pp_util.make_placement_messages.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_placement_messages.params.event_info">¶</a> (<a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a>) – See <a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing a message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.make_pick_messages">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_pick_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_pick_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Produces a message according to the given event info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="pp_util.make_pick_messages.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_pick_messages.params.event_info">¶</a> (<a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventInfo</span></code></a>) – See <a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventInfo</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing a message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pp_util.get_valid_placement_positions">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_valid_placement_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_valid_placement_positions" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all valid placement positions for the part that was picked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="pp_util.get_valid_placement_positions.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_placement_positions.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The process state after the motion event has been evaluated</p></li>
+<li><p><span class="target" id="pp_util.get_valid_placement_positions.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_placement_positions.params.part_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Part ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>, <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="process_planning_util.html" class="btn btn-neutral float-left" title="Process Planning Utility Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ps_util.html" class="btn btn-neutral float-right" title="Process State Utility module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Richard Reider.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
