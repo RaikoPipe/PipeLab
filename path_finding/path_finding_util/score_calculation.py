@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from path_finding.path_finding_util import path_math
-from path_finding.path_finding_util.path_math import manhattan_distance, get_direction
+from path_finding.path_finding_util.path_math import manhattan_distance, get_direction, diff_pos
 from path_finding.path_finding_util.restrictions import out_of_bounds
 from path_finding.pf_data_class.weights import Weights
 from type_dictionary import constants
@@ -12,7 +12,7 @@ def get_min_o_reduction(current_node, length: int, relative_direction: tuple, ax
     """Counts free positions next to the move."""
 
     reduction = 0
-    for i in range(length):  # check pos right of pipe
+    for i in range(length):
         n_relative_direction = (relative_direction[0] + (axis[0] * i), relative_direction[1] + (axis[1] * i))
         b_relative_direction = (current_node[0] + n_relative_direction[0], current_node[1] + n_relative_direction[1])
         if not out_of_bounds(b_relative_direction, state_grid):
@@ -26,7 +26,7 @@ def calculate_distance_to_obstacles(state_grid, current_pos: Pos, neighbor_pos: 
     """Calculates the amount of obstacles next to the move divided by the maximum possible amount of obstacles next to
      the move."""
 
-    axis = get_direction(neighbor_pos)
+    axis = get_direction(diff_pos(current_pos, neighbor_pos))
     length = path_math.get_length_same_axis(current_pos,neighbor_pos)
     min_o = length * 2
     upper_bound = min_o

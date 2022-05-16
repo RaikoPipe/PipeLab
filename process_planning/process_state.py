@@ -254,7 +254,6 @@ class ProcessState:
             one. """
 
         current_layout = self.last_event_trail
-        building_instruction = self.building_instructions.get(current_layout)
         layout_changed = False
 
         if event_pos in self.aimed_solution.node_trail.keys():
@@ -392,7 +391,7 @@ class ProcessState:
             event_info.deviated = True
             self.pipe_placed_deviated_route(event_info, ignore_part_check)
 
-    def pipe_placed_deviated_route(self, event_info, ignore_part_check):
+    def pipe_placed_deviated_route(self, event_info, ignore_part_check) -> int:
         """
         Pipe placement evaluation if either motion event occurred outside solution or if :paramref:`~process_state.ProcessState.evaluate_placement.assume_pipe_id_from_solution` has been set to True in :meth:`~process_state.ProcessState.evaluate_placement`.
 
@@ -402,6 +401,9 @@ class ProcessState:
             event_info(:class:`~placement_event_info.PlacementEventInfo`): Event info being modified.
             ignore_part_check (:obj:`bool`): Option for ignoring part restrictions.
                  See :paramref:`~process_planner.ProcessPlanner.main.ignore_part_check`
+
+        Returns:
+            Event part ID (:obj:`int`)
 
 
 
@@ -542,8 +544,9 @@ class ProcessState:
             # at least one fitting needs to be deviating
             fit_tup = (pos, event_pos)
             fit_deviated = []
-            for pos in fit_tup:
-                _, fit_state = self.get_construction_state(pos, event_codes=[constants.fit_event_code])
+
+            for fit_pos in fit_tup:
+                _, fit_state = self.get_construction_state(fit_pos, event_codes=[constants.fit_event_code])
                 fit_deviated.append(fit_state.deviated)
 
             if not any(fit_deviated):  # at least one fitting needs to be deviating
@@ -598,12 +601,14 @@ class ProcessState:
 
             return {detour_trail: detour_instruction}
 
-    def adjust_motion_dict_to_solution(self, solution: Solution, detour_event: BuildingInstructions = None):
+    def reevaluate_motion_dict_from_solution(self, solution: Solution, detour_event: BuildingInstructions = None):
         """Reevaluates all entries in the motion dict according to the given solution.
 
         Args:
             solution(:class:`~solution.Solution`): New solution.
             detour_event(:obj:`~class_types.BuildingInstructions`): Cause of the detour event.
+        Returns:
+            :obj:`~type_aliases.Trail` with :obj:`~type_aliases_pos` in the order according to the solution.
         """
         self.aimed_solution = solution
         self.building_instructions = construct_building_instructions_from_solution(solution)
@@ -671,9 +676,15 @@ class ProcessState:
                 event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
 
         if detour_event:
-            self.last_event_trail = list(detour_event.keys())[0]
+            # find detour trail in ordered trails
+            ordered_pos_set: OrderedPos = tuple([set(i) for i in self.aimed_solution.ordered_trails])
+            idx = ordered_pos_set.index(set(tuple(detour_event.keys())[0]))
+            self.last_event_trail = self.aimed_solution.ordered_trails[idx]
+            #self.last_event_trail = list(detour_event.keys())[0]
         else:
             self.last_event_trail = self.aimed_solution.ordered_trails[0]
+
+        return self.last_event_trail
 
     # restriction checks
 

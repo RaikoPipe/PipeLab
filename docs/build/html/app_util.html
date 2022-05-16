@@ -86,34 +86,110 @@
 <dd></dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="app_util.get_style_grid">
-<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">get_style_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.get_style_grid" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="app_util.update_style_grid">
+<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">update_style_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.update_style_grid" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the <code class="xref py py-obj docutils literal notranslate"><span class="pre">process_planner.ProcessPlanner.motion_dict</span></code> from the process planner and updates the visualization
+configuration of the <a class="reference internal" href="#app_util.update_style_grid.params.style_grid`" title="app_util.update_style_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">style_grid`</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="app_util.update_style_grid.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#app_util.update_style_grid.params.process_state">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">process_planning.process_state.ProcessState</span></code>) – Process state that was modified.</p></li>
+<li><p><span class="target" id="app_util.update_style_grid.params.style_grid"></span><strong>style_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.update_style_grid.params.style_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#app_util.update_button_grid.params.style_grid" title="app_util.update_button_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">style_grid</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Style grid (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) with modified visualization configuration.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="app_util.get_attributes_as_string">
-<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">get_attributes_as_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_class</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.get_attributes_as_string" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="app_util.get_construction_state_attributes_as_string">
+<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">get_construction_state_attributes_as_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">construction_state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.get_construction_state_attributes_as_string" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Reads variable names and values from <code class="xref py py-class docutils literal notranslate"><span class="pre">pp_data_class.construction_state.ConstructionState</span></code> and returns them</dt><dd><p>as a formatted string.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="app_util.get_construction_state_attributes_as_string.params.construction_state"></span><strong>construction_state</strong><a class="paramlink headerlink reference internal" href="#app_util.get_construction_state_attributes_as_string.params.construction_state">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">pp_data_class.construction_state.ConstructionState</span></code>) – Construction state to read.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="app_util.get_tool_tip_text_grid">
-<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">get_tool_tip_text_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_tip_text_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.get_tool_tip_text_grid" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dt class="sig sig-object py" id="app_util.update_tool_tip_text_grid">
+<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">update_tool_tip_text_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_tip_text_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.update_tool_tip_text_grid" title="Permalink to this definition"></a></dt>
+<dd><p>Reads the <code class="xref py py-obj docutils literal notranslate"><span class="pre">process_planner.ProcessPlanner.motion_dict</span></code> from the process planner and updates each items
+attributes as string in the <a class="reference internal" href="#app_util.update_tool_tip_text_grid.params.tool_tip_text_grid" title="app_util.update_tool_tip_text_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">tool_tip_text_grid</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="app_util.update_tool_tip_text_grid.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#app_util.update_tool_tip_text_grid.params.process_state">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code>) – Process state that was modified.</p></li>
+<li><p><span class="target" id="app_util.update_tool_tip_text_grid.params.tool_tip_text_grid"></span><strong>tool_tip_text_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.update_tool_tip_text_grid.params.tool_tip_text_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – See <a class="reference internal" href="#app_util.update_button_grid.params.tool_tip_text_grid" title="app_util.update_button_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">tool_tip_text_grid</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tool tip text grid (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) with modified texts.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app_util.update_button_grid">
-<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">update_button_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_tip_text_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.update_button_grid" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">update_button_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">button_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_tip_text_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.update_button_grid" title="Permalink to this definition"></a></dt>
+<dd><p>Updates buttons in <a class="reference internal" href="#app_util.update_button_grid.params.button_grid" title="app_util.update_button_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">button_grid</span></code></a> after updating <a class="reference internal" href="#app_util.update_button_grid.params.style_grid" title="app_util.update_button_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">style_grid</span></code></a> and
+<a class="reference internal" href="#app_util.update_button_grid.params.tool_tip_text_grid" title="app_util.update_button_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">tool_tip_text_grid</span></code></a>. Shape of each array must match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="app_util.update_button_grid.params.button_grid"></span><strong>button_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.update_button_grid.params.button_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Grid array containing buttons.</p></li>
+<li><p><span class="target" id="app_util.update_button_grid.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#app_util.update_button_grid.params.process_state">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code>) – </p></li>
+<li><p><span class="target" id="app_util.update_button_grid.params.style_grid"></span><strong>style_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.update_button_grid.params.style_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Style grid to overwrite visualization configuration.</p></li>
+<li><p><span class="target" id="app_util.update_button_grid.params.tool_tip_text_grid"></span><strong>tool_tip_text_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.update_button_grid.params.tool_tip_text_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Style grid to overwrite tool tip texts.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app_util.undo_action">
 <span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">undo_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock_tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_tip_text_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_message_tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_button_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.undo_action" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Undoes the last action by reverting to the previous process state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="app_util.undo_action.params.solution_button_grid"></span><strong>solution_button_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.undo_action.params.solution_button_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ttk.Treeview</span></code>) – Button grid with solution layout visualization.</p></li>
+<li><p><span class="target" id="app_util.undo_action.params.process_message_tree"></span><strong>process_message_tree</strong><a class="paramlink headerlink reference internal" href="#app_util.undo_action.params.process_message_tree">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ttk.Treeview</span></code>) – Process message display.</p></li>
+<li><p><span class="target" id="app_util.undo_action.params.part_stock_tree"></span><strong>part_stock_tree</strong><a class="paramlink headerlink reference internal" href="#app_util.undo_action.params.part_stock_tree">¶</a> – Part stock display.</p></li>
+<li><p><span class="target" id="app_util.undo_action.params.button_grid"></span><strong>button_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.undo_action.params.button_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Grid array containing visualization button for the current process state.</p></li>
+<li><p><span class="target" id="app_util.undo_action.params.process_planner"></span><strong>process_planner</strong><a class="paramlink headerlink reference internal" href="#app_util.undo_action.params.process_planner">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanner</span></code>) – The latest process planner.</p></li>
+<li><p><span class="target" id="app_util.undo_action.params.style_grid"></span><strong>style_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.undo_action.params.style_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Style grid to overwrite visualization configuration.</p></li>
+<li><p><span class="target" id="app_util.undo_action.params.tool_tip_text_grid"></span><strong>tool_tip_text_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.undo_action.params.tool_tip_text_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Style grid to overwrite tool tip texts.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app_util.update_solution_grid">
-<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">update_solution_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tentative_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_style_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.update_solution_grid" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">update_solution_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_button_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_style_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.update_solution_grid" title="Permalink to this definition"></a></dt>
+<dd><p>Updates buttons in <a class="reference internal" href="#app_util.update_solution_grid.params.button_grid" title="app_util.update_solution_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">button_grid</span></code></a> after updating <a class="reference internal" href="#app_util.update_solution_grid.params.style_grid" title="app_util.update_solution_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">style_grid</span></code></a> and
+<a class="reference internal" href="#app_util.update_solution_grid.params.tool_tip_text_grid" title="app_util.update_solution_grid"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">tool_tip_text_grid</span></code></a>. Shape of each array must match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="app_util.update_solution_grid.params.solution_button_grid"></span><strong>solution_button_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.update_solution_grid.params.solution_button_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Grid array containing buttons.</p></li>
+<li><p><span class="target" id="app_util.update_solution_grid.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#app_util.update_solution_grid.params.process_state">¶</a> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code>) – </p></li>
+<li><p><span class="target" id="app_util.update_solution_grid.params.style_grid"></span><strong>style_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.update_solution_grid.params.style_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Style grid to overwrite visualization configuration.</p></li>
+<li><p><span class="target" id="app_util.update_solution_grid.params.tool_tip_text_grid"></span><strong>tool_tip_text_grid</strong><a class="paramlink headerlink reference internal" href="#app_util.update_solution_grid.params.tool_tip_text_grid">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>) – Style grid to overwrite tool tip texts.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app_util.send_new_placement_event">
@@ -133,12 +209,14 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="app_util.send_new_pick_event">
 <span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">send_new_pick_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_message_tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock_tree</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.send_new_pick_event" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Sends new pick event to process planner.</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="app_util.get_button_grid">
 <span class="sig-prename descclassname"><span class="pre">app_util.</span></span><span class="sig-name descname"><span class="pre">get_button_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absolute_trail</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button_grid_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_select_option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock_tree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solution_button_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_util.get_button_grid" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Constructs a button grid.</p>
+</dd></dl>
 
 </div>
 

@@ -35,7 +35,8 @@ fastening_robot_command_message_dict = {
 
 # Todo:
 #   Known Issues:
-#   -
+#   - detour events dont work vertically
+#   - detour events dont trigger on valid assembly
 #   Planned Features:
 #   - improve partial solutions
 
@@ -161,9 +162,11 @@ class ProcessPlanner:
 
             # handle all detour events
             if detour_event and handle_detour_events:
+                # new detour event
                 detour_message, tentative_process_state = self.handle_detour_event(detour_event,
                                                                                    tentative_process_state)
             else:
+                # handle existing detour events
                 detour_message = self.handle_detour_trails(process_state=tentative_process_state)
 
             # get next recommended action
@@ -231,13 +234,13 @@ class ProcessPlanner:
                     solution = pp_util.get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
                                                                     process_state=process_state,
                                                                     detour_event=detour_event)
-                    process_state.adjust_motion_dict_to_solution(solution, detour_event)
+                    process_state.reevaluate_motion_dict_from_solution(solution, detour_event)
                     detour_message = str.format(
                         f"Deviating layout incomplete, returning to solution for last deviating layout.")
                 else:
                     # return to optimal solution
                     detour_event = {None: "Returned to optimal solution"}
-                    process_state.adjust_motion_dict_to_solution(self.optimal_solution)
+                    process_state.reevaluate_motion_dict_from_solution(self.optimal_solution)
 
                     detour_message = str.format(
                         f"No complete deviating layouts left, returning to optimal solution.")
@@ -257,10 +260,10 @@ class ProcessPlanner:
             A :obj:`tuple` containing :obj:`str` messages and a modified state with the new solution applied (:obj:`tuple` [:obj:`str`, :class:`~process_state.ProcessState`]).
 
         """
-        detour_message = str.format(f"detour event confirmed, but no alternative solution found!")
+        detour_message = str.format(f"Detour event confirmed, but no alternative solution found!")
         detour_process_state = deepcopy(process_state)
         detour_process_state.building_instructions.update(detour_event)
-        detour_process_state.detour_trails.append(list(detour_event)[0])
+
         # update state grid
         for pos in list(detour_event.keys())[0]:
             detour_process_state.state_grid[pos] = 2
@@ -268,9 +271,9 @@ class ProcessPlanner:
                                                         process_state=detour_process_state,
                                                         detour_event=detour_event)
         if solution:
-            detour_message = str.format(f"detour event confirmed, applying alternative solution!")
-            detour_process_state.adjust_motion_dict_to_solution(solution, detour_event)
-
+            detour_message = str.format(f"Detour event confirmed. Alternative solution was applied!")
+            detour_trail = detour_process_state.reevaluate_motion_dict_from_solution(solution, detour_event)
+            detour_process_state.detour_trails.append(detour_trail)
             # clean up remaining detour trails
             for detour_trail in detour_process_state.detour_trails:
                 if not detour_trail in detour_process_state.building_instructions.keys():

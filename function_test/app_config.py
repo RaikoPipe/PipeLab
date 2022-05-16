@@ -35,37 +35,41 @@ highlight_next_rec_action_style = "nextrecact.primary.TButton"
 treeview_style = "treestyle.Treeview"
 
 
+#: visualization colors. See `tkinter colors:
+#: <https://i0.wp.com/www.wikipython.com/wp-content/uploads/Color-chart-capture-082321.jpg?resize=1536%2C869&ssl=1>`
+#: Active color: Used when mouse is hovered over element.
+obs_color = "orange" #: obstacle color
+obs_active_color = "orange2" #: obstacle active color
 
-obs_color = "orange"
-obs_active_color = "orange2"
+transition_color = "black" #: transition color
+transition_active_color = "grey20" #: transition active color
 
-transition_color = "black"
-transition_active_color = "grey20"
+start_color = "green" #: start color
+start_active_color = "green2" #: start active color
+goal_color = "red2" #: goal color
+goal_active_color = "orange red" #: goal active color
 
-start_color = "green"
-start_active_color = "green2"
-goal_color = "red2"
-goal_active_color = "orange red"
+pipe_color = "blue" #: pipe color
+pipe_active_color = "dodger blue" #: pipe active color
+fit_color = "saddle brown" #: fiting color
+fit_active_color = "salmon3" #: fitting active color
+att_color = "medium violet red" #: attachment color
+att_active_color = "magenta" #: attachment active color
 
-pipe_color = "blue"
-pipe_active_color = "dodger blue"
-fit_color = "saddle brown"
-fit_active_color = "salmon3"
-att_color = "medium violet red"
-att_active_color = "magenta"
-
-deviated_color = "yellow"
-
-deviated_color2 = "gold3"
-
+#: Button size and font
 button_width = 6  #: Width of the grid buttons.
 button_height = 10  #: Height of the grid buttons.
 font = ('Tahoma', 6)  #: Tuple containing :obj:`str` of font art and :obj:`int` of font size.
 
+#: Process Message Treeview colors:
+message_deviated_assembly_color = "yellow2"
+message_valid_assembly_color = "green2"
+message_error_color = "red3"
+
 
 def configure_style(style: ttk.Style):
     """Sets the style for the process visualization and interface. If ttkbootstrap theme is not used
-    the look of the buttons will depend on the version and kind of operating system used!
+    the look of the buttons will depend on the type and version of operating system used!
 
     Args:
         style(:obj:`ttk.Style`): Tkinter Style object.
@@ -135,9 +139,5 @@ def configure_style(style: ttk.Style):
         style.configure("TLabelframe.Label", foreground="grey51", background="grey12")
         style.configure("TRadiobutton", background="grey12", foreground="grey51")
 
-
-class GridButton(ttk.Button):
-    def __init__(self, frame, text, style):
-        super(GridButton, self).__init__(frame, text=text, style=style)
 
 

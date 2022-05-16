@@ -88,7 +88,7 @@ NodePairSet: TypeAlias = set[NodePair]
 """
 
 OrderedTrails: TypeAlias = tuple[Trail]
-"""List containing trails, that are ordered from start to goal.
+"""Tuple containing trails, that are ordered from start to goal.
 
 *Type*: (:obj:`list` [:obj:`~type_aliases.Trail`])"""
 
@@ -111,6 +111,11 @@ PosSet = set[Pos]
 """A set containing node positions.
 
 *Type*: (:obj:`set` [:obj:`~type_aliases.Pos`])"""
+
+OrderedPos: TypeAlias = tuple[PosSet]
+"""Tuple containing PosSet, that are ordered from start to goal.
+
+*Type*: (:obj:`list` [:obj:`~type_aliases.Trail`])"""
 
 RenderingDict: TypeAlias = dict[Pos, int]
 """

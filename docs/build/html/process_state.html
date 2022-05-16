@@ -265,6 +265,9 @@ See <code class="xref py py-paramref docutils literal notranslate"><span class="
 See <code class="xref py py-paramref docutils literal notranslate"><span class="pre">ignore_part_check</span></code></p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Event part ID (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>)</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -323,15 +326,18 @@ Detour event occurs if:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="process_state.ProcessState.adjust_motion_dict_to_solution">
-<span class="sig-name descname"><span class="pre">adjust_motion_dict_to_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detour_event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.adjust_motion_dict_to_solution" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="process_state.ProcessState.reevaluate_motion_dict_from_solution">
+<span class="sig-name descname"><span class="pre">reevaluate_motion_dict_from_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detour_event</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.reevaluate_motion_dict_from_solution" title="Permalink to this definition"></a></dt>
 <dd><p>Reevaluates all entries in the motion dict according to the given solution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="process_state.ProcessState.adjust_motion_dict_to_solution.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.adjust_motion_dict_to_solution.params.solution">¶</a> (<a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>) – New solution.</p></li>
-<li><p><span class="target" id="process_state.ProcessState.adjust_motion_dict_to_solution.params.detour_event"></span><strong>detour_event</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.adjust_motion_dict_to_solution.params.detour_event">¶</a> (<a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) – Cause of the detour event.</p></li>
+<li><p><span class="target" id="process_state.ProcessState.reevaluate_motion_dict_from_solution.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.reevaluate_motion_dict_from_solution.params.solution">¶</a> (<a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>) – New solution.</p></li>
+<li><p><span class="target" id="process_state.ProcessState.reevaluate_motion_dict_from_solution.params.detour_event"></span><strong>detour_event</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.reevaluate_motion_dict_from_solution.params.detour_event">¶</a> (<a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) – Cause of the detour event.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a> with <code class="xref py py-obj docutils literal notranslate"><span class="pre">type_aliases_pos</span></code> in the order according to the solution.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -1,7 +1,7 @@
 from copy import deepcopy
 from idlelib.tooltip import Hovertip
 from typing import Optional
-from function_test.app_config import GridButton, button_width, button_height
+from function_test.app_config import button_width, button_height
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 
@@ -10,7 +10,7 @@ import numpy as np
 from function_test.app_config import free_style, pipe_style, obs_style, att_style, fit_style, start_style, goal_style, \
     transition_style, fit_deviated_style, att_deviated_style, pipe_deviated_style, fit_misplaced_style, \
     att_misplaced_style, pipe_misplaced_style, start_warning_style, start_success_style, goal_success_style, \
-    goal_warning_style
+    goal_warning_style, message_error_color, message_deviated_assembly_color, message_valid_assembly_color
 from process_planning.pp_data_class.construction_state import ConstructionState
 from process_planning.pp_data_class.pick_event_info import PickEventInfo
 from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
@@ -21,32 +21,138 @@ from type_dictionary.type_aliases import StateGrid
 message_count = 0
 
 
-def get_style_from_construction_state(construction_state: Optional[ConstructionState]):
-    style = free_style
-    if construction_state:
-        if construction_state.event_code == 3:
-            if construction_state.unnecessary or construction_state.deviated:
-                style = att_deviated_style
-            elif construction_state.misplaced:
-                style = att_misplaced_style
-            else:
-                style = att_style
-        elif construction_state.event_code == 2:
-            if construction_state.unnecessary or construction_state.deviated:
-                style = pipe_deviated_style
-            elif construction_state.misplaced:
-                style = pipe_misplaced_style
-            else:
-                style = pipe_style
-        elif construction_state.event_code == 1:
-            if construction_state.unnecessary or construction_state.deviated:
-                style = fit_deviated_style
-            elif construction_state.misplaced:
-                style = fit_misplaced_style
-            else:
-                style = fit_style
+def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, process_message_tree,
+                             style_grid,
+                             initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid, root=None):
+    output = process_planner.handle_motion_event((pos, event_code), handle_detour_events=True,
+                                                 ignore_part_check=False)
+    # pprint.pprint(output)
+    process_state = output.process_state
+    messages = output.messages
+    next_recommended_action = output.next_recommended_action
+    event_info: PlacementEventInfo = process_state.last_placement_event_info
+    update_button_grid(button_grid, process_planner.last_process_state, style_grid, tool_tip_text_grid)
 
-    return style
+    if event_info.detour_event or process_state.detour_trails:
+        update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
+                             style_grid=initial_style_grid)
+
+    update_process_message_tree(event_info, messages, next_recommended_action, part_stock_tree, process_message_tree,
+                                process_planner)
+
+
+def send_new_pick_event(part_id, process_planner: ProcessPlanner, process_message_tree, part_stock_tree):
+    """Sends new pick event to process planner."""
+    global message_count
+    output = process_planner.handle_motion_event((part_id, 4))
+    event_info: PickEventInfo = output.current_event_info
+    # pprint.pprint(output)
+    message = output.messages[0]
+    special_message = output.messages[1]
+
+    process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
+                                text=message.replace("Process Planner: ", ""))
+
+    if event_info.error:
+        process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground="white")
+    else:
+        process_message_tree.tag_configure(tagname=message_count, background=message_valid_assembly_color, foreground="black")
+
+    extra_message_ids = [message_count]
+    message_count += 1
+
+    if special_message:
+        process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=special_message)
+        extra_message_ids.append(message_count)
+        message_count += 1
+
+    append_texts_to_message(event_info, extra_message_ids, process_message_tree)
+
+    item = part_stock_tree.get_children()[part_id]
+    part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
+                                       process_planner.last_process_state.part_stock[part_id]))
+
+    process_message_tree.yview_moveto(1)
+
+
+def undo_action(process_planner: ProcessPlanner, button_grid: np.ndarray, style_grid: np.ndarray,
+                part_stock_tree: ttk.Treeview, tool_tip_text_grid, process_message_tree: ttk.Treeview,
+                solution_button_grid: np.ndarray):
+    """Undoes the last action by reverting to the previous process state.
+
+    Args:
+
+        solution_button_grid(:obj:`ttk.Treeview`): Button grid with solution layout visualization.
+        process_message_tree(:obj:`ttk.Treeview`): Process message display.
+        part_stock_tree: Part stock display.
+        button_grid(:obj:`numpy.ndarray`): Grid array containing visualization button for the current process state.
+        process_planner(:class:`~process_planning.process_planner.ProcessPlanner`): The latest process planner.
+        style_grid(:obj:`numpy.ndarray`): Style grid to overwrite visualization configuration.
+        tool_tip_text_grid(:obj:`numpy.ndarray`): Style grid to overwrite tool tip texts.
+
+    """
+    process_planner.return_to_previous_state()
+    update_button_grid(button_grid=button_grid, process_state=process_planner.last_process_state,
+                       tool_tip_text_grid=tool_tip_text_grid,
+                       style_grid=style_grid)
+
+    part_id = 0
+    for item in part_stock_tree.get_children():
+        part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
+                                           process_planner.last_process_state.part_stock[part_id]))
+        part_id += 1
+
+    global message_count
+    process_message_tree.insert("", index=ttk.END, tag=message_count, text="Last Action was undone!")
+    process_message_tree.tag_configure(tagname=message_count, background="brown1", foreground="black")
+    message_count += 1
+    process_state = process_planner.last_process_state
+
+    update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
+                         style_grid=initial_style_grid)
+
+    process_message_tree.yview_moveto(1)
+
+
+def update_button_grid(button_grid: np.ndarray, process_state: ProcessState, style_grid: np.ndarray,
+                       tool_tip_text_grid: np.ndarray):
+    """Updates buttons in :paramref:`button_grid` after updating :paramref:`style_grid` and
+    :paramref:`tool_tip_text_grid`. Shape of each array must match.
+
+    Args:
+        button_grid(:obj:`numpy.ndarray`): Grid array containing buttons.
+        process_state(:class:`~process_planning.process_state.ProcessState`): Process state that was modified.
+        style_grid(:obj:`numpy.ndarray`): Style grid to overwrite visualization configuration.
+        tool_tip_text_grid(:obj:`numpy.ndarray`): Style grid to overwrite tool tip texts.
+        """
+
+    style_grid = update_style_grid(process_state, style_grid)
+    tool_tip_text_grid = update_tool_tip_text_grid(process_state, tool_tip_text_grid)
+
+    # update button grid
+    for pos, style in np.ndenumerate(style_grid):
+        button_grid[pos].configure(style=style)
+
+    # update hovertips
+    for pos, tool_tip_text in np.ndenumerate(tool_tip_text_grid):
+        Hovertip(button_grid[pos], tool_tip_text, hover_delay=0)
+
+    # reset button text
+    for pos, _ in np.ndenumerate(process_state.state_grid):
+        button_grid[pos].configure(text=str(pos))
+
+    # update button text
+    for _, construction_state in process_state.motion_dict.items():
+        construction_state: ConstructionState
+        button = button_grid[construction_state.event_pos]
+        button: ttk.Button
+        button_text = button.cget("text")
+        button_text: str
+        button_text.replace("?", "")
+        if construction_state.part_id == -2:
+            button_text += "?"
+
+        button_grid[construction_state.event_pos].configure(text=button_text)
 
 
 def update_style_grid(process_state, style_grid: np.ndarray) -> np.ndarray:
@@ -54,7 +160,7 @@ def update_style_grid(process_state, style_grid: np.ndarray) -> np.ndarray:
     configuration of the :paramref:`style_grid``.
 
     Args:
-        process_state(:class:`process_planning.process_state.ProcessState`): Process state that was modified.
+        process_state(:class:`~process_state.ProcessState`): Process state that was modified.
         style_grid(:obj:`numpy.ndarray`): See :paramref:`~update_button_grid.style_grid`
     Returns:
         Style grid (:obj:`numpy.ndarray`) with modified visualization configuration.
@@ -101,36 +207,40 @@ def update_style_grid(process_state, style_grid: np.ndarray) -> np.ndarray:
     return style_grid
 
 
-def get_construction_state_attributes_as_string(construction_state: ConstructionState) -> str:
-    """Reads variable names and values from :class:`pp_data_class.construction_state.ConstructionState` and returns them
-     as a formatted string.
+def get_style_from_construction_state(construction_state: Optional[ConstructionState]):
+    style = free_style
+    if construction_state:
+        if construction_state.event_code == 3:
+            if construction_state.unnecessary or construction_state.deviated:
+                style = att_deviated_style
+            elif construction_state.misplaced:
+                style = att_misplaced_style
+            else:
+                style = att_style
+        elif construction_state.event_code == 2:
+            if construction_state.unnecessary or construction_state.deviated:
+                style = pipe_deviated_style
+            elif construction_state.misplaced:
+                style = pipe_misplaced_style
+            else:
+                style = pipe_style
+        elif construction_state.event_code == 1:
+            if construction_state.unnecessary or construction_state.deviated:
+                style = fit_deviated_style
+            elif construction_state.misplaced:
+                style = fit_misplaced_style
+            else:
+                style = fit_style
 
-    Args:
-        construction_state(:class:`pp_data_class.construction_state.ConstructionState`): Construction state to read.
-
-    Returns:
-        :obj:`str`
-
-    """
-    text = ""
-    for attribute in vars(construction_state):
-        value = construction_state.__getattribute__(attribute)
-        if attribute == "time_registered":
-            value = str(value.replace(microsecond=0))
-        elif attribute == "part_id":
-            value = str(value)
-        if value:
-            text += attribute + ": " + str(value) + "\n"
-
-    return text
+    return style
 
 
 def update_tool_tip_text_grid(process_state: ProcessState, tool_tip_text_grid: np.ndarray) -> np.ndarray:
-    """Reads the :obj:`process_planner.ProcessPlanner.motion_dict` from the process planner and updates each items
+    """Reads the :obj:`~type_aliases.MotionDict` from the process state and updates each items
     attributes as string in the :paramref:`tool_tip_text_grid`.
 
     Args:
-        process_state(:class:`~process_planning.process_state.ProcessState`): Process state that was modified.
+        process_state(:class:`~process_state.ProcessState`): Process state that was modified.
         tool_tip_text_grid(:obj:`numpy.ndarray`): See :paramref:`~update_button_grid.tool_tip_text_grid`
     Returns:
         Tool tip text grid (:obj:`numpy.ndarray`) with modified texts.
@@ -163,101 +273,42 @@ def update_tool_tip_text_grid(process_state: ProcessState, tool_tip_text_grid: n
 
     return tool_tip_text_grid
 
-    pass
 
-
-def update_button_grid(button_grid: np.ndarray, process_state: ProcessState, style_grid: np.ndarray,
-                       tool_tip_text_grid: np.ndarray):
-    """Updates buttons in :paramref:`button_grid` after updating :paramref:`style_grid` and
-    :paramref:`tool_tip_text_grid`. Shape of each array must match.
+def get_construction_state_attributes_as_string(construction_state: ConstructionState) -> str:
+    """Reads variable names and values from :class:`~construction_state.ConstructionState` and returns them
+     as a formatted string.
 
     Args:
-        button_grid(:obj:`numpy.ndarray`): Grid array containing buttons.
-        process_state(:class:`~process_planning.process_state.ProcessState`)
-        style_grid(:obj:`numpy.ndarray`): Style grid to overwrite visualization configuration.
-        tool_tip_text_grid(:obj:`numpy.ndarray`): Style grid to overwrite tool tip texts.
-        """
+        construction_state(:class:`construction_state.ConstructionState`): Construction state to read.
 
-    style_grid = update_style_grid(process_state, style_grid)
-    tool_tip_text_grid = update_tool_tip_text_grid(process_state, tool_tip_text_grid)
-
-    # update button grid
-    for pos, style in np.ndenumerate(style_grid):
-        button_grid[pos].configure(style=style)
-
-    # update hovertips
-    for pos, tool_tip_text in np.ndenumerate(tool_tip_text_grid):
-        Hovertip(button_grid[pos], tool_tip_text, hover_delay=0)
-
-    # reset button text
-    for pos, _ in np.ndenumerate(process_state.state_grid):
-        button_grid[pos].configure(text=str(pos))
-
-    # update button text
-    for _, construction_state in process_state.motion_dict.items():
-        construction_state: ConstructionState
-        button = button_grid[construction_state.event_pos]
-        button: ttk.Button
-        button_text = button.cget("text")
-        button_text: str
-        button_text.replace("?", "")
-        if construction_state.part_id == -2:
-            button_text += "?"
-
-        button_grid[construction_state.event_pos].configure(text=button_text)
-
-
-def undo_action(process_planner: ProcessPlanner, button_grid: np.ndarray, style_grid: np.ndarray,
-                part_stock_tree: ttk.Treeview, tool_tip_text_grid, process_message_tree: ttk.Treeview,
-                solution_button_grid: np.ndarray):
-    """Undoes the last action by reverting to the previous process state.
-
-    Args:
-
-        solution_button_grid(:obj:`ttk.Treeview`): Button grid with solution layout visualization.
-        process_message_tree(:obj:`ttk.Treeview`): Process message display.
-        part_stock_tree: Part stock display.
-        button_grid(:obj:`numpy.ndarray`): Grid array containing visualization button for the current process state.
-        process_planner(:class:`~process_planning.process_planner.ProcessPlanner`): The latest process planner.
-        style_grid(:obj:`numpy.ndarray`): Style grid to overwrite visualization configuration.
-        tool_tip_text_grid(:obj:`numpy.ndarray`): Style grid to overwrite tool tip texts.
+    Returns:
+        :obj:`str`
 
     """
-    process_planner.return_to_previous_state()
-    update_button_grid(button_grid=button_grid, process_state=process_planner.last_process_state,
-                       tool_tip_text_grid=tool_tip_text_grid,
-                       style_grid=style_grid)
+    text = ""
+    for attribute in vars(construction_state):
+        value = construction_state.__getattribute__(attribute)
+        if attribute == "time_registered":
+            value = str(value.replace(microsecond=0))
+        elif attribute == "part_id":
+            value = str(value)
+        if value:
+            text += attribute + ": " + str(value) + "\n"
 
-    part_id = 0
-    for item in part_stock_tree.get_children():
-        part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
-                                           process_planner.last_process_state.part_stock[part_id]))
-        part_id += 1
-
-    global message_count
-    process_message_tree.insert("", index=ttk.END, tag=message_count, text="Last Action was undone!")
-    process_message_tree.tag_configure(tagname=message_count, background="brown1", foreground="black")
-    message_count += 1
-    process_state = process_planner.last_process_state
-
-    update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
-                         initial_style_grid=initial_style_grid)
-
-    process_message_tree.yview_moveto(1)
+    return text
 
 
-def update_solution_grid(process_state: ProcessState, solution_button_grid: np.ndarray, initial_style_grid: np.ndarray):
+def update_solution_grid(process_state: ProcessState, solution_button_grid: np.ndarray, style_grid: np.ndarray):
     """Updates buttons in :paramref:`button_grid` after updating :paramref:`style_grid` and
     :paramref:`tool_tip_text_grid`. Shape of each array must match.
 
     Args:
         solution_button_grid(:obj:`numpy.ndarray`): Grid array containing buttons.
         process_state(:class:`~process_planning.process_state.ProcessState`)
-        style_grid(:obj:`numpy.ndarray`): Style grid to overwrite visualization configuration.
-        tool_tip_text_grid(:obj:`numpy.ndarray`): Style grid to overwrite tool tip texts.
+        style_grid(:obj:`numpy.ndarray`): Style grid with initial configuration.
         """
     # reset
-    for pos, style in np.ndenumerate(initial_style_grid):
+    for pos, style in np.ndenumerate(style_grid):
         if style != fit_style or style != pipe_style:
             solution_button_grid[pos].configure(style=style)
 
@@ -274,26 +325,6 @@ def update_solution_grid(process_state: ProcessState, solution_button_grid: np.n
     solution_button_grid[goal].configure(style=goal_success_style)
 
 
-def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, process_message_tree,
-                             style_grid,
-                             initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid, root=None):
-    output = process_planner.handle_motion_event((pos, event_code), handle_detour_events=True,
-                                                 ignore_part_check=False)
-    # pprint.pprint(output)
-    process_state = output.process_state
-    messages = output.messages
-    next_recommended_action = output.next_recommended_action
-    event_info: PlacementEventInfo = process_state.last_placement_event_info
-    update_button_grid(button_grid, process_planner.last_process_state, style_grid, tool_tip_text_grid)
-
-    if event_info.detour_event or process_state.detour_trails:
-        update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
-                             initial_style_grid=initial_style_grid)
-
-    update_process_message_tree(event_info, messages, next_recommended_action, part_stock_tree, process_message_tree,
-                                process_planner)
-
-
 def update_process_message_tree(event_info, messages, next_recommended_action, part_stock_tree, process_message_tree,
                                 process_planner):
     message = messages[0]
@@ -305,12 +336,12 @@ def update_process_message_tree(event_info, messages, next_recommended_action, p
                                     text=message.replace("Process Planner: ", ""))
         if any((event_info.deviated, event_info.unnecessary, event_info.misplaced)):
             if not event_info.removal:
-                process_message_tree.tag_configure(tagname=message_count, background="yellow2", foreground="black")
+                process_message_tree.tag_configure(tagname=message_count, background=message_deviated_assembly_color, foreground="black")
         else:
-            process_message_tree.tag_configure(tagname=message_count, background="green2", foreground="black")
+            process_message_tree.tag_configure(tagname=message_count, background=message_valid_assembly_color, foreground="black")
 
         if event_info.error:
-            process_message_tree.tag_configure(tagname=message_count, background="red3", foreground="white")
+            process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground="white")
 
         extra_message_ids = [message_count]
         message_count += 1
@@ -366,40 +397,6 @@ def append_texts_to_message(event_info, extra_message_ids, process_message_tree)
         if idx == 0:
             continue
         process_message_tree.move(child_message_id, parent_message_id, idx - 1)
-
-
-def send_new_pick_event(part_id, process_planner: ProcessPlanner, process_message_tree, part_stock_tree):
-    """Sends new pick event to process planner."""
-    global message_count
-    output = process_planner.handle_motion_event((part_id, 4))
-    event_info: PickEventInfo = output.current_event_info
-    # pprint.pprint(output)
-    message = output.messages[0]
-    special_message = output.messages[1]
-
-    process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
-                                text=message.replace("Process Planner: ", ""))
-
-    if event_info.error:
-        process_message_tree.tag_configure(tagname=message_count, background="red3", foreground="white")
-    else:
-        process_message_tree.tag_configure(tagname=message_count, background="green2", foreground="black")
-
-    extra_message_ids = [message_count]
-    message_count += 1
-
-    if special_message:
-        process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=special_message)
-        extra_message_ids.append(message_count)
-        message_count += 1
-
-    append_texts_to_message(event_info, extra_message_ids, process_message_tree)
-
-    item = part_stock_tree.get_children()[part_id]
-    part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
-                                       process_planner.last_process_state.part_stock[part_id]))
-
-    process_message_tree.yview_moveto(1)
 
 
 def get_button_grid(state_grid: StateGrid, absolute_trail, start, goal, button_grid_frame,

@@ -30,6 +30,15 @@ class FunctionTestApp:
         else:
             theme = light_theme_use
         self.root = ttk.Window(themename=theme)
+
+        # set icon
+        self.root.iconbitmap('function_test/resources/PipeLab2.ico')
+
+        # set title
+        self.root.title("PipeLab2 Function Test")
+
+
+
         style = ttk.Style(theme)
         configure_style(style)
 
@@ -40,12 +49,10 @@ class FunctionTestApp:
 
         part_select_option = ttk.IntVar(value=1)
 
-
-
         # make app widgets
 
         layout_frame = ttk.Frame(self.root)
-        layout_frame.grid(row=0,column=0)
+        layout_frame.grid(row=0, column=0)
 
         self.solution_button_grid_frame = ttk.LabelFrame(layout_frame, text="Solution Grid:")
         self.solution_button_grid_frame.grid(row=0, column=0)
@@ -90,8 +97,6 @@ class FunctionTestApp:
         scrollbar = ttk.Scrollbar(part_stock_frame, orient=ttk.VERTICAL, command=self.part_stock_tree.yview)
         self.part_stock_tree.configure(yscroll=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
-
-
 
         part_put_frame = ttk.LabelFrame(tool_frame, text="Placement:")
         part_put_frame.grid(row=0, column=0, padx=5)
@@ -153,7 +158,7 @@ class FunctionTestApp:
             solution_button_grid=self.solution_button_grid)
 
         # set button to revert to a previous process state
-        return_to_previous_state = ttk.Button(tool_frame, text="Undo action", style ="danger.TButton",
+        return_to_previous_state = ttk.Button(tool_frame, text="Undo action", style="danger.TButton",
                                               command=lambda: undo_action(process_planner=self.process_planner,
                                                                           part_stock_tree=self.part_stock_tree,
                                                                           button_grid=self.construction_button_grid,
@@ -164,9 +169,6 @@ class FunctionTestApp:
                                                                           ))
         return_to_previous_state.grid(row=2, column=0)
 
-        # setting title
-        self.root.title("Pipe Lab 2.0")
-        # setting window size
         if controlled_from_outside:
             # update once
 

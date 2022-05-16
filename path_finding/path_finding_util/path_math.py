@@ -42,6 +42,7 @@ def sum_abs_pos(a: Pos, b: Pos) -> Pos:
     b = abs(b[0]), abs(b[1])
     return a[0] + b[0], a[1] + b[1]
 
+
 def get_length_same_axis(a: Pos, b: Pos) -> int:
     """return length of a and b if row xor column are the same
 
@@ -83,6 +84,7 @@ def get_rel_dist_same_axis(a: Pos, b: Pos) -> Pos:
 
     return rel_dist
 
+
 def manhattan_distance(a: Pos, b: Pos):
     """Calculates the distance between to nodes in horizontal/vertical steps required.
 
@@ -105,10 +107,12 @@ def get_direction(pos: Pos) -> Pos:
         """
     x = pos[0]
     y = pos[1]
+    if x == y:
+        raise ValueError
 
-    if x == 0:
+    if not x:
         y = y ** 0
-    elif y == 0:
+    elif not y:
         x = x ** 0
 
     x = int(copysign(x, pos[0]))
