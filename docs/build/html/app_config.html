@@ -78,8 +78,18 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-app_config">
-<span id="app-configuration"></span><h1>App Configuration<a class="headerlink" href="#module-app_config" title="Permalink to this headline"></a></h1>
+  <div class="section" id="app-configuration">
+<h1>App Configuration<a class="headerlink" href="#app-configuration" title="Permalink to this headline"></a></h1>
+<p>Color and shape configuration used in FunctionTestApp. See <a class="reference external" href="https://i0.wp.com/www.wikipython.com/wp-content/uploads/Color-chart-capture-082321.jpg?resize=1536%2C869&amp;ssl=1">Tkinter Colors</a></p>
+<p>Active colors: Used when mouse is hovered over element.
+Message colors: Used for message output by the process message display.</p>
+<p>Border colors of buttons are not customizable.</p>
+<span class="target" id="module-app_config"></span><dl class="py data">
+<dt class="sig sig-object py" id="app_config.dark_theme">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">dark_theme</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app_config.dark_theme" title="Permalink to this definition"></a></dt>
+<dd><p>Option for using a dark theme for the app.</p>
+</dd></dl>
+
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.obs_color">
 <span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">obs_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'orange'</span></em><a class="headerlink" href="#app_config.obs_color" title="Permalink to this definition"></a></dt>
@@ -131,13 +141,13 @@
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.pipe_color">
 <span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">pipe_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'blue'</span></em><a class="headerlink" href="#app_config.pipe_color" title="Permalink to this definition"></a></dt>
-<dd><p>pipe color</p>
+<dd><p>straight pipe color</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.pipe_active_color">
 <span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">pipe_active_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dodger</span> <span class="pre">blue'</span></em><a class="headerlink" href="#app_config.pipe_active_color" title="Permalink to this definition"></a></dt>
-<dd><p>pipe active color</p>
+<dd><p>straight pipe active color</p>
 </dd></dl>
 
 <dl class="py data">
@@ -161,7 +171,7 @@
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.att_active_color">
 <span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">att_active_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'magenta'</span></em><a class="headerlink" href="#app_config.att_active_color" title="Permalink to this definition"></a></dt>
-<dd><p>attachment active color</p>
+<dd><p>attachment active color n</p>
 </dd></dl>
 
 <dl class="py data">
@@ -182,40 +192,52 @@
 <dd><p>Tuple containing <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> of font art and <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> of font size.</p>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="app_config.message_deviated_assembly_color">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_deviated_assembly_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'yellow2'</span></em><a class="headerlink" href="#app_config.message_deviated_assembly_color" title="Permalink to this definition"></a></dt>
+<dd><p>message color on deviated assembly</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app_config.message_conformal_assembly_color">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_conformal_assembly_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'green2'</span></em><a class="headerlink" href="#app_config.message_conformal_assembly_color" title="Permalink to this definition"></a></dt>
+<dd><p>message color on conformal assembly</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app_config.message_error_color">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_error_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'red3'</span></em><a class="headerlink" href="#app_config.message_error_color" title="Permalink to this definition"></a></dt>
+<dd><p>message color on error</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app_config.message_detour_event_color">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_detour_event_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'maroon1'</span></em><a class="headerlink" href="#app_config.message_detour_event_color" title="Permalink to this definition"></a></dt>
+<dd><p>message color on detour event</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app_config.message_construction_complete_color">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_construction_complete_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gold'</span></em><a class="headerlink" href="#app_config.message_construction_complete_color" title="Permalink to this definition"></a></dt>
+<dd><p>message color on completion</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app_config.message_action_undone_color">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_action_undone_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'brown1'</span></em><a class="headerlink" href="#app_config.message_action_undone_color" title="Permalink to this definition"></a></dt>
+<dd><p>message color on undo action</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="app_config.configure_style">
 <span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">configure_style</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">style</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_config.configure_style" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the style for the process visualization and interface. If ttkbootstrap theme is not used
-the look of the buttons will depend on the version and kind of operating system used!</p>
+the look of the buttons will depend on the type and version of operating system used!</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><span class="target" id="app_config.configure_style.params.style"></span><strong>style</strong><a class="paramlink headerlink reference internal" href="#app_config.configure_style.params.style">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ttk.Style</span></code>) – Tkinter Style object.</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="app_config.GridButton">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">GridButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app_config.GridButton" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tkinter.ttk.Button</span></code></p>
-<p>Constructs a Ttk Widget with the parent master.</p>
-<p>STANDARD OPTIONS</p>
-<blockquote>
-<div><p>class, cursor, takefocus, style</p>
-</div></blockquote>
-<p>SCROLLABLE WIDGET OPTIONS</p>
-<blockquote>
-<div><p>xscrollcommand, yscrollcommand</p>
-</div></blockquote>
-<p>LABEL WIDGET OPTIONS</p>
-<blockquote>
-<div><p>text, textvariable, underline, image, compound, width</p>
-</div></blockquote>
-<p>WIDGET STATES</p>
-<blockquote>
-<div><p>active, disabled, focus, pressed, selected, background,
-readonly, alternate, invalid</p>
-</div></blockquote>
 </dd></dl>
 
 </div>

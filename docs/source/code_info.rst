@@ -1,8 +1,8 @@
 Code Information
 =============================
 
-Motion Event Codes:
-****************************
+Motion Event Codes
+***********************
 1: Fitting placed
 
 2: Pipe placed
@@ -17,8 +17,8 @@ Motion Event Codes:
 
 Currently Code 4 and 5 are treated the same
 
-Picking robot command codes:
-******************************
+Picking robot command codes
+--------------------------------------
 -2: STOP (unused)
 
 -1: Cancel all picking tasks (unused)
@@ -34,8 +34,8 @@ Picking robot command codes:
 4: Wait for worker to accept part
 
 
-Fastening robot commands:
-**************************
+Fastening robot commands
+-----------------------------
 -2: STOP (unused)
 
 -1: Remove fastening of positions x from command pipeline (unused)

@@ -1,29 +1,47 @@
+import numpy
+import ttkbootstrap
 from copy import deepcopy
 from idlelib.tooltip import Hovertip
 from typing import Optional
-from function_test.app_config import button_width, button_height
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
 
 import numpy as np
+import ttkbootstrap as ttk
 
+from function_test.app_config import button_height
 from function_test.app_config import free_style, pipe_style, obs_style, att_style, fit_style, start_style, goal_style, \
     transition_style, fit_deviated_style, att_deviated_style, pipe_deviated_style, fit_misplaced_style, \
     att_misplaced_style, pipe_misplaced_style, start_warning_style, start_success_style, goal_success_style, \
-    goal_warning_style, message_error_color, message_deviated_assembly_color, message_valid_assembly_color
+    goal_warning_style, message_error_color, message_deviated_assembly_color, message_conformal_assembly_color, \
+    message_construction_complete_color, message_detour_event_color, message_action_undone_color
 from process_planning.pp_data_class.construction_state import ConstructionState
 from process_planning.pp_data_class.pick_event_info import PickEventInfo
 from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
 from process_planning.process_planner import ProcessPlanner
 from process_planning.process_state import ProcessState
-from type_dictionary.type_aliases import StateGrid
+from type_dictionary.type_aliases import StateGrid, Pos
 
 message_count = 0
 
 
-def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, button_grid, process_message_tree,
-                             style_grid,
-                             initial_style_grid, part_stock_tree, solution_button_grid, tool_tip_text_grid, root=None):
+def send_new_placement_event(pos:Pos, event_code:int, process_planner: ProcessPlanner, button_grid:numpy.ndarray,
+                             process_message_tree: ttk.Treeview,
+                             style_grid: numpy.ndarray,
+                             initial_style_grid: numpy.ndarray, part_stock_tree: ttk.Treeview,
+                             solution_button_grid: numpy.ndarray, tool_tip_text_grid: numpy.ndarray):
+    """Sends new pick event to :class:`~process_planner.ProcessPlanner` instance of :class:`~app.FunctionTestApp`.
+
+    Args:
+        pos(:obj:`~type_aliases.Pos`): Node position of the motion event.
+        event_code(:obj:`int`): Type of motion event. See :ref:`Motion Event Codes`
+        process_planner(:class:`~process_planner.ProcessPlanner`): Process planner instance of the function test app
+        process_message_tree(:obj:`ttk.Treeview`): Process message display view of the function test app
+        part_stock_tree(:obj:`ttk.Treeview`): Part stock display view of the function test app
+        button_grid(:obj:`numpy.ndarray`): Grid array containing buttons.
+        style_grid(:obj:`numpy.ndarray`): Style grid to overwrite visualization configuration.
+        tool_tip_text_grid(:obj:`numpy.ndarray`): Style grid to overwrite tool tip texts.
+        solution_button_grid(:obj:`ttk.Treeview`): Button grid with solution layout visualization.
+
+    """
     output = process_planner.handle_motion_event((pos, event_code), handle_detour_events=True,
                                                  ignore_part_check=False)
     # pprint.pprint(output)
@@ -38,11 +56,20 @@ def send_new_placement_event(pos, event_code, process_planner: ProcessPlanner, b
                              style_grid=initial_style_grid)
 
     update_process_message_tree(event_info, messages, next_recommended_action, part_stock_tree, process_message_tree,
-                                process_planner)
+                                process_planner.last_process_state)
 
 
-def send_new_pick_event(part_id, process_planner: ProcessPlanner, process_message_tree, part_stock_tree):
-    """Sends new pick event to process planner."""
+def send_new_pick_event(part_id: int, process_planner: ProcessPlanner, process_message_tree: ttk.Treeview, part_stock_tree: ttk.Treeview):
+    """Sends new pick event to :class:`~process_planner.ProcessPlanner` instance of :class:`~app.FunctionTestApp`.
+
+    Args:
+        part_id(:obj:`int`): Part ID to pick.
+        process_planner(:class:`~process_planner.ProcessPlanner`): Process planner instance of the function test app
+        process_message_tree(:obj:`ttk.Treeview`): Process message display view of the function test app
+        part_stock_tree(:obj:`ttk.Treeview`): Part stock display view of the function test app
+
+
+    """
     global message_count
     output = process_planner.handle_motion_event((part_id, 4))
     event_info: PickEventInfo = output.current_event_info
@@ -56,7 +83,7 @@ def send_new_pick_event(part_id, process_planner: ProcessPlanner, process_messag
     if event_info.error:
         process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground="white")
     else:
-        process_message_tree.tag_configure(tagname=message_count, background=message_valid_assembly_color, foreground="black")
+        process_message_tree.tag_configure(tagname=message_count, background=message_conformal_assembly_color, foreground="black")
 
     extra_message_ids = [message_count]
     message_count += 1
@@ -104,7 +131,7 @@ def undo_action(process_planner: ProcessPlanner, button_grid: np.ndarray, style_
 
     global message_count
     process_message_tree.insert("", index=ttk.END, tag=message_count, text="Last Action was undone!")
-    process_message_tree.tag_configure(tagname=message_count, background="brown1", foreground="black")
+    process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground="black")
     message_count += 1
     process_state = process_planner.last_process_state
 
@@ -207,7 +234,13 @@ def update_style_grid(process_state, style_grid: np.ndarray) -> np.ndarray:
     return style_grid
 
 
-def get_style_from_construction_state(construction_state: Optional[ConstructionState]):
+def get_style_from_construction_state(construction_state: Optional[ConstructionState]) -> str:
+    """Evaluates which style configuration should used for the given parameter.
+
+    Args:
+        construction_state(:class:`~construction_state.ConstructionState`)
+
+    """
     style = free_style
     if construction_state:
         if construction_state.event_code == 3:
@@ -326,7 +359,14 @@ def update_solution_grid(process_state: ProcessState, solution_button_grid: np.n
 
 
 def update_process_message_tree(event_info, messages, next_recommended_action, part_stock_tree, process_message_tree,
-                                process_planner):
+                                process_state: ProcessState):
+    """Updates the given process message tree instance with
+
+    Args:
+        part_id(:obj:`int`): Part ID to pick.
+        process_planner(:class:`~process_planner.ProcessPlanner`): Process planner instance of the function test app
+        process_message_tree(:obj:`ttk.Treeview`): Process message display view of the function test app
+        process_message_tree(:obj:`ttk.Treeview`): Part stock display view of the function test app"""
     message = messages[0]
     special_message = messages[1]
     detour_message = messages[2]
@@ -338,7 +378,7 @@ def update_process_message_tree(event_info, messages, next_recommended_action, p
             if not event_info.removal:
                 process_message_tree.tag_configure(tagname=message_count, background=message_deviated_assembly_color, foreground="black")
         else:
-            process_message_tree.tag_configure(tagname=message_count, background=message_valid_assembly_color, foreground="black")
+            process_message_tree.tag_configure(tagname=message_count, background=message_conformal_assembly_color, foreground="black")
 
         if event_info.error:
             process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground="white")
@@ -360,17 +400,17 @@ def update_process_message_tree(event_info, messages, next_recommended_action, p
         append_texts_to_message(event_info, extra_message_ids, process_message_tree)
     if detour_message:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=detour_message)
-        process_message_tree.tag_configure(tagname=message_count, background="maroon1", foreground="black")
+        process_message_tree.tag_configure(tagname=message_count, background=message_detour_event_color, foreground="black")
         message_count += 1
-    if process_planner.last_process_state.completion == 1:
+    if process_state.completion == 1:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
                                     text="Construction complete!")
-        process_message_tree.tag_configure(tagname=message_count, background="gold", foreground="black")
+        process_message_tree.tag_configure(tagname=message_count, background=message_construction_complete_color, foreground="black")
         message_count += 1
-    for p_id in process_planner.last_process_state.part_stock.keys():
+    for p_id in process_state.part_stock.keys():
         item = part_stock_tree.get_children()[p_id]
-        part_stock_tree.item(item, values=(p_id, process_planner.last_process_state.picked_parts.count(p_id),
-                                           process_planner.last_process_state.part_stock[p_id]))
+        part_stock_tree.item(item, values=(p_id, process_state.picked_parts.count(p_id),
+                                           process_state.part_stock[p_id]))
     process_message_tree.yview_moveto(1)
 
 

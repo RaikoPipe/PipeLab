@@ -1,6 +1,6 @@
 import ttkbootstrap as ttk
 
-dark_theme = True
+dark_theme = False #: Option for using a dark theme for the app.
 dark_theme_use = "darkly"
 light_theme_use = "litera"
 
@@ -34,10 +34,6 @@ pipe_misplaced_style = "pipemis.warning.TButton"
 highlight_next_rec_action_style = "nextrecact.primary.TButton"
 treeview_style = "treestyle.Treeview"
 
-
-#: visualization colors. See `tkinter colors:
-#: <https://i0.wp.com/www.wikipython.com/wp-content/uploads/Color-chart-capture-082321.jpg?resize=1536%2C869&ssl=1>`
-#: Active color: Used when mouse is hovered over element.
 obs_color = "orange" #: obstacle color
 obs_active_color = "orange2" #: obstacle active color
 
@@ -49,22 +45,25 @@ start_active_color = "green2" #: start active color
 goal_color = "red2" #: goal color
 goal_active_color = "orange red" #: goal active color
 
-pipe_color = "blue" #: pipe color
-pipe_active_color = "dodger blue" #: pipe active color
+pipe_color = "blue" #: straight pipe color
+pipe_active_color = "dodger blue" #: straight pipe active color
 fit_color = "saddle brown" #: fiting color
 fit_active_color = "salmon3" #: fitting active color
 att_color = "medium violet red" #: attachment color
-att_active_color = "magenta" #: attachment active color
+att_active_color = "magenta" #: attachment active color \n
 
-#: Button size and font
+
 button_width = 6  #: Width of the grid buttons.
 button_height = 10  #: Height of the grid buttons.
 font = ('Tahoma', 6)  #: Tuple containing :obj:`str` of font art and :obj:`int` of font size.
 
-#: Process Message Treeview colors:
-message_deviated_assembly_color = "yellow2"
-message_valid_assembly_color = "green2"
-message_error_color = "red3"
+
+message_deviated_assembly_color = "yellow2" #: message color on deviated assembly
+message_conformal_assembly_color = "green2" #: message color on conformal assembly
+message_error_color = "red3" #: message color on error
+message_detour_event_color = "maroon1" #: message color on detour event
+message_construction_complete_color = "gold" #: message color on completion
+message_action_undone_color = "brown1" #: message color on undo action
 
 
 def configure_style(style: ttk.Style):

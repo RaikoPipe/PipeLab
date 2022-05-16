@@ -47,9 +47,11 @@
 <li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Utility Module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Code Information</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#motion-event-codes">Motion Event Codes:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#picking-robot-command-codes">Picking robot command codes:</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#fastening-robot-commands">Fastening robot commands:</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#motion-event-codes">Motion Event Codes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#picking-robot-command-codes">Picking robot command codes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fastening-robot-commands">Fastening robot commands</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -87,7 +89,7 @@
   <div class="section" id="code-information">
 <h1>Code Information<a class="headerlink" href="#code-information" title="Permalink to this headline"></a></h1>
 <div class="section" id="motion-event-codes">
-<h2>Motion Event Codes:<a class="headerlink" href="#motion-event-codes" title="Permalink to this headline"></a></h2>
+<h2>Motion Event Codes<a class="headerlink" href="#motion-event-codes" title="Permalink to this headline"></a></h2>
 <p>1: Fitting placed</p>
 <p>2: Pipe placed</p>
 <p>3: Attachment placed</p>
@@ -95,9 +97,8 @@
 <p>5: Picked part manually</p>
 <p>-&gt; See <a class="reference internal" href="constants.html#module-constants"><span class="std std-ref">Constants module</span></a></p>
 <p>Currently Code 4 and 5 are treated the same</p>
-</div>
 <div class="section" id="picking-robot-command-codes">
-<h2>Picking robot command codes:<a class="headerlink" href="#picking-robot-command-codes" title="Permalink to this headline"></a></h2>
+<h3>Picking robot command codes<a class="headerlink" href="#picking-robot-command-codes" title="Permalink to this headline"></a></h3>
 <p>-2: STOP (unused)</p>
 <p>-1: Cancel all picking tasks (unused)</p>
 <p>0: Go to neutral state</p>
@@ -107,12 +108,13 @@
 <p>4: Wait for worker to accept part</p>
 </div>
 <div class="section" id="fastening-robot-commands">
-<h2>Fastening robot commands:<a class="headerlink" href="#fastening-robot-commands" title="Permalink to this headline"></a></h2>
+<h3>Fastening robot commands<a class="headerlink" href="#fastening-robot-commands" title="Permalink to this headline"></a></h3>
 <p>-2: STOP (unused)</p>
 <p>-1: Remove fastening of positions x from command pipeline (unused)</p>
 <p>0: Go to neutral state</p>
 <p>1: Move to fastening position and fasten attachment at pos x</p>
 <p>2: Move to fastening position and fasten pipe at pos x</p>
+</div>
 </div>
 </div>
 
