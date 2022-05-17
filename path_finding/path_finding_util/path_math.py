@@ -108,7 +108,7 @@ def get_direction(pos: Pos) -> Pos:
     x = pos[0]
     y = pos[1]
     if x == y:
-        raise ValueError
+        raise Exception("Direction can't be determined from equal values!")
 
     if not x:
         y = y ** 0

@@ -94,18 +94,22 @@
 <dt class="sig sig-object py" id="process_output.ProcessOutput">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">process_output.</span></span><span class="sig-name descname"><span class="pre">ProcessOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picking_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastening_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_recommended_action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_placement_positions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_output.ProcessOutput" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Output class used by process planner.</p>
+<p>Output dataclass for neatly outputting the return for
+<a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.handle_motion_event" title="process_planner.ProcessPlanner.handle_motion_event"><code class="xref py py-meth docutils literal notranslate"><span class="pre">handle_motion_event()</span></code></a>.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="process_output.ProcessOutput.process_state">
 <span class="sig-name descname"><span class="pre">process_state</span></span><a class="headerlink" href="#process_output.ProcessOutput.process_state" title="Permalink to this definition"></a></dt>
-<dd><p>Modified process state after a motion event.</p>
+<dd><p>Updated process state after a motion event.</p>
 <p><em>Type</em>: <a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a></p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="process_output.ProcessOutput.current_event_info">
 <span class="sig-name descname"><span class="pre">current_event_info</span></span><a class="headerlink" href="#process_output.ProcessOutput.current_event_info" title="Permalink to this definition"></a></dt>
-<dd><p>Evaluated information on the current event. Can be a placement or pick event depending on the motion event input.</p>
+<dd><dl class="simple">
+<dt>Evaluated information on the current event. Can be either <a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a></dt><dd><p>or <a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">pick_event_info.PickEventInfo</span></code></a> depending on the evaluated motion event.</p>
+</dd>
+</dl>
 <p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a>, <a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventInfo</span></code></a>]</p>
 </dd></dl>
 
@@ -113,7 +117,7 @@
 <dt class="sig sig-object py" id="process_output.ProcessOutput.messages">
 <span class="sig-name descname"><span class="pre">messages</span></span><a class="headerlink" href="#process_output.ProcessOutput.messages" title="Permalink to this definition"></a></dt>
 <dd><p>A <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code> messages.
-These messages confirm a motion event or an error. For immediate comprehension.</p>
+These messages confirm a motion event or an error. For easily consumable feedback for the input motion event.</p>
 <p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>]</p>
 </dd></dl>
 

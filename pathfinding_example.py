@@ -6,9 +6,9 @@ from path_finding.pf_data_class.weights import Weights
 from path_finding.search_algorithm import find_path
 
 x = 10
-y = 10
+y = 15
 
-transition_points_set = {(-2, 5)}
+transition_points_set = {(-2, 10)}
 
 r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
 solution = None
