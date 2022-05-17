@@ -1,10 +1,12 @@
-The PipeLab Module consists of several submodules and classes. It uses type aliases for easier comprehension of complex types,
-which can be found in :ref:`type dictionary <Type Dictionary>`. The following are the most important submodules:
+PipeLab2
+==========
 
-:ref:`OPC-UA server <OPC_UA>`: OPC-UA server environment
+The PipeLab Module consists of several submodules and classes. The following are the most important submodules:
 
-:ref:`App for debugging and visualization <Function Test>`
+**opc_ua**: OPC-UA server environment
 
-:ref:`Process planner for managing and guiding the worker. <Process Planning>`
+**FunctionTestApp**: for debugging and visualization
 
-For documentation, refer to :ref:`PipeLab2 Documentation. <PipeLab2 Documentation>`
+**process_planning**: Process planner for managing and guiding the worker
+
+*For documentation, refer to PipeLab/docs/build/html/index.rst.*

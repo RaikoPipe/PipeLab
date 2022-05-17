@@ -1,46 +1,63 @@
-
-
 from path_finding.grid import grid_functions, randomizer
 from path_finding.pf_data_class.path_problem import PathProblem
 from path_finding.pf_data_class.weights import Weights
 from path_finding.search_algorithm import find_path
+from type_dictionary.constants import fitting_id
+
+# Configuration
 
 x = 10
-y = 15
+y = 18
 
 transition_points_set = {(-2, 10)}
 
-r_grid, mounting_wall_data = grid_functions.get_rendering_grid(x, y)
-solution = None
-while solution is None:
-    # mandatory adjustments to state grid
-    state_grid = grid_functions.get_empty_stategrid(x, y)
-    state_grid = randomizer.set_random_obstacles(0., state_grid)
-    state_grid = grid_functions.set_transition_points(state_grid, transition_points_set)
-    start_node = (0, 0)
-    goal_node = (9, 9)
-    state_grid[start_node] = 0
-    state_grid[goal_node] = 0
+start_node = (0, 0)
+goal_node = (9, 17)
+start_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)}
+goal_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)}
 
-    pipe_stock = {0: 10, 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10}
+pipe_stock = {0: 10, 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10}
 
-    part_cost = {0: 5.32, 1: 1.15, 2: 1.38, 3: 1.60, 4: 1.82, 5: 2.04, 6: 2.50}
+part_cost = {0: 5.32, 1: 1.15, 2: 1.38, 3: 1.60, 4: 1.82, 5: 2.04, 6: 2.50}
 
-    weights = Weights(path_length=0, cost=1, distance_to_obstacles=0)
+state_grid = None
 
-    path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node,
-                               start_directions={(0, 1), (1, 0), (-1, 0), (0, -1)},
-                               goal_directions={(0, 1), (1, 0), (-1, 0), (0, -1)}, part_cost=part_cost,
-                               starting_part=0, part_stock=pipe_stock, weights=weights, algorithm="mcsa*",
-                               transition_points=transition_points_set)
+algorithm="mcsa*"
+weights = Weights(path_length=0, cost=1, distance_to_obstacles=0)
 
-    solution = find_path(path_problem=path_problem)
+obs_frequency = 0.1
 
-    if solution is None:
-        print("No solution found")
-    else:
-        "Solution found!"
+tentative_path_problem = PathProblem(state_grid=state_grid, start_pos=start_node, goal_pos=goal_node,
+                                     start_directions=start_directions,
+                                     goal_directions=goal_directions, part_cost=part_cost,
+                                     starting_part=fitting_id , part_stock=pipe_stock, weights=weights, algorithm=algorithm,
+                                     transition_points=transition_points_set)
 
+
+def get_solvable_path_problem_with_random_obstacles():
+    solution = None
+    count = 0
+    while solution is None:
+
+        state_grid = grid_functions.get_empty_stategrid(x, y)
+        state_grid[start_node] = 0
+        state_grid[goal_node] = 0
+        state_grid = randomizer.set_random_obstacles(obs_frequency,
+                                                     state_grid,
+                                                     transition_points_set)
+        tentative_path_problem.state_grid = grid_functions.set_transition_points(state_grid, transition_points_set)
+
+        solution = find_path(path_problem=tentative_path_problem)
+
+        if solution:
+            return tentative_path_problem
+
+        if count == 1000:
+            raise Exception("There probably is no single solvable problem configuration for the given parameters!")
+
+        count += 1
+
+# Vpython rendering
 # print(path_problem)
 # print(solution)
 
