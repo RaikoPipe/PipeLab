@@ -152,7 +152,7 @@
         <li><a href="app_util.html#module-app_util">module</a>
 </li>
       </ul></li>
-      <li><a href="app_util.html#app_util.append_texts_to_message">append_texts_to_message() (in module app_util)</a>
+      <li><a href="app_util.html#app_util.append_attributes_to_tree_entry">append_attributes_to_tree_entry() (in module app_util)</a>
 </li>
       <li><a href="process_state.html#process_state.ProcessState.assign_pipe_id">assign_pipe_id() (process_state.ProcessState method)</a>
 </li>
@@ -247,6 +247,8 @@
         <li><a href="app_util.html#app_util.update_button_grid.params.button_grid">(app_util.update_button_grid parameter)</a>
 </li>
       </ul></li>
+      <li><a href="app_util.html#app_util.get_button_grid.params.button_grid_frame">button_grid_frame (app_util.get_button_grid parameter)</a>
+</li>
       <li><a href="app_config.html#app_config.button_height">button_height (in module app_config)</a>
 </li>
       <li><a href="app_config.html#app_config.button_width">button_width (in module app_config)</a>
@@ -952,16 +954,20 @@
 </li>
       <li><a href="grid_functions.html#grid_functions.get_rendering_grid.params.node_dist">node_dist (grid_functions.get_rendering_grid parameter)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pp_util.html#pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set">node_pairs_set (pp_util.adjust_pos_in_node_pairs_set parameter)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="solution.html#solution.Solution.node_path">node_path (solution.Solution attribute)</a>
 </li>
       <li><a href="grid_functions.html#grid_functions.change_grid_states.params.node_states">node_states (grid_functions.change_grid_states parameter)</a>
 </li>
-      <li><a href="solution.html#solution.Solution.node_trail">node_trail (solution.Solution attribute)</a>
+      <li><a href="app_util.html#app_util.get_button_grid.params.node_trail">node_trail (app_util.get_button_grid parameter)</a>
+
+      <ul>
+        <li><a href="solution.html#solution.Solution.node_trail">(solution.Solution attribute)</a>
 </li>
+      </ul></li>
       <li><a href="type_aliases.html#type_aliases.NodePair">NodePair (in module type_aliases)</a>
 </li>
       <li><a href="type_aliases.html#type_aliases.NodePairSet">NodePairSet (in module type_aliases)</a>
@@ -1035,8 +1041,6 @@
       <li><a href="app_util.html#app_util.send_new_pick_event.params.part_id">part_id (app_util.send_new_pick_event parameter)</a>
 
       <ul>
-        <li><a href="app_util.html#app_util.update_process_message_tree.params.part_id">(app_util.update_process_message_tree parameter)</a>
-</li>
         <li><a href="construction_state.html#construction_state.ConstructionState.part_id">(construction_state.ConstructionState attribute)</a>
 </li>
         <li><a href="pick_event_info.html#pick_event_info.PickEventInfo.part_id">(pick_event_info.PickEventInfo attribute)</a>
@@ -1060,6 +1064,8 @@
 </li>
       <li><a href="process_state.html#process_state.ProcessState.part_removed">part_removed() (process_state.ProcessState method)</a>
 </li>
+      <li><a href="app_util.html#app_util.get_button_grid.params.part_select_option">part_select_option (app_util.get_button_grid parameter)</a>
+</li>
       <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.part_stock">part_stock (partial_solver.get_partial_solutions parameter)</a>
 
       <ul>
@@ -1076,12 +1082,16 @@
         <li><a href="solution.html#solution.Solution.part_stock">(solution.Solution attribute)</a>
 </li>
       </ul></li>
-      <li><a href="app_util.html#app_util.send_new_pick_event.params.part_stock_tree">part_stock_tree (app_util.send_new_pick_event parameter)</a>
+      <li><a href="app_util.html#app_util.get_button_grid.params.part_stock_tree">part_stock_tree (app_util.get_button_grid parameter)</a>
 
       <ul>
+        <li><a href="app_util.html#app_util.send_new_pick_event.params.part_stock_tree">(app_util.send_new_pick_event parameter)</a>
+</li>
         <li><a href="app_util.html#app_util.send_new_placement_event.params.part_stock_tree">(app_util.send_new_placement_event parameter)</a>
 </li>
         <li><a href="app_util.html#app_util.undo_action.params.part_stock_tree">(app_util.undo_action parameter)</a>
+</li>
+        <li><a href="app_util.html#app_util.update_trees_on_placement_event.params.part_stock_tree">(app_util.update_trees_on_placement_event parameter)</a>
 </li>
       </ul></li>
       <li><a href="predecessor.html#predecessor.Predecessor.part_to_predecessor">part_to_predecessor (predecessor.Predecessor attribute)</a>
@@ -1122,6 +1132,8 @@
       <li><a href="app.html#app.FunctionTestApp.params.path_problem">path_problem (app.FunctionTestApp parameter)</a>
 
       <ul>
+        <li><a href="app_util.html#app_util.get_button_grid.params.path_problem">(app_util.get_button_grid parameter)</a>
+</li>
         <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.path_problem">(partial_solver.get_partial_solutions parameter)</a>
 </li>
         <li><a href="path_util.html#path_util.construct_solution.params.path_problem">(path_util.construct_solution parameter)</a>
@@ -1175,10 +1187,10 @@
       </ul></li>
       <li><a href="process_state.html#process_state.ProcessState.pipe_placed">pipe_placed() (process_state.ProcessState method)</a>
 </li>
-      <li><a href="process_state.html#process_state.ProcessState.pipe_placed_detour_event">pipe_placed_detour_event() (process_state.ProcessState method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="process_state.html#process_state.ProcessState.pipe_placed_detour_event">pipe_placed_detour_event() (process_state.ProcessState method)</a>
+</li>
       <li><a href="process_state.html#process_state.ProcessState.pipe_placed_deviated_route">pipe_placed_deviated_route() (process_state.ProcessState method)</a>
 </li>
       <li><a href="path_util.html#path_util.pipe_stock_check">pipe_stock_check() (in module path_util)</a>
@@ -1254,14 +1266,16 @@
       </ul></li>
       <li><a href="randomizer.html#randomizer.set_random_obstacles.params.probability(obj">probability(obj (randomizer.set_random_obstacles parameter)</a>
 </li>
-      <li><a href="app_util.html#app_util.send_new_pick_event.params.process_message_tree">process_message_tree (app_util.send_new_pick_event parameter)</a>
+      <li><a href="app_util.html#app_util.get_button_grid.params.process_message_tree">process_message_tree (app_util.get_button_grid parameter)</a>
 
       <ul>
+        <li><a href="app_util.html#app_util.send_new_pick_event.params.process_message_tree">(app_util.send_new_pick_event parameter)</a>
+</li>
         <li><a href="app_util.html#app_util.send_new_placement_event.params.process_message_tree">(app_util.send_new_placement_event parameter)</a>
 </li>
         <li><a href="app_util.html#app_util.undo_action.params.process_message_tree">(app_util.undo_action parameter)</a>
 </li>
-        <li><a href="app_util.html#app_util.update_process_message_tree.params.process_message_tree">(app_util.update_process_message_tree parameter)</a>, <a href="app_util.html#app_util.update_process_message_tree.params.process_message_tree">[1]</a>
+        <li><a href="app_util.html#app_util.update_trees_on_placement_event.params.process_message_tree">(app_util.update_trees_on_placement_event parameter)</a>
 </li>
       </ul></li>
       <li>
@@ -1271,6 +1285,8 @@
         <li><a href="process_output.html#module-process_output">module</a>
 </li>
       </ul></li>
+      <li><a href="app_util.html#app_util.update_trees_on_placement_event.params.process_output">process_output (app_util.update_trees_on_placement_event parameter)</a>
+</li>
       <li>
     process_planner
 
@@ -1281,13 +1297,13 @@
       <li><a href="app.html#app.FunctionTestApp.params.process_planner">process_planner (app.FunctionTestApp parameter)</a>
 
       <ul>
+        <li><a href="app_util.html#app_util.get_button_grid.params.process_planner">(app_util.get_button_grid parameter)</a>
+</li>
         <li><a href="app_util.html#app_util.send_new_pick_event.params.process_planner">(app_util.send_new_pick_event parameter)</a>
 </li>
         <li><a href="app_util.html#app_util.send_new_placement_event.params.process_planner">(app_util.send_new_placement_event parameter)</a>
 </li>
         <li><a href="app_util.html#app_util.undo_action.params.process_planner">(app_util.undo_action parameter)</a>
-</li>
-        <li><a href="app_util.html#app_util.update_process_message_tree.params.process_planner">(app_util.update_process_message_tree parameter)</a>
 </li>
       </ul></li>
       <li>
@@ -1462,9 +1478,11 @@
         <li><a href="ps_util.html#ps_util.construct_building_instructions_from_solution.params.solution">(ps_util.construct_building_instructions_from_solution parameter)</a>
 </li>
       </ul></li>
-      <li><a href="app_util.html#app_util.send_new_placement_event.params.solution_button_grid">solution_button_grid (app_util.send_new_placement_event parameter)</a>
+      <li><a href="app_util.html#app_util.get_button_grid.params.solution_button_grid">solution_button_grid (app_util.get_button_grid parameter)</a>
 
       <ul>
+        <li><a href="app_util.html#app_util.send_new_placement_event.params.solution_button_grid">(app_util.send_new_placement_event parameter)</a>
+</li>
         <li><a href="app_util.html#app_util.undo_action.params.solution_button_grid">(app_util.undo_action parameter)</a>
 </li>
         <li><a href="app_util.html#app_util.update_solution_grid.params.solution_button_grid">(app_util.update_solution_grid parameter)</a>
@@ -1493,9 +1511,11 @@
       </ul></li>
       <li><a href="path_problem.html#path_problem.PathProblem.starting_part">starting_part (path_problem.PathProblem attribute)</a>
 </li>
-      <li><a href="grid_functions.html#grid_functions.change_grid_states.params.state_grid">state_grid (grid_functions.change_grid_states parameter)</a>
+      <li><a href="app_util.html#app_util.get_button_grid.params.state_grid">state_grid (app_util.get_button_grid parameter)</a>
 
       <ul>
+        <li><a href="grid_functions.html#grid_functions.change_grid_states.params.state_grid">(grid_functions.change_grid_states parameter)</a>
+</li>
         <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.state_grid">(partial_solver.get_partial_solutions parameter)</a>
 </li>
         <li><a href="path_problem.html#path_problem.PathProblem.state_grid">(path_problem.PathProblem attribute)</a>
@@ -1608,13 +1628,13 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="app_util.html#app_util.update_process_message_tree">update_process_message_tree() (in module app_util)</a>
-</li>
       <li><a href="app_util.html#app_util.update_solution_grid">update_solution_grid() (in module app_util)</a>
 </li>
       <li><a href="app_util.html#app_util.update_style_grid">update_style_grid() (in module app_util)</a>
 </li>
       <li><a href="app_util.html#app_util.update_tool_tip_text_grid">update_tool_tip_text_grid() (in module app_util)</a>
+</li>
+      <li><a href="app_util.html#app_util.update_trees_on_placement_event">update_trees_on_placement_event() (in module app_util)</a>
 </li>
   </ul></td>
 </tr></table>

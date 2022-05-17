@@ -93,10 +93,11 @@ class ProcessState:
         return None, None
 
     # events
-    def pick_part(self, part_id: int, ignore_empty_stock:bool) -> PickEventInfo:
+    def pick_part(self, event_code: int, part_id: int, ignore_empty_stock:bool) -> PickEventInfo:
         """Handling of a pick event.
 
         Args:
+            event_code(:obj:`int`): See :paramref:`~evaluate_placement.event_code`
             part_id (:obj:`int`): Part ID that was picked.
             ignore_empty_stock (:obj:`bool`): See :paramref:`~process_planner.ProcessPlanner.handle_motion_event.ignore_empty_stock`
         Returns:
@@ -116,7 +117,7 @@ class ProcessState:
         for p_id, amount in self.part_stock.items():
             if amount < 1:
                 stock_empty.add(p_id)
-        return PickEventInfo(part_id, time_registered=datetime.now(), stock_empty=stock_empty, error=error, part_not_available=part_not_available)
+        return PickEventInfo(part_id= part_id, time_registered=datetime.now(), stock_empty=stock_empty, error=error, part_not_available=part_not_available, event_code=event_code)
 
     def evaluate_placement(self, event_pos: Pos, event_code: int,
                            ignore_part_check: bool = False, ignore_obstructions: bool = False,

@@ -1,5 +1,3 @@
-
-
 import asyncio
 import logging
 
@@ -9,6 +7,10 @@ from process_planning.process_planner import ProcessPlanner
 
 logging.basicConfig(level=logging.INFO)
 
-if __name__ == "__main__":
-    process_planner = ProcessPlanner(initial_path_problem=path_problem)
+
+def start_server(process_planner):
     asyncio.run(main(process_planner))
+
+
+if __name__ == "__main__":
+    start_server(ProcessPlanner(initial_path_problem=path_problem))

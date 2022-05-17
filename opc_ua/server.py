@@ -1,9 +1,12 @@
 import asyncio
 import os
+from typing import Union
 
 from asyncua import ua, uamethod, Server
 
+from process_planning.pp_data_class.pick_event_info import PickEventInfo
 from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.process_output import ProcessOutput
 from process_planning.process_planner import ProcessPlanner
 
 
@@ -61,14 +64,15 @@ class PipeLabServer:
     @uamethod
     def send_motion_event(self, parent, x, y, code):
         if code == 4:
-            output = self.process_planner.handle_motion_event((x, code))
+            output: ProcessOutput = self.process_planner.handle_motion_event((x, code))
         else:
             output = self.process_planner.handle_motion_event(((x, y), code))
-        event_info: PlacementEventInfo = output.placement_event_info
+        event_info: Union[PlacementEventInfo, PickEventInfo] = output.current_event_info
         print('\033[92m' + "ProcessPlanner Output:")
         #pprint.pprint(output)
-        if event_info.detour_event:
-            return event_info.event_code, "Deviated from optimal solution!"
+        if isinstance(event_info,PlacementEventInfo):
+            if event_info.detour_event:
+                return event_info.event_code, "Deviated from optimal solution!"
         return event_info.event_code
 
     async def __aenter__(self):

@@ -15,14 +15,15 @@ from process_planning.process_util import pp_util
 from type_dictionary.class_types import BuildingInstructions
 from type_dictionary.type_aliases import *
 
-picking_robot_command_message_dict = {-2: "STOP",
-                                      -1: "Cancel all picking tasks",
-                                      0: "Go to neutral state",
-                                      1: "Move to pick-up point and pick part id: ",
-                                      2: "Move to return position and return of part id: ",  # unused
-                                      3: "Move to offering position",
-                                      4: "Wait for worker to accept part",
-                                      }
+picking_robot_command_message_dict = {
+    -2: "STOP",
+    -1: "Cancel all picking tasks",
+    0: "Go to neutral state",
+    1: "Move to pick-up point and pick part id: ",
+    2: "Move to return position and return of part id: ",  # unused
+    3: "Move to offering position",
+    4: "Wait for worker to accept part",
+}
 
 fastening_robot_command_message_dict = {
     -2: "STOP",
@@ -69,6 +70,9 @@ class ProcessPlanner:
                 if initial_process_state.aimed_solution:
                     self.optimal_solution = initial_process_state.aimed_solution
                     print("Process Planner: Assuming aimed solution from initial state as optimal solution.")
+            else:
+                raise Exception("No optimal solution found! Provide either a solvable path problem or an initial "
+                                "process state!")
         else:
             if not initial_process_state:
                 self.initial_process_state = ProcessState(self.optimal_solution)
@@ -84,6 +88,7 @@ class ProcessPlanner:
         self.previous_states = []  # contains all previous valid states
 
         self.last_process_state = self.initial_process_state  # last valid state
+        self.last_output = None
 
     def handle_motion_event(self, motion_event: MotionEvent, handle_detour_events: bool = True,
                             ignore_part_check: bool = False, ignore_empty_stock: bool = False,
@@ -116,7 +121,7 @@ class ProcessPlanner:
             picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
                                                                            process_state=tentative_process_state)
             part_id = event_pos
-            event_info: PickEventInfo = tentative_process_state.pick_part(part_id, ignore_empty_stock)
+            event_info: PickEventInfo = tentative_process_state.pick_part(event_code, part_id, ignore_empty_stock)
             tentative_process_state.last_pick_event_info = event_info
 
             messages = pp_util.make_pick_messages(event_info)
@@ -201,6 +206,8 @@ class ProcessPlanner:
                                        valid_placement_positions=valid_placement_positions,
                                        picking_robot_commands=picking_robot_commands,
                                        fastening_robot_commands=fastening_robot_commands)
+
+        self.last_output = process_output
 
         return process_output
 

@@ -8,6 +8,11 @@ from datetime import datetime
 class PickEventInfo():
     """Dataclass containing information about a pick event."""
 
+    event_code: int
+    """The Type of motion event.
+
+    *Type*: :obj:`int`"""
+
     part_id : int
     """Part ID of the part picked.
 
