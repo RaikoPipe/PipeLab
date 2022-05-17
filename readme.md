@@ -1,1 +1,0 @@
-Latest stable version of PipeLab

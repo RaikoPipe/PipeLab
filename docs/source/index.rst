@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PipeLab ProcessPlanner Documentation!
+PipeLab2 Documentation
 =================================================
 The PipeLab Module consists of several submodules and classes. It uses type aliases for easier comprehension of complex types,
 which can be found in :ref:`type dictionary <Type Dictionary>`. The most important modules are the :ref:`OPC-UA server <OPC_UA>`

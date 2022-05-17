@@ -82,7 +82,7 @@
 <span id="app-module"></span><h1>App module<a class="headerlink" href="#module-app" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.FunctionTestApp">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">FunctionTestApp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controlled_from_outside</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.FunctionTestApp" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">FunctionTestApp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_self_periodically</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.FunctionTestApp" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Provides a UI for the process planner, mainly for debugging purposes. Visualizes the process state.
 Initializes and uses an instance of a process planner.</p>
@@ -91,10 +91,21 @@ Initializes and uses an instance of a process planner.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><span class="target" id="app.FunctionTestApp.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – The initial path problem</p></li>
 <li><p><span class="target" id="app.FunctionTestApp.params.process_planner"></span><strong>process_planner</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.process_planner">¶</a> (<a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner" title="process_planner.ProcessPlanner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanner</span></code></a>) – A process planner instance.</p></li>
-<li><p><span class="target" id="app.FunctionTestApp.params.controlled_from_outside"></span><strong>controlled_from_outside</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.controlled_from_outside">¶</a> – Option, if event loops of the app are to be updated manually.</p></li>
+<li><p><span class="target" id="app.FunctionTestApp.params.update_self_periodically"></span><strong>update_self_periodically</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.update_self_periodically">¶</a> – Option, if event loops of the app are to be updated in intervals.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="app.FunctionTestApp.refresh">
+<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.FunctionTestApp.refresh" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="app.FunctionTestApp.update_app">
+<span class="sig-name descname"><span class="pre">update_app</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.FunctionTestApp.update_app" title="Permalink to this definition"></a></dt>
+<dd><p>Manually calls all app widgets to update according to the latest process state.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
