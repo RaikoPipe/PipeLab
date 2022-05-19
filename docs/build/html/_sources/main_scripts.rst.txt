@@ -1,5 +1,5 @@
 Main Scripts
-=======
+===============
 
 - **run_function_test_app**: Runs the function test app *only*.
 - **run_opcua_server**: Runs the OPC-UA server *only*.

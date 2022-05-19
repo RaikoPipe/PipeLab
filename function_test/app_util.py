@@ -15,8 +15,8 @@ from function_test.app_config import free_style, pipe_style, obs_style, att_styl
     message_construction_complete_color, message_detour_event_color, message_action_undone_color
 from path_finding.pf_data_class.path_problem import PathProblem
 from process_planning.pp_data_class.construction_state import ConstructionState
-from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
+from process_planning.pp_data_class.pick_event_result import PickEventResult
+from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.pp_data_class.process_output import ProcessOutput
 from process_planning.process_planner import ProcessPlanner
 from process_planning.process_state import ProcessState
@@ -26,12 +26,12 @@ from type_dictionary.type_aliases import StateGrid, Pos, NodeTrail
 message_count = 0
 
 
-def send_new_placement_event(pos:Pos, event_code:int, process_planner: ProcessPlanner, button_grid:numpy.ndarray,
-                             process_message_tree: ttk.Treeview,
-                             style_grid: numpy.ndarray,
-                             initial_style_grid: numpy.ndarray, part_stock_tree: ttk.Treeview,
-                             solution_button_grid: numpy.ndarray, tool_tip_text_grid: numpy.ndarray,
-                             update_self_periodically):
+def send_new_assembly_event(pos:Pos, event_code:int, process_planner: ProcessPlanner, button_grid:numpy.ndarray,
+                            process_message_tree: ttk.Treeview,
+                            style_grid: numpy.ndarray,
+                            initial_style_grid: numpy.ndarray, part_stock_tree: ttk.Treeview,
+                            solution_button_grid: numpy.ndarray, tool_tip_text_grid: numpy.ndarray,
+                            update_self_periodically):
     """Sends new pick event to :class:`~process_planner.ProcessPlanner` instance of :class:`~app.FunctionTestApp`.
 
     Args:
@@ -51,14 +51,14 @@ def send_new_placement_event(pos:Pos, event_code:int, process_planner: ProcessPl
     # pprint.pprint(output)
 
     process_state = output.process_state
-    event_info: AssemblyEventInfo = process_state.last_placement_event_info
+    event_result: AssemblyEventResult = process_state.last_assembly_event_result
     update_button_grid(button_grid, process_planner.last_process_state, style_grid, tool_tip_text_grid)
 
-    if event_info.detour_event or process_state.detour_trails:
+    if event_result.detour_event or process_state.detour_trails:
         update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
                              style_grid=initial_style_grid)
     if not update_self_periodically:
-        update_trees_on_placement_event(part_stock_tree, process_message_tree, output)
+        update_trees_on_assembly_event(part_stock_tree, process_message_tree, output)
 
 
 def send_new_pick_event(part_id: int, process_planner: ProcessPlanner, process_message_tree: ttk.Treeview, part_stock_tree: ttk.Treeview, update_self_periodically):
@@ -90,13 +90,13 @@ def update_trees_on_pick_event(output: ProcessOutput, part_id:int, part_stock_tr
         part_stock_tree(:obj:`ttk.Treeview`): See :paramref:`~send_new_pick_event.part_stock_tree`
         """
     global message_count
-    event_info: PickEventInfo = output.current_event_info
+    event_result: PickEventResult = output.current_event_result
     # pprint.pprint(output)
     message = output.messages[0]
     special_message = output.messages[1]
     process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
                                 text=message.replace("Process Planner: ", ""))
-    if event_info.error:
+    if event_result.error:
         process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground="white")
     else:
         process_message_tree.tag_configure(tagname=message_count, background=message_conformal_assembly_color,
@@ -107,7 +107,7 @@ def update_trees_on_pick_event(output: ProcessOutput, part_id:int, part_stock_tr
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=special_message)
         extra_message_ids.append(message_count)
         message_count += 1
-    append_attributes_to_tree_entry(event_info, extra_message_ids, process_message_tree)
+    append_attributes_to_tree_entry(event_result, extra_message_ids, process_message_tree)
     item = part_stock_tree.get_children()[part_id]
     part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
                                        process_planner.last_process_state.part_stock[part_id]))
@@ -369,7 +369,7 @@ def update_solution_grid(process_state: ProcessState, solution_button_grid: np.n
     solution_button_grid[goal].configure(style=goal_success_style)
 
 
-def update_trees_on_placement_event(part_stock_tree: ttk.Treeview, process_message_tree: ttk.Treeview, process_output: ProcessOutput):
+def update_trees_on_assembly_event(part_stock_tree: ttk.Treeview, process_message_tree: ttk.Treeview, process_output: ProcessOutput):
     """Updates the given process message treeview and part stock treeview instance with the updated data in process_output.
 
     Args:
@@ -382,7 +382,7 @@ def update_trees_on_placement_event(part_stock_tree: ttk.Treeview, process_messa
     process_state = process_output.process_state
     messages = process_output.messages
     next_recommended_action = process_output.next_recommended_action
-    event_info = process_output.current_event_info
+    event_result = process_output.current_event_result
 
     message = messages[0]
     special_message = messages[1]
@@ -391,13 +391,13 @@ def update_trees_on_placement_event(part_stock_tree: ttk.Treeview, process_messa
     if message:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
                                     text=message.replace("Process Planner: ", ""))
-        if any((event_info.deviated, event_info.unnecessary, event_info.misplaced)):
-            if not event_info.removal:
+        if any((event_result.deviated, event_result.unnecessary, event_result.misplaced)):
+            if not event_result.removal:
                 process_message_tree.tag_configure(tagname=message_count, background=message_deviated_assembly_color, foreground="black")
         else:
             process_message_tree.tag_configure(tagname=message_count, background=message_conformal_assembly_color, foreground="black")
 
-        if event_info.error:
+        if event_result.error:
             process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground="white")
 
         extra_message_ids = [message_count]
@@ -414,7 +414,7 @@ def update_trees_on_placement_event(part_stock_tree: ttk.Treeview, process_messa
             extra_message_ids.append(message_count)
             message_count += 1
 
-        append_attributes_to_tree_entry(event_info, extra_message_ids, process_message_tree)
+        append_attributes_to_tree_entry(event_result, extra_message_ids, process_message_tree)
     if detour_message:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=detour_message)
         process_message_tree.tag_configure(tagname=message_count, background=message_detour_event_color, foreground="black")
@@ -432,20 +432,20 @@ def update_trees_on_placement_event(part_stock_tree: ttk.Treeview, process_messa
     process_message_tree.yview_moveto(1)
 
 
-def append_attributes_to_tree_entry(event_info:Union[AssemblyEventInfo, PickEventInfo], extra_message_ids:list, process_message_tree: ttk.Treeview):
+def append_attributes_to_tree_entry(event_result:Union[AssemblyEventResult, PickEventResult], extra_message_ids:list, process_message_tree: ttk.Treeview):
     """Inserts attributes in event_info to the given process message treeview and appends them to the parent
     entry specified in the first list entry of extra_message_ids.
 
     Args:
-        event_info(:obj:`Union` [:class:`~placement_event_info.PlacementEventInfo`, :class:`~pick_event_info.PickEventInfo`])
+        event_result(:obj:`Union` [:class:`~assembly_event_result.AssemblyEventResult`, :class:`~pick_event_result.PickEventResult`])
         extra_message_ids(:obj`list`): List containing IDs of entries to add to a parent entry. First entry in the list must
         be the ID of the parent entry.
         process_message_tree(:obj:`ttk.Treeview`): Process message treeview of the app.
 
     """
     global message_count
-    for attribute in vars(event_info):
-        value = event_info.__getattribute__(attribute)
+    for attribute in vars(event_result):
+        value = event_result.__getattribute__(attribute)
         if attribute == "detour_event" and value:
             value = True
         elif attribute == "time_registered":
@@ -545,12 +545,12 @@ def get_button_grid(state_grid: StateGrid, node_trail: NodeTrail, button_grid_fr
                 Hovertip(button, text, hover_delay=0)
             else:
                 Hovertip(button, tool_tip_text_grid[pos], hover_delay=0)
-            command = lambda t=pos: send_new_placement_event(t, part_select_option.get(), process_planner, button_grid,
-                                                             process_message_tree, style_grid, initial_style_grid,
-                                                             part_stock_tree=part_stock_tree,
-                                                             solution_button_grid=solution_button_grid,
-                                                             tool_tip_text_grid=tool_tip_text_grid,
-                                                             update_self_periodically= update_self_periodically)
+            command = lambda t=pos: send_new_assembly_event(t, part_select_option.get(), process_planner, button_grid,
+                                                            process_message_tree, style_grid, initial_style_grid,
+                                                            part_stock_tree=part_stock_tree,
+                                                            solution_button_grid=solution_button_grid,
+                                                            tool_tip_text_grid=tool_tip_text_grid,
+                                                            update_self_periodically= update_self_periodically)
             button.config(command=command)
 
 

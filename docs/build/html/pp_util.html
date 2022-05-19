@@ -179,12 +179,12 @@ process_state (<a class="reference internal" href="process_state.html#process_st
 <dl class="py function">
 <dt class="sig sig-object py" id="pp_util.make_registration_message">
 <span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_registration_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_registration_message" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a message as string confirming a placement or removal event.</p>
+<dd><p>Returns a message as string confirming a assembly or removal event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><span class="target" id="pp_util.make_registration_message.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_registration_message.params.event_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – See <code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></p></li>
-<li><p><span class="target" id="pp_util.make_registration_message.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_registration_message.params.event_code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – See <a class="reference internal" href="process_state.html#process_state.ProcessState.evaluate_placement.params.event_code" title="process_state.ProcessState.evaluate_placement"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
+<li><p><span class="target" id="pp_util.make_registration_message.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_registration_message.params.event_code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – See <a class="reference internal" href="process_state.html#process_state.ProcessState.evaluate_assembly.params.event_code" title="process_state.ProcessState.evaluate_assembly"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -196,7 +196,7 @@ process_state (<a class="reference internal" href="process_state.html#process_st
 <dl class="py function">
 <dt class="sig sig-object py" id="pp_util.make_special_message">
 <span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_special_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">note</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_special_message" title="Permalink to this definition"></a></dt>
-<dd><p>Returns a special message as string, usually used in case of deviated placements.</p>
+<dd><p>Returns a special message as string, usually used in case of deviated assemblys.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -224,12 +224,12 @@ information regarding the reason for the error.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pp_util.make_placement_messages">
-<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_placement_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_placement_messages" title="Permalink to this definition"></a></dt>
-<dd><p>Produces a message according to the given event info.</p>
+<dt class="sig sig-object py" id="pp_util.make_assembly_messages">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_assembly_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_assembly_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Produces a message according to the given event result.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="pp_util.make_placement_messages.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_placement_messages.params.event_info">¶</a> (<a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a>) – See <a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a></p>
+<dd class="field-odd"><p><span class="target" id="pp_util.make_assembly_messages.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_assembly_messages.params.event_result">¶</a> (<a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>) – See <a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a></p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing a message.</p>
@@ -239,11 +239,11 @@ information regarding the reason for the error.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pp_util.make_pick_messages">
-<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_pick_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_pick_messages" title="Permalink to this definition"></a></dt>
-<dd><p>Produces a message according to the given event info.</p>
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">make_pick_messages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.make_pick_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Produces a message according to the given event result.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="pp_util.make_pick_messages.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_pick_messages.params.event_info">¶</a> (<a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventInfo</span></code></a>) – See <a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventInfo</span></code></a></p>
+<dd class="field-odd"><p><span class="target" id="pp_util.make_pick_messages.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_pick_messages.params.event_result">¶</a> (<a class="reference internal" href="pick_event_result.html#pick_event_result.PickEventResult" title="pick_event_result.PickEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a>) – See <a class="reference internal" href="pick_event_result.html#pick_event_result.PickEventResult" title="pick_event_result.PickEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a></p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing a message.</p>
@@ -252,14 +252,14 @@ information regarding the reason for the error.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="pp_util.get_valid_placement_positions">
-<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_valid_placement_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_valid_placement_positions" title="Permalink to this definition"></a></dt>
-<dd><p>Returns all valid placement positions for the part that was picked.</p>
+<dt class="sig sig-object py" id="pp_util.get_valid_assembly_positions">
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_valid_assembly_positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_valid_assembly_positions" title="Permalink to this definition"></a></dt>
+<dd><p>Returns all valid assembly positions for the part that was picked.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="pp_util.get_valid_placement_positions.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_placement_positions.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The process state after the motion event has been evaluated</p></li>
-<li><p><span class="target" id="pp_util.get_valid_placement_positions.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_placement_positions.params.part_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Part ID</p></li>
+<li><p><span class="target" id="pp_util.get_valid_assembly_positions.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_assembly_positions.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The process state after the motion event has been evaluated</p></li>
+<li><p><span class="target" id="pp_util.get_valid_assembly_positions.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_assembly_positions.params.part_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Part ID</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

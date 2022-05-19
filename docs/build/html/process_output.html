@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Process Planning Utility Module" href="process_planning_util.html" />
-    <link rel="prev" title="PickEventInfo dataclass" href="pick_event_info.html" /> 
+    <link rel="prev" title="PickEventResult dataclass" href="pick_event_result.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,8 +47,8 @@
 <li class="toctree-l2 current"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="building_instruction.html">BuildingInstruction class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="construction_state.html">ConstructionState dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="placement_event_info.html">PlacementEventInfo dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pick_event_info.html">PickEventInfo dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="assembly_event_result.html">AssemblyEventInfo dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pick_event_result.html">PickEventResult dataclass</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ProcessOutput dataclass</a></li>
 </ul>
 </li>
@@ -93,7 +93,7 @@
 <p>Dataclass for neatly outputting data returned from <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner" title="process_planner.ProcessPlanner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanner</span></code></a>.</p>
 <span class="target" id="module-process_output"></span><dl class="py class">
 <dt class="sig sig-object py" id="process_output.ProcessOutput">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">process_output.</span></span><span class="sig-name descname"><span class="pre">ProcessOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picking_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastening_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_recommended_action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_placement_positions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_output.ProcessOutput" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">process_output.</span></span><span class="sig-name descname"><span class="pre">ProcessOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_event_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picking_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastening_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_recommended_action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_assembly_positions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_output.ProcessOutput" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Output dataclass for neatly outputting the return for
 <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.handle_motion_event" title="process_planner.ProcessPlanner.handle_motion_event"><code class="xref py py-meth docutils literal notranslate"><span class="pre">handle_motion_event()</span></code></a>.</p>
@@ -105,13 +105,13 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="process_output.ProcessOutput.current_event_info">
-<span class="sig-name descname"><span class="pre">current_event_info</span></span><a class="headerlink" href="#process_output.ProcessOutput.current_event_info" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="process_output.ProcessOutput.current_event_result">
+<span class="sig-name descname"><span class="pre">current_event_result</span></span><a class="headerlink" href="#process_output.ProcessOutput.current_event_result" title="Permalink to this definition"></a></dt>
 <dd><dl class="simple">
-<dt>Evaluated information on the current event. Can be either <a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a></dt><dd><p>or <a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">pick_event_info.PickEventInfo</span></code></a> depending on the evaluated motion event.</p>
+<dt>Evaluated information on the current event. Can be either <a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a></dt><dd><p>or <a class="reference internal" href="pick_event_result.html#pick_event_result.PickEventResult" title="pick_event_result.PickEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">pick_event_result.PickEventResult</span></code></a> depending on the evaluated motion event.</p>
 </dd>
 </dl>
-<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="placement_event_info.html#placement_event_info.PlacementEventInfo" title="placement_event_info.PlacementEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlacementEventInfo</span></code></a>, <a class="reference internal" href="pick_event_info.html#pick_event_info.PickEventInfo" title="pick_event_info.PickEventInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventInfo</span></code></a>]</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>, <a class="reference internal" href="pick_event_result.html#pick_event_result.PickEventResult" title="pick_event_result.PickEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a>]</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -145,9 +145,9 @@ See parameter <a class="reference internal" href="process_planner.html#process_p
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="process_output.ProcessOutput.valid_placement_positions">
-<span class="sig-name descname"><span class="pre">valid_placement_positions</span></span><a class="headerlink" href="#process_output.ProcessOutput.valid_placement_positions" title="Permalink to this definition"></a></dt>
-<dd><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> containing valid placement <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a> for the part ID that was picked.</p>
+<dt class="sig sig-object py" id="process_output.ProcessOutput.valid_assembly_positions">
+<span class="sig-name descname"><span class="pre">valid_assembly_positions</span></span><a class="headerlink" href="#process_output.ProcessOutput.valid_assembly_positions" title="Permalink to this definition"></a></dt>
+<dd><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> containing valid assembly <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a> for the part ID that was picked.</p>
 <p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>]</p>
 </dd></dl>
 
@@ -159,7 +159,7 @@ See parameter <a class="reference internal" href="process_planner.html#process_p
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pick_event_info.html" class="btn btn-neutral float-left" title="PickEventInfo dataclass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pick_event_result.html" class="btn btn-neutral float-left" title="PickEventResult dataclass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="process_planning_util.html" class="btn btn-neutral float-right" title="Process Planning Utility Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

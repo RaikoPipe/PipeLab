@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Union
 
-from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
+from process_planning.pp_data_class.pick_event_result import PickEventResult
+from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.process_state import ProcessState
 from type_dictionary.type_aliases import Action, Pos
 
@@ -16,11 +16,11 @@ class ProcessOutput:
     """Updated process state after a motion event.
     
     *Type*: :class:`~process_state.ProcessState`"""
-    current_event_info: Union[AssemblyEventInfo, PickEventInfo, None]
-    """Evaluated information on the current event. Can be either :class:`~placement_event_info.PlacementEventInfo`
-     or :class:`pick_event_info.PickEventInfo` depending on the evaluated motion event.
+    current_event_result: Union[AssemblyEventResult, PickEventResult, None]
+    """Evaluated information on the current event. Can be either :class:`~assembly_event_result.AssemblyEventResult`
+     or :class:`pick_event_result.PickEventResult` depending on the evaluated motion event.
     
-    *Type*: :obj:`Union` [:class:`~placement_event_info.PlacementEventInfo`, :class:`~pick_event_info.PickEventInfo`]"""
+    *Type*: :obj:`Union` [:class:`~assembly_event_result.AssemblyEventResult`, :class:`~pick_event_result.PickEventResult`]"""
     messages: tuple[str]
     """A :obj:`tuple` containing :obj:`str` messages.
     These messages confirm a motion event or an error. For easily consumable feedback for the input motion event.
@@ -44,8 +44,8 @@ class ProcessOutput:
     
     *Type*: :obj:`~type_aliases.Action`"""
 
-    valid_placement_positions: set[Pos]
+    valid_assembly_positions: set[Pos]
     """
-    :obj:`set` containing valid placement :obj:`~type_aliases.Pos` for the part ID that was picked.
+    :obj:`set` containing valid assembly :obj:`~type_aliases.Pos` for the part ID that was picked.
     
     *Type*: :obj:`set` [:obj:`~type_aliases.Pos`]"""

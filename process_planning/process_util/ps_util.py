@@ -16,7 +16,7 @@ def get_optimal_attachment_pos(state_grid: StateGrid, pos: Pos, part_id: int, di
         pos(:obj:`~type_aliases.Pos`): Starting position of a pipe.
         state_grid(:obj:`~type_aliases.StateGrid`): See type for explanation. Only parts and obstacles are considered as obstacles.
      Returns:
-         Optimal (:obj:`~type_aliases.Pos`) for attachment placement.
+         Optimal (:obj:`~type_aliases.Pos`) for attachment assembly.
          """
     # old function that needs refactoring, but fulfills its purpose nonetheless
     countList = []

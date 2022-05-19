@@ -6,7 +6,7 @@ from function_test import app_util
 from function_test.app_config import treeview_style, configure_style, dark_theme, dark_theme_use, light_theme_use
 from function_test.app_util import undo_action, send_new_pick_event, get_button_grid
 from path_finding.pf_data_class.path_problem import PathProblem
-from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
+from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.process_planner import ProcessPlanner
 
 button_dict = {}
@@ -191,21 +191,21 @@ class FunctionTestApp:
     def update_app(self):
         """Manually calls all app widgets to update according to the latest process state."""
         process_state = self.process_planner.last_process_state
-        if process_state.last_placement_event_info or process_state.last_pick_event_info:
-            if self.process_planner.last_output.current_event_info.time_registered > self.last_event_time:
-                self.last_event_time = self.process_planner.last_output.current_event_info.time_registered
-                if isinstance(self.process_planner.last_output.current_event_info, AssemblyEventInfo):
+        if process_state.last_assembly_event_result or process_state.last_pick_event_result:
+            if self.process_planner.last_output.current_event_result.time_registered > self.last_event_time:
+                self.last_event_time = self.process_planner.last_output.current_event_result.time_registered
+                if isinstance(self.process_planner.last_output.current_event_result, AssemblyEventResult):
                     app_util.update_button_grid(button_grid=self.construction_button_grid, process_state=process_state,
                                                 style_grid=self.style_grid, tool_tip_text_grid=self.tool_tip_text_grid)
-                    app_util.update_trees_on_placement_event(self.part_stock_tree, self.process_message_tree,
-                                                             self.process_planner.last_output)
-                    if process_state.last_placement_event_info.detour_event or process_state.detour_trails:
+                    app_util.update_trees_on_assembly_event(self.part_stock_tree, self.process_message_tree,
+                                                            self.process_planner.last_output)
+                    if process_state.last_assembly_event_result.detour_event or process_state.detour_trails:
                         app_util.update_solution_grid(process_state=process_state,
                                                       solution_button_grid=self.solution_button_grid,
                                                       style_grid=app_util.initial_style_grid)
 
 
                 else:
-                    part_id = process_state.last_pick_event_info.part_id
+                    part_id = process_state.last_pick_event_result.part_id
                     app_util.update_trees_on_pick_event(self.process_planner.last_output, part_id, self.part_stock_tree,
                                                         self.process_message_tree, self.process_planner)

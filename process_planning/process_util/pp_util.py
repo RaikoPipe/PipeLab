@@ -7,8 +7,8 @@ from path_finding import partial_solver
 from path_finding.path_finding_util.path_math import get_direction, diff_pos
 from path_finding.pf_data_class.path_problem import PathProblem
 from path_finding.pf_data_class.solution import Solution
-from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
+from process_planning.pp_data_class.pick_event_result import PickEventResult
+from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.process_state import ProcessState
 from type_dictionary import constants
 from type_dictionary.class_types import *
@@ -220,18 +220,18 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
 
 
 def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pipe_id: int) -> str:
-    """Returns a message as string confirming a placement or removal event.
+    """Returns a message as string confirming a assembly or removal event.
 
     Args:
-        event_pos (:obj:`~type_aliases.Pos`): See :paramref:`~process_planning.ProcessState.evaluate_placement.event_pos`
-        event_code (:obj:`int`): See :paramref:`~process_state.ProcessState.evaluate_placement.event_code`
+        event_pos (:obj:`~type_aliases.Pos`): See :paramref:`~process_planning.ProcessState.evaluate_assembly.event_pos`
+        event_code (:obj:`int`): See :paramref:`~process_state.ProcessState.evaluate_assembly.event_code`
 
     Returns:
         :obj:`str`
         """
 
     object_name = message_dict[event_code]
-    motion_type = "placement"
+    motion_type = "assembly"
     if removal:
         motion_type = "removal"
 
@@ -249,7 +249,7 @@ def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pi
 
 
 def make_special_message(note: str, event_pos: Pos) -> str:
-    """Returns a special message as string, usually used in case of deviated placements."""
+    """Returns a special message as string, usually used in case of deviated assemblys."""
     message = str.format(f"Process Planner: Position {event_pos}: {note} ")
     return message
 
@@ -314,11 +314,11 @@ def get_next_recommended_action(process_state, building_instruction) -> Action:
     return rec_pos, rec_event, rec_part_id
 
 
-def make_placement_messages(event_info: AssemblyEventInfo) -> (str, str):
-    """Produces a message according to the given event info.
+def make_assembly_messages(event_result: AssemblyEventResult) -> (str, str):
+    """Produces a message according to the given event result.
 
     Args:
-        event_info(:class:`~placement_event_info.PlacementEventInfo`): See :class:`~placement_event_info.PlacementEventInfo`
+        event_result(:class:`~assembly_event_result.AssemblyEventResult`): See :class:`~assembly_event_result.AssemblyEventResult`
 
     Returns:
         :obj:`tuple` containing a message.
@@ -326,74 +326,74 @@ def make_placement_messages(event_info: AssemblyEventInfo) -> (str, str):
 
     note = None
 
-    if event_info.obstructed_obstacle:
-        note = str.format(f"Obstructed obstacle while placing {message_dict[event_info.event_code]}")
+    if event_result.obstructed_obstacle:
+        note = str.format(f"Obstructed obstacle while placing {message_dict[event_result.event_code]}")
 
-    if event_info.obstructed_part:
+    if event_result.obstructed_part:
         note = str.format(
-            f"Obstructed {message_dict[event_info.obstructed_part]} while placing {message_dict[event_info.event_code]}")
+            f"Obstructed {message_dict[event_result.obstructed_part]} while placing {message_dict[event_result.event_code]}")
 
-    if event_info.removal:
-        if event_info.unnecessary:
-            note = str.format(f"Removed unnecessary {message_dict[event_info.event_code]}")
-        elif event_info.misplaced:
-            note = str.format(f"Removed misplaced {message_dict[event_info.event_code]}")
-        elif event_info.deviated:
-            note = str.format(f"Removed deviating {message_dict[event_info.event_code]}")
+    if event_result.removal:
+        if event_result.unnecessary:
+            note = str.format(f"Removed unnecessary {message_dict[event_result.event_code]}")
+        elif event_result.misplaced:
+            note = str.format(f"Removed misplaced {message_dict[event_result.event_code]}")
+        elif event_result.deviated:
+            note = str.format(f"Removed deviating {message_dict[event_result.event_code]}")
     else:
-        if event_info.unnecessary:
-            note = str.format(f"Unnecessary {message_dict[event_info.event_code]} detected!")
-        elif event_info.deviated:
-            note = str.format(f"Deviating {message_dict[event_info.event_code]} detected!")
-        elif event_info.misplaced:
-            note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
+        if event_result.unnecessary:
+            note = str.format(f"Unnecessary {message_dict[event_result.event_code]} detected!")
+        elif event_result.deviated:
+            note = str.format(f"Deviating {message_dict[event_result.event_code]} detected!")
+        elif event_result.misplaced:
+            note = str.format(f"Misplaced {message_dict[event_result.event_code]} detected!")
 
-    if event_info.part_not_picked:
-        if event_info.part_id == -99:
-            note = str.format(f"Placed {message_dict[event_info.event_code]}"
+    if event_result.part_not_picked:
+        if event_result.part_id == -99:
+            note = str.format(f"Placed {message_dict[event_result.event_code]}"
                               f", but part was not picked!")
         else:
-            note = str.format(f"Placed id {event_info.part_id} "
+            note = str.format(f"Placed id {event_result.part_id} "
                               f", but not picked!")
 
     # make messages
-    if event_info.error:
-        message = make_error_message(event_pos=event_info.event_pos,
+    if event_result.error:
+        message = make_error_message(event_pos=event_result.event_pos,
                                      note=note)
-    elif event_info.deviated:
-        message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
-                                            removal=event_info.removal, pipe_id=event_info.part_id)
+    elif event_result.deviated:
+        message = make_registration_message(event_pos=event_result.event_pos, event_code=event_result.event_code,
+                                            removal=event_result.removal, pipe_id=event_result.part_id)
 
     else:
-        message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
-                                            removal=event_info.removal, pipe_id=event_info.part_id)
+        message = make_registration_message(event_pos=event_result.event_pos, event_code=event_result.event_code,
+                                            removal=event_result.removal, pipe_id=event_result.part_id)
 
     return message, note
 
 
-def make_pick_messages(event_info: PickEventInfo) -> (str, str):
-    """Produces a message according to the given event info.
+def make_pick_messages(event_result: PickEventResult) -> (str, str):
+    """Produces a message according to the given event result.
 
     Args:
-        event_info(:class:`~pick_event_info.PickEventInfo`): See :class:`~pick_event_info.PickEventInfo`
+        event_result(:class:`~pick_event_result.PickEventResult`): See :class:`~pick_event_result.PickEventResult`
 
     Returns:
         :obj:`tuple` containing a message.
     """
     message = None
     note = None
-    if event_info.error:
-        message = str.format(f"Error while picking part with ID {event_info.part_id}!")
-        if event_info.part_not_available:
-            note = str.format(f"Stock for part with ID {event_info.part_id} empty!")
+    if event_result.error:
+        message = str.format(f"Error while picking part with ID {event_result.part_id}!")
+        if event_result.part_not_available:
+            note = str.format(f"Stock for part with ID {event_result.part_id} empty!")
     else:
-        message = str.format(f"Process Planner: Picked part with ID {event_info.part_id}")
+        message = str.format(f"Process Planner: Picked part with ID {event_result.part_id}")
 
     return message, note
 
 
-def get_valid_placement_positions(process_state: ProcessState, part_id: int) -> set[Union[Pos, Trail]]:
-    """Returns all valid placement positions for the part that was picked.
+def get_valid_assembly_positions(process_state: ProcessState, part_id: int) -> set[Union[Pos, Trail]]:
+    """Returns all valid assembly positions for the part that was picked.
 
     Args:
         process_state(:class:`~process_state.ProcessState`): The process state after the motion event has been evaluated

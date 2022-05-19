@@ -9,8 +9,8 @@ from type_dictionary.type_aliases import *
 
 
 @dataclass
-class AssemblyEventInfo(ConstructionState):
-    """Dataclass containing information about a placement/removal/error event."""
+class AssemblyEventResult(ConstructionState):
+    """Dataclass containing information about the result of a assembly or removal event."""
 
     removal: bool
     """If a part was removed.
@@ -40,11 +40,11 @@ class AssemblyEventInfo(ConstructionState):
     
     *Type*: :obj:`bool`"""
     obstructed_obstacle: bool
-    """Error specifier. If an obstacle was obstructed by a placement.
+    """Error specifier. If an obstacle was obstructed by a assembly.
     
     *Type*: :obj:`bool`"""
     obstructed_part: int
-    """Error specifier. If another part was obstructed by a placement.
+    """Error specifier. If another part was obstructed by a assembly.
     
     *Type*: :obj:`int`"""
 

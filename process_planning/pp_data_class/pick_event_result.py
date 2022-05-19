@@ -5,8 +5,8 @@ from datetime import datetime
 
 
 @dataclass
-class PickEventInfo():
-    """Dataclass containing information about a pick event."""
+class PickEventResult():
+    """Dataclass containing information about the result of a pick event."""
 
     event_code: int
     """The Type of motion event.
