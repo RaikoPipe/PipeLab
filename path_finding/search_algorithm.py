@@ -56,7 +56,7 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
 
     predecessors = {
         key_dict.get(fast_mode): Predecessor(state_grid=state_grid, direction=None, path=(), part_to_predecessor=None,
-                                             part_to_successor=0,
+                                             part_to_successor=constants.fitting_id,
                                              part_stock=path_problem.part_stock, pos=None)}
     current_state_grid = state_grid
     current_state_grid[start_pos] = 2

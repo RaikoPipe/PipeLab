@@ -3,6 +3,7 @@ from typing import Optional
 import vpython as vpy
 
 from path_finding.path_finding_util.path_math import diff_pos, get_direction
+from type_dictionary import constants
 from type_dictionary.type_aliases import *
 from vpython_rendering.object_rendering import render_obstacle, render_pipe, render_corner, render_marker
 
@@ -16,7 +17,7 @@ def render_obstacles_from_state_grid(state_grid: StateGrid, rendering_grid: np.n
     obstacle_compound_list = []
     for index, state in np.ndenumerate(state_grid):
         rendering_grid_pos = vpy.vector(rendering_grid[index])
-        if state == 1:  # spot is obstructed
+        if state == constants.obstacle_state:  # spot is obstructed
             obstacle = render_obstacle(scene, rendering_grid_pos)
             obstacle_compound_list.append(obstacle)
     if not obstacle_compound_list:

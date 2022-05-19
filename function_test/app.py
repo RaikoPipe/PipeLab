@@ -6,7 +6,7 @@ from function_test import app_util
 from function_test.app_config import treeview_style, configure_style, dark_theme, dark_theme_use, light_theme_use
 from function_test.app_util import undo_action, send_new_pick_event, get_button_grid
 from path_finding.pf_data_class.path_problem import PathProblem
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
 from process_planning.process_planner import ProcessPlanner
 
 button_dict = {}
@@ -87,11 +87,11 @@ class FunctionTestApp:
         self.part_stock_tree = ttk.Treeview(part_stock_frame, columns=("part_id", "picked", "stock"), show="headings",
                                             style=treeview_style)
         self.part_stock_tree.heading("part_id", text="Part ID")
-        self.part_stock_tree.heading("picked", text="Picked")
+        self.part_stock_tree.heading("picked", text="Holding")
         self.part_stock_tree.heading("stock", text="Stock")
-        self.part_stock_tree.column("part_id", width=60)
-        self.part_stock_tree.column("picked", width=60)
-        self.part_stock_tree.column("stock", width=60)
+        self.part_stock_tree.column("part_id", width=70)
+        self.part_stock_tree.column("picked", width=70)
+        self.part_stock_tree.column("stock", width=70)
         self.part_stock_tree.grid(row=0, column=0)
 
         # set a scrollbar for the part stock view
@@ -99,7 +99,7 @@ class FunctionTestApp:
         self.part_stock_tree.configure(yscroll=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
-        part_put_frame = ttk.LabelFrame(tool_frame, text="Placement:")
+        part_put_frame = ttk.LabelFrame(tool_frame, text="Assembly Event:")
         part_put_frame.grid(row=0, column=0, padx=5)
 
         att_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Attachment", variable=part_select_option,
@@ -194,7 +194,7 @@ class FunctionTestApp:
         if process_state.last_placement_event_info or process_state.last_pick_event_info:
             if self.process_planner.last_output.current_event_info.time_registered > self.last_event_time:
                 self.last_event_time = self.process_planner.last_output.current_event_info.time_registered
-                if isinstance(self.process_planner.last_output.current_event_info, PlacementEventInfo):
+                if isinstance(self.process_planner.last_output.current_event_info, AssemblyEventInfo):
                     app_util.update_button_grid(button_grid=self.construction_button_grid, process_state=process_state,
                                                 style_grid=self.style_grid, tool_tip_text_grid=self.tool_tip_text_grid)
                     app_util.update_trees_on_placement_event(self.part_stock_tree, self.process_message_tree,

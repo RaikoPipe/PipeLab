@@ -16,7 +16,7 @@ def get_min_o_reduction(current_node, length: int, relative_direction: tuple, ax
         n_relative_direction = (relative_direction[0] + (axis[0] * i), relative_direction[1] + (axis[1] * i))
         b_relative_direction = (current_node[0] + n_relative_direction[0], current_node[1] + n_relative_direction[1])
         if not out_of_bounds(b_relative_direction, state_grid):
-            if state_grid[b_relative_direction] != 0:
+            if state_grid[b_relative_direction] != constants.free_state:
                 continue
         reduction = reduction + 1
     return reduction
@@ -53,7 +53,7 @@ def get_worst_move_cost(part_cost: dict) -> (float, list):
     worst_moves = []
     for _, (part_id, cost) in enumerate(part_cost.items()):
         length = part_id
-        if part_id == 0:
+        if part_id == constants.fitting_id:
             length = 1
         if worst_move_cost <= cost / length:
             worst_move_cost = cost / length

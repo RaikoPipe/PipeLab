@@ -37,5 +37,11 @@ fitting_id = 0  #: fitting id convention
 fit_event_code = 1  #: Fitting placed
 pipe_event_code = 2  #: Pipe placed
 att_event_code = 3  #: Attachment placed
-pick_event_code = 4  #: Part picked from robot
+pick_robot_event_code = 4  #: Part picked from robot
 pick_manual_event_code = 5  #: Part picked manually
+
+# state codes
+free_state = 0
+obstacle_state = 1
+part_state = 2
+transition_state = 3

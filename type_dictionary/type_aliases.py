@@ -65,7 +65,7 @@ MotionEvent = tuple[Union[Pos, int], int]
 2 -> pipe placed\n
 3 -> attachment placed\n
 4 -> accepted part from picking robot\n
-5 -> picked part manually #unused
+5 -> picked part manually 
 
 *Type*: (:obj:`tuple` [:obj:`Union` [:obj:`~type_aliases.Pos`, :obj:`int`], :obj:`int`])
 """

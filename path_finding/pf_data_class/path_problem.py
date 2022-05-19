@@ -80,6 +80,11 @@ class PathProblem:
     algorithm: str = "mcsa*"
     """
     Defines how scores are calculated and therefore how nodes are evaluated in the search.
+    Accepted algorithms:
+    mcsa*
+    mca*
+    dijkstra
+    best-first
     
     *Type*: (:obj: `str`) 
     """

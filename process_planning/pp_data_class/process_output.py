@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Union
 
 from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
 from process_planning.process_state import ProcessState
 from type_dictionary.type_aliases import Action, Pos
 
@@ -16,7 +16,7 @@ class ProcessOutput:
     """Updated process state after a motion event.
     
     *Type*: :class:`~process_state.ProcessState`"""
-    current_event_info: Union[PlacementEventInfo, PickEventInfo]
+    current_event_info: Union[AssemblyEventInfo, PickEventInfo, None]
     """Evaluated information on the current event. Can be either :class:`~placement_event_info.PlacementEventInfo`
      or :class:`pick_event_info.PickEventInfo` depending on the evaluated motion event.
     

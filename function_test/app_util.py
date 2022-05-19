@@ -16,10 +16,11 @@ from function_test.app_config import free_style, pipe_style, obs_style, att_styl
 from path_finding.pf_data_class.path_problem import PathProblem
 from process_planning.pp_data_class.construction_state import ConstructionState
 from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
 from process_planning.pp_data_class.process_output import ProcessOutput
 from process_planning.process_planner import ProcessPlanner
 from process_planning.process_state import ProcessState
+from type_dictionary import constants
 from type_dictionary.type_aliases import StateGrid, Pos, NodeTrail
 
 message_count = 0
@@ -50,7 +51,7 @@ def send_new_placement_event(pos:Pos, event_code:int, process_planner: ProcessPl
     # pprint.pprint(output)
 
     process_state = output.process_state
-    event_info: PlacementEventInfo = process_state.last_placement_event_info
+    event_info: AssemblyEventInfo = process_state.last_placement_event_info
     update_button_grid(button_grid, process_planner.last_process_state, style_grid, tool_tip_text_grid)
 
     if event_info.detour_event or process_state.detour_trails:
@@ -209,11 +210,11 @@ def update_style_grid(process_state, style_grid: np.ndarray) -> np.ndarray:
 
     # reset style grid
     for pos, state in np.ndenumerate(process_state.aimed_solution.path_problem.state_grid):
-        if state == 0:
+        if state == constants.free_state:
             style_grid[pos] = free_style
-        elif state == 1:
+        elif state == constants.obstacle_state:
             style_grid[pos] = obs_style
-        elif state == 3:
+        elif state == constants.transition_state:
             style_grid[pos] = transition_style
         else:
             style_grid[pos] = free_style
@@ -291,11 +292,11 @@ def update_tool_tip_text_grid(process_state: ProcessState, tool_tip_text_grid: n
     """
     # reset
     for pos, state in np.ndenumerate(process_state.aimed_solution.path_problem.state_grid):
-        if state == 0:
+        if state == constants.free_state:
             tool_tip_text_grid[pos] = str(pos) + "\n" + "free"
-        elif state == 1:
+        elif state == constants.obstacle_state:
             tool_tip_text_grid[pos] = str(pos) + "\n" + "obstructed"
-        elif state == 3:
+        elif state == constants.transition_state:
             tool_tip_text_grid[pos] = str(pos) + "\n" + "Transition"
 
         part_id = process_state.aimed_solution.node_trail.get(pos)
@@ -431,7 +432,7 @@ def update_trees_on_placement_event(part_stock_tree: ttk.Treeview, process_messa
     process_message_tree.yview_moveto(1)
 
 
-def append_attributes_to_tree_entry(event_info:Union[PlacementEventInfo, PickEventInfo], extra_message_ids:list, process_message_tree: ttk.Treeview):
+def append_attributes_to_tree_entry(event_info:Union[AssemblyEventInfo, PickEventInfo], extra_message_ids:list, process_message_tree: ttk.Treeview):
     """Inserts attributes in event_info to the given process message treeview and appends them to the parent
     entry specified in the first list entry of extra_message_ids.
 
@@ -498,15 +499,15 @@ def get_button_grid(state_grid: StateGrid, node_trail: NodeTrail, button_grid_fr
     tool_tip_text_grid = np.zeros((state_grid.shape[0], state_grid.shape[1]), dtype=np.dtype("U100"))
     for pos, state in np.ndenumerate(state_grid):
         style = ""
-        if state == 0:
+        if state == constants.free_state:
             style = free_style
             style_grid[pos] = free_style
             tool_tip_text_grid[pos] = str(pos) + "\n" + "free"
-        elif state == 1:
+        elif state == constants.obstacle_state:
             style = obs_style
             style_grid[pos] = obs_style
             tool_tip_text_grid[pos] = str(pos) + "\n" + "obstructed"
-        elif state == 2:
+        elif state == constants.part_state:
             # what part was used?
             if node_trail[pos] == 0:
                 style = fit_style
@@ -514,7 +515,7 @@ def get_button_grid(state_grid: StateGrid, node_trail: NodeTrail, button_grid_fr
             else:
                 style = pipe_style
                 style_grid[pos] = pipe_style
-        elif state == 3:
+        elif state == constants.transition_state:
             style = transition_style
             style_grid[pos] = transition_style
             tool_tip_text_grid[pos] = str(pos) + "\n" + "Transition"

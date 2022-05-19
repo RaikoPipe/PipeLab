@@ -8,10 +8,11 @@ from path_finding.pf_data_class.path_problem import PathProblem
 from path_finding.pf_data_class.weights import Weights
 from path_finding.search_algorithm import find_path
 from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
 from process_planning.pp_data_class.process_output import ProcessOutput
 from process_planning.process_state import ProcessState
 from process_planning.process_util import pp_util
+from type_dictionary import constants
 from type_dictionary.class_types import BuildingInstructions
 from type_dictionary.type_aliases import *
 
@@ -42,6 +43,7 @@ fastening_robot_command_message_dict = {
 #   - improve partial solutions
 
 
+# noinspection PyUnboundLocalVariable
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process with the :class:`~process_state.ProcessState`
     class and provides robot commands. Handles calculation of new solutions in case of a detour event.
@@ -106,6 +108,7 @@ class ProcessPlanner:
         Returns:
              :class:`~process_output.ProcessOutput` containing processed information regarding the event and current process state."""
 
+
         event_pos = motion_event[0]
         event_code = motion_event[1]
 
@@ -113,10 +116,11 @@ class ProcessPlanner:
         picking_robot_commands = []
         fastening_robot_commands = []
         valid_placement_positions = set()
+        messages = ()
 
         self.previous_states.insert(0, deepcopy(self.last_process_state))
 
-        if motion_event[1] in (4, 5):
+        if event_code in (constants.pick_manual_event_code, constants.pick_robot_event_code):
             # motion event was pick event
             picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
                                                                            process_state=tentative_process_state)
@@ -130,7 +134,7 @@ class ProcessPlanner:
                                                                               part_id=part_id)
             print(valid_placement_positions)
 
-        else:
+        elif event_code in {constants.fit_event_code, constants.pipe_event_code, constants.att_event_code}:
             # motion event was placement event
 
             # check if worker event occurred on transition point, correct if necessary
@@ -150,10 +154,10 @@ class ProcessPlanner:
                     # correct worker event pos
                     event_pos = (event_pos[0] - direction[0], event_pos[1] - direction[1])
 
-            event_info: PlacementEventInfo = tentative_process_state.evaluate_placement(event_pos=event_pos,
-                                                                                        event_code=event_code,
-                                                                                        ignore_part_check=ignore_part_check,
-                                                                                        ignore_obstructions=ignore_obstructions)
+            event_info: AssemblyEventInfo = tentative_process_state.evaluate_placement(event_pos=event_pos,
+                                                                                       event_code=event_code,
+                                                                                       ignore_part_check=ignore_part_check,
+                                                                                       ignore_obstructions=ignore_obstructions)
 
             tentative_process_state.last_placement_event_info = event_info
 
@@ -197,6 +201,8 @@ class ProcessPlanner:
                                                                                       0])
 
             messages = (message, special_message, detour_message)
+
+
 
         self.last_process_state = tentative_process_state
 

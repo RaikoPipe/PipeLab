@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Code Information &mdash; PipeLab 2022 documentation</title>
+  <title>Encoding Information &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -41,24 +41,26 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="process_planning.html">Process Planning</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="process_planner.html">ProcessPlanner class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="process_state.html">ProcessState class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a></li>
-<li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Utility Module</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Code Information</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#motion-event-codes">Motion Event Codes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#picking-robot-command-codes">Picking robot command codes</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#fastening-robot-commands">Fastening robot commands</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="type_aliases.html">Type Aliases module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="constants.html">Constants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="class_types.html">Class Types module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Encoding Information</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#motion-event-codes">Motion Event Codes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#state-grid-state-codes">State Grid State Codes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#part-ids">Part IDs</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#picking-robot-command-codes">Picking Robot Command Codes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fastening-robot-command-codes">Fastening Robot Command Codes</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -76,7 +78,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="process_planning.html">Process Planning</a> &raquo;</li>
-      <li>Code Information</li>
+      <li>Encoding Information</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/code_info.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -86,35 +88,61 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="code-information">
-<h1>Code Information<a class="headerlink" href="#code-information" title="Permalink to this headline"></a></h1>
+  <div class="section" id="encoding-information">
+<h1>Encoding Information<a class="headerlink" href="#encoding-information" title="Permalink to this headline"></a></h1>
+<p>-&gt; See also <a class="reference internal" href="constants.html#module-constants"><span class="std std-ref">Constants module</span></a></p>
 <div class="section" id="motion-event-codes">
 <h2>Motion Event Codes<a class="headerlink" href="#motion-event-codes" title="Permalink to this headline"></a></h2>
-<p>1: Fitting placed</p>
-<p>2: Pipe placed</p>
-<p>3: Attachment placed</p>
-<p>4: Accepted part from picking robot</p>
-<p>5: Picked part manually</p>
-<p>-&gt; See <a class="reference internal" href="constants.html#module-constants"><span class="std std-ref">Constants module</span></a></p>
-<p>Currently Code 4 and 5 are treated the same</p>
+<ul class="simple">
+<li><p>1: Fitting placed</p></li>
+<li><p>2: Pipe placed</p></li>
+<li><p>3: Attachment placed</p></li>
+<li><p>4: Accepted part from picking robot</p></li>
+<li><p>5: Picked part manually</p></li>
+</ul>
+<p>Currently Code 4 and 5 are treated as the same</p>
+</div>
+<div class="section" id="state-grid-state-codes">
+<h2>State Grid State Codes<a class="headerlink" href="#state-grid-state-codes" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>0: Free position</p></li>
+<li><p>1: occupied by obstacle</p></li>
+<li><p>2: occupied by part</p></li>
+<li><p>3: transition</p></li>
+</ul>
+<p>Currently Code 4 and 5 are treated as the same</p>
+<div class="section" id="part-ids">
+<h3>Part IDs<a class="headerlink" href="#part-ids" title="Permalink to this headline"></a></h3>
+<ul class="simple">
+<li><p>-99: Placeholder</p></li>
+<li><p>-2: Unknown straight pipe</p></li>
+<li><p>-1: attachment</p></li>
+<li><p>0: fitting</p></li>
+<li><p>1-n: straight pipe (corresponding to the amount of nodes it passes)</p></li>
+</ul>
+</div>
+</div>
 <div class="section" id="picking-robot-command-codes">
-<h3>Picking robot command codes<a class="headerlink" href="#picking-robot-command-codes" title="Permalink to this headline"></a></h3>
-<p>-2: STOP (unused)</p>
-<p>-1: Cancel all picking tasks (unused)</p>
-<p>0: Go to neutral state</p>
-<p>1: Move to pick-up point of part id x and pick part</p>
-<p>2: Move to return position of part id x and return part (unused)</p>
-<p>3: Move into offering position</p>
-<p>4: Wait for worker to accept part</p>
+<h2>Picking Robot Command Codes<a class="headerlink" href="#picking-robot-command-codes" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>-2: STOP (unused)</p></li>
+<li><p>-1: Cancel all picking tasks (unused)</p></li>
+<li><p>0: Go to neutral state</p></li>
+<li><p>1: Move to pick-up point of part id x and pick part</p></li>
+<li><p>2: Move to return position of part id x and return part (unused)</p></li>
+<li><p>3: Move into offering position</p></li>
+<li><p>4: Wait for worker to accept part</p></li>
+</ul>
 </div>
-<div class="section" id="fastening-robot-commands">
-<h3>Fastening robot commands<a class="headerlink" href="#fastening-robot-commands" title="Permalink to this headline"></a></h3>
-<p>-2: STOP (unused)</p>
-<p>-1: Remove fastening of positions x from command pipeline (unused)</p>
-<p>0: Go to neutral state</p>
-<p>1: Move to fastening position and fasten attachment at pos x</p>
-<p>2: Move to fastening position and fasten pipe at pos x</p>
-</div>
+<div class="section" id="fastening-robot-command-codes">
+<h2>Fastening Robot Command Codes<a class="headerlink" href="#fastening-robot-command-codes" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>-2: STOP (unused)</p></li>
+<li><p>-1: Remove fastening of positions x from command pipeline (unused)</p></li>
+<li><p>0: Go to neutral state</p></li>
+<li><p>1: Move to fastening position and fasten attachment at pos x</p></li>
+<li><p>2: Move to fastening position and fasten pipe at pos x</p></li>
+</ul>
 </div>
 </div>
 

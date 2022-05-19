@@ -43,6 +43,7 @@
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -119,9 +120,11 @@
 </li>
       <li><a href="pp_util.html#pp_util.adjust_pos_in_node_pairs_set">adjust_pos_in_node_pairs_set() (in module pp_util)</a>
 </li>
-      <li><a href="path_problem.html#path_problem.PathProblem.algorithm">algorithm (path_problem.PathProblem attribute)</a>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.algorithm">algorithm (in module path_problem_configuration)</a>
 
       <ul>
+        <li><a href="path_problem.html#path_problem.PathProblem.algorithm">(path_problem.PathProblem attribute)</a>
+</li>
         <li><a href="solution.html#solution.Solution.algorithm">(solution.Solution attribute)</a>
 </li>
       </ul></li>
@@ -649,10 +652,10 @@
 </li>
       <li><a href="partial_solver.html#partial_solver.get_partial_solutions">get_partial_solutions() (in module partial_solver)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="path_util.html#path_util.get_pipe_neighbors">get_pipe_neighbors() (in module path_util)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="process_state.html#process_state.ProcessState.get_positions_from_motion_dict">get_positions_from_motion_dict() (process_state.ProcessState method)</a>
 </li>
       <li><a href="path_math.html#path_math.get_rel_dist_same_axis">get_rel_dist_same_axis() (in module path_math)</a>
@@ -664,6 +667,8 @@
       <li><a href="solution_manager.html#solution_manager.get_solution">get_solution() (in module solution_manager)</a>
 </li>
       <li><a href="pp_util.html#pp_util.get_solution_on_detour_event">get_solution_on_detour_event() (in module pp_util)</a>
+</li>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.get_solvable_path_problem_with_random_obstacles">get_solvable_path_problem_with_random_obstacles() (in module path_problem_configuration)</a>
 </li>
       <li><a href="app_util.html#app_util.get_style_from_construction_state">get_style_from_construction_state() (in module app_util)</a>
 </li>
@@ -683,12 +688,20 @@
         <li><a href="restrictions.html#restrictions.goal_restricted.params.goal_dict">(restrictions.goal_restricted parameter)</a>
 </li>
       </ul></li>
-      <li><a href="path_problem.html#path_problem.PathProblem.goal_directions">goal_directions (path_problem.PathProblem attribute)</a>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.goal_directions">goal_directions (in module path_problem_configuration)</a>
+
+      <ul>
+        <li><a href="path_problem.html#path_problem.PathProblem.goal_directions">(path_problem.PathProblem attribute)</a>
 </li>
+      </ul></li>
       <li><a href="path_util.html#path_util.construct_solution.params.goal_part(">goal_part( (path_util.construct_solution parameter)</a>
 </li>
-      <li><a href="path_problem.html#path_problem.PathProblem.goal_pos">goal_pos (path_problem.PathProblem attribute)</a>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.goal_pos">goal_pos (in module path_problem_configuration)</a>
+
+      <ul>
+        <li><a href="path_problem.html#path_problem.PathProblem.goal_pos">(path_problem.PathProblem attribute)</a>
 </li>
+      </ul></li>
       <li><a href="path_util.html#path_util.construct_solution.params.goal_pos(">goal_pos( (path_util.construct_solution parameter)</a>
 </li>
       <li><a href="restrictions.html#restrictions.goal_restricted">goal_restricted() (in module restrictions)</a>
@@ -717,11 +730,13 @@
 </li>
       <li><a href="process_planner.html#process_planner.ProcessPlanner.handle_motion_event.params.handle_detour_events">handle_detour_events (process_planner.ProcessPlanner.handle_motion_event parameter)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="process_planner.html#process_planner.ProcessPlanner.handle_detour_trails">handle_detour_trails() (process_planner.ProcessPlanner method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="process_planner.html#process_planner.ProcessPlanner.handle_motion_event">handle_motion_event() (process_planner.ProcessPlanner method)</a>
+</li>
+      <li><a href="run_example_client.html#run_example_client.HelloClient">HelloClient (class in run_example_client)</a>
 </li>
       <li><a href="constants.html#constants.horizontal_directions">horizontal_directions (in module constants)</a>
 </li>
@@ -885,6 +900,8 @@
 </li>
         <li><a href="path_problem.html#module-path_problem">path_problem</a>
 </li>
+        <li><a href="path_problem_configuration.html#module-path_problem_configuration">path_problem_configuration</a>
+</li>
         <li><a href="path_util.html#module-path_util">path_util</a>
 </li>
         <li><a href="pick_event_info.html#module-pick_event_info">pick_event_info</a>
@@ -906,6 +923,14 @@
         <li><a href="randomizer.html#module-randomizer">randomizer</a>
 </li>
         <li><a href="restrictions.html#module-restrictions">restrictions</a>
+</li>
+        <li><a href="run_example_client.html#module-run_example_client">run_example_client</a>
+</li>
+        <li><a href="run_function_test_app.html#module-run_function_test_app">run_function_test_app</a>
+</li>
+        <li><a href="run_opcua_server.html#module-run_opcua_server">run_opcua_server</a>
+</li>
+        <li><a href="run_server_connected_app.html#module-run_server_connected_app">run_server_connected_app</a>
 </li>
         <li><a href="score_calculation.html#module-score_calculation">score_calculation</a>
 </li>
@@ -1006,16 +1031,18 @@
 </li>
       <li><a href="app_config.html#app_config.obs_color">obs_color (in module app_config)</a>
 </li>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.get_solvable_path_problem_with_random_obstacles.params.obs_frequency">obs_frequency (path_problem_configuration.get_solvable_path_problem_with_random_obstacles parameter)</a>
+</li>
       <li><a href="object_data_classes.html#object_data_classes.ObstacleData">ObstacleData (class in object_data_classes)</a>
 </li>
       <li><a href="placement_event_info.html#placement_event_info.PlacementEventInfo.obstructed_obstacle">obstructed_obstacle (placement_event_info.PlacementEventInfo attribute)</a>
 </li>
       <li><a href="process_state.html#process_state.ProcessState.obstructed_obstacle">obstructed_obstacle() (process_state.ProcessState method)</a>
 </li>
-      <li><a href="placement_event_info.html#placement_event_info.PlacementEventInfo.obstructed_part">obstructed_part (placement_event_info.PlacementEventInfo attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="placement_event_info.html#placement_event_info.PlacementEventInfo.obstructed_part">obstructed_part (placement_event_info.PlacementEventInfo attribute)</a>
+</li>
       <li><a href="process_state.html#process_state.ProcessState.obstructed_part">obstructed_part() (process_state.ProcessState method)</a>
 </li>
       <li><a href="ps_util.html#ps_util.get_neighboring_layouts.params.ordered_trails">ordered_trails (ps_util.get_neighboring_layouts parameter)</a>
@@ -1044,8 +1071,12 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="path_problem.html#path_problem.PathProblem.part_cost">part_cost (path_problem.PathProblem attribute)</a>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.part_cost">part_cost (in module path_problem_configuration)</a>
+
+      <ul>
+        <li><a href="path_problem.html#path_problem.PathProblem.part_cost">(path_problem.PathProblem attribute)</a>
 </li>
+      </ul></li>
       <li><a href="app_util.html#app_util.send_new_pick_event.params.part_id">part_id (app_util.send_new_pick_event parameter)</a>
 
       <ul>
@@ -1160,6 +1191,13 @@
 </li>
       </ul></li>
       <li>
+    path_problem_configuration
+
+      <ul>
+        <li><a href="path_problem_configuration.html#module-path_problem_configuration">module</a>
+</li>
+      </ul></li>
+      <li>
     path_util
 
       <ul>
@@ -1199,11 +1237,13 @@
       </ul></li>
       <li><a href="process_state.html#process_state.ProcessState.pipe_placed">pipe_placed() (process_state.ProcessState method)</a>
 </li>
-      <li><a href="process_state.html#process_state.ProcessState.pipe_placed_detour_event">pipe_placed_detour_event() (process_state.ProcessState method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="process_state.html#process_state.ProcessState.pipe_placed_detour_event">pipe_placed_detour_event() (process_state.ProcessState method)</a>
+</li>
       <li><a href="process_state.html#process_state.ProcessState.pipe_placed_deviated_route">pipe_placed_deviated_route() (process_state.ProcessState method)</a>
+</li>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.pipe_stock">pipe_stock (in module path_problem_configuration)</a>
 </li>
       <li><a href="path_util.html#path_util.pipe_stock_check">pipe_stock_check() (in module path_util)</a>
 </li>
@@ -1403,8 +1443,6 @@
 </li>
       <li><a href="object_rendering.html#object_rendering.render_obstacle">render_obstacle() (in module object_rendering)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="group_rendering.html#group_rendering.render_obstacles_from_state_grid">render_obstacles_from_state_grid() (in module group_rendering)</a>
 </li>
       <li><a href="object_rendering.html#object_rendering.render_pipe">render_pipe() (in module object_rendering)</a>
@@ -1415,6 +1453,8 @@
 </li>
       <li><a href="solution.html#solution.Solution.rendering_dict">rendering_dict (solution.Solution attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="type_aliases.html#type_aliases.RenderingDict">RenderingDict (in module type_aliases)</a>
 </li>
       <li><a href="building_instruction.html#building_instruction.BuildingInstruction.required_fit_positions">required_fit_positions (building_instruction.BuildingInstruction attribute)</a>
@@ -1436,6 +1476,38 @@
 </li>
       <li><a href="constants.html#constants.rot_90">rot_90 (in module constants)</a>
 </li>
+      <li><a href="run_function_test_app.html#run_function_test_app.run_app">run_app() (in module run_function_test_app)</a>
+</li>
+      <li>
+    run_example_client
+
+      <ul>
+        <li><a href="run_example_client.html#module-run_example_client">module</a>
+</li>
+      </ul></li>
+      <li>
+    run_function_test_app
+
+      <ul>
+        <li><a href="run_function_test_app.html#module-run_function_test_app">module</a>
+</li>
+      </ul></li>
+      <li>
+    run_opcua_server
+
+      <ul>
+        <li><a href="run_opcua_server.html#module-run_opcua_server">module</a>
+</li>
+      </ul></li>
+      <li><a href="run_opcua_server.html#run_opcua_server.run_server">run_server() (in module run_opcua_server)</a>
+</li>
+      <li>
+    run_server_connected_app
+
+      <ul>
+        <li><a href="run_server_connected_app.html#module-run_server_connected_app">module</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1462,8 +1534,12 @@
         <li><a href="search_algorithm.html#module-search_algorithm">module</a>
 </li>
       </ul></li>
-      <li><a href="server.html#server.PipeLabServer.send_motion_event">send_motion_event() (server.PipeLabServer method)</a>
+      <li><a href="run_example_client.html#run_example_client.send_motion_event">send_motion_event() (in module run_example_client)</a>
+
+      <ul>
+        <li><a href="server.html#server.PipeLabServer.send_motion_event">(server.PipeLabServer method)</a>
 </li>
+      </ul></li>
       <li><a href="app_util.html#app_util.send_new_pick_event">send_new_pick_event() (in module app_util)</a>
 </li>
       <li><a href="app_util.html#app_util.send_new_placement_event">send_new_placement_event() (in module app_util)</a>
@@ -1517,15 +1593,21 @@
       </ul></li>
       <li><a href="app_config.html#app_config.start_active_color">start_active_color (in module app_config)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="app_config.html#app_config.start_color">start_color (in module app_config)</a>
 </li>
-      <li><a href="path_problem.html#path_problem.PathProblem.start_directions">start_directions (path_problem.PathProblem attribute)</a>
-</li>
-      <li><a href="path_problem.html#path_problem.PathProblem.start_pos">start_pos (path_problem.PathProblem attribute)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.start_directions">start_directions (in module path_problem_configuration)</a>
 
       <ul>
+        <li><a href="path_problem.html#path_problem.PathProblem.start_directions">(path_problem.PathProblem attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.start_pos">start_pos (in module path_problem_configuration)</a>
+
+      <ul>
+        <li><a href="path_problem.html#path_problem.PathProblem.start_pos">(path_problem.PathProblem attribute)</a>
+</li>
         <li><a href="restrictions.html#restrictions.get_restricted_neighbor_nodes.params.start_pos">(restrictions.get_restricted_neighbor_nodes parameter)</a>
 </li>
       </ul></li>
@@ -1535,6 +1617,8 @@
 
       <ul>
         <li><a href="grid_functions.html#grid_functions.change_grid_states.params.state_grid">(grid_functions.change_grid_states parameter)</a>
+</li>
+        <li><a href="path_problem_configuration.html#path_problem_configuration.state_grid">(in module path_problem_configuration)</a>
 </li>
         <li><a href="partial_solver.html#partial_solver.get_partial_solutions.params.state_grid">(partial_solver.get_partial_solutions parameter)</a>
 </li>
@@ -1627,6 +1711,8 @@
         <li><a href="restrictions.html#restrictions.get_restricted_neighbor_nodes.params.transition_points">(restrictions.get_restricted_neighbor_nodes parameter)</a>
 </li>
       </ul></li>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.transition_points_set">transition_points_set (in module path_problem_configuration)</a>
+</li>
       <li>
     type_aliases
 
@@ -1703,14 +1789,20 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="weights.html#weights.Weights">Weights (class in weights)</a>
 </li>
-      <li><a href="path_problem.html#path_problem.PathProblem.weights">weights (path_problem.PathProblem attribute)</a>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.weights">weights (in module path_problem_configuration)</a>
+
+      <ul>
+        <li><a href="path_problem.html#path_problem.PathProblem.weights">(path_problem.PathProblem attribute)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="X">X</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.x">x (in module path_problem_configuration)</a>
+</li>
       <li><a href="grid_functions.html#grid_functions.get_empty_stategrid.params.x_nodes">x_nodes (grid_functions.get_empty_stategrid parameter)</a>
 
       <ul>
@@ -1729,6 +1821,8 @@
 <h2 id="Y">Y</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="path_problem_configuration.html#path_problem_configuration.y">y (in module path_problem_configuration)</a>
+</li>
       <li><a href="grid_functions.html#grid_functions.get_empty_stategrid.params.y_nodes">y_nodes (grid_functions.get_empty_stategrid parameter)</a>
 
       <ul>

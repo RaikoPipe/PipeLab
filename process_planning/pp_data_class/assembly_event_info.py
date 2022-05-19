@@ -9,7 +9,7 @@ from type_dictionary.type_aliases import *
 
 
 @dataclass
-class PlacementEventInfo(ConstructionState):
+class AssemblyEventInfo(ConstructionState):
     """Dataclass containing information about a placement/removal/error event."""
 
     removal: bool

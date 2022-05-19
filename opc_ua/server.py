@@ -5,9 +5,10 @@ from typing import Union
 from asyncua import ua, uamethod, Server
 
 from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
 from process_planning.pp_data_class.process_output import ProcessOutput
 from process_planning.process_planner import ProcessPlanner
+from type_dictionary import constants
 
 
 @uamethod
@@ -63,17 +64,25 @@ class PipeLabServer:
 
     @uamethod
     def send_motion_event(self, parent, x, y, code):
-        if code == 4:
-            output: ProcessOutput = self.process_planner.handle_motion_event((x, code))
-        else:
-            output = self.process_planner.handle_motion_event(((x, y), code))
-        event_info: Union[PlacementEventInfo, PickEventInfo] = output.current_event_info
-        print('\033[92m' + "ProcessPlanner Output:")
-        #pprint.pprint(output)
-        if isinstance(event_info,PlacementEventInfo):
-            if event_info.detour_event:
-                return event_info.event_code, "Deviated from optimal solution!"
-        return event_info.event_code
+        try:
+            if code in {constants.pick_manual_event_code, constants.pick_robot_event_code}:
+                output: ProcessOutput = self.process_planner.handle_motion_event((x, code))
+            elif code in {constants.fit_event_code, constants.pipe_event_code, constants.att_event_code}:
+                output = self.process_planner.handle_motion_event(((x, y), code))
+            else:
+                return f"Event code {code} not recognized!"
+
+            event_info: Union[AssemblyEventInfo, PickEventInfo] = output.current_event_info
+            print('\033[92m' + "ProcessPlanner Output:")
+            #pprint.pprint(output)
+            if isinstance(event_info, AssemblyEventInfo):
+                if event_info.detour_event:
+                    return event_info.event_code, "Deviated from optimal solution!"
+            return event_info.event_code
+        except BaseException as e:
+            print(e)
+            return str(e)
+
 
     async def __aenter__(self):
         await self.init()

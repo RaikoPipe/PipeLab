@@ -6,6 +6,7 @@ from typing import Optional
 from path_finding.path_finding_util.path_math import diff_pos, get_direction, sum_pos
 from path_finding.pf_data_class.path_problem import PathProblem
 from path_finding.pf_data_class.solution import Solution
+from type_dictionary import constants
 from type_dictionary.class_types import *
 
 
@@ -65,7 +66,7 @@ def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tupl
     while i < len(node_path) - 1:
         start_node = node_path[i]
 
-        if start_node[1] == 0 or start_node[1] is None:
+        if start_node[1] == constants.fitting_id or start_node[1] is None:
             trail_list = []
             absolute_trail[start_node[0]] = start_node[1]
             trail_list.append(start_node[0])
@@ -78,7 +79,7 @@ def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tupl
             while pos != end_node[0]:
                 pos = (pos[0] + 1 * direction[0], pos[1] + 1 * direction[1])
                 # handle transition case
-                if state_grid[pos] == 3:
+                if state_grid[pos] == constants.transition_state:
                     continue
                 absolute_trail[pos] = pipe_node[1]
                 trail_list.append(pos)

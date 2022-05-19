@@ -10,7 +10,7 @@ from path_finding.pf_data_class.solution import Solution
 from process_planning.pp_data_class.building_instruction import BuildingInstruction
 from process_planning.pp_data_class.construction_state import ConstructionState
 from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
 from process_planning.process_util.ps_util import get_neighboring_layouts, construct_trail, \
     construct_detour_building_instruction, construct_building_instructions_from_solution, get_completion_proportion
 from type_dictionary import constants
@@ -121,7 +121,7 @@ class ProcessState:
 
     def evaluate_placement(self, event_pos: Pos, event_code: int,
                            ignore_part_check: bool = False, ignore_obstructions: bool = False,
-                           assume_pipe_id_from_solution: bool = False) -> PlacementEventInfo:
+                           assume_pipe_id_from_solution: bool = False) -> AssemblyEventInfo:
         """Evaluates a placement event and registers changes to motion_dict according to building_instructions. Also registers if an instruction has been completed.
 
         Args:
@@ -159,13 +159,13 @@ class ProcessState:
 
         time_registered = datetime.now()
 
-        event_info = PlacementEventInfo(event_pos=event_pos, event_code=event_code, part_id=part_id,
-                                        obstructed_part=obstructed_part, obstructed_obstacle=obstructed_obstacle,
-                                        deviated=deviated, misplaced=misplaced, unnecessary=unnecessary,
-                                        completed_layouts=completed_layouts,
-                                        layout=current_layout, removal=removal, part_not_picked=part_not_picked,
-                                        detour_event=detour_event, error=error, time_registered=time_registered,
-                                        )
+        event_info = AssemblyEventInfo(event_pos=event_pos, event_code=event_code, part_id=part_id,
+                                       obstructed_part=obstructed_part, obstructed_obstacle=obstructed_obstacle,
+                                       deviated=deviated, misplaced=misplaced, unnecessary=unnecessary,
+                                       completed_layouts=completed_layouts,
+                                       layout=current_layout, removal=removal, part_not_picked=part_not_picked,
+                                       detour_event=detour_event, error=error, time_registered=time_registered,
+                                       )
 
         construction_state = ConstructionState(event_pos=event_pos, event_code=event_code,
                                                part_id=part_id, deviated=deviated,
@@ -337,7 +337,7 @@ class ProcessState:
         return None
 
     def attachment_placed(self, event_pos: Pos, event_code: int, building_instruction: BuildingInstruction,
-                          event_info: PlacementEventInfo):
+                          event_info: AssemblyEventInfo):
         """Evaluates the placement of an attachment. Notes findings to event_info.
 
         Args:
@@ -633,17 +633,17 @@ class ProcessState:
             unnecessary = False
             # error = False
 
-            event_info = PlacementEventInfo(event_pos=construction_state.event_pos,
-                                            event_code=construction_state.event_code,
-                                            removal=False, layout=None,
-                                            part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced,
-                                            unnecessary=unnecessary,
-                                            obstructed_part=False, completed_layouts=completed_layouts,
-                                            part_not_picked=False,
-                                            error=False,
-                                            obstructed_obstacle=False,
-                                            time_registered=construction_state.time_registered,
-                                            )
+            event_info = AssemblyEventInfo(event_pos=construction_state.event_pos,
+                                           event_code=construction_state.event_code,
+                                           removal=False, layout=None,
+                                           part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced,
+                                           unnecessary=unnecessary,
+                                           obstructed_part=False, completed_layouts=completed_layouts,
+                                           part_not_picked=False,
+                                           error=False,
+                                           obstructed_obstacle=False,
+                                           time_registered=construction_state.time_registered,
+                                           )
 
             new_construction_state = ConstructionState(event_pos=construction_state.event_pos,
                                                        event_code=construction_state.event_code,
@@ -732,7 +732,7 @@ class ProcessState:
             return False
 
     # utilities
-    def set_completion_state(self, current_layout: Trail, event_info:PlacementEventInfo) -> set:
+    def set_completion_state(self, current_layout: Trail, event_info:AssemblyEventInfo) -> set:
         """Sets completion state of current layout and neighboring layouts. Updates state grid on completed layouts.
 
         Args:
@@ -812,8 +812,8 @@ class ProcessState:
                 pos_set.add(pos)
         return pos_set
 
-    def pipe_placed_detour_event(self, event_pos: Pos, event_info: PlacementEventInfo,
-                                 building_instruction: BuildingInstruction, pipe_id: int) -> PlacementEventInfo:
+    def pipe_placed_detour_event(self, event_pos: Pos, event_info: AssemblyEventInfo,
+                                 building_instruction: BuildingInstruction, pipe_id: int) -> AssemblyEventInfo:
         """Pipe placement reevaluation for detour events. Similar to :meth:`pipe_placed`.
 
         Args:

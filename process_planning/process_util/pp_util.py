@@ -8,7 +8,7 @@ from path_finding.path_finding_util.path_math import get_direction, diff_pos
 from path_finding.pf_data_class.path_problem import PathProblem
 from path_finding.pf_data_class.solution import Solution
 from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.assembly_event_info import AssemblyEventInfo
 from process_planning.process_state import ProcessState
 from type_dictionary import constants
 from type_dictionary.class_types import *
@@ -314,7 +314,7 @@ def get_next_recommended_action(process_state, building_instruction) -> Action:
     return rec_pos, rec_event, rec_part_id
 
 
-def make_placement_messages(event_info: PlacementEventInfo) -> (str, str):
+def make_placement_messages(event_info: AssemblyEventInfo) -> (str, str):
     """Produces a message according to the given event info.
 
     Args:

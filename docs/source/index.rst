@@ -20,6 +20,7 @@ and the :ref:`GUI for debugging and visualization <Function Test>`. If you want 
    path_finding
    type_dictionary
    vpython_rendering
+   main_scripts
 
 
 Indices and tables
@@ -29,6 +30,3 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-Main Scripts
-===================
-**

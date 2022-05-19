@@ -6,6 +6,6 @@ Process Planning Dataclasses
 
    building_instruction
    construction_state
-   placement_event_info
+   assembly_event_info
    pick_event_info
    process_output

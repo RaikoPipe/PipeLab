@@ -7,4 +7,4 @@ Type Dictionary
    type_aliases
    constants
    class_types
-   encoding_information
+   code_info
