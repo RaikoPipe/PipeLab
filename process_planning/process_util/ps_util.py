@@ -120,7 +120,7 @@ def construct_detour_building_instruction(length: int, fit_tup: NodePair, state_
         possible_att_pipe_positions(:obj:`~type_aliases.Trail`): Trail containing positions the pipe of this new layout needs to occupy.
 
     Returns:
-        :class:`~building_instruction.BuildingInstruction`
+        :class:`BuildingInstruction<building_instruction>`
     """
     pipe_id = length - 1
     direction = get_direction(diff_pos(fit_tup[0], fit_tup[1]))
@@ -142,7 +142,7 @@ def construct_building_instructions_from_solution(solution: Solution) -> Buildin
     """Constructs building instructions from the given solution.
 
     Args:
-        solution(:class:`~solution.Solution`): See :class:`~Solution`
+        solution(:class:`Solution<solution>`): See :class:`~Solution`
     Returns:
         :obj:`~class_types.BuildingInstructions`
         """

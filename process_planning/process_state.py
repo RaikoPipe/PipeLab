@@ -23,7 +23,7 @@ class ProcessState:
 
     Args:
 
-        solution(:class:`~Solution`):
+        solution(:class:`Solution<solution>`):
 
 
     :ivar state_grid: :obj:`~type_aliases.StateGrid` that shows where obstacles and completed layouts occupy nodes
@@ -78,7 +78,7 @@ class ProcessState:
             event_codes (:obj:`list` [:obj:`int`]): List containing event codes valid for search.
 
         Returns:
-            If nothing was found, returns a :obj:`tuple` containing :obj:`None`, otherwise returns a :obj:`tuple` containing a :obj:`~type_aliases.Pos` or :obj:`~type_aliases.Trail` and its :class:`~construction_state.ConstructionState`"""
+            If nothing was found, returns a :obj:`tuple` containing :obj:`None`, otherwise returns a :obj:`tuple` containing a :obj:`~type_aliases.Pos` or :obj:`~type_aliases.Trail` and its :class:`ConstructionState<construction_state>`"""
         if 2 in event_codes:
             for trail, construction_state in self.motion_dict.items():
                 if (find_me in trail or find_me == trail) and construction_state.event_code == 2:
@@ -101,7 +101,7 @@ class ProcessState:
             part_id (:obj:`int`): Part ID that was picked.
             ignore_empty_stock (:obj:`bool`): See :paramref:`~process_planner.ProcessPlanner.handle_motion_event.ignore_empty_stock`
         Returns:
-            :class:`~pick_event_result.PickEventResult`
+            :class:`PickEventResult<pick_event_result>`
             """
         error = False
         part_not_available = False
@@ -123,7 +123,7 @@ class ProcessState:
     def evaluate_assembly(self, event_pos: Pos, event_code: int,
                           ignore_part_check: bool = False, ignore_obstructions: bool = False,
                           assume_pipe_id_from_solution: bool = False) -> AssemblyEventResult:
-        """Evaluates a assembly event and registers changes to motion_dict according to building_instructions. Also registers if an instruction has been completed.
+        """Evaluates an assembly event and registers changes to the :obj:`~class_types.MotionDict` according to the :obj:`BuildingInstructions`. Also registers if an instruction has been completed.
 
         Args:
             event_pos (:obj:`~type_aliases.pos`): :obj:`~type_aliases.pos` where :obj:`motion event<type_aliases.MotionEvent>` occurred.
@@ -136,7 +136,7 @@ class ProcessState:
              event occured on solution and pipe ID is among the parts that have been picked.
 
         Returns:
-            :class:`~assembly_event_result.AssemblyEventResult`
+            :class:`AssemblyEventResult <assembly_event_result>`
             """
 
         part_id = None
@@ -244,15 +244,15 @@ class ProcessState:
 
     def get_current_layout_and_building_instruction(self, event_code: int, event_pos: Pos) -> tuple[
         BuildingInstruction, Trail, bool]:
-        """Returns the current layout and building instruction if event occurred inside solution.
+        """Returns the current layout and :class:`BuildingInstruction<building_instruction>` if event occurred inside solution.
 
         Args:
             event_pos(:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_assembly.event_pos`
             event_code(:obj:`int`): See :paramref:`~evaluate_assembly.event_code`
 
         Returns:
-            :obj:`tuple` [:class:`~building_instruction.BuildingInstruction`, :obj:`~type_aliases.Trail`, :obj:`bool`] containing the
-            current layout (:obj:`~type_aliases.Trail`), :class:`~building_instruction.BuildingInstruction` and a value that signifies if the layout has changed from the previous
+            :obj:`tuple` [:class:`BuildingInstruction<building_instruction>`, :obj:`~type_aliases.Trail`, :obj:`bool`] containing the
+            current layout (:obj:`~type_aliases.Trail`), :class:`BuildingInstruction<building_instruction>` and a value that signifies if the layout has changed from the previous
             one. """
 
         current_layout = self.last_event_trail
@@ -299,8 +299,8 @@ class ProcessState:
 
             event_pos(:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_assembly.event_pos`
             event_code(:obj:`int`): See :paramref:`~evaluate_assembly.event_code`
-            building_instruction(:class:`~building_instruction.BuildingInstruction`): The current building instruction.
-            construction_state(:class:`~construction_state.ConstructionState`): Construction state of the current motion event.
+            building_instruction(:class:`BuildingInstruction<building_instruction>`): The current building instruction.
+            construction_state(:class:`ConstructionState<construction_state>`): Construction state of the current motion event.
 
         """
         # make construction state
@@ -324,7 +324,7 @@ class ProcessState:
 
         Returns:
 
-            :obj:`tuple` [:obj:`~type_aliases.Pos`, :class:`~construction_state.ConstructionState`] containing the :obj:`~type_aliases.Pos` and :class:`~construction_state.ConstructionState`
+            :obj:`tuple` [:obj:`~type_aliases.Pos`, :class:`ConstructionState<construction_state>`] containing the :obj:`~type_aliases.Pos` and :class:`ConstructionState<construction_state>`
             of the motion event of the part that was removed, else :obj:`None`."""
         pos, construction_state = self.get_construction_state(find_me=event_pos, event_codes=[event_code])
 
@@ -346,8 +346,8 @@ class ProcessState:
         """Evaluates the assembly of an attachment. Notes findings to event_info.
 
         Args:
-            event_result(:class:`~assembly_event_result.AssemblyEventResult`): Event info being modified.
-            building_instruction(:class:`~building_instruction.BuildingInstruction`): Building instruction of the current layout.
+            event_result(:class:`AssemblyEventResult <assembly_event_result>`): Event info being modified.
+            building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
             event_pos(:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_assembly.event_pos`
             event_code(:obj:`int`): See :paramref:`~evaluate_assembly.event_code`"""
         # todo: check recommended att_pos
@@ -373,8 +373,8 @@ class ProcessState:
 
         Args:
             event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_assembly.event_pos`
-            event_result(:class:`~assembly_event_result.AssemblyEventResult`): Event result being modified
-            building_instruction(:class:`~building_instruction.BuildingInstruction`): Building instruction of the current layout.
+            event_result(:class:`AssemblyEventResult <assembly_event_result>`): Event result being modified
+            building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
             ignore_part_check (:obj:`bool`): Option for ignoring part restrictions.
              See :paramref:`~process_planner.ProcessPlanner.main.ignore_part_check`
             assume_pipe_id_from_solution(:obj:`bool`): See :paramref:`~process_state.ProcessState.evaluate_assembly.assume_pipe_id_from_solution`
@@ -404,7 +404,7 @@ class ProcessState:
 
         Args:
 
-            event_result(:class:`~assembly_event_result.AssemblyEventResult`): Event info being modified.
+            event_result(:class:`AssemblyEventResult <assembly_event_result>`): Event info being modified.
             ignore_part_check (:obj:`bool`): Option for ignoring part restrictions.
                  See :paramref:`~process_planner.ProcessPlanner.main.ignore_part_check`
 
@@ -421,7 +421,7 @@ class ProcessState:
             # if there is only one of a kind of pipe in picked_parts, then we know which id was placed
             event_result.part_id = picked_pipes[0]
         elif len(set(picked_parts)) > 1 or ignore_part_check:
-            if self.get_num_unknown_pipes() < len(picked_pipes) or ignore_part_check:
+            if self.get_num_open_pipes() < len(picked_pipes) or ignore_part_check:
                 event_result.part_id = -2
             # multiple kinds of pipe picked
             else:
@@ -441,8 +441,8 @@ class ProcessState:
 
         Args:
             event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_assembly.event_pos`
-            event_result(:class:`~assembly_event_result.AssemblyEventResult`): Event info being modified
-            building_instruction(:class:`~building_instruction.BuildingInstruction`): Building instruction of the current layout.
+            event_result(:class:`AssemblyEventResult <assembly_event_result>`): Event info being modified
+            building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
             ignore_part_check (:obj:`bool`): Option for ignoring part restrictions.
              See :paramref:`~process_planner.ProcessPlanner.main.ignore_part_check`
 
@@ -517,7 +517,7 @@ class ProcessState:
         Detour event occurs if:\n
         1. 2 fittings in proximity (connectable by available parts)\n
         2. 1 attachment in between those 2 fittings\n
-        3. 1 pipe (with correct or unknown id) in between those fittings
+        3. 1 pipe (with correct or open id) in between those fittings
 
         Args:
 
@@ -611,7 +611,7 @@ class ProcessState:
         """Reevaluates all entries in the motion dict according to the given solution.
 
         Args:
-            solution(:class:`~solution.Solution`): New solution.
+            solution(:class:`Solution<solution>`): New solution.
             detour_event(:obj:`~class_types.BuildingInstructions`): Cause of the detour event.
         Returns:
             :obj:`~type_aliases.Trail` with :obj:`~type_aliases_pos` in the order according to the solution.
@@ -771,7 +771,7 @@ class ProcessState:
         """Checks if the building instruction was completed.
 
         Args:
-            building_instruction(:class:`~building_instruction.BuildingInstruction`): Building instruction of the current layout.
+            building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
 
         Returns:
         :obj:`tuple` containing if building instruction was completed (:obj:`bool`) and event code (:obj:`int`) corresponding to its completion state.
@@ -823,8 +823,8 @@ class ProcessState:
 
         Args:
             event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_assembly.event_pos`
-            event_info(:class:`~assembly_event_result.AssemblyEventResult`): Event info being modified
-            building_instruction(:class:`~building_instruction.BuildingInstruction`): Building instruction of the current layout.
+            event_info(:class:`AssemblyEventResult <assembly_event_result>`): Event info being modified
+            building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
             pipe_id(:obj:`int`): Pipe ID of the construction state being reevaluated.
         Return:
 
@@ -842,11 +842,11 @@ class ProcessState:
             event_info.deviated = True
         return event_info
 
-    def get_num_unknown_pipes(self) -> int:
+    def get_num_open_pipes(self) -> int:
         """
 
         Returns:
-            Amount of pipes (:obj:`int`) with unknown ID in motion dictionary (-2).
+            Amount of pipes (:obj:`int`) with open ID in motion dictionary.
 
         """
 

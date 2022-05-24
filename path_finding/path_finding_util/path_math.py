@@ -99,11 +99,12 @@ def manhattan_distance(a: Pos, b: Pos):
 
 def get_direction(pos: Pos) -> Pos:
     """Returns the direction of a relative position.
+
     Args:
-         pos(:obj:`~type_aliases.Pos`): Some relative position
+         pos(:obj:`~type_aliases.Pos`): Some relative position (Either x or y = 0).
 
     Returns:
-        (:obj:`~type_aliases.Pos`)
+        :obj:`~type_aliases.Pos`
         """
     x = pos[0]
     y = pos[1]

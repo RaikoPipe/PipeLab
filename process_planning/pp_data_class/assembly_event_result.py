@@ -10,7 +10,7 @@ from type_dictionary.type_aliases import *
 
 @dataclass
 class AssemblyEventResult(ConstructionState):
-    """Dataclass containing information about the result of a assembly or removal event."""
+    """Used to describe the result of an assembly/removal motion event after it was evaluated by :class:`ProcessState<process_state>`"""
 
     removal: bool
     """If a part was removed.
@@ -40,11 +40,11 @@ class AssemblyEventResult(ConstructionState):
     
     *Type*: :obj:`bool`"""
     obstructed_obstacle: bool
-    """Error specifier. If an obstacle was obstructed by a assembly.
+    """Error specifier. If an obstacle was obstructed by an assembly.
     
     *Type*: :obj:`bool`"""
     obstructed_part: int
-    """Error specifier. If another part was obstructed by a assembly.
+    """Error specifier. If another part was obstructed by an assembly.
     
     *Type*: :obj:`int`"""
 

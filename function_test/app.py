@@ -15,17 +15,15 @@ previous_detour_trails = set()
 
 
 class FunctionTestApp:
-    """Provides a UI for the process planner, mainly for debugging purposes. Visualizes the process state.
-    Initializes and uses an instance of a process planner.
-
+    """Provides an interactive UI for the process planner and the current process state, mainly for debugging purposes.
     """
 
     def __init__(self, path_problem: PathProblem, process_planner: ProcessPlanner, update_self_periodically=False):
         """
 
         Args:
-            path_problem(:class:`~path_problem.PathProblem`): The initial path problem
-            process_planner(:class:`~process_planner.ProcessPlanner`): A process planner instance.
+            path_problem(:class:`PathProblem<path_problem>`): The initial path problem
+            process_planner(:class:`ProcessPlanner<process_planner>`): A process planner instance.
             update_self_periodically: Option, if event loops of the app are to be updated in intervals.
         """
 
@@ -34,6 +32,8 @@ class FunctionTestApp:
         else:
             theme = light_theme_use
         self.root = ttk.Window(themename=theme)
+        self.root.geometry("1440x900")
+        self.root.state("zoomed")
 
         # set title
         self.root.title("PipeLab2 Function Test")
@@ -50,9 +50,46 @@ class FunctionTestApp:
 
         part_select_option = ttk.IntVar(value=1)
 
+        # full screen scrollbars
+        main_frame = ttk.Frame(self.root)
+        main_frame.pack(fill=ttk.BOTH, expand=1)
+
+        # create frame for X Scrollbar
+        sec = ttk.Frame(main_frame)
+        sec.pack(fill=ttk.X, side=ttk.BOTTOM)
+
+        # create canvas
+        canvas = ttk.Canvas(main_frame)
+        canvas.pack(side=ttk.LEFT, fill=ttk.BOTH, expand=1)
+
+        # Add A Scrollbars to Canvas
+
+        x_scrollbar = ttk.Scrollbar(sec, orient=ttk.HORIZONTAL, command=canvas.xview)
+
+        x_scrollbar.pack(side=ttk.BOTTOM, fill=ttk.X)
+
+        y_scrollbar = ttk.Scrollbar(main_frame, orient=ttk.VERTICAL, command=canvas.yview)
+        y_scrollbar.pack(side=ttk.RIGHT, fill=ttk.Y)
+
+        # Configure the canvas
+
+        canvas.configure(xscrollcommand=x_scrollbar.set)
+
+        canvas.configure(yscrollcommand=y_scrollbar.set)
+
+        canvas.bind("<Configure>", lambda e: canvas.config(scrollregion=canvas.bbox(ttk.ALL)))
+
+        # Create Another Frame INSIDE the Canvas
+
+        second_frame = ttk.Frame(canvas)
+
+        # Add that New Frame a Window In The Canvas
+
+        canvas.create_window((0, 0), window=second_frame, anchor="nw")
+
         # make app widgets
 
-        layout_frame = ttk.Frame(self.root)
+        layout_frame = ttk.Frame(second_frame)
         layout_frame.grid(row=0, column=0)
 
         self.solution_button_grid_frame = ttk.LabelFrame(layout_frame, text="Solution Grid:")
@@ -71,7 +108,7 @@ class FunctionTestApp:
         self.construction_button_grid_frame = ttk.LabelFrame(layout_frame, text="Current construction grid:")
         self.construction_button_grid_frame.grid(row=1, column=0)
 
-        pp_frame = ttk.LabelFrame(self.root, text="Tool Window")
+        pp_frame = ttk.LabelFrame(second_frame, text="Tool Window")
         pp_frame.grid(row=0, column=1, padx=10)
 
         tool_frame = ttk.LabelFrame(pp_frame, text="Process tools:")
@@ -96,7 +133,7 @@ class FunctionTestApp:
 
         # set a scrollbar for the part stock view
         scrollbar = ttk.Scrollbar(part_stock_frame, orient=ttk.VERTICAL, command=self.part_stock_tree.yview)
-        self.part_stock_tree.configure(yscroll=scrollbar.set)
+        self.part_stock_tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
         part_put_frame = ttk.LabelFrame(tool_frame, text="Assembly Event:")
@@ -129,7 +166,7 @@ class FunctionTestApp:
 
         # set a scrollbar for the process message view
         scrollbar = ttk.Scrollbar(process_message_frame, orient=ttk.VERTICAL, command=self.process_message_tree.yview)
-        self.process_message_tree.configure(style=treeview_style, yscroll=scrollbar.set)
+        self.process_message_tree.configure(style=treeview_style, yscrollcommand=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
         part_ids = [k for k in path_problem.part_stock.keys()]
@@ -184,6 +221,7 @@ class FunctionTestApp:
             self.root.mainloop()
 
     def refresh(self):
+        """Initiates an update loop for the function test app widgets."""
         self.root.update()
         self.update_app()
         self.root.after(100, self.refresh)

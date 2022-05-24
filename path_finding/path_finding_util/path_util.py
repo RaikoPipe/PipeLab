@@ -17,18 +17,18 @@ def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tupl
     """Constructs a solution based on given parameters.
 
     Args:
-        state_grid(:obj`~type_aliases.State`): State grid with applied solution path
-        current_node(:obj`~type_aliases.Pos`): Last visited node in search.
-        predecessors(:obj:`~special_types.Predecessors`): All visited predecessors.
-        score(:obj`float`): The final solution score.
-        algorithm(:obj`str`): Algorithm used in prior search.
-        path_problem(:class:`~path_problem.PathProblem`)
-        fast_mode(:obj`bool`): See :paramref:`~search_algorithm.find_path.fast_mode`
-        goal_pos(:obj`~type_aliases.Pos`): The reached goal position.
-        goal_part(:obj`int`): Part that should be appended to reach actual goal position.
+        state_grid(:obj:`~type_aliases.State`): State grid with applied solution path
+        current_node(:obj:`~type_aliases.Pos`): Last visited node in search.
+        predecessors(:obj:`~class_types.Predecessors`): All visited predecessors.
+        score(:obj:`float`): The final solution score.
+        algorithm(:obj:`str`): Algorithm used in prior search.
+        path_problem(:class:`PathProblem<path_problem>`)
+        fast_mode(:obj:`bool`): See :paramref:`~search_algorithm.find_path.fast_mode`
+        goal_pos(:obj:`~type_aliases.Pos`): The reached goal position.
+        goal_part(:obj:`int`): Part that should be appended to reach actual goal position.
 
     Returns:
-        :class:`~solution.Solution`
+        :class:`Solution<solution>`
         """
 
     node_path: NodePath = []
@@ -123,11 +123,11 @@ def get_pipe_neighbors(direction: Pos, available_parts: set[int], at_start: bool
 
     Args:
         direction(:obj:`~type_aliases.Pos`): Considered direction for pipe.
-        available_parts(:obj:list [:obj:`int`]): See :func:`pipe_stock_check`
+        available_parts(:obj:`list` [:obj:`int`]): See :func:`pipe_stock_check`
         at_start(:obj:`bool`): If the current position is the start point.
-        transition(:obj:`tuple` [:obj:`~type_aliases.Pos`,:obj:`~type_aliases.Pos`]): See :func:`get_transition`
+        transition(:obj:`tuple` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Pos`]): See :func:`get_transition`
     Returns:
-        A :obj:`set` of neighbor :obj`Nodes<type_aliases.Node>`.
+        A :obj:`set` of neighbor :obj:`Nodes<type_aliases.Node>`.
     """
 
     # pipe moves have two variants, depending on the current axis
@@ -184,8 +184,8 @@ def pipe_stock_check(part_stock: PartStock, predecessors: Predecessors, fast_mod
     """Calculates availability of parts.
 
     Args:
-        part_stock(:obj:`type_aliases.PartStock`): To the current path reduced part stock.
-        predecessors(:obj:`class_types.Predecessors`): See :obj:`class_types.Predecessors`
+        part_stock(:obj:`~type_aliases.PartStock`): To the current path reduced part stock.
+        predecessors(:obj:`~class_types.Predecessors`): See :obj:`~class_types.Predecessors`
         fast_mode(:obj:`bool`): See :paramref:`~pathfinding_util.search_algorithm.find_path.fast_mode`
         key: See :paramref:`~path_finding_util.restrictions.restrict_neighbor_pos.key`
 
@@ -242,7 +242,7 @@ def get_transition(pos:Pos, direction:Pos, transition_points: set[Pos]) -> Optio
     """Checks if transition points lie in the node in direction of the given node position.
 
     Returns:
-        :obj:`tuple` [:obj:`~type_aliases.Pos`,:obj:`~type_aliases.Pos`] if transition point found, else None.
+        :obj:`tuple` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Pos`] if transition point found, else None.
     """
     for transition_point in transition_points:
         check_pos = sum_pos(pos, direction)

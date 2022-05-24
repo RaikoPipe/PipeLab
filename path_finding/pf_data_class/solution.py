@@ -41,12 +41,12 @@ class Solution:
     path_problem: PathProblem
     """Path Problem that was solved
 
-    *Type*: (:class:`~path_problem.PathProblem`)"""
+    *Type*: (:class:`PathProblem<path_problem>`)"""
 
     part_stock: dict[int, int]
     """The amount of parts still available after applying the solution.
 
-    *Type*: (:class:`~path_problem.PathProblem`)"""
+    *Type*: (:class:`PathProblem<path_problem>`)"""
 
     node_path: NodePath = field(default_factory=list)
     """List of Positions with part IDs used (to get to this position).

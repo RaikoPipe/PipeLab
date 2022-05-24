@@ -41,7 +41,7 @@ def get_solvable_path_problem_with_random_obstacles(obs_frequency) -> PathProble
         obs_frequency(:obj:`float`): Chance for a node to be an obstacle
 
     Returns:
-        :class:`~path_problem.PathProblem`
+        :class:`PathProblem<path_problem>`
         """
     solution = None
     count = 0

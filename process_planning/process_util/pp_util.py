@@ -21,7 +21,7 @@ def determine_next_part(process_state: ProcessState, layout: Trail) -> Optional[
     """Determines which part should be picked next according to the current build progress.
 
     Args:
-        process_state(:class:`~process_state.ProcessState`): The current process state.
+        process_state(:class:`ProcessState<process_state>`): The current process state.
         layout(:obj:`~type_aliases.Trail`): The current layout.
 
     Returns:
@@ -154,11 +154,11 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     """Tries to get a new solution on a detour event.
     Args:
 
-    initial_path_problem (:class:`~path_problem.PathProblem`): The original path problem.
-    process_state (:class:`~process_state.ProcessState`): The current process state.
+    initial_path_problem (:class:`PathProblem<path_problem>`): The original path problem.
+    process_state (:class:`ProcessState<process_state>`): The current process state.
 
     Returns:
-        :class:`~solution.Solution` if one was found, else None.
+        :class:`Solution<solution>` if one was found, else None.
     """
     completed_instructions = get_completed_instructions(process_state.building_instructions)
 
@@ -265,8 +265,8 @@ def get_next_recommended_action(process_state, building_instruction) -> Action:
     """Calculates the completion for the building instruction and determines the next recommended action.
 
     Args:
-        building_instruction(:class:`~building_instruction.BuildingInstruction`): Building instruction currently being followed.
-        process_state(:class:`~process_state.ProcessState`): The current process state.
+        building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction currently being followed.
+        process_state(:class:`ProcessState<process_state>`): The current process state.
     Returns:
         :obj:`~type_aliases.Action` containing the position, motion event code and part id for the next recommended action.
     """
@@ -318,7 +318,7 @@ def make_assembly_messages(event_result: AssemblyEventResult) -> (str, str):
     """Produces a message according to the given event result.
 
     Args:
-        event_result(:class:`~assembly_event_result.AssemblyEventResult`): See :class:`~assembly_event_result.AssemblyEventResult`
+        event_result(:class:`AssemblyEventResult <assembly_event_result>`): See :class:`AssemblyEventResult <assembly_event_result>`
 
     Returns:
         :obj:`tuple` containing a message.
@@ -375,7 +375,7 @@ def make_pick_messages(event_result: PickEventResult) -> (str, str):
     """Produces a message according to the given event result.
 
     Args:
-        event_result(:class:`~pick_event_result.PickEventResult`): See :class:`~pick_event_result.PickEventResult`
+        event_result(:class:`PickEventResult<pick_event_result>`): See :class:`PickEventResult<pick_event_result>`
 
     Returns:
         :obj:`tuple` containing a message.
@@ -396,7 +396,7 @@ def get_valid_assembly_positions(process_state: ProcessState, part_id: int) -> s
     """Returns all valid assembly positions for the part that was picked.
 
     Args:
-        process_state(:class:`~process_state.ProcessState`): The process state after the motion event has been evaluated
+        process_state(:class:`ProcessState<process_state>`): The process state after the motion event has been evaluated
         part_id(:obj:`int`): Part ID
     Returns:
         :obj:`set` [:obj:`Union` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Trail`]]
@@ -408,7 +408,6 @@ def get_valid_assembly_positions(process_state: ProcessState, part_id: int) -> s
             state = process_state.completed_instruction(building_instruction)
             if state[1] == constants.pipe_event_code and building_instruction.pipe_id == part_id:
                 valid_pos.add(building_instruction.possible_att_pipe_positions)
-
 
     elif part_id == constants.fitting_id:
         placed_fit_pos_set = process_state.get_positions_from_motion_dict(constants.fit_event_code)

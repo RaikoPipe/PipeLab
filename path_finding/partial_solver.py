@@ -28,8 +28,8 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
         exclusion_list (:obj:`list` [:obj:`set`]): List of node pairs that are excluded from connecting.
         outgoing_node_directions_dict (:obj:`~type_aliases.FittingDirections`): Dictionary containing the directions each node can be connected to.
         state_grid(:obj:`~type_aliases.StateGrid`): See :obj:`~type_aliases.StateGrid`
-        part_stock(:obj:`type_aliases.PartStock`): See :paramref:`~process_state.ProcessState.part_stock`.
-        path_problem(:class:`~path_problem.PathProblem`): See :class:'PathProblem'.
+        part_stock(:obj:`~type_aliases.PartStock`): See :paramref:`~process_state.ProcessState.part_stock`.
+        path_problem(:class:`PathProblem<path_problem>`): See :class:'PathProblem'.
 
     """
 
@@ -108,12 +108,12 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
     be compatible and equal to a valid assembly layout.
 
     Args:
-        partial_solutions (:obj:`list` [:class:`~solution.Solution`]): A list of solutions that (presumably) form a complete solution.
+        partial_solutions (:obj:`list` [:class:`Solution<solution>`]): A list of solutions that (presumably) form a complete solution.
         completed_layouts (:obj:`~class_types.BuildingInstructions`): Dictionary containing only layouts that are fully completed.
-        initial_path_problem (:class:`~path_problem.PathProblem`): The original path problem.
+        initial_path_problem (:class:`PathProblem<path_problem>`): The original path problem.
 
     Returns:
-        :class:`~solution.Solution` that is a fusion of all partial solutions.
+        :class:`Solution<solution>` that is a fusion of all partial solutions.
     """
     node_trail = {}
 

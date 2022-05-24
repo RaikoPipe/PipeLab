@@ -19,7 +19,6 @@ and the :ref:`GUI for debugging and visualization <Function Test>`. If you want 
    process_planning
    path_finding
    type_dictionary
-   vpython_rendering
    main_scripts
 
 

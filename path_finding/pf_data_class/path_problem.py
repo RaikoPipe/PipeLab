@@ -9,7 +9,7 @@ from type_dictionary.type_aliases import *
 
 @dataclass(slots=True) # slots increase property access performance by ~20% compared to dictionaries.
 class PathProblem:
-    """Dataclass that contains detailed information about a path problem.
+    """Describes a path problem to be solved by the :ref:`Solution Manager Module <Solution Manager Module>`.
     """
 
     state_grid: StateGrid  #:

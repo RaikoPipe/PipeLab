@@ -1,7 +1,8 @@
 Server class
 =============
+
 This server class acts as a communication interface through opc-ua.
-In its current state, it's only an example placeholder for a more fleshed out opc-ua server.
+In its current state, it can accept Motion Events, forward it to the process planner and return some data from it.
 
 
 .. automodule:: server

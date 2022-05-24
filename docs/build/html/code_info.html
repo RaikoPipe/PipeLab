@@ -49,17 +49,14 @@
 <li class="toctree-l2"><a class="reference internal" href="class_types.html">Class Types module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Encoding Information</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#motion-event-codes">Motion Event Codes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#state-grid-state-codes">State Grid State Codes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#part-ids">Part IDs</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#state-grid-state-codes">State Grid State Codes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#part-ids">Part IDs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#picking-robot-command-codes">Picking Robot Command Codes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fastening-robot-command-codes">Fastening Robot Command Codes</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
@@ -90,7 +87,7 @@
              
   <div class="section" id="encoding-information">
 <h1>Encoding Information<a class="headerlink" href="#encoding-information" title="Permalink to this headline"></a></h1>
-<p>-&gt; See also <a class="reference internal" href="constants.html#module-constants"><span class="std std-ref">Constants module</span></a></p>
+<p>-&gt; See also <a class="reference internal" href="constants.html#constants-module"><span class="std std-ref">Constants module</span></a></p>
 <div class="section" id="motion-event-codes">
 <h2>Motion Event Codes<a class="headerlink" href="#motion-event-codes" title="Permalink to this headline"></a></h2>
 <ul class="simple">
@@ -110,17 +107,16 @@
 <li><p>2: occupied by part</p></li>
 <li><p>3: transition</p></li>
 </ul>
-<p>Currently Code 4 and 5 are treated as the same</p>
+</div>
 <div class="section" id="part-ids">
-<h3>Part IDs<a class="headerlink" href="#part-ids" title="Permalink to this headline"></a></h3>
+<h2>Part IDs<a class="headerlink" href="#part-ids" title="Permalink to this headline"></a></h2>
 <ul class="simple">
 <li><p>-99: Placeholder</p></li>
-<li><p>-2: Unknown straight pipe</p></li>
+<li><p>-2: Open ID (currently not determinable)</p></li>
 <li><p>-1: attachment</p></li>
 <li><p>0: fitting</p></li>
 <li><p>1-n: straight pipe (corresponding to the amount of nodes it passes)</p></li>
 </ul>
-</div>
 </div>
 <div class="section" id="picking-robot-command-codes">
 <h2>Picking Robot Command Codes<a class="headerlink" href="#picking-robot-command-codes" title="Permalink to this headline"></a></h2>
@@ -128,8 +124,8 @@
 <li><p>-2: STOP (unused)</p></li>
 <li><p>-1: Cancel all picking tasks (unused)</p></li>
 <li><p>0: Go to neutral state</p></li>
-<li><p>1: Move to pick-up point of part id x and pick part</p></li>
-<li><p>2: Move to return position of part id x and return part (unused)</p></li>
+<li><p>(1,x): Move to pick-up point of part id x and pick part</p></li>
+<li><p>(2,x): Move to return position of part id x and return part (unused)</p></li>
 <li><p>3: Move into offering position</p></li>
 <li><p>4: Wait for worker to accept part</p></li>
 </ul>
@@ -140,8 +136,8 @@
 <li><p>-2: STOP (unused)</p></li>
 <li><p>-1: Remove fastening of positions x from command pipeline (unused)</p></li>
 <li><p>0: Go to neutral state</p></li>
-<li><p>1: Move to fastening position and fasten attachment at pos x</p></li>
-<li><p>2: Move to fastening position and fasten pipe at pos x</p></li>
+<li><p>(1,x,y): Move to fastening position and fasten attachment at coordinates (x,y)</p></li>
+<li><p>(2,x,y): Move to fastening position and fasten pipe at coordinates (x,y)</p></li>
 </ul>
 </div>
 </div>

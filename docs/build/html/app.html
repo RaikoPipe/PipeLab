@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>App module &mdash; PipeLab 2022 documentation</title>
+  <title>App Class &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -41,7 +41,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="function_test.html">Function Test</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">App module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">App Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_config.html">App Configuration</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_util.html">App Util module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_info.html">FunctionTestApp Information</a></li>
@@ -50,7 +50,6 @@
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
@@ -69,7 +68,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="function_test.html">Function Test</a> &raquo;</li>
-      <li>App module</li>
+      <li>App Class</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/app.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -80,18 +79,17 @@
            <div itemprop="articleBody">
              
   <div class="section" id="module-app">
-<span id="app-module"></span><h1>App module<a class="headerlink" href="#module-app" title="Permalink to this headline"></a></h1>
+<span id="app-class"></span><h1>App Class<a class="headerlink" href="#module-app" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="app.FunctionTestApp">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">app.</span></span><span class="sig-name descname"><span class="pre">FunctionTestApp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_self_periodically</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#app.FunctionTestApp" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Provides a UI for the process planner, mainly for debugging purposes. Visualizes the process state.
-Initializes and uses an instance of a process planner.</p>
+<p>Provides an interactive UI for the process planner and the current process state, mainly for debugging purposes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="app.FunctionTestApp.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – The initial path problem</p></li>
-<li><p><span class="target" id="app.FunctionTestApp.params.process_planner"></span><strong>process_planner</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.process_planner">¶</a> (<a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner" title="process_planner.ProcessPlanner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanner</span></code></a>) – A process planner instance.</p></li>
+<li><p><span class="target" id="app.FunctionTestApp.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#module-path_problem" title="path_problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – The initial path problem</p></li>
+<li><p><span class="target" id="app.FunctionTestApp.params.process_planner"></span><strong>process_planner</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.process_planner">¶</a> (<a class="reference internal" href="process_planner.html#module-process_planner" title="process_planner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanner</span></code></a>) – A process planner instance.</p></li>
 <li><p><span class="target" id="app.FunctionTestApp.params.update_self_periodically"></span><strong>update_self_periodically</strong><a class="paramlink headerlink reference internal" href="#app.FunctionTestApp.params.update_self_periodically">¶</a> – Option, if event loops of the app are to be updated in intervals.</p></li>
 </ul>
 </dd>
@@ -99,7 +97,8 @@ Initializes and uses an instance of a process planner.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="app.FunctionTestApp.refresh">
 <span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#app.FunctionTestApp.refresh" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Initiates an update loop for the function test app widgets.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="app.FunctionTestApp.update_app">

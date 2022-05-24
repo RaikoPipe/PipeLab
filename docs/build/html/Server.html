@@ -47,7 +47,6 @@
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
@@ -79,7 +78,7 @@
   <div class="section" id="server-class">
 <h1>Server class<a class="headerlink" href="#server-class" title="Permalink to this headline"></a></h1>
 <p>This server class acts as a communication interface through opc-ua.
-In its current state, it’s only an example placeholder for a more fleshed out opc-ua server.</p>
+In its current state, it can accept Motion Events, forward it to the process planner and return some data from it.</p>
 <span class="target" id="module-server"></span><dl class="py class">
 <dt class="sig sig-object py" id="server.PipeLabServer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">server.</span></span><span class="sig-name descname"><span class="pre">PipeLabServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_planner</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.PipeLabServer" title="Permalink to this definition"></a></dt>

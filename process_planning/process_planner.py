@@ -5,7 +5,6 @@ from typing import Optional
 
 from path_finding.path_finding_util.path_math import get_direction, diff_pos
 from path_finding.pf_data_class.path_problem import PathProblem
-from path_finding.pf_data_class.weights import Weights
 from path_finding.search_algorithm import find_path
 from process_planning.pp_data_class.pick_event_result import PickEventResult
 from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
@@ -37,23 +36,22 @@ fastening_robot_command_message_dict = {
 
 # Todo:
 #   Known Issues:
-#   - detour events dont work vertically
-#   - detour events dont trigger on valid assembly
+#   - Search algorithm sometimes starts with fitting after a transition
 #   Planned Features:
 #   - improve partial solutions
 
 
 # noinspection PyUnboundLocalVariable
 class ProcessPlanner:
-    """Acts as an interface for handling events. Keeps track of the building process with the :class:`~process_state.ProcessState`
+    """Acts as an interface for handling events. Keeps track of the building process with the :class:`ProcessState<process_state>`
     class and provides robot commands. Handles calculation of new solutions in case of a detour event.
     """
 
     def __init__(self, initial_path_problem: PathProblem, initial_process_state: Optional[ProcessState] = None):
         """
         Args:
-            initial_path_problem(:class:`~path_problem.PathProblem`): See :class:`~path_problem.PathProblem`.
-            initial_process_state(:obj:`Optional` [:class:`~path_problem.PathProblem`]): Optional parameter if an initial process state exists.
+            initial_path_problem(:class:`PathProblem<path_problem>`): See :class:`PathProblem<path_problem>`.
+            initial_process_state(:obj:`Optional` [:class:`PathProblem<path_problem>`]): Optional parameter if an initial process state exists.
 
         :ivar _initial_path_problem: A copy of the original path problem
         :ivar optimal_solution: A solution to the initial path problem.
@@ -106,7 +104,7 @@ class ProcessPlanner:
             ignore_empty_stock(:obj:`bool`): If set to true, parts with empty stock can be picked without error. Could lead to unexpected behaviour.
 
         Returns:
-             :class:`~process_output.ProcessOutput` containing processed information regarding the event and current process state."""
+             :class:`ProcessOutput<process_ouput>` containing processed information regarding the event and current process state."""
 
         event_pos = motion_event[0]
         event_code = motion_event[1]
@@ -122,7 +120,7 @@ class ProcessPlanner:
         if event_code in (constants.pick_manual_event_code, constants.pick_robot_event_code):
             # motion event was pick event
             picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
-                                                                           process_state=tentative_process_state)
+                                                                      process_state=tentative_process_state)
             part_id = event_pos
             event_result: PickEventResult = tentative_process_state.pick_part(event_code, part_id, ignore_empty_stock)
             tentative_process_state.last_pick_event_result = event_result
@@ -190,8 +188,8 @@ class ProcessPlanner:
                                                                                event_info=tentative_process_state.last_assembly_event_result)
             # get picking robot commands
             picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
-                                                                           layout=tentative_process_state.last_assembly_event_result.layout,
-                                                                           process_state=tentative_process_state)
+                                                                      layout=tentative_process_state.last_assembly_event_result.layout,
+                                                                      process_state=tentative_process_state)
 
             # get valid assembly positions
             if tentative_process_state.picked_parts:
@@ -218,7 +216,7 @@ class ProcessPlanner:
         """Handles current detour trails and decides if the currently aimed solution should return to a previous iteration.
 
         Args:
-            process_state (:class:`~process_state.ProcessState`): The current process state.
+            process_state (:class:`ProcessState<process_state>`): The current process state.
 
         Returns:
             An optional :obj:`str` message if the currently aimed solution was changed to a previous one.
@@ -263,11 +261,11 @@ class ProcessPlanner:
         """Handles the detour event, applies new solution if found.
 
         Args:
-            process_state(:class:`~process_state.ProcessState`): The current process state.
+            process_state(:class:`ProcessState<process_state>`): The current process state.
             detour_event(:obj:`~class_types.BuildingInstructions`): Dictionary containing a trail and building instruction of the deviated layout.
 
         Returns:
-            A :obj:`tuple` containing :obj:`str` messages and a modified state with the new solution applied (:obj:`tuple` [:obj:`str`, :class:`~process_state.ProcessState`]).
+            A :obj:`tuple` containing :obj:`str` messages and a modified state with the new solution applied (:obj:`tuple` [:obj:`str`, :class:`ProcessState<process_state>`]).
 
         """
         detour_message = str.format(f"Detour event confirmed, but no alternative solution found!")
@@ -293,14 +291,15 @@ class ProcessPlanner:
 
     @staticmethod
     def determine_fastening_robot_commands(event_pos: Pos, event_code: int, event_info) -> tuple:
-        """
+        """Reads the current process state and determines command codes for the fastening robot.
 
         Args:
             event_pos (:obj:`~type_aliases.Pos`): See parameter :paramref:`~process_state.ProcessState.evaluate_assembly.event_pos`
             event_code (:obj:`int`): See parameter :paramref:`~process_state.ProcessState.evaluate_assembly.event_code`
-            event_info(:class:`~assembly_event_result.AssemblyEventResult`): See :class:`~assembly_event_result.AssemblyEventResult`
-         Returns:
-             :obj:`tuple` containing robot command codes for the fastening robot (See :ref:`Code Information`)
+            event_info(:class:`AssemblyEventResult <assembly_event_result>`): See :class:`AssemblyEventResult <assembly_event_result>`
+        Returns:
+            :obj:`tuple` containing robot command codes for the fastening robot (See :ref:`Fastening Robot Command Codes`).
+
         """
 
         fastening_robot_commands = []
@@ -325,13 +324,14 @@ class ProcessPlanner:
     @staticmethod
     def determine_picking_robot_commands(event_code: int, process_state: ProcessState,
                                          layout: Trail = None) -> tuple:
-        """
+        """Reads the current process state and determines command codes for the picking robot.
+
         Args:
-            process_state(:class:`~process_state.ProcessState`): The current process state.
+            process_state(:class:`ProcessState<process_state>`): The current process state.
             event_code (:obj:`int`): See parameter :paramref:`~process_state.ProcessState.evaluate_assembly.event_code`
-            layout(:obj:`type_aliases.Trail`): The current layout.
-         Returns:
-             :obj:`tuple` containing robot command codes for the fastening robot. (See :ref:`Code Information`)
+            layout(:obj:`~type_aliases.Trail`): The current layout.
+        Returns:
+            :obj:`tuple` containing robot command codes for the picking robot (See :ref:`Picking Robot Command Codes`).
         """
 
         picking_robot_commands = []

@@ -55,7 +55,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
@@ -94,7 +93,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="pp_util.determine_next_part.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.determine_next_part.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The current process state.</p></li>
+<li><p><span class="target" id="pp_util.determine_next_part.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.determine_next_part.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#module-process_state" title="process_state"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The current process state.</p></li>
 <li><p><span class="target" id="pp_util.determine_next_part.params.layout"></span><strong>layout</strong><a class="paramlink headerlink reference internal" href="#pp_util.determine_next_part.params.layout">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>) – The current layout.</p></li>
 </ul>
 </dd>
@@ -167,11 +166,11 @@ then add as a node pair tuple containing only pos.</p>
 <span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">get_solution_on_detour_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detour_event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.get_solution_on_detour_event" title="Permalink to this definition"></a></dt>
 <dd><p>Tries to get a new solution on a detour event.
 Args:</p>
-<p>initial_path_problem (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>): The original path problem.
-process_state (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>): The current process state.</p>
+<p>initial_path_problem (<a class="reference internal" href="path_problem.html#module-path_problem" title="path_problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>): The original path problem.
+process_state (<a class="reference internal" href="process_state.html#module-process_state" title="process_state"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>): The current process state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if one was found, else None.</p>
+<dd class="field-odd"><p><a class="reference internal" href="solution.html#module-solution" title="solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if one was found, else None.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -213,8 +212,8 @@ information regarding the reason for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="pp_util.get_next_recommended_action.params.building_instruction"></span><strong>building_instruction</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_next_recommended_action.params.building_instruction">¶</a> (<a class="reference internal" href="building_instruction.html#building_instruction.BuildingInstruction" title="building_instruction.BuildingInstruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>) – Building instruction currently being followed.</p></li>
-<li><p><span class="target" id="pp_util.get_next_recommended_action.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_next_recommended_action.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The current process state.</p></li>
+<li><p><span class="target" id="pp_util.get_next_recommended_action.params.building_instruction"></span><strong>building_instruction</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_next_recommended_action.params.building_instruction">¶</a> (<a class="reference internal" href="building_instruction.html#module-building_instruction" title="building_instruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>) – Building instruction currently being followed.</p></li>
+<li><p><span class="target" id="pp_util.get_next_recommended_action.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_next_recommended_action.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#module-process_state" title="process_state"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The current process state.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -229,7 +228,7 @@ information regarding the reason for the error.</p>
 <dd><p>Produces a message according to the given event result.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="pp_util.make_assembly_messages.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_assembly_messages.params.event_result">¶</a> (<a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>) – See <a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a></p>
+<dd class="field-odd"><p><span class="target" id="pp_util.make_assembly_messages.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_assembly_messages.params.event_result">¶</a> (<a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>) – See <a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a></p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing a message.</p>
@@ -243,7 +242,7 @@ information regarding the reason for the error.</p>
 <dd><p>Produces a message according to the given event result.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="pp_util.make_pick_messages.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_pick_messages.params.event_result">¶</a> (<a class="reference internal" href="pick_event_result.html#pick_event_result.PickEventResult" title="pick_event_result.PickEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a>) – See <a class="reference internal" href="pick_event_result.html#pick_event_result.PickEventResult" title="pick_event_result.PickEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a></p>
+<dd class="field-odd"><p><span class="target" id="pp_util.make_pick_messages.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#pp_util.make_pick_messages.params.event_result">¶</a> (<a class="reference internal" href="pick_event_result.html#module-pick_event_result" title="pick_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a>) – See <a class="reference internal" href="pick_event_result.html#module-pick_event_result" title="pick_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a></p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing a message.</p>
@@ -258,7 +257,7 @@ information regarding the reason for the error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="pp_util.get_valid_assembly_positions.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_assembly_positions.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The process state after the motion event has been evaluated</p></li>
+<li><p><span class="target" id="pp_util.get_valid_assembly_positions.params.process_state"></span><strong>process_state</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_assembly_positions.params.process_state">¶</a> (<a class="reference internal" href="process_state.html#module-process_state" title="process_state"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a>) – The process state after the motion event has been evaluated</p></li>
 <li><p><span class="target" id="pp_util.get_valid_assembly_positions.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#pp_util.get_valid_assembly_positions.params.part_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Part ID</p></li>
 </ul>
 </dd>

@@ -5,8 +5,8 @@ from datetime import datetime
 
 
 @dataclass
-class PickEventResult():
-    """Dataclass containing information about the result of a pick event."""
+class PickEventResult:
+    """Used to describe the result a pick motion event in detail after it was evaluated by :class:`ProcessState<process_state>`"""
 
     event_code: int
     """The Type of motion event.

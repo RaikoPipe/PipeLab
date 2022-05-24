@@ -7,7 +7,7 @@ from type_dictionary.type_aliases import *
 
 @dataclass(slots=True)
 class BuildingInstruction:
-    """Contains instructions for building a layout.
+    """Contains instructions and requirements for building a layout.
         """
 
     pipe_id: int

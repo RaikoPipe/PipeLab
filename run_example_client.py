@@ -29,7 +29,7 @@ async def send_motion_event(x, y, code):
         print("Hellower is: ", hellower)
 
         resulting_text = await hellower.call_method("1:SendMotionEvent", x, y, code)
-        print(resulting_text)
+        print('\033[92m'"ProcessPlanner Output:" + str(resulting_text))
 
 
 motion_events = [(5, 4, 3), (1, None, 4), (5, 4, 2), (0, None, 4), (5, 3, 1), (0, None, 4), (5, 5, 1)]

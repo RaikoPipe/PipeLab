@@ -14,7 +14,7 @@ def out_of_bounds(neighbor_pos: Pos, state_grid: StateGrid):
 
     Args:
         neighbor_pos(:obj:`~type_aliases.Pos`): Node position of considered neighbor node.
-        state_grid(:obj:`type_aliases.StateGrid`): To the current path modified state grid.
+        state_grid(:obj:`~type_aliases.StateGrid`): To the current path modified state grid.
 
     Returns:
         :obj:`bool`
@@ -38,7 +38,7 @@ def collided_obstacle(current_pos: Pos, neighbor_pos: Pos, state_grid: StateGrid
     Args:
         current_pos(:obj:`~type_aliases.Pos`): Node position of currently expanded node.
         neighbor_pos(:obj:`~type_aliases.Pos`): Node position of considered neighbor node.
-        state_grid(:obj:`type_aliases.StateGrid`): To the current path modified state grid.
+        state_grid(:obj:`~type_aliases.StateGrid`): To the current path modified state grid.
         part_id(:obj:`int`): Part ID of the neighbor node.
 
     Returns:
@@ -74,7 +74,7 @@ def neighbor_position_restricted(current_pos: Pos, neighbor_pos: Pos, relative_n
         current_pos(:obj:`~type_aliases.Pos`): Node position of currently expanded node.
         neighbor_pos(:obj:`~type_aliases.Pos`): Node position of considered neighbor node.
         relative_neighbor_pos(:obj:`~type_aliases.Pos`): Relative node position of neighbor
-        state_grid(:obj:`type_aliases.StateGrid`): To the current path modified state grid.
+        state_grid(:obj:`~type_aliases.StateGrid`): To the current path modified state grid.
         part_id(:obj:`int`): Part ID of the neighbor node.
 
     Returns:
@@ -126,8 +126,8 @@ def get_restricted_neighbor_nodes(directions: PosSet, goal_dict: DirectionDict, 
     that violate goal restrictions.
 
     Args:
-        part_stock(:obj:`type_aliases.PartStock`): See :obj:`type_aliases.PartStock`
-        predecessors(:obj:`class_types.Predecessors`): See :obj:`class_types.Predecessors`
+        part_stock(:obj:`~type_aliases.PartStock`): See :obj:`~type_aliases.PartStock`
+        predecessors(:obj:`~class_types.Predecessors`): See :obj:`~class_types.Predecessors`
         fast_mode(:obj:`bool`): See :paramref:`~pathfinding_util.search_algorithm.find_path.fast_mode`
         key: Key for getting predecessor to the currently expanded node. Type depends on if fast_mode is set.
         directions(:obj:`set` [:obj:`~type_aliases.Pos`]): Directions in which neighbors are considered.

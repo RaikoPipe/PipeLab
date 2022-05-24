@@ -32,12 +32,12 @@ def send_new_assembly_event(pos:Pos, event_code:int, process_planner: ProcessPla
                             initial_style_grid: numpy.ndarray, part_stock_tree: ttk.Treeview,
                             solution_button_grid: numpy.ndarray, tool_tip_text_grid: numpy.ndarray,
                             update_self_periodically):
-    """Sends new pick event to :class:`~process_planner.ProcessPlanner` instance of :class:`~app.FunctionTestApp`.
+    """Sends new pick event to :class:`ProcessPlanner<process_planner>` instance of :class:`~app.FunctionTestApp`.
 
     Args:
         pos(:obj:`~type_aliases.Pos`): Node position of the motion event.
         event_code(:obj:`int`): Type of motion event. See :ref:`Motion Event Codes`
-        process_planner(:class:`~process_planner.ProcessPlanner`): Process planner instance of the function test app
+        process_planner(:class:`ProcessPlanner<process_planner>`): Process planner instance of the function test app
         process_message_tree(:obj:`ttk.Treeview`): Process message display view of the function test app
         part_stock_tree(:obj:`ttk.Treeview`): Part stock display view of the function test app
         button_grid(:obj:`numpy.ndarray`): Grid array containing buttons.
@@ -62,11 +62,11 @@ def send_new_assembly_event(pos:Pos, event_code:int, process_planner: ProcessPla
 
 
 def send_new_pick_event(part_id: int, process_planner: ProcessPlanner, process_message_tree: ttk.Treeview, part_stock_tree: ttk.Treeview, update_self_periodically):
-    """Sends new pick event to :class:`~process_planner.ProcessPlanner` instance of :class:`~app.FunctionTestApp`.
+    """Sends new pick event to :class:`ProcessPlanner<process_planner>` instance of :class:`~app.FunctionTestApp`.
 
     Args:
         part_id(:obj:`int`): Part ID to pick.
-        process_planner(:class:`~process_planner.ProcessPlanner`): Process planner instance of the function test app
+        process_planner(:class:`ProcessPlanner<process_planner>`): Process planner instance of the function test app
         process_message_tree(:obj:`ttk.Treeview`): Process message display view of the function test app
         part_stock_tree(:obj:`ttk.Treeview`): Part stock display view of the function test app
 
@@ -85,7 +85,7 @@ def update_trees_on_pick_event(output: ProcessOutput, part_id:int, part_stock_tr
     Args:
         output:
         part_id(:obj:`int`): See :paramref:`~send_new_pick_event.part_id`
-        process_planner(:class:`~process_planner.ProcessPlanner`): See :paramref:`~send_new_pick_event.process_planner`
+        process_planner(:class:`ProcessPlanner<process_planner>`): See :paramref:`~send_new_pick_event.process_planner`
         process_message_tree(:obj:`ttk.Treeview`): See :paramref:`~send_new_pick_event.process_message_tree`
         part_stock_tree(:obj:`ttk.Treeview`): See :paramref:`~send_new_pick_event.part_stock_tree`
         """
@@ -195,11 +195,11 @@ def update_button_grid(button_grid: np.ndarray, process_state: ProcessState, sty
 
 
 def update_style_grid(process_state, style_grid: np.ndarray) -> np.ndarray:
-    """Reads the :obj:`process_planner.ProcessPlanner.motion_dict` from the process planner and updates the visualization
-    configuration of the :paramref:`style_grid``.
+    """Reads the :obj:`~class_types.MotionDict` from the process state and updates the visualization
+    configuration of the :paramref:`style_grid`.
 
     Args:
-        process_state(:class:`~process_state.ProcessState`): Process state that was modified.
+        process_state(:class:`ProcessState<process_state>`): Process state that was modified.
         style_grid(:obj:`numpy.ndarray`): See :paramref:`~update_button_grid.style_grid`
     Returns:
         Style grid (:obj:`numpy.ndarray`) with modified visualization configuration.
@@ -250,7 +250,7 @@ def get_style_from_construction_state(construction_state: Optional[ConstructionS
     """Evaluates which style configuration should used for the given parameter.
 
     Args:
-        construction_state(:class:`~construction_state.ConstructionState`)
+        construction_state(:class:`ConstructionState<construction_state>`)
 
     """
     style = free_style
@@ -281,11 +281,11 @@ def get_style_from_construction_state(construction_state: Optional[ConstructionS
 
 
 def update_tool_tip_text_grid(process_state: ProcessState, tool_tip_text_grid: np.ndarray) -> np.ndarray:
-    """Reads the :obj:`~type_aliases.MotionDict` from the process state and updates each items
+    """Reads the :obj:`~class_types.MotionDict` from the process state and updates each items
     attributes as string in the :paramref:`tool_tip_text_grid`.
 
     Args:
-        process_state(:class:`~process_state.ProcessState`): Process state that was modified.
+        process_state(:class:`ProcessState<process_state>`): Process state that was modified.
         tool_tip_text_grid(:obj:`numpy.ndarray`): See :paramref:`~update_button_grid.tool_tip_text_grid`
     Returns:
         Tool tip text grid (:obj:`numpy.ndarray`) with modified texts.
@@ -323,7 +323,7 @@ def get_construction_state_attributes_as_string(construction_state: Construction
     """Reads variable names and values from construction_state and returns them as a formatted string.
 
     Args:
-        construction_state(:class:`~construction_state.ConstructionState`): Construction state to read.
+        construction_state(:class:`ConstructionState<construction_state>`): Construction state to read.
 
     Returns:
         :obj:`str`
@@ -374,7 +374,7 @@ def update_trees_on_assembly_event(part_stock_tree: ttk.Treeview, process_messag
 
     Args:
 
-        process_output(:class:`~process_output.ProcessOutput`): Output by the process planner.
+        process_output(:class:`ProcessOutput<process_ouput>`): Output by the process planner.
         process_message_tree(:obj:`ttk.Treeview`): Process message display view of the function test app
         part_stock_tree(:obj:`ttk.Treeview`): Part stock display view of the function test app
 """
@@ -437,9 +437,9 @@ def append_attributes_to_tree_entry(event_result:Union[AssemblyEventResult, Pick
     entry specified in the first list entry of extra_message_ids.
 
     Args:
-        event_result(:obj:`Union` [:class:`~assembly_event_result.AssemblyEventResult`, :class:`~pick_event_result.PickEventResult`])
-        extra_message_ids(:obj`list`): List containing IDs of entries to add to a parent entry. First entry in the list must
-        be the ID of the parent entry.
+        event_result(:obj:`Union` [:class:`AssemblyEventResult <assembly_event_result>`, :class:`PickEventResult<pick_event_result>`])
+        extra_message_ids(:obj:`list`): List containing IDs of entries to add to a parent entry. First entry in the list must
+         be the ID of the parent entry.
         process_message_tree(:obj:`ttk.Treeview`): Process message treeview of the app.
 
     """
@@ -476,7 +476,7 @@ def get_button_grid(state_grid: StateGrid, node_trail: NodeTrail, button_grid_fr
     Also creates a style grid and a tool tip text grid for saving visualization information.
 
     Args:
-        path_problem(:class:`~path_problem.PathProblem`):
+        path_problem(:class:`PathProblem<path_problem>`):
         solution_button_grid(:obj:`Optional` [:obj:`numpy.ndarray`]): Needed for making button grid interactive.
         process_planner(:obj:`Optional` [:obj:`~process_planner.ProcessPlanner`]): If given, makes button grid interactive.
         button_grid_frame(:obj:`ttk.LabelFrame`): LabelFrame object to put the button grid in.

@@ -11,27 +11,6 @@ from process_planning.process_planner import ProcessPlanner
 from type_dictionary import constants
 
 
-@uamethod
-def say_hello_xml(parent, happy):
-    print("Calling say_hello_xml")
-    if happy:
-        result = "I'm happy"
-    else:
-        result = "I'm not happy"
-    print(result)
-    return result
-
-
-@uamethod
-def say_hello_array(parent, happy):
-    if happy:
-        result = "I'm happy"
-    else:
-        result = "I'm not happy"
-    print(result)
-    return [result, "Actually I am"]
-
-
 class PipeLabServer:
     def __init__(self, endpoint, name, model_filepath, process_planner):
         self.server = Server()
@@ -64,6 +43,14 @@ class PipeLabServer:
 
     @uamethod
     def send_motion_event(self, parent, x, y, code):
+        """send_motion_event()
+        Receives a motion event and sends it to the process planner. Returns some data from it.
+
+        Args:
+            x(:obj:`int`): x-coordinate of the motion event position or a part id
+            y(:obj:`int`): y-coordinate of the motion event position
+            code(:obj:`int`): Motion event code (See :ref:`Motion Event Codes`)
+            """
         try:
             if code in {constants.pick_manual_event_code, constants.pick_robot_event_code}:
                 output: ProcessOutput = self.process_planner.handle_motion_event((x, code))
@@ -72,17 +59,26 @@ class PipeLabServer:
             else:
                 return f"Event code {code} not recognized!"
 
-            event_info: Union[AssemblyEventResult, PickEventResult] = output.current_event_result
-            print('\033[92m' + "ProcessPlanner Output:")
-            #pprint.pprint(output)
-            if isinstance(event_info, AssemblyEventResult):
-                if event_info.detour_event:
-                    return event_info.event_code, "Deviated from optimal solution!"
-            return event_info.event_code
+            event_result: Union[AssemblyEventResult, PickEventResult] = output.current_event_result
+            # pprint.pprint(output)
+            response = [event_result.event_code, str(event_result.time_registered), event_result.error]
+
+            if isinstance(event_result, AssemblyEventResult):
+                event_result: AssemblyEventResult
+                response.extend((event_result.obstructed_part,
+                                 event_result.obstructed_obstacle,
+                                 event_result.deviated, event_result.misplaced,
+                                 event_result.unnecessary, output.messages[0], output.messages[1] if len(
+                    output.messages) > 1 else None))
+            elif isinstance(event_result, PickEventResult):
+                event_result: PickEventResult
+                response.extend((event_result.part_not_available, event_result.part_id))
+
+            return tuple(response)
+
         except BaseException as e:
             print(e)
             return str(e)
-
 
     async def __aenter__(self):
         await self.init()

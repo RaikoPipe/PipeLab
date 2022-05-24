@@ -18,12 +18,12 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
     """Searches for a solution for the given path problem.
 
         Args:
-            path_problem(:class:`~path_problem.PathProblem`): Path problem to solve.
+            path_problem(:class:`PathProblem<path_problem>`): Path problem to solve.
             fast_mode(:obj:`bool`): Slightly faster, but incomplete search. Not recommended.
             draw_path(:obj:`bool`): Debug option. If set to True, shows path drawn via `matplotlib.pyplot <https://matplotlib.org/3.5.0/api/_as_gen/matplotlib.pyplot.html>`_ after each node expansion.
 
         Returns:
-            :class:`~path_problem.PathProblem` when a solution was found, else :obj:`None`.
+            :class:`PathProblem<path_problem>` when a solution was found, else :obj:`None`.
 
 
     """

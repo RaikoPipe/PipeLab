@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BuildingInstruction class &mdash; PipeLab 2022 documentation</title>
+  <title>PickEventResult dataclass &mdash; PipeLab 2022 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/sphinx_paramlinks.css" type="text/css" />
@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="ConstructionState dataclass" href="construction_state.html" />
-    <link rel="prev" title="Process Planning Dataclasses" href="pp_data_class.html" /> 
+    <link rel="next" title="ProcessOutput dataclass" href="process_output.html" />
+    <link rel="prev" title="AssemblyEventResult dataclass" href="assembly_event_result.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,10 +45,10 @@
 <li class="toctree-l2"><a class="reference internal" href="process_planner.html">ProcessPlanner class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="process_state.html">ProcessState class</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">BuildingInstruction class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="building_instruction.html">BuildingInstruction class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="construction_state.html">ConstructionState dataclass</a></li>
 <li class="toctree-l3"><a class="reference internal" href="assembly_event_result.html">AssemblyEventResult dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pick_event_result.html">PickEventResult dataclass</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">PickEventResult dataclass</a></li>
 <li class="toctree-l3"><a class="reference internal" href="process_output.html">ProcessOutput dataclass</a></li>
 </ul>
 </li>
@@ -77,9 +77,9 @@
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="process_planning.html">Process Planning</a> &raquo;</li>
           <li><a href="pp_data_class.html">Process Planning Dataclasses</a> &raquo;</li>
-      <li>BuildingInstruction class</li>
+      <li>PickEventResult dataclass</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/building_instruction.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/pick_event_result.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -87,45 +87,52 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-building_instruction">
-<span id="buildinginstruction-class"></span><h1>BuildingInstruction class<a class="headerlink" href="#module-building_instruction" title="Permalink to this headline"></a></h1>
-<dl class="py class">
-<dt class="sig sig-object py" id="building_instruction.BuildingInstruction">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">building_instruction.</span></span><span class="sig-name descname"><span class="pre">BuildingInstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_fit_positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">possible_att_pipe_positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recommended_attachment_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_completed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#building_instruction.BuildingInstruction" title="Permalink to this definition"></a></dt>
+  <div class="section" id="pickeventresult-dataclass">
+<h1>PickEventResult dataclass<a class="headerlink" href="#pickeventresult-dataclass" title="Permalink to this headline"></a></h1>
+<span class="target" id="module-pick_event_result"></span><dl class="py class">
+<dt class="sig sig-object py" id="pick_event_result.PickEventResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pick_event_result.</span></span><span class="sig-name descname"><span class="pre">PickEventResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stock_empty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_registered</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_not_available</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pick_event_result.PickEventResult" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Contains instructions and requirements for building a layout.</p>
+<p>Used to describe the result a pick motion event in detail after it was evaluated by <a class="reference internal" href="process_state.html#module-process_state" title="process_state"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="building_instruction.BuildingInstruction.pipe_id">
-<span class="sig-name descname"><span class="pre">pipe_id</span></span><a class="headerlink" href="#building_instruction.BuildingInstruction.pipe_id" title="Permalink to this definition"></a></dt>
-<dd><p>ID of pipe that needs to be placed in the layout.</p>
+<dt class="sig sig-object py" id="pick_event_result.PickEventResult.event_code">
+<span class="sig-name descname"><span class="pre">event_code</span></span><a class="headerlink" href="#pick_event_result.PickEventResult.event_code" title="Permalink to this definition"></a></dt>
+<dd><p>The Type of motion event.</p>
 <p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="building_instruction.BuildingInstruction.required_fit_positions">
-<span class="sig-name descname"><span class="pre">required_fit_positions</span></span><a class="headerlink" href="#building_instruction.BuildingInstruction.required_fit_positions" title="Permalink to this definition"></a></dt>
-<dd><p>Position where fittings need to be placed.</p>
-<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.DirectedConnection" title="type_aliases.DirectedConnection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DirectedConnection</span></code></a></p>
+<dt class="sig sig-object py" id="pick_event_result.PickEventResult.part_id">
+<span class="sig-name descname"><span class="pre">part_id</span></span><a class="headerlink" href="#pick_event_result.PickEventResult.part_id" title="Permalink to this definition"></a></dt>
+<dd><p>Part ID of the part picked.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="building_instruction.BuildingInstruction.possible_att_pipe_positions">
-<span class="sig-name descname"><span class="pre">possible_att_pipe_positions</span></span><a class="headerlink" href="#building_instruction.BuildingInstruction.possible_att_pipe_positions" title="Permalink to this definition"></a></dt>
-<dd><p>Trail containing node positions that a pipe of this layout would occupy. Used for checking if position of a motion event is valid for attachment or pipe assembly.</p>
-<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a></p>
+<dt class="sig sig-object py" id="pick_event_result.PickEventResult.stock_empty">
+<span class="sig-name descname"><span class="pre">stock_empty</span></span><a class="headerlink" href="#pick_event_result.PickEventResult.stock_empty" title="Permalink to this definition"></a></dt>
+<dd><p>Set containing part IDs with empty stock.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="building_instruction.BuildingInstruction.recommended_attachment_pos">
-<span class="sig-name descname"><span class="pre">recommended_attachment_pos</span></span><a class="headerlink" href="#building_instruction.BuildingInstruction.recommended_attachment_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Recommended assembly position of attachment, determined by an algorithm.</p>
-<p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
+<dt class="sig sig-object py" id="pick_event_result.PickEventResult.time_registered">
+<span class="sig-name descname"><span class="pre">time_registered</span></span><a class="headerlink" href="#pick_event_result.PickEventResult.time_registered" title="Permalink to this definition"></a></dt>
+<dd><p>Datetime of when event was registered.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="building_instruction.BuildingInstruction.layout_completed">
-<span class="sig-name descname"><span class="pre">layout_completed</span></span><a class="headerlink" href="#building_instruction.BuildingInstruction.layout_completed" title="Permalink to this definition"></a></dt>
-<dd><p>If the layout is completed.</p>
+<dt class="sig sig-object py" id="pick_event_result.PickEventResult.error">
+<span class="sig-name descname"><span class="pre">error</span></span><a class="headerlink" href="#pick_event_result.PickEventResult.error" title="Permalink to this definition"></a></dt>
+<dd><p>If an error occurred.
+Errors signify that an action occurred that should have been impossible in the context of the current process state.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pick_event_result.PickEventResult.part_not_available">
+<span class="sig-name descname"><span class="pre">part_not_available</span></span><a class="headerlink" href="#pick_event_result.PickEventResult.part_not_available" title="Permalink to this definition"></a></dt>
+<dd><p>Error specifier. If a part was picked that was empty in stock</p>
 <p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd></dl>
 
@@ -137,8 +144,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pp_data_class.html" class="btn btn-neutral float-left" title="Process Planning Dataclasses" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="construction_state.html" class="btn btn-neutral float-right" title="ConstructionState dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="assembly_event_result.html" class="btn btn-neutral float-left" title="AssemblyEventResult dataclass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="process_output.html" class="btn btn-neutral float-right" title="ProcessOutput dataclass" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

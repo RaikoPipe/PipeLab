@@ -15,10 +15,10 @@ def check_solution_stack(path_problem: PathProblem) -> Optional[Solution]:
     """Checks if this path problem was already solved and returns the solution to it.
 
     Args:
-        path_problem(:class:`~path_problem.PathProblem`): Path problem to solve.
+        path_problem(:class:`PathProblem<path_problem>`): Path problem to solve.
 
     Returns:
-        :class:`~solution.Solution` if found in stack, else :obj:`None`.
+        :class:`Solution<solution>` if found in stack, else :obj:`None`.
         """
 
     for solution in completed_solutions_stack:
@@ -48,11 +48,11 @@ def get_solution(path_problem: PathProblem, draw_debug: bool = False) -> Optiona
     """Wraps functions :func:`check_solution_stack` and find_path to look for a solution to the given path problem.
 
     Args:
-        path_problem (:class:`~path_problem.PathProblem`): Path problem to solve.
+        path_problem (:class:`PathProblem<path_problem>`): Path problem to solve.
         draw_debug(:obj:`bool`): See draw_debug in :obj:`find_path<search_algorithm>`
 
     Returns:
-        :class:`~solution.Solution` when a solution was found, else :obj:`None`.
+        :class:`Solution<solution>` when a solution was found, else :obj:`None`.
     """
     solution = check_solution_stack(path_problem=path_problem)
     if solution:

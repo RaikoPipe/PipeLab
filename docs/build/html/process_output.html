@@ -47,7 +47,7 @@
 <li class="toctree-l2 current"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="building_instruction.html">BuildingInstruction class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="construction_state.html">ConstructionState dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="assembly_event_result.html">AssemblyEventInfo dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="assembly_event_result.html">AssemblyEventResult dataclass</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pick_event_result.html">PickEventResult dataclass</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">ProcessOutput dataclass</a></li>
 </ul>
@@ -58,7 +58,6 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
@@ -88,10 +87,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="processoutput-dataclass">
-<h1>ProcessOutput dataclass<a class="headerlink" href="#processoutput-dataclass" title="Permalink to this headline"></a></h1>
-<p>Dataclass for neatly outputting data returned from <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner" title="process_planner.ProcessPlanner"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessPlanner</span></code></a>.</p>
-<span class="target" id="module-process_output"></span><dl class="py class">
+  <div class="section" id="module-process_output">
+<span id="processoutput-dataclass"></span><h1>ProcessOutput dataclass<a class="headerlink" href="#module-process_output" title="Permalink to this headline"></a></h1>
+<dl class="py class">
 <dt class="sig sig-object py" id="process_output.ProcessOutput">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">process_output.</span></span><span class="sig-name descname"><span class="pre">ProcessOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_event_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">picking_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fastening_robot_commands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_recommended_action</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_assembly_positions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_output.ProcessOutput" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -101,17 +99,15 @@
 <dt class="sig sig-object py" id="process_output.ProcessOutput.process_state">
 <span class="sig-name descname"><span class="pre">process_state</span></span><a class="headerlink" href="#process_output.ProcessOutput.process_state" title="Permalink to this definition"></a></dt>
 <dd><p>Updated process state after a motion event.</p>
-<p><em>Type</em>: <a class="reference internal" href="process_state.html#process_state.ProcessState" title="process_state.ProcessState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a></p>
+<p><em>Type</em>: <a class="reference internal" href="process_state.html#module-process_state" title="process_state"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessState</span></code></a></p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="process_output.ProcessOutput.current_event_result">
 <span class="sig-name descname"><span class="pre">current_event_result</span></span><a class="headerlink" href="#process_output.ProcessOutput.current_event_result" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Evaluated information on the current event. Can be either <a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a></dt><dd><p>or <a class="reference internal" href="pick_event_result.html#pick_event_result.PickEventResult" title="pick_event_result.PickEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">pick_event_result.PickEventResult</span></code></a> depending on the evaluated motion event.</p>
-</dd>
-</dl>
-<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>, <a class="reference internal" href="pick_event_result.html#pick_event_result.PickEventResult" title="pick_event_result.PickEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a>]</p>
+<dd><p>Evaluated information on the current event. Can be either <a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>
+or <a class="reference internal" href="pick_event_result.html#module-pick_event_result" title="pick_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a> depending on the evaluated motion event.</p>
+<p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>, <a class="reference internal" href="pick_event_result.html#module-pick_event_result" title="pick_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">PickEventResult</span></code></a>]</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -125,14 +121,18 @@ These messages confirm a motion event or an error. For easily consumable feedbac
 <dl class="py attribute">
 <dt class="sig sig-object py" id="process_output.ProcessOutput.picking_robot_commands">
 <span class="sig-name descname"><span class="pre">picking_robot_commands</span></span><a class="headerlink" href="#process_output.ProcessOutput.picking_robot_commands" title="Permalink to this definition"></a></dt>
-<dd><p>See <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.determine_picking_robot_commands" title="process_planner.ProcessPlanner.determine_picking_robot_commands"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_picking_robot_commands()</span></code></a></p>
+<dd><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing robot command codes for the picking robot</p>
+<p>See <a class="reference internal" href="code_info.html#picking-robot-command-codes"><span class="std std-ref">Picking Robot Command Codes</span></a> for reference.</p>
+<p>Determined in: <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.determine_picking_robot_commands" title="process_planner.ProcessPlanner.determine_picking_robot_commands"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_picking_robot_commands()</span></code></a></p>
 <p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="process_output.ProcessOutput.fastening_robot_commands">
 <span class="sig-name descname"><span class="pre">fastening_robot_commands</span></span><a class="headerlink" href="#process_output.ProcessOutput.fastening_robot_commands" title="Permalink to this definition"></a></dt>
-<dd><p>See <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.determine_fastening_robot_commands" title="process_planner.ProcessPlanner.determine_fastening_robot_commands"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_fastening_robot_commands()</span></code></a></p>
+<dd><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing robot command codes for the fastening robot</p>
+<p>See <a class="reference internal" href="code_info.html#fastening-robot-command-codes"><span class="std std-ref">Fastening Robot Command Codes</span></a> for reference.</p>
+<p>Determined in: <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.determine_fastening_robot_commands" title="process_planner.ProcessPlanner.determine_fastening_robot_commands"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_fastening_robot_commands()</span></code></a></p>
 <p><em>Type</em>: <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
 </dd></dl>
 
@@ -140,7 +140,7 @@ These messages confirm a motion event or an error. For easily consumable feedbac
 <dt class="sig sig-object py" id="process_output.ProcessOutput.next_recommended_action">
 <span class="sig-name descname"><span class="pre">next_recommended_action</span></span><a class="headerlink" href="#process_output.ProcessOutput.next_recommended_action" title="Permalink to this definition"></a></dt>
 <dd><p>Next recommended worker action (Place part with ID x at pos (x,x))
-See parameter <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.params.next_recommended_action" title="process_planner.ProcessPlanner"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">next_recommended_action</span></code></a></p>
+See parameter <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.params.next_recommended_action" title="process_planner.ProcessPlanner"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">next_recommended_action</span></code></a>.</p>
 <p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Action" title="type_aliases.Action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Action</span></code></a></p>
 </dd></dl>
 
