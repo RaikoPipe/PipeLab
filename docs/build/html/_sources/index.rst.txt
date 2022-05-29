@@ -6,9 +6,10 @@
 PipeLab2 Documentation
 =================================================
 The PipeLab Module consists of several submodules and classes. It uses type aliases for easier comprehension of complex types,
-which can be found in :ref:`type dictionary <Type Dictionary>`. The most important modules are the :ref:`OPC-UA server <OPC_UA>`
-and the :ref:`GUI for debugging and visualization <Function Test>`. If you want to directly run __main__ scripts, refer to
-:ref:`Running main scripts<Main Scripts>`
+which can be found in :ref:`type dictionary <Type Dictionary>`. The most important modules are the :ref:`OPC-UA server <OPC-UA>`
+and the :ref:`app for debugging and visualization <Function Test>`. If you want to directly run __main__ scripts refer to
+:ref:`running main scripts<Main Scripts>`.
+
 
 .. toctree::
    :maxdepth: 2

@@ -7,10 +7,10 @@ from typing import Optional
 from path_finding.path_finding_util import path_math
 from path_finding.path_finding_util.path_math import get_direction, diff_pos
 from path_finding.pf_data_class.solution import Solution
+from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.pp_data_class.building_instruction import BuildingInstruction
 from process_planning.pp_data_class.construction_state import ConstructionState
 from process_planning.pp_data_class.pick_event_result import PickEventResult
-from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.process_util.ps_util import get_neighboring_layouts, construct_trail, \
     construct_detour_building_instruction, construct_building_instructions_from_solution, get_completion_proportion
 from type_dictionary import constants
@@ -23,8 +23,7 @@ class ProcessState:
 
     Args:
 
-        solution(:class:`Solution<solution>`):
-
+        solution(:class:`Solution<solution>`): Solution to the path problem that is the basis for the assembly process.
 
     :ivar state_grid: :obj:`~type_aliases.StateGrid` that shows where obstacles and completed layouts occupy nodes
 
@@ -43,11 +42,12 @@ class ProcessState:
         detour event.
 
     :ivar motion_dict: Dictionary (See :obj:`~class_types.MotionDict`) containing all registered motion events that are
-        valid (non-error) that point to a ConstructionState. The keys for pipe events are of the type :obj:`~type_aliases.Trail`, while other
+        valid (non-error) that point to a ConstructionState. The keys for pipe events are of the type
+        :obj:`~type_aliases.Trail`, while other
         events are of the type :obj:`~type_aliases.Pos`.
 
-    :ivar last_event_info: Dictionary (See :obj:`~class_types.BuildingInstructions`) containing information of the last event that occurred.
-        """
+    :ivar last_event_info: Dictionary (See :obj:`~class_types.BuildingInstructions`) containing information of the last
+        event that occurred."""
 
     def __init__(self, solution: Solution):
         self.state_grid = solution.path_problem.state_grid
@@ -73,12 +73,14 @@ class ProcessState:
         tuple[Pos, ConstructionState], tuple[Trail, ConstructionState], tuple[None, None]]:
         """returns construction state and pos/trail if pos and event_code specified are in motion_dict.
 
-        Args:
-            find_me (:obj:`Union` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Trail`]): Position or trail to find in motion_dict.
-            event_codes (:obj:`list` [:obj:`int`]): List containing event codes valid for search.
+        Args: find_me (:obj:`Union` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Trail`]): Position or trail to
+        find in motion_dict. event_codes (:obj:`list` [:obj:`int`]): List containing event codes valid for search.
 
         Returns:
-            If nothing was found, returns a :obj:`tuple` containing :obj:`None`, otherwise returns a :obj:`tuple` containing a :obj:`~type_aliases.Pos` or :obj:`~type_aliases.Trail` and its :class:`ConstructionState<construction_state>`"""
+            If nothing was found, returns a :obj:`tuple` containing :obj:`None`, otherwise returns a :obj:`tuple`
+            containing a :obj:`~type_aliases.Pos` or :obj:`~type_aliases.Trail` and its
+            :class:`ConstructionState<construction_state>`"""
+
         if 2 in event_codes:
             for trail, construction_state in self.motion_dict.items():
                 if (find_me in trail or find_me == trail) and construction_state.event_code == 2:
@@ -94,15 +96,17 @@ class ProcessState:
 
     # events
     def pick_part(self, event_code: int, part_id: int, ignore_empty_stock: bool) -> PickEventResult:
-        """Handling of a pick event.
+        """Evaluates the pick event in the context of the current process state and registers changes to the
+        :obj:`~type_aliases.PartStock` and other class instance variables if the action was valid.
 
         Args:
             event_code(:obj:`int`): See :paramref:`~evaluate_assembly.event_code`
             part_id (:obj:`int`): Part ID that was picked.
-            ignore_empty_stock (:obj:`bool`): See :paramref:`~process_planner.ProcessPlanner.handle_motion_event.ignore_empty_stock`
+            ignore_empty_stock (:obj:`bool`): See
+                :paramref:`~process_planner.ProcessPlanner.handle_motion_event.ignore_empty_stock`
+
         Returns:
-            :class:`PickEventResult<pick_event_result>`
-            """
+            :class:`PickEventResult<pick_event_result>`"""
         error = False
         part_not_available = False
         stock_empty = set()
@@ -123,7 +127,9 @@ class ProcessState:
     def evaluate_assembly(self, event_pos: Pos, event_code: int,
                           ignore_part_check: bool = False, ignore_obstructions: bool = False,
                           assume_pipe_id_from_solution: bool = False) -> AssemblyEventResult:
-        """Evaluates an assembly event and registers changes to the :obj:`~class_types.MotionDict` according to the :obj:`BuildingInstructions`. Also registers if an instruction has been completed.
+        """Evaluates the assembly event in the context of the current process state and registers changes to the
+        :obj:`~class_types.MotionDict` if the action was valid.
+        Also registers if a :obj:`building_instruction.BuildingInstruction` has been fulfilled.
 
         Args:
             event_pos (:obj:`~type_aliases.pos`): :obj:`~type_aliases.pos` where :obj:`motion event<type_aliases.MotionEvent>` occurred.
@@ -150,13 +156,11 @@ class ProcessState:
         misplaced = False
         unnecessary = False
         error = False
-        process_error = False
         part_not_picked = False
         obstructed_obstacle = False
         obstructed_part = False
 
         detour_event = {}
-        next_recommended_action = ()
 
         time_registered = datetime.now()
 

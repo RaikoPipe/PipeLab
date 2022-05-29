@@ -1,5 +1,5 @@
-App Util module
-================
+App Utility module
+=====================
 
 Utility functions used by the :ref:`Function Test App<App Class>`
 

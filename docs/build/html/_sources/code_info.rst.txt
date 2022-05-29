@@ -5,9 +5,15 @@ Encoding Information
 
 Motion Event Codes
 -------------------------------
+
+Assembly Events
+~~~~~~~~~~~~~~~~
 - 1: Fitting placed
 - 2: Pipe placed
 - 3: Attachment placed
+
+Pick Events
+~~~~~~~~~~~~~~~~
 - 4: Accepted part from picking robot
 - 5: Picked part manually
 

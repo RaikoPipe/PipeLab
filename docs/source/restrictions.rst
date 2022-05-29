@@ -1,7 +1,7 @@
 Restrictions module
 ===================
 
-Restriction functions used to limit the available neighbors to a search iteration according to certain rules.
+Restriction functions used to limit the available neighbors in a search iteration according to set rules.
 
 .. automodule:: restrictions
    :members:

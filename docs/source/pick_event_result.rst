@@ -1,5 +1,5 @@
 PickEventResult dataclass
-=======================
+===========================
 
 .. automodule:: pick_event_result
    :members:

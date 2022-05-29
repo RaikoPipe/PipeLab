@@ -39,14 +39,13 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="process_planning.html">Process Planning</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="process_planner.html">ProcessPlanner class</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">ProcessState class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Utility Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_info.html">Encoding Information</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
@@ -79,16 +78,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-process_state">
-<span id="processstate-class"></span><h1>ProcessState class<a class="headerlink" href="#module-process_state" title="Permalink to this headline"></a></h1>
-<dl class="py class">
+  <div class="section" id="processstate-class">
+<h1>ProcessState class<a class="headerlink" href="#processstate-class" title="Permalink to this headline"></a></h1>
+<p>The process state class describes the last known state of the build process.
+On each motion event it evaluates the input and modify its instance variables accordingly.
+(See <a class="reference internal" href="#process_state.ProcessState.evaluate_assembly" title="process_state.ProcessState.evaluate_assembly"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_state.ProcessState.evaluate_assembly()</span></code></a> for <a class="reference internal" href="code_info.html#assembly-events"><span class="std std-ref">assembly events</span></a> and
+<a class="reference internal" href="#process_state.ProcessState.pick_part" title="process_state.ProcessState.pick_part"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_state.ProcessState.pick_part()</span></code></a> for <a class="reference internal" href="code_info.html#pick-events"><span class="std std-ref">pick events</span></a>.</p>
+<span class="target" id="module-process_state"></span><dl class="py class">
 <dt class="sig sig-object py" id="process_state.ProcessState">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">process_state.</span></span><span class="sig-name descname"><span class="pre">ProcessState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Data class that contains information about a process state</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="process_state.ProcessState.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.params.solution">¶</a> (<a class="reference internal" href="solution.html#module-solution" title="solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>) – </p>
+<dd class="field-odd"><p><span class="target" id="process_state.ProcessState.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.params.solution">¶</a> (<a class="reference internal" href="solution.html#module-solution" title="solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>) – Solution to the path problem that is the basis for the assembly process.</p>
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
@@ -103,9 +106,11 @@ part IDs picked from stock. Parts will be removed upon assembly.</p></li>
 about the required assembly and IDs of parts to complete the construction process. Is recalculated after a
 detour event.</p></li>
 <li><p><strong>motion_dict</strong> – Dictionary (See <a class="reference internal" href="class_types.html#class_types.MotionDict" title="class_types.MotionDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MotionDict</span></code></a>) containing all registered motion events that are
-valid (non-error) that point to a ConstructionState. The keys for pipe events are of the type <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>, while other
+valid (non-error) that point to a ConstructionState. The keys for pipe events are of the type
+<a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>, while other
 events are of the type <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>.</p></li>
-<li><p><strong>last_event_info</strong> – Dictionary (See <a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) containing information of the last event that occurred.</p></li>
+<li><p><strong>last_event_info</strong> – Dictionary (See <a class="reference internal" href="class_types.html#class_types.BuildingInstructions" title="class_types.BuildingInstructions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code></a>) containing information of the last
+event that occurred.</p></li>
 </ul>
 </dd>
 </dl>
@@ -113,15 +118,13 @@ events are of the type <a class="reference internal" href="type_aliases.html#typ
 <dt class="sig sig-object py" id="process_state.ProcessState.get_construction_state">
 <span class="sig-name descname"><span class="pre">get_construction_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">find_me</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_codes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.get_construction_state" title="Permalink to this definition"></a></dt>
 <dd><p>returns construction state and pos/trail if pos and event_code specified are in motion_dict.</p>
+<p>Args: find_me (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>, <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>]): Position or trail to
+find in motion_dict. event_codes (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]): List containing event codes valid for search.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="process_state.ProcessState.get_construction_state.params.find_me"></span><strong>find_me</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.get_construction_state.params.find_me">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>, <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a>]) – Position or trail to find in motion_dict.</p></li>
-<li><p><span class="target" id="process_state.ProcessState.get_construction_state.params.event_codes"></span><strong>event_codes</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.get_construction_state.params.event_codes">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]) – List containing event codes valid for search.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>If nothing was found, returns a <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, otherwise returns a <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing a <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a> or <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a> and its <a class="reference internal" href="construction_state.html#module-construction_state" title="construction_state"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code></a></p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>If nothing was found, returns a <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, otherwise returns a <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>
+containing a <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a> or <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a> and its
+<a class="reference internal" href="construction_state.html#module-construction_state" title="construction_state"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstructionState</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -129,13 +132,15 @@ events are of the type <a class="reference internal" href="type_aliases.html#typ
 <dl class="py method">
 <dt class="sig sig-object py" id="process_state.ProcessState.pick_part">
 <span class="sig-name descname"><span class="pre">pick_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_empty_stock</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.pick_part" title="Permalink to this definition"></a></dt>
-<dd><p>Handling of a pick event.</p>
+<dd><p>Evaluates the pick event in the context of the current process state and registers changes to the
+<a class="reference internal" href="type_aliases.html#type_aliases.PartStock" title="type_aliases.PartStock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PartStock</span></code></a> and other class instance variables if the action was valid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><span class="target" id="process_state.ProcessState.pick_part.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pick_part.params.event_code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – See <a class="reference internal" href="#process_state.ProcessState.evaluate_assembly.params.event_code" title="process_state.ProcessState.evaluate_assembly"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
 <li><p><span class="target" id="process_state.ProcessState.pick_part.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pick_part.params.part_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Part ID that was picked.</p></li>
-<li><p><span class="target" id="process_state.ProcessState.pick_part.params.ignore_empty_stock"></span><strong>ignore_empty_stock</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pick_part.params.ignore_empty_stock">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – See <a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.handle_motion_event.params.ignore_empty_stock" title="process_planner.ProcessPlanner.handle_motion_event"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">ignore_empty_stock</span></code></a></p></li>
+<li><p><span class="target" id="process_state.ProcessState.pick_part.params.ignore_empty_stock"></span><strong>ignore_empty_stock</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pick_part.params.ignore_empty_stock">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – See
+<a class="reference internal" href="process_planner.html#process_planner.ProcessPlanner.handle_motion_event.params.ignore_empty_stock" title="process_planner.ProcessPlanner.handle_motion_event"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">ignore_empty_stock</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -147,7 +152,9 @@ events are of the type <a class="reference internal" href="type_aliases.html#typ
 <dl class="py method">
 <dt class="sig sig-object py" id="process_state.ProcessState.evaluate_assembly">
 <span class="sig-name descname"><span class="pre">evaluate_assembly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_part_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_obstructions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_pipe_id_from_solution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.evaluate_assembly" title="Permalink to this definition"></a></dt>
-<dd><p>Evaluates an assembly event and registers changes to the <a class="reference internal" href="class_types.html#class_types.MotionDict" title="class_types.MotionDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MotionDict</span></code></a> according to the <code class="xref py py-obj docutils literal notranslate"><span class="pre">BuildingInstructions</span></code>. Also registers if an instruction has been completed.</p>
+<dd><p>Evaluates the assembly event in the context of the current process state and registers changes to the
+<a class="reference internal" href="class_types.html#class_types.MotionDict" title="class_types.MotionDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MotionDict</span></code></a> if the action was valid.
+Also registers if a <a class="reference internal" href="building_instruction.html#building_instruction.BuildingInstruction" title="building_instruction.BuildingInstruction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">building_instruction.BuildingInstruction</span></code></a> has been fulfilled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

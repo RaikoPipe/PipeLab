@@ -83,7 +83,7 @@ def update_trees_on_pick_event(output: ProcessOutput, part_id:int, part_stock_tr
     """Updates the given process message treeview and part stock treeview instance with the updated data in process_output.
 
     Args:
-        output:
+        output(:class:`ProcessOutput<process_ouput>`): Output by the process planner.
         part_id(:obj:`int`): See :paramref:`~send_new_pick_event.part_id`
         process_planner(:class:`ProcessPlanner<process_planner>`): See :paramref:`~send_new_pick_event.process_planner`
         process_message_tree(:obj:`ttk.Treeview`): See :paramref:`~send_new_pick_event.process_message_tree`

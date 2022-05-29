@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Path Finding" href="path_finding.html" />
-    <link rel="prev" title="Process State Utility module" href="ps_util.html" /> 
+    <link rel="next" title="Main Scripts" href="main_scripts.html" />
+    <link rel="prev" title="Class Types module" href="class_types.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,7 +39,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
@@ -48,7 +48,11 @@
 <li class="toctree-l2"><a class="reference internal" href="constants.html">Constants module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class_types.html">Class Types module</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Encoding Information</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#motion-event-codes">Motion Event Codes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#motion-event-codes">Motion Event Codes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#assembly-events">Assembly Events</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pick-events">Pick Events</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#state-grid-state-codes">State Grid State Codes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#part-ids">Part IDs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#picking-robot-command-codes">Picking Robot Command Codes</a></li>
@@ -74,7 +78,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="process_planning.html">Process Planning</a> &raquo;</li>
+          <li><a href="type_dictionary.html">Type Dictionary</a> &raquo;</li>
       <li>Encoding Information</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/code_info.rst.txt" rel="nofollow"> View page source</a>
@@ -90,14 +94,22 @@
 <p>-&gt; See also <a class="reference internal" href="constants.html#constants-module"><span class="std std-ref">Constants module</span></a></p>
 <div class="section" id="motion-event-codes">
 <h2>Motion Event Codes<a class="headerlink" href="#motion-event-codes" title="Permalink to this headline"></a></h2>
+<div class="section" id="assembly-events">
+<h3>Assembly Events<a class="headerlink" href="#assembly-events" title="Permalink to this headline"></a></h3>
 <ul class="simple">
 <li><p>1: Fitting placed</p></li>
 <li><p>2: Pipe placed</p></li>
 <li><p>3: Attachment placed</p></li>
+</ul>
+</div>
+<div class="section" id="pick-events">
+<h3>Pick Events<a class="headerlink" href="#pick-events" title="Permalink to this headline"></a></h3>
+<ul class="simple">
 <li><p>4: Accepted part from picking robot</p></li>
 <li><p>5: Picked part manually</p></li>
 </ul>
 <p>Currently Code 4 and 5 are treated as the same</p>
+</div>
 </div>
 <div class="section" id="state-grid-state-codes">
 <h2>State Grid State Codes<a class="headerlink" href="#state-grid-state-codes" title="Permalink to this headline"></a></h2>
@@ -146,8 +158,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="ps_util.html" class="btn btn-neutral float-left" title="Process State Utility module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="path_finding.html" class="btn btn-neutral float-right" title="Path Finding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="class_types.html" class="btn btn-neutral float-left" title="Class Types module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="main_scripts.html" class="btn btn-neutral float-right" title="Main Scripts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

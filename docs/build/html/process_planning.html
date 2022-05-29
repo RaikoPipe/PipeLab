@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="ProcessPlanner class" href="process_planner.html" />
-    <link rel="prev" title="FunctionTestApp Information" href="app_info.html" /> 
+    <link rel="prev" title="Visualization colors and text information" href="app_info.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,14 +39,13 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Process Planning</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="process_planner.html">ProcessPlanner class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="process_state.html">ProcessState class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a></li>
 <li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Utility Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_info.html">Encoding Information</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
@@ -80,6 +79,13 @@
              
   <div class="section" id="process-planning">
 <h1>Process Planning<a class="headerlink" href="#process-planning" title="Permalink to this headline"></a></h1>
+<p>This module contains the <a class="reference internal" href="process_planner.html#module-process_planner"><span class="std std-ref">process planner</span></a> for monitoring and managing the build process.
+<a class="reference internal" href="pp_data_class.html#process-planning-dataclasses"><span class="std std-ref">Dataclasses</span></a> are used for easier handling of
+complex data structures. The most important dataclass is <a class="reference internal" href="process_state.html#processstate-class"><span class="std std-ref">ProcessState class</span></a>.</p>
+<div class="figure align-default" id="id1">
+<a class="reference internal image-reference" href="_images/loop.png"><img alt="Main loop of the process planner with an OPC-UA server as a input source." src="_images/loop.png" style="width: 800px;" /></a>
+<p class="caption"><span class="caption-text">Main loop</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</div>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="process_planner.html">ProcessPlanner class</a></li>
@@ -97,14 +103,6 @@
 <li class="toctree-l2"><a class="reference internal" href="ps_util.html">Process State Utility module</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="code_info.html">Encoding Information</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="code_info.html#motion-event-codes">Motion Event Codes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_info.html#state-grid-state-codes">State Grid State Codes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_info.html#part-ids">Part IDs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_info.html#picking-robot-command-codes">Picking Robot Command Codes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_info.html#fastening-robot-command-codes">Fastening Robot Command Codes</a></li>
-</ul>
-</li>
 </ul>
 </div>
 </div>
@@ -113,7 +111,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="app_info.html" class="btn btn-neutral float-left" title="FunctionTestApp Information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app_info.html" class="btn btn-neutral float-left" title="Visualization colors and text information" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="process_planner.html" class="btn btn-neutral float-right" title="ProcessPlanner class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

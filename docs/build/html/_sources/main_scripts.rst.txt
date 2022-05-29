@@ -6,7 +6,7 @@ Main Scripts
 - **run_server_connected_app**: Runs the function test app connected to the OPC-UA server.
 - **run_minimal_client**: Runs an example client that sends out test messages to the OPC-UA server.
 
--> All scripts use the path problem defined in :ref:`Path problem configuration`
+-> All scripts use an initial path problem defined in :ref:`Path problem configuration`
 
 .. toctree::
    :maxdepth: 4
