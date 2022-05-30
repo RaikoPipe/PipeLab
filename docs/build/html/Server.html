@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Function Test" href="function_test.html" />
-    <link rel="prev" title="OPC_UA" href="opc_ua.html" /> 
+    <link rel="prev" title="OPC-UA" href="opc_ua.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,7 +39,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="opc_ua.html">OPC_UA</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="opc_ua.html">OPC-UA</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Server class</a></li>
 </ul>
 </li>
@@ -64,7 +64,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="opc_ua.html">OPC_UA</a> &raquo;</li>
+          <li><a href="opc_ua.html">OPC-UA</a> &raquo;</li>
       <li>Server class</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/server.rst.txt" rel="nofollow"> View page source</a>
@@ -90,8 +90,18 @@ In its current state, it can accept Motion Events, forward it to the process pla
 
 <dl class="py method">
 <dt class="sig sig-object py" id="server.PipeLabServer.send_motion_event">
-<span class="sig-name descname"><span class="pre">send_motion_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#server.PipeLabServer.send_motion_event" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<span class="sig-name descname"><span class="pre">send_motion_event</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#server.PipeLabServer.send_motion_event" title="Permalink to this definition"></a></dt>
+<dd><p>Receives a motion event and sends it to the process planner. Returns some data from it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="server.PipeLabServer.send_motion_event.params.x"></span><strong>x</strong><a class="paramlink headerlink reference internal" href="#server.PipeLabServer.send_motion_event.params.x">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – x-coordinate of the motion event position or a part id</p></li>
+<li><p><span class="target" id="server.PipeLabServer.send_motion_event.params.y"></span><strong>y</strong><a class="paramlink headerlink reference internal" href="#server.PipeLabServer.send_motion_event.params.y">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – y-coordinate of the motion event position</p></li>
+<li><p><span class="target" id="server.PipeLabServer.send_motion_event.params.code"></span><strong>code</strong><a class="paramlink headerlink reference internal" href="#server.PipeLabServer.send_motion_event.params.code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Motion event code (See <a class="reference internal" href="code_info.html#motion-event-codes"><span class="std std-ref">Motion Event Codes</span></a>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -106,7 +116,7 @@ In its current state, it can accept Motion Events, forward it to the process pla
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="opc_ua.html" class="btn btn-neutral float-left" title="OPC_UA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="opc_ua.html" class="btn btn-neutral float-left" title="OPC-UA" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="function_test.html" class="btn btn-neutral float-right" title="Function Test" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

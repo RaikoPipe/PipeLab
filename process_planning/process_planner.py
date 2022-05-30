@@ -37,8 +37,10 @@ fastening_robot_command_message_dict = {
 # Todo:
 #   Known Issues:
 #   - Search algorithm sometimes starts with fitting after a transition
+#   - sometimes invalid detour event solutions
 #   Planned Features:
 #   - improve partial solutions
+#   - cancel all picking tasks on detour event
 
 
 # noinspection PyUnboundLocalVariable
