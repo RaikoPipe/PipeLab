@@ -82,13 +82,13 @@
 <h1>ProcessState class<a class="headerlink" href="#processstate-class" title="Permalink to this headline"></a></h1>
 <p>The process state class describes the last known state of the build process.
 On each motion event it evaluates the input and modify its instance variables accordingly.
-(See <a class="reference internal" href="#process_state.ProcessState.evaluate_assembly" title="process_state.ProcessState.evaluate_assembly"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_state.ProcessState.evaluate_assembly()</span></code></a> for <a class="reference internal" href="code_info.html#assembly-events"><span class="std std-ref">assembly events</span></a> and
-<a class="reference internal" href="#process_state.ProcessState.pick_part" title="process_state.ProcessState.pick_part"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_state.ProcessState.pick_part()</span></code></a> for <a class="reference internal" href="code_info.html#pick-events"><span class="std std-ref">pick events</span></a>.</p>
+(See <a class="reference internal" href="#process_state.ProcessState.evaluate_assembly" title="process_state.ProcessState.evaluate_assembly"><code class="xref py py-func docutils literal notranslate"><span class="pre">evaluate_assembly()</span></code></a> for <a class="reference internal" href="code_info.html#assembly-events"><span class="std std-ref">assembly events</span></a> and
+<a class="reference internal" href="#process_state.ProcessState.pick_part" title="process_state.ProcessState.pick_part"><code class="xref py py-func docutils literal notranslate"><span class="pre">pick_part()</span></code></a> for <a class="reference internal" href="code_info.html#pick-events"><span class="std std-ref">pick events</span></a>.</p>
 <span class="target" id="module-process_state"></span><dl class="py class">
 <dt class="sig sig-object py" id="process_state.ProcessState">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">process_state.</span></span><span class="sig-name descname"><span class="pre">ProcessState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Data class that contains information about a process state</p>
+<p>Data class that contains information about a process state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><span class="target" id="process_state.ProcessState.params.solution"></span><strong>solution</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.params.solution">¶</a> (<a class="reference internal" href="solution.html#module-solution" title="solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a>) – Solution to the path problem that is the basis for the assembly process.</p>

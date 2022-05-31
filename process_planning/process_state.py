@@ -19,7 +19,7 @@ from type_dictionary.type_aliases import *
 
 
 class ProcessState:
-    """Data class that contains information about a process state
+    """Data class that contains information about a process state.
 
     Args:
 

@@ -95,18 +95,23 @@ class ProcessPlanner:
     def handle_motion_event(self, motion_event: MotionEvent, handle_detour_events: bool = True,
                             ignore_part_check: bool = False, ignore_empty_stock: bool = False,
                             ignore_obstructions: bool = False) -> ProcessOutput:
-        """Main method of ProcessPlanner. Takes worker_event as input and sends information about the event to
-        ProcessState. Prints message output of ProcessState and handles detour events.
+        """Main method of ProcessPlanner. Takes a :obj:`~type_aliases.MotionEvent` as input and sends information about
+        the event to a :class:`ProcessState  <process_state>` instance. Handles detour events and produces robot commands.
 
         Args:
-            motion_event(:obj:`~type_aliases.MotionEvent`): A tuple containing event position and event code. Contains a part ID instead of a position in case of a pick event.
-            handle_detour_events(:obj:`bool`): If set to true, detour events will result in the process planner looking for a new solution.
-            ignore_part_check(:obj:`bool`): If set to true, part restrictions will be ignored. Could lead to unexpected behaviour.
-            ignore_obstructions(:obj:`bool`): If set to true, obstructions will be ignored. Could lead to unexpected behaviour.
-            ignore_empty_stock(:obj:`bool`): If set to true, parts with empty stock can be picked without error. Could lead to unexpected behaviour.
+            motion_event(:obj:`~type_aliases.MotionEvent`): A tuple containing event position and event code. Contains a
+             part ID instead of a position in case of a pick event.
+            handle_detour_events(:obj:`bool`): If set to true, detour events will result in the process planner looking
+             for a new solution.
+            ignore_part_check(:obj:`bool`): If set to true, part restrictions will be ignored. Could lead to unexpected
+             behaviour.
+            ignore_obstructions(:obj:`bool`): If set to true, obstructions will be ignored. Could lead to unexpected
+             behaviour.
+            ignore_empty_stock(:obj:`bool`): If set to true, parts with empty stock can be picked without error. Could
+             lead to unexpected behaviour.
 
-        Returns:
-             :class:`ProcessOutput<process_ouput>` containing processed information regarding the event and current process state."""
+        Returns: :class:`ProcessOutput<process_output>` containing processed information regarding the event and
+        current process state. """
 
         event_pos = motion_event[0]
         event_code = motion_event[1]

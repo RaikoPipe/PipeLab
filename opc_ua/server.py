@@ -9,6 +9,7 @@ from process_planning.pp_data_class.assembly_event_result import AssemblyEventRe
 from process_planning.pp_data_class.process_output import ProcessOutput
 from process_planning.process_planner import ProcessPlanner
 from type_dictionary import constants
+import json
 
 
 class PipeLabServer:
@@ -44,7 +45,8 @@ class PipeLabServer:
     @uamethod
     def send_motion_event(self, parent, x, y, code):
         """send_motion_event()
-        Receives a motion event and sends it to the process planner. Returns some data from it.
+        Receives a motion event from the client and sends it to the process planner.
+        Returns a JSON formatted string with the returned event result.
 
         Args:
             x(:obj:`int`): x-coordinate of the motion event position or a part id
@@ -61,20 +63,24 @@ class PipeLabServer:
 
             event_result: Union[AssemblyEventResult, PickEventResult] = output.current_event_result
             # pprint.pprint(output)
-            response = [event_result.event_code, str(event_result.time_registered), event_result.error]
+            response = {"eventCode": event_result.event_code, "timeRegistered": str(event_result.time_registered),
+                        "error": event_result.error}
 
             if isinstance(event_result, AssemblyEventResult):
                 event_result: AssemblyEventResult
-                response.extend((event_result.obstructed_part,
-                                 event_result.obstructed_obstacle,
-                                 event_result.deviated, event_result.misplaced,
-                                 event_result.unnecessary, output.messages[0], output.messages[1] if len(
-                    output.messages) > 1 else None))
+                response.update({"AssemblyEvent" : {"obstructedPart": event_result.obstructed_part,
+                                 "obstructedObstacle": event_result.obstructed_obstacle,
+                                 "deviated": event_result.deviated, "misplaced": event_result.misplaced,
+                                 "unnecessary": event_result.unnecessary, "message1": output.messages[0],
+                                 "message2": output.messages[1] if len(
+                                     output.messages) > 1 else None}})
+
             elif isinstance(event_result, PickEventResult):
                 event_result: PickEventResult
-                response.extend((event_result.part_not_available, event_result.part_id))
-
-            return tuple(response)
+                response.update({"PickEvent": {"partNotAvailable": event_result.part_not_available,
+                                               "partID" : event_result.part_id}})
+            response = json.dumps(response)
+            return response
 
         except BaseException as e:
             print(e)
