@@ -45,7 +45,8 @@ def check_solution_stack(path_problem: PathProblem) -> Optional[Solution]:
 
 
 def get_solution(path_problem: PathProblem, draw_debug: bool = False) -> Optional[Solution]:
-    """Wraps functions :func:`check_solution_stack` and find_path to look for a solution to the given path problem.
+    """Wraps functions :func:`check_solution_stack` and :func:`~search_algorithm.find_path` to look for a solution to the
+    given path problem.
 
     Args:
         path_problem (:class:`PathProblem<path_problem>`): Path problem to solve.

@@ -33,13 +33,13 @@ class PathProblem:
     """
     Set containing directions that restrict in which direction the search algorithm can start the search.
     
-    *Type*: (set[:obj:`~type_aliases.Pos`]) """
+    *Type*: (:obj:´set` [:obj:`~type_aliases.Pos`]) """
 
     goal_directions: set[Pos]
     """
     Set containing directions that restrict in which direction the search algorithm can append to the goal.
     
-    *Type*: (set[:obj:`~type_aliases.Pos`])
+    *Type*: (:obj:`set` [:obj:`~type_aliases.Pos`])
     """
     transition_points: set[Pos]
     """
@@ -60,7 +60,7 @@ class PathProblem:
     """
     Part IDs pointing the amount of parts available for assembly.
     
-    *Type*: (set[:obj:`~type_aliases.PartStock`]) 
+    *Type*: (:obj:`set` [:obj:`~type_aliases.PartStock`]) 
     """
 
     part_cost: dict[int, float]
@@ -74,7 +74,7 @@ class PathProblem:
     """
     Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
     
-    *Type*: (:obj`Optional` [:class:`weights.Weights`])
+    *Type*: (:obj:`Optional` [:class:`~weights.Weights`])
     """
 
     algorithm: str = "mcsa*"
@@ -86,5 +86,5 @@ class PathProblem:
     dijkstra
     best-first
     
-    *Type*: (:obj: `str`) 
+    *Type*: (:obj:`str`) 
     """

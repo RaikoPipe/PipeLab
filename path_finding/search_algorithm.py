@@ -7,7 +7,7 @@ from path_finding.grid.grid_functions import change_grid_states
 from path_finding.path_finding_util.path_math import *
 from path_finding.path_finding_util.path_util import *
 from path_finding.path_finding_util.restrictions import neighbor_position_restricted, get_restricted_neighbor_nodes
-from path_finding.path_finding_util.score_calculation import get_worst_move_cost, get_f_score, get_m_score, \
+from path_finding.path_finding_util.score_calculation import get_worst_move, get_f_score, get_m_score, \
     get_e_score
 from path_finding.pf_data_class.path_problem import PathProblem
 # fixme: mca* doesn't work, mcsa* doesn't include extra score
@@ -36,7 +36,7 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
     transition_points = path_problem.transition_points
     pipe_stock = deepcopy(path_problem.part_stock)
     part_cost = path_problem.part_cost
-    worst_move_cost, worst_moves = get_worst_move_cost(part_cost)
+    worst_move_cost, worst_moves = get_worst_move(part_cost)
     weights = path_problem.weights
     algorithm = path_problem.algorithm
 
@@ -174,7 +174,7 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
                 current_score_extra = get_e_score(algorithm=algorithm, weights=weights, current_pos=current_pos,
                                                   neighbor_pos=neighbor_pos,
                                                   part_cost=part_cost, worst_move_cost=worst_move_cost,
-                                                  current_state_grid=current_state_grid, part_id=neighbor_part_id)
+                                                  state_grid=current_state_grid, part_id=neighbor_part_id)
 
                 total_score[neighbor_pos] = get_f_score(current_score_start_distance, current_score_goal_distance,
                                                         current_score_extra, total_score[current_pos], algorithm)

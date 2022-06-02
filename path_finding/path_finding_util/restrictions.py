@@ -128,7 +128,7 @@ def get_restricted_neighbor_nodes(directions: PosSet, goal_dict: DirectionDict, 
     Args:
         part_stock(:obj:`~type_aliases.PartStock`): See :obj:`~type_aliases.PartStock`
         predecessors(:obj:`~class_types.Predecessors`): See :obj:`~class_types.Predecessors`
-        fast_mode(:obj:`bool`): See :paramref:`~pathfinding_util.search_algorithm.find_path.fast_mode`
+        fast_mode(:obj:`bool`): See :paramref:`~search_algorithm.find_path.fast_mode`
         key: Key for getting predecessor to the currently expanded node. Type depends on if fast_mode is set.
         directions(:obj:`set` [:obj:`~type_aliases.Pos`]): Directions in which neighbors are considered.
         goal_dict(:obj:`~type_aliases.DirectionDict`): Directions in which the goal can be appended to.
@@ -138,7 +138,7 @@ def get_restricted_neighbor_nodes(directions: PosSet, goal_dict: DirectionDict, 
         transition_points(:obj:`set` [:obj:`~type_aliases.Pos`]): Set of node positions that are marked as transition points.
 
     Returns:
-        A :obj:`set` of restricted neighbor :obj`Nodes<type_aliases.Node>`.
+        A :obj:`set` of restricted neighbor :obj:`Nodes<type_aliases.Node>`.
 
     """
 

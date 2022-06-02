@@ -11,7 +11,7 @@ class Solution:
     """Dataclass that contains information about the solution to a path problem."""
 
     rendering_dict: RenderingDict
-    """Dict containing necessary information for rendering objects.
+    """Dict containing useful information for rendering objects.
 
     *Type*: (:obj:`~type_aliases.RenderingDict`) """
     #:

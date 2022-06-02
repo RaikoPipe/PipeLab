@@ -126,6 +126,12 @@
 </li>
         <li><a href="path_util.html#path_util.construct_solution.params.algorithm">(path_util.construct_solution parameter)</a>
 </li>
+        <li><a href="score_calculation.html#score_calculation.get_e_score.params.algorithm">(score_calculation.get_e_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_f_score.params.algorithm">(score_calculation.get_f_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_m_score.params.algorithm">(score_calculation.get_m_score parameter)</a>
+</li>
         <li><a href="solution.html#solution.Solution.algorithm">(solution.Solution attribute)</a>
 </li>
       </ul></li>
@@ -184,6 +190,8 @@
       <li><a href="path_util.html#path_util.get_pipe_neighbors.params.available_parts">available_parts (path_util.get_pipe_neighbors parameter)</a>
 </li>
       <li><a href="path_util.html#path_util.get_corner_neighbors.params.available_parts(">available_parts( (path_util.get_corner_neighbors parameter)</a>
+</li>
+      <li><a href="score_calculation.html#score_calculation.get_min_o_reduction.params.axis">axis (score_calculation.get_min_o_reduction parameter)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -264,7 +272,7 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="score_calculation.html#score_calculation.calculate_distance_to_obstacles">calculate_distance_to_obstacles() (in module score_calculation)</a>
+      <li><a href="score_calculation.html#score_calculation.calculate_min_o_score">calculate_min_o_score() (in module score_calculation)</a>
 </li>
       <li><a href="grid_functions.html#grid_functions.change_grid_states">change_grid_states() (in module grid_functions)</a>
 </li>
@@ -279,6 +287,8 @@
         <li><a href="class_types.html#module-class_types">module</a>
 </li>
       </ul></li>
+      <li><a href="server.html#server.PipeLabServer.send_motion_event.params.code">code (server.PipeLabServer.send_motion_event parameter)</a>
+</li>
       <li><a href="restrictions.html#restrictions.collided_obstacle">collided_obstacle() (in module restrictions)</a>
 </li>
       <li><a href="process_state.html#process_state.ProcessState.completed_instruction">completed_instruction() (process_state.ProcessState method)</a>
@@ -304,8 +314,6 @@
 </li>
       <li><a href="ps_util.html#ps_util.construct_detour_building_instruction">construct_detour_building_instruction() (in module ps_util)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="path_util.html#path_util.construct_solution">construct_solution() (in module path_util)</a>
 </li>
       <li><a href="ps_util.html#ps_util.construct_trail">construct_trail() (in module ps_util)</a>
@@ -317,6 +325,8 @@
         <li><a href="construction_state.html#module-construction_state">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="app_util.html#app_util.get_construction_state_attributes_as_string.params.construction_state">construction_state (app_util.get_construction_state_attributes_as_string parameter)</a>
 
       <ul>
@@ -348,7 +358,19 @@
 </li>
         <li><a href="restrictions.html#restrictions.neighbor_position_restricted.params.current_pos">(restrictions.neighbor_position_restricted parameter)</a>
 </li>
+        <li><a href="score_calculation.html#score_calculation.calculate_min_o_score.params.current_pos">(score_calculation.calculate_min_o_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_e_score.params.current_pos">(score_calculation.get_e_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_min_o_reduction.params.current_pos">(score_calculation.get_min_o_reduction parameter)</a>
+</li>
       </ul></li>
+      <li><a href="score_calculation.html#score_calculation.get_f_score.params.current_score_extra">current_score_extra (score_calculation.get_f_score parameter)</a>
+</li>
+      <li><a href="score_calculation.html#score_calculation.get_f_score.params.current_score_goal_distance">current_score_goal_distance (score_calculation.get_f_score parameter)</a>
+</li>
+      <li><a href="score_calculation.html#score_calculation.get_f_score.params.current_score_start_distance">current_score_start_distance (score_calculation.get_f_score parameter)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -607,10 +629,10 @@
 </li>
       <li><a href="partial_solver.html#partial_solver.get_partial_solutions">get_partial_solutions() (in module partial_solver)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="path_util.html#path_util.get_pipe_neighbors">get_pipe_neighbors() (in module path_util)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="process_state.html#process_state.ProcessState.get_positions_from_motion_dict">get_positions_from_motion_dict() (process_state.ProcessState method)</a>
 </li>
       <li><a href="path_math.html#path_math.get_rel_dist_same_axis">get_rel_dist_same_axis() (in module path_math)</a>
@@ -631,7 +653,7 @@
 </li>
       <li><a href="pp_util.html#pp_util.get_valid_assembly_positions">get_valid_assembly_positions() (in module pp_util)</a>
 </li>
-      <li><a href="score_calculation.html#score_calculation.get_worst_move_cost">get_worst_move_cost() (in module score_calculation)</a>
+      <li><a href="score_calculation.html#score_calculation.get_worst_move">get_worst_move() (in module score_calculation)</a>
 </li>
       <li><a href="app_config.html#app_config.goal_active_color">goal_active_color (in module app_config)</a>
 </li>
@@ -657,6 +679,8 @@
         <li><a href="path_problem.html#path_problem.PathProblem.goal_pos">(path_problem.PathProblem attribute)</a>
 </li>
         <li><a href="path_util.html#path_util.construct_solution.params.goal_pos">(path_util.construct_solution parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_m_score.params.goal_pos">(score_calculation.get_m_score parameter)</a>
 </li>
       </ul></li>
       <li><a href="restrictions.html#restrictions.goal_restricted">goal_restricted() (in module restrictions)</a>
@@ -768,6 +792,8 @@
 
       <ul>
         <li><a href="ps_util.html#ps_util.construct_trail.params.length">(ps_util.construct_trail parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_min_o_reduction.params.length">(score_calculation.get_min_o_reduction parameter)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -902,6 +928,12 @@
 </li>
         <li><a href="restrictions.html#restrictions.out_of_bounds.params.neighbor_pos">(restrictions.out_of_bounds parameter)</a>
 </li>
+        <li><a href="score_calculation.html#score_calculation.calculate_min_o_score.params.neighbor_pos">(score_calculation.calculate_min_o_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_e_score.params.neighbor_pos">(score_calculation.get_e_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_m_score.params.neighbor_pos">(score_calculation.get_m_score parameter)</a>
+</li>
       </ul></li>
       <li><a href="restrictions.html#restrictions.neighbor_position_restricted">neighbor_position_restricted() (in module restrictions)</a>
 </li>
@@ -909,12 +941,12 @@
 </li>
       <li><a href="type_aliases.html#type_aliases.Node">Node (in module type_aliases)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grid_functions.html#grid_functions.get_rendering_grid.params.node_dist">node_dist (grid_functions.get_rendering_grid parameter)</a>
 </li>
       <li><a href="pp_util.html#pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set">node_pairs_set (pp_util.adjust_pos_in_node_pairs_set parameter)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="solution.html#solution.Solution.node_path">node_path (solution.Solution attribute)</a>
 </li>
       <li><a href="grid_functions.html#grid_functions.change_grid_states.params.node_states">node_states (grid_functions.change_grid_states parameter)</a>
@@ -984,6 +1016,10 @@
       <ul>
         <li><a href="path_problem.html#path_problem.PathProblem.part_cost">(path_problem.PathProblem attribute)</a>
 </li>
+        <li><a href="score_calculation.html#score_calculation.get_e_score.params.part_cost">(score_calculation.get_e_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_worst_move.params.part_cost">(score_calculation.get_worst_move parameter)</a>
+</li>
       </ul></li>
       <li><a href="app_util.html#app_util.send_new_pick_event.params.part_id">part_id (app_util.send_new_pick_event parameter)</a>
 
@@ -1005,6 +1041,8 @@
         <li><a href="restrictions.html#restrictions.goal_restricted.params.part_id">(restrictions.goal_restricted parameter)</a>
 </li>
         <li><a href="restrictions.html#restrictions.neighbor_position_restricted.params.part_id">(restrictions.neighbor_position_restricted parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_e_score.params.part_id">(score_calculation.get_e_score parameter)</a>
 </li>
       </ul></li>
       <li><a href="pick_event_result.html#pick_event_result.PickEventResult.part_not_available">part_not_available (pick_event_result.PickEventResult attribute)</a>
@@ -1135,10 +1173,10 @@
 </li>
       <li><a href="app_config.html#app_config.pipe_color">pipe_color (in module app_config)</a>
 </li>
-      <li><a href="constants.html#constants.pipe_event_code">pipe_event_code (in module constants)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="constants.html#constants.pipe_event_code">pipe_event_code (in module constants)</a>
+</li>
       <li><a href="building_instruction.html#building_instruction.BuildingInstruction.pipe_id">pipe_id (building_instruction.BuildingInstruction attribute)</a>
 
       <ul>
@@ -1324,6 +1362,8 @@
 </li>
       <li><a href="process_state.html#process_state.ProcessState.register_assembly">register_assembly() (process_state.ProcessState method)</a>
 </li>
+      <li><a href="score_calculation.html#score_calculation.get_min_o_reduction.params.relative_direction">relative_direction (score_calculation.get_min_o_reduction parameter)</a>
+</li>
       <li><a href="restrictions.html#restrictions.neighbor_position_restricted.params.relative_neighbor_pos">relative_neighbor_pos (restrictions.neighbor_position_restricted parameter)</a>
 </li>
       <li><a href="assembly_event_result.html#assembly_event_result.AssemblyEventResult.removal">removal (assembly_event_result.AssemblyEventResult attribute)</a>
@@ -1341,10 +1381,10 @@
         <li><a href="restrictions.html#module-restrictions">module</a>
 </li>
       </ul></li>
-      <li><a href="process_planner.html#process_planner.ProcessPlanner.return_to_previous_state">return_to_previous_state() (process_planner.ProcessPlanner method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="process_planner.html#process_planner.ProcessPlanner.return_to_previous_state">return_to_previous_state() (process_planner.ProcessPlanner method)</a>
+</li>
       <li><a href="constants.html#constants.right">right (in module constants)</a>
 </li>
       <li><a href="constants.html#constants.rot_180">rot_180 (in module constants)</a>
@@ -1472,14 +1512,14 @@
 </li>
       <li><a href="app_config.html#app_config.start_color">start_color (in module app_config)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="path_problem_configuration.html#path_problem_configuration.start_directions">start_directions (in module path_problem_configuration)</a>
 
       <ul>
         <li><a href="path_problem.html#path_problem.PathProblem.start_directions">(path_problem.PathProblem attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="path_problem_configuration.html#path_problem_configuration.start_pos">start_pos (in module path_problem_configuration)</a>
 
       <ul>
@@ -1514,6 +1554,12 @@
         <li><a href="restrictions.html#restrictions.neighbor_position_restricted.params.state_grid">(restrictions.neighbor_position_restricted parameter)</a>
 </li>
         <li><a href="restrictions.html#restrictions.out_of_bounds.params.state_grid">(restrictions.out_of_bounds parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.calculate_min_o_score.params.state_grid">(score_calculation.calculate_min_o_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_e_score.params.state_grid">(score_calculation.get_e_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_min_o_reduction.params.state_grid">(score_calculation.get_min_o_reduction parameter)</a>
 </li>
         <li><a href="solution.html#solution.Solution.state_grid">(solution.Solution attribute)</a>
 </li>
@@ -1566,6 +1612,8 @@
         <li><a href="app_util.html#app_util.update_tool_tip_text_grid.params.tool_tip_text_grid">(app_util.update_tool_tip_text_grid parameter)</a>
 </li>
       </ul></li>
+      <li><a href="score_calculation.html#score_calculation.get_f_score.params.total_score_current_node">total_score_current_node (score_calculation.get_f_score parameter)</a>
+</li>
       <li><a href="type_aliases.html#type_aliases.Trail">Trail (in module type_aliases)</a>
 </li>
   </ul></td>
@@ -1609,10 +1657,10 @@
 </li>
       <li><a href="app_util.html#app_util.update_button_grid">update_button_grid() (in module app_util)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="app.html#app.FunctionTestApp.params.update_self_periodically">update_self_periodically (app.FunctionTestApp parameter)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="app_util.html#app_util.update_solution_grid">update_solution_grid() (in module app_util)</a>
 </li>
       <li><a href="app_util.html#app_util.update_style_grid">update_style_grid() (in module app_util)</a>
@@ -1622,6 +1670,8 @@
       <li><a href="app_util.html#app_util.update_trees_on_assembly_event">update_trees_on_assembly_event() (in module app_util)</a>
 </li>
       <li><a href="app_util.html#app_util.update_trees_on_pick_event">update_trees_on_pick_event() (in module app_util)</a>
+</li>
+      <li><a href="score_calculation.html#score_calculation.get_m_score.params.upper_bound">upper_bound (score_calculation.get_m_score parameter)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1658,8 +1708,6 @@
         <li><a href="weights.html#module-weights">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="weights.html#weights.Weights">Weights (class in weights)</a>
 </li>
       <li><a href="path_problem_configuration.html#path_problem_configuration.weights">weights (in module path_problem_configuration)</a>
@@ -1667,7 +1715,15 @@
       <ul>
         <li><a href="path_problem.html#path_problem.PathProblem.weights">(path_problem.PathProblem attribute)</a>
 </li>
+        <li><a href="score_calculation.html#score_calculation.get_e_score.params.weights">(score_calculation.get_e_score parameter)</a>
+</li>
+        <li><a href="score_calculation.html#score_calculation.get_m_score.params.weights">(score_calculation.get_m_score parameter)</a>
+</li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="score_calculation.html#score_calculation.get_e_score.params.worst_move_cost">worst_move_cost (score_calculation.get_e_score parameter)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1675,15 +1731,19 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="path_problem_configuration.html#path_problem_configuration.x">x (in module path_problem_configuration)</a>
+
+      <ul>
+        <li><a href="server.html#server.PipeLabServer.send_motion_event.params.x">(server.PipeLabServer.send_motion_event parameter)</a>
 </li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grid_functions.html#grid_functions.get_empty_stategrid.params.x_nodes">x_nodes (grid_functions.get_empty_stategrid parameter)</a>
 
       <ul>
         <li><a href="grid_functions.html#grid_functions.get_rendering_grid.params.x_nodes">(grid_functions.get_rendering_grid parameter)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grid_functions.html#grid_functions.get_rendering_grid.params.x_start">x_start (grid_functions.get_rendering_grid parameter)</a>
 </li>
   </ul></td>
@@ -1693,15 +1753,19 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="path_problem_configuration.html#path_problem_configuration.y">y (in module path_problem_configuration)</a>
+
+      <ul>
+        <li><a href="server.html#server.PipeLabServer.send_motion_event.params.y">(server.PipeLabServer.send_motion_event parameter)</a>
 </li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grid_functions.html#grid_functions.get_empty_stategrid.params.y_nodes">y_nodes (grid_functions.get_empty_stategrid parameter)</a>
 
       <ul>
         <li><a href="grid_functions.html#grid_functions.get_rendering_grid.params.y_nodes">(grid_functions.get_rendering_grid parameter)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="grid_functions.html#grid_functions.get_rendering_grid.params.y_start">y_start (grid_functions.get_rendering_grid parameter)</a>
 </li>
   </ul></td>

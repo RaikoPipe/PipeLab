@@ -22,7 +22,7 @@ class PipeLabServer:
 
     async def init(self):
         await self.server.init()
-        #  This need to be imported at the start or else it will overwrite the data
+        #  This needs to be imported at the start or else it will overwrite the data
         await self.server.import_xml(self.model_filepath)
 
         objects = self.server.nodes.objects

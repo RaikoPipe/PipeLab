@@ -92,38 +92,118 @@
 <p>Functions for calculating scores for path finding.</p>
 <span class="target" id="module-score_calculation"></span><dl class="py function">
 <dt class="sig sig-object py" id="score_calculation.get_min_o_reduction">
-<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_min_o_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_min_o_reduction" title="Permalink to this definition"></a></dt>
-<dd><p>Counts free positions next to the move.</p>
+<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_min_o_reduction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relative_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_min_o_reduction" title="Permalink to this definition"></a></dt>
+<dd><p>Counts free positions adjacent to the move.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="score_calculation.get_min_o_reduction.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_min_o_reduction.params.state_grid">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a>) – To the current path modified state grid.</p></li>
+<li><p><span class="target" id="score_calculation.get_min_o_reduction.params.axis"></span><strong>axis</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_min_o_reduction.params.axis">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Direction of the move.</p></li>
+<li><p><span class="target" id="score_calculation.get_min_o_reduction.params.length"></span><strong>length</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_min_o_reduction.params.length">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Node length of the move.</p></li>
+<li><p><span class="target" id="score_calculation.get_min_o_reduction.params.current_pos"></span><strong>current_pos</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_min_o_reduction.params.current_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Current node position in the search.</p></li>
+<li><p><span class="target" id="score_calculation.get_min_o_reduction.params.relative_direction"></span><strong>relative_direction</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_min_o_reduction.params.relative_direction">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Direction of adjacent positions to check.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code> amount of occupied adjacent positions.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="score_calculation.calculate_distance_to_obstacles">
-<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">calculate_distance_to_obstacles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.calculate_distance_to_obstacles" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the amount of obstacles next to the move divided by the maximum possible amount of obstacles next to
-the move.</p>
+<dt class="sig sig-object py" id="score_calculation.calculate_min_o_score">
+<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">calculate_min_o_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.calculate_min_o_score" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the amount of obstacles adjacent to the move divided by the maximum possible amount of obstacles
+adjacent to the move.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="score_calculation.calculate_min_o_score.params.neighbor_pos"></span><strong>neighbor_pos</strong><a class="paramlink headerlink reference internal" href="#score_calculation.calculate_min_o_score.params.neighbor_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position of considered neighbor node.</p></li>
+<li><p><span class="target" id="score_calculation.calculate_min_o_score.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#score_calculation.calculate_min_o_score.params.state_grid">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a>) – To the current path modified state grid.</p></li>
+<li><p><span class="target" id="score_calculation.calculate_min_o_score.params.current_pos"></span><strong>current_pos</strong><a class="paramlink headerlink reference internal" href="#score_calculation.calculate_min_o_score.params.current_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Current node position in the search.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="score_calculation.get_worst_move_cost">
-<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_worst_move_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_worst_move_cost" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates the cost of the worst move.</p>
+<dt class="sig sig-object py" id="score_calculation.get_worst_move">
+<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_worst_move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_worst_move" title="Permalink to this definition"></a></dt>
+<dd><p>Looks for the move with the highest movement cost.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="score_calculation.get_worst_move.params.part_cost"></span><strong>part_cost</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_worst_move.params.part_cost">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>]) – See <a class="reference internal" href="path_problem.html#path_problem.PathProblem.part_cost" title="path_problem.PathProblem.part_cost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">part_cost</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing the per move cost and a list containing the move/s.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="score_calculation.get_f_score">
 <span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_f_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_score_start_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_score_goal_distance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_score_extra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_score_current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_f_score" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Calculates the total score of a move according to the used search algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="score_calculation.get_f_score.params.algorithm"></span><strong>algorithm</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_f_score.params.algorithm">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – See <a class="reference internal" href="path_problem.html#path_problem.PathProblem.algorithm" title="path_problem.PathProblem.algorithm"><code class="xref py py-attr docutils literal notranslate"><span class="pre">algorithm</span></code></a></p></li>
+<li><p><span class="target" id="score_calculation.get_f_score.params.total_score_current_node"></span><strong>total_score_current_node</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_f_score.params.total_score_current_node">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The total score up until the current position of the search.</p></li>
+<li><p><span class="target" id="score_calculation.get_f_score.params.current_score_extra"></span><strong>current_score_extra</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_f_score.params.current_score_extra">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – See <a class="reference internal" href="#score_calculation.get_e_score" title="score_calculation.get_e_score"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_e_score()</span></code></a></p></li>
+<li><p><span class="target" id="score_calculation.get_f_score.params.current_score_start_distance"></span><strong>current_score_start_distance</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_f_score.params.current_score_start_distance">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – (Normalized) Distance score to the start node</p></li>
+<li><p><span class="target" id="score_calculation.get_f_score.params.current_score_goal_distance"></span><strong>current_score_goal_distance</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_f_score.params.current_score_goal_distance">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – See <a class="reference internal" href="#score_calculation.get_m_score" title="score_calculation.get_m_score"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_m_score()</span></code></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="score_calculation.get_m_score">
 <span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_m_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">goal_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bound</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_m_score" title="Permalink to this definition"></a></dt>
-<dd><p>Calculates normalized M Score.</p>
+<dd><p>Calculates normalized M Score -&gt; Distance to the goal divided by an upper bound score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="score_calculation.get_m_score.params.goal_pos"></span><strong>goal_pos</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_m_score.params.goal_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Goal position.</p></li>
+<li><p><span class="target" id="score_calculation.get_m_score.params.neighbor_pos"></span><strong>neighbor_pos</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_m_score.params.neighbor_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position of considered neighbor node.</p></li>
+<li><p><span class="target" id="score_calculation.get_m_score.params.weights"></span><strong>weights</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_m_score.params.weights">¶</a> (<a class="reference internal" href="weights.html#weights.Weights" title="weights.Weights"><code class="xref py py-class docutils literal notranslate"><span class="pre">Weights</span></code></a>) – See <a class="reference internal" href="weights.html#weights.Weights" title="weights.Weights"><code class="xref py py-class docutils literal notranslate"><span class="pre">Weights</span></code></a>.</p></li>
+<li><p><span class="target" id="score_calculation.get_m_score.params.algorithm"></span><strong>algorithm</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_m_score.params.algorithm">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – See <a class="reference internal" href="path_problem.html#path_problem.PathProblem.algorithm" title="path_problem.PathProblem.algorithm"><code class="xref py py-attr docutils literal notranslate"><span class="pre">algorithm</span></code></a>.</p></li>
+<li><p><span class="target" id="score_calculation.get_m_score.params.upper_bound"></span><strong>upper_bound</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_m_score.params.upper_bound">¶</a> – Score to normalize the resulting distance to goal score.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="score_calculation.get_e_score">
-<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_e_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worst_move_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_e_score" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">score_calculation.</span></span><span class="sig-name descname"><span class="pre">get_e_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">algorithm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neighbor_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">worst_move_cost</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#score_calculation.get_e_score" title="Permalink to this definition"></a></dt>
 <dd><p>Calculates normalized E Score (extra score) for MCA*/MCSA*. E score includes additional costs such as part cost and distance to obstacles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="score_calculation.get_e_score.params.current_pos"></span><strong>current_pos</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_e_score.params.current_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Current node position in the search.</p></li>
+<li><p><span class="target" id="score_calculation.get_e_score.params.part_id"></span><strong>part_id</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_e_score.params.part_id">¶</a> – Part ID of the move that was used.</p></li>
+<li><p><span class="target" id="score_calculation.get_e_score.params.part_cost"></span><strong>part_cost</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_e_score.params.part_cost">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>]) – See <a class="reference internal" href="path_problem.html#path_problem.PathProblem.part_cost" title="path_problem.PathProblem.part_cost"><code class="xref py py-attr docutils literal notranslate"><span class="pre">part_cost</span></code></a></p></li>
+<li><p><span class="target" id="score_calculation.get_e_score.params.worst_move_cost"></span><strong>worst_move_cost</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_e_score.params.worst_move_cost">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – See <a class="reference internal" href="#score_calculation.get_worst_move" title="score_calculation.get_worst_move"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_worst_move()</span></code></a></p></li>
+<li><p><span class="target" id="score_calculation.get_e_score.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_e_score.params.state_grid">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a>) – To the current path modified state grid.</p></li>
+<li><p><span class="target" id="score_calculation.get_e_score.params.neighbor_pos"></span><strong>neighbor_pos</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_e_score.params.neighbor_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Node position of considered neighbor node.</p></li>
+<li><p><span class="target" id="score_calculation.get_e_score.params.weights"></span><strong>weights</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_e_score.params.weights">¶</a> (<a class="reference internal" href="weights.html#weights.Weights" title="weights.Weights"><code class="xref py py-class docutils literal notranslate"><span class="pre">Weights</span></code></a>) – See <a class="reference internal" href="weights.html#weights.Weights" title="weights.Weights"><code class="xref py py-class docutils literal notranslate"><span class="pre">Weights</span></code></a>.</p></li>
+<li><p><span class="target" id="score_calculation.get_e_score.params.algorithm"></span><strong>algorithm</strong><a class="paramlink headerlink reference internal" href="#score_calculation.get_e_score.params.algorithm">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – See <a class="reference internal" href="path_problem.html#path_problem.PathProblem.algorithm" title="path_problem.PathProblem.algorithm"><code class="xref py py-attr docutils literal notranslate"><span class="pre">algorithm</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
