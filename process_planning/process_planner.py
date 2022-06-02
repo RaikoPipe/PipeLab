@@ -372,9 +372,15 @@ class ProcessPlanner:
         return tuple(picking_robot_commands)
 
     def return_to_previous_state(self):
-        """Restores the previous state as the current state."""
+        """Restores the previous state as the current state.
+
+        Returns:
+            :obj:`bool` if restoring the previous state was successful.
+        """
         if self.previous_states:
             self.last_process_state = self.previous_states.pop(0)
             print("Returned to previous state!")
+            return True
         else:
             print("There is no last state to return to!")
+            return False

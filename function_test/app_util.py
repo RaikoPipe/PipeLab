@@ -130,27 +130,36 @@ def undo_action(process_planner: ProcessPlanner, button_grid: np.ndarray, style_
         tool_tip_text_grid(:obj:`numpy.ndarray`): Style grid to overwrite tool tip texts.
 
     """
-    process_planner.return_to_previous_state()
-    update_button_grid(button_grid=button_grid, process_state=process_planner.last_process_state,
-                       tool_tip_text_grid=tool_tip_text_grid,
-                       style_grid=style_grid)
+    restored = process_planner.return_to_previous_state()
+    if restored:
+        update_button_grid(button_grid=button_grid, process_state=process_planner.last_process_state,
+                           tool_tip_text_grid=tool_tip_text_grid,
+                           style_grid=style_grid)
 
-    part_id = 0
-    for item in part_stock_tree.get_children():
-        part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
-                                           process_planner.last_process_state.part_stock[part_id]))
-        part_id += 1
+        part_id = 0
+        for item in part_stock_tree.get_children():
+            part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
+                                               process_planner.last_process_state.part_stock[part_id]))
+            part_id += 1
 
-    global message_count
-    process_message_tree.insert("", index=ttk.END, tag=message_count, text="Last Action was undone!")
-    process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground="black")
-    message_count += 1
-    process_state = process_planner.last_process_state
+        global message_count
+        process_message_tree.insert("", index=ttk.END, tag=message_count, text="Last Action was undone!")
+        process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground="black")
+        message_count += 1
 
-    update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
-                         style_grid=initial_style_grid)
+        process_state = process_planner.last_process_state
 
-    process_message_tree.yview_moveto(1)
+        process_message_tree.yview_moveto(1)
+
+        update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
+                             style_grid=initial_style_grid)
+
+
+    else:
+        process_message_tree.insert("", index=ttk.END, tag=message_count, text="There is no previous state to restore!")
+        process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground="black")
+        message_count += 1
+
 
 
 def update_button_grid(button_grid: np.ndarray, process_state: ProcessState, style_grid: np.ndarray,
