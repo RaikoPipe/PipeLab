@@ -6,7 +6,7 @@ import threading
 
 
 if __name__ == "__main__":
-    path_problem = path_problem_configuration.get_solvable_path_problem_with_random_obstacles(.1)
+    path_problem = path_problem_configuration.get_solvable_path_problem_with_random_obstacles(0)
 
     process_planner = ProcessPlanner(initial_path_problem= path_problem)
 

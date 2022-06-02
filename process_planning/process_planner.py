@@ -38,6 +38,7 @@ fastening_robot_command_message_dict = {
 #   Known Issues:
 #   - Search algorithm sometimes starts with fitting after a transition
 #   - sometimes invalid detour event solutions
+#   - part id changes on transition
 #   Planned Features:
 #   - improve partial solutions
 #   - cancel all picking tasks on detour event

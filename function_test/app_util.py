@@ -1,8 +1,9 @@
 import numpy
-import ttkbootstrap
 from copy import deepcopy
-from idlelib.tooltip import Hovertip
 from typing import Optional, Union
+
+from ttkbootstrap.tooltip import ToolTip
+from ttkbootstrap.constants import *
 
 import numpy as np
 import ttkbootstrap as ttk
@@ -183,7 +184,7 @@ def update_button_grid(button_grid: np.ndarray, process_state: ProcessState, sty
 
     # update hovertips
     for pos, tool_tip_text in np.ndenumerate(tool_tip_text_grid):
-        Hovertip(button_grid[pos], tool_tip_text, hover_delay=0)
+        ToolTip(button_grid[pos], tool_tip_text, bootstyle=INFO)
 
     # reset button text
     for pos, _ in np.ndenumerate(process_state.state_grid):
@@ -551,9 +552,9 @@ def get_button_grid(state_grid: StateGrid, node_trail: NodeTrail, button_grid_fr
             if part_id is not None:
                 text = str.format(str(pos) + "\n" + f"Required part ID: {part_id}")
                 tool_tip_text_grid[pos] = text
-                Hovertip(button, text, hover_delay=0)
+                ToolTip(button, text,bootstyle=INFO)
             else:
-                Hovertip(button, tool_tip_text_grid[pos], hover_delay=0)
+                ToolTip(button, tool_tip_text_grid[pos], bootstyle=INFO)
             command = lambda t=pos: send_new_assembly_event(t, part_select_option.get(), process_planner, button_grid,
                                                             process_message_tree, style_grid, initial_style_grid,
                                                             part_stock_tree=part_stock_tree,

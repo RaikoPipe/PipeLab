@@ -2,6 +2,8 @@ from datetime import datetime
 
 import ttkbootstrap as ttk
 
+from ttkbootstrap.tooltip import ToolTip
+
 from function_test import app_util
 from function_test.app_config import treeview_style, configure_style, dark_theme, dark_theme_use, light_theme_use
 from function_test.app_util import undo_action, send_new_pick_event, get_button_grid
@@ -139,6 +141,8 @@ class FunctionTestApp:
         part_put_frame = ttk.LabelFrame(tool_frame, text="Assembly Event:")
         part_put_frame.grid(row=0, column=0, padx=5)
 
+        ToolTip(part_put_frame, "Choose what assembly event to execute on click")
+
         att_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Attachment", variable=part_select_option,
                                                  value=3)
         att_option_radiobutton.pack(anchor=ttk.W, pady=5)
@@ -181,6 +185,7 @@ class FunctionTestApp:
                                               update_self_periodically=update_self_periodically),
                                           style="primary.Outline.TButton")
             pick_part_button.pack(anchor=ttk.W)
+            ToolTip(pick_part_button, "Executes a pick event for ID " + str(part_id))
             self.part_stock_tree.insert("", ttk.END,
                                         values=(
                                             part_id,
@@ -210,15 +215,15 @@ class FunctionTestApp:
                                                                           solution_button_grid=self.solution_button_grid,
                                                                           ))
         return_to_previous_state.grid(row=2, column=0)
+        ToolTip(return_to_previous_state, "Restores the previous process state")
 
         # set icon
         self.root.iconbitmap('function_test/resources/PipeLab2.ico')
 
         if update_self_periodically:
             self.refresh()
-            self.root.mainloop()
-        else:
-            self.root.mainloop()
+
+        self.root.mainloop()
 
     def refresh(self):
         """Initiates an update loop for the function test app widgets."""

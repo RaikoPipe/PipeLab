@@ -7,24 +7,24 @@ from type_dictionary.constants import fitting_id
 # Configuration
 
 x = 10 #: Horizontal shape (amount of nodes)
-y = 18 #: Vertical shape (amount of nodes)
+y = 25 #: Vertical shape (amount of nodes)
 
-transition_points_set = {(-2, 10)} #: Set containing transition points that show where a transition from one wall to another occurs.
+transition_points_set = {(-2, 16)} #: Set containing transition points that show where a transition from one wall to another occurs.
 
 start_pos = (0, 0) #: Start position of the search.
-goal_pos = (9, 17) #: Goal position that needs to be reached
+goal_pos = (9, 24) #: Goal position that needs to be reached
 
 start_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)} #: Set containing directions that restrict in which direction the search algorithm can start the search.
 goal_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)} #: Set containing directions that restrict in which direction the search algorithm can append to the goal.
 
-pipe_stock = {0: 10, 1: 10, 2: 10, 3: 10, 4: 10, 5: 10, 6: 10} #: Part IDs pointing the amount of parts available for assembly.
+pipe_stock = {0: 10, 2: 10, 5: 10} #: Part IDs pointing the amount of parts available for assembly.
 
 part_cost = {0: 5.32, 1: 1.15, 2: 1.38, 3: 1.60, 4: 1.82, 5: 2.04, 6: 2.50} #: Part IDs pointing to their cost value.
 
 state_grid = grid_functions.get_empty_stategrid(x, y) #: A grid array where each position in the grid points to an integer value representing a state.
 
 algorithm="mcsa*" #: Defines how scores are calculated and therefore how nodes are evaluated in the search.
-weights = Weights(path_length=0, cost=1, distance_to_obstacles=0) #: Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
+weights = Weights(path_length=1, cost=1, distance_to_obstacles=0) #: Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
 
 new_path_problem = PathProblem(state_grid=state_grid, start_pos=start_pos, goal_pos=goal_pos,
                                start_directions=start_directions,
@@ -34,11 +34,11 @@ new_path_problem = PathProblem(state_grid=state_grid, start_pos=start_pos, goal_
 
 
 def get_solvable_path_problem_with_random_obstacles(obs_frequency) -> PathProblem:
-    """Tries to find a solvable obstacle configuration for the path problem defined in this file.
+    """Tries to find a solvable random obstacle configuration for the path problem defined in this file.
     Raises an exception after 1000 unsuccessful tries.
 
     Args:
-        obs_frequency(:obj:`float`): Chance for a node to be an obstacle
+        obs_frequency(:obj:`float`): Chance for a node to be an obstacle.
 
     Returns:
         :class:`PathProblem<path_problem>`
