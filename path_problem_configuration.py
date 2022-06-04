@@ -11,13 +11,13 @@ y = 25 #: Vertical shape (amount of nodes)
 
 transition_points_set = {(-2, 16)} #: Set containing transition points that show where a transition from one wall to another occurs.
 
-start_pos = (0, 0) #: Start position of the search.
-goal_pos = (9, 24) #: Goal position that needs to be reached
+start_pos = (3, 0) #: Start position of the search.
+goal_pos = (5, 24) #: Goal position that needs to be reached
 
 start_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)} #: Set containing directions that restrict in which direction the search algorithm can start the search.
 goal_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)} #: Set containing directions that restrict in which direction the search algorithm can append to the goal.
 
-pipe_stock = {0: 10, 2: 10, 5: 10} #: Part IDs pointing the amount of parts available for assembly.
+pipe_stock = {0: 10, 2: 10, 4: 10} #: Part IDs pointing the amount of parts available for assembly.
 
 part_cost = {0: 5.32, 1: 1.15, 2: 1.38, 3: 1.60, 4: 1.82, 5: 2.04, 6: 2.50} #: Part IDs pointing to their cost value.
 
@@ -52,11 +52,13 @@ def get_solvable_path_problem_with_random_obstacles(obs_frequency) -> PathProble
             raise Exception("There probably is no single solvable problem configuration for the given parameters!")
 
         state_grid = grid_functions.get_empty_stategrid(x, y)
-        state_grid[start_pos] = 0
-        state_grid[goal_pos] = 0
+
         state_grid = randomizer.set_random_obstacles(obs_frequency,
                                                      state_grid,
                                                      transition_points_set)
+        # clear start and goal of potential obstacles
+        state_grid[start_pos] = 0
+        state_grid[goal_pos] = 0
         new_path_problem.state_grid = grid_functions.set_transition_points(state_grid, transition_points_set)
 
         solution = find_path(path_problem=new_path_problem)

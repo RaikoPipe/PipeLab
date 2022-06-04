@@ -13,7 +13,6 @@ from path_finding.pf_data_class.path_problem import PathProblem
 # fixme: mca* doesn't work, mcsa* doesn't include extra score
 from type_dictionary import constants
 
-
 def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=False) -> Optional[Solution]:
     """Searches for a solution for the given path problem.
 

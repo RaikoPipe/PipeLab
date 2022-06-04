@@ -137,7 +137,6 @@ class ProcessPlanner:
 
             valid_assembly_positions = pp_util.get_valid_assembly_positions(process_state=tentative_process_state,
                                                                              part_id=part_id)
-            print(valid_assembly_positions)
 
         elif event_code in {constants.fit_event_code, constants.pipe_event_code, constants.att_event_code}:
             # motion event was assembly event

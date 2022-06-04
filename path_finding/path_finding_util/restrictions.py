@@ -147,6 +147,7 @@ def get_restricted_neighbor_nodes(directions: PosSet, goal_dict: DirectionDict, 
     available_parts = pipe_stock_check(part_stock, predecessors, fast_mode, key)
     remove = set()
 
+
     for direction in directions:
         if current_pos == start_pos:
             transition = get_transition(current_pos, direction, transition_points)

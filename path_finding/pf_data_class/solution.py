@@ -30,16 +30,17 @@ class Solution:
 
     score: Optional[float]
     """Measure of solution quality. The lower the score the better the solution.
+    Subjective to applied algorithm.
 
     *Type*: (:obj:`Optional` [:obj:`float`])"""
 
     algorithm: str
-    """Algorithm that was used to search.
+    """Algorithm that was used to search the solution.
 
     *Type*: (:obj:`str`)"""
 
     path_problem: PathProblem
-    """Path Problem that was solved
+    """Path Problem that was solved.
 
     *Type*: (:class:`PathProblem<path_problem>`)"""
 

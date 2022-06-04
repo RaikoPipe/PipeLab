@@ -9,7 +9,6 @@ from path_finding.pf_data_class.solution import Solution
 from type_dictionary import constants
 from type_dictionary.class_types import *
 
-
 def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tuple[Pos, int, Pos]],
                        state_grid: StateGrid, score: float,
                        algorithm: str, path_problem: PathProblem, fast_mode: bool, goal_pos: Pos,
@@ -139,10 +138,16 @@ def get_pipe_neighbors(direction: Pos, available_parts: set[int], at_start: bool
             continue
 
         if transition:
-            neighbors.add(((direction[0] * (part_id + abs(direction[0])), (direction[1] * (part_id + abs(direction[1])))), part_id))
-            if not at_start:
-                neighbors.add(((part_id * direction[1], part_id * direction[0]), part_id))
-                neighbors.add(((part_id * -direction[1], part_id * -direction[0]), part_id))
+            directions = {(direction[1], direction[0]),
+                          (-direction[1], -direction[0]),
+                          (direction[0], direction[1])}
+            # todo: improve this, what if transition is directly after start pos?
+            for dir in directions:
+                if dir == transition[1]:
+                    neighbors.add(((dir[0] * (part_id + abs(dir[0])), (dir[1] * (part_id + abs(dir[1])))), part_id))
+                else:
+                    neighbors.add(((part_id * dir[0], part_id * dir[1]), part_id))
+
         elif at_start:
             # only allow neighbors that meet start condition
             neighbors.add(((part_id * direction[0], part_id * direction[1]), part_id))
@@ -194,13 +199,9 @@ def pipe_stock_check(part_stock: PartStock, predecessors: Predecessors, fast_mod
         :obj:`set` containing the part IDs (:obj:`int`) left in stock.
 
     """
-    available_parts = set()
-    pipe_stock_copy = deepcopy(part_stock)
-    if len(predecessors) < 2:
-        # no parts used, no need to check current path
-        available_parts = get_available_parts(pipe_stock_copy)
-    else:
 
+    pipe_stock_copy = deepcopy(part_stock)
+    if len(predecessors) >= 2:
         while key in predecessors:
             part_id = predecessors.get(key).part_to_successor
 
@@ -244,10 +245,15 @@ def get_transition(pos:Pos, direction:Pos, transition_points: set[Pos]) -> Optio
     Returns:
         :obj:`tuple` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Pos`] if transition point found, else None.
     """
+    directions = {(direction[1], direction[0]),
+                  (-direction[1], -direction[0]),
+                  (direction[0], direction[1])}
+
     for transition_point in transition_points:
-        check_pos = sum_pos(pos, direction)
-        if check_pos[0] == transition_point[0] or check_pos[1] == transition_point[1]:
-            transition = (transition_point, direction)
-            return transition
+        for dir in directions:
+            check_pos = sum_pos(pos, dir)
+            if check_pos[0] == transition_point[0] or check_pos[1] == transition_point[1]:
+                transition = (transition_point, dir)
+                return transition
 
     return None

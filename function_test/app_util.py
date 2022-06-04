@@ -109,8 +109,10 @@ def update_trees_on_pick_event(output: ProcessOutput, part_id:int, part_stock_tr
         extra_message_ids.append(message_count)
         message_count += 1
     append_attributes_to_tree_entry(event_result, extra_message_ids, process_message_tree)
-    item = part_stock_tree.get_children()[part_id]
-    part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
+
+    part_id_to_child_id = get_child_id_dict(part_stock_tree)
+    child_id = part_id_to_child_id[part_id]
+    part_stock_tree.item(child_id, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
                                        process_planner.last_process_state.part_stock[part_id]))
     process_message_tree.yview_moveto(1)
 
@@ -132,23 +134,23 @@ def undo_action(process_planner: ProcessPlanner, button_grid: np.ndarray, style_
 
     """
     restored = process_planner.return_to_previous_state()
+    process_state = process_planner.last_process_state
     if restored:
-        update_button_grid(button_grid=button_grid, process_state=process_planner.last_process_state,
+        update_button_grid(button_grid=button_grid, process_state=process_state,
                            tool_tip_text_grid=tool_tip_text_grid,
                            style_grid=style_grid)
 
-        part_id = 0
-        for item in part_stock_tree.get_children():
-            part_stock_tree.item(item, values=(part_id, process_planner.last_process_state.picked_parts.count(part_id),
-                                               process_planner.last_process_state.part_stock[part_id]))
-            part_id += 1
+        part_id_to_child_id = get_child_id_dict(part_stock_tree)
+
+        for p_id in process_state.part_stock.keys():
+            child_id = part_id_to_child_id[p_id]
+            part_stock_tree.item(child_id, values=(p_id, process_state.picked_parts.count(p_id),
+                                                   process_state.part_stock[p_id]))
 
         global message_count
         process_message_tree.insert("", index=ttk.END, tag=message_count, text="Last Action was undone!")
         process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground="black")
         message_count += 1
-
-        process_state = process_planner.last_process_state
 
         process_message_tree.yview_moveto(1)
 
@@ -427,7 +429,7 @@ def update_trees_on_assembly_event(part_stock_tree: ttk.Treeview, process_messag
         append_attributes_to_tree_entry(event_result, extra_message_ids, process_message_tree)
     if detour_message:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=detour_message)
-        process_message_tree.tag_configure(tagname=message_count, background=message_detour_event_color, foreground="black")
+        process_message_tree.tag_configure(tagname=message_count, background=message_detour_event_color, foreground="white")
         message_count += 1
     if process_state.completion == 1:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
@@ -435,11 +437,23 @@ def update_trees_on_assembly_event(part_stock_tree: ttk.Treeview, process_messag
         process_message_tree.tag_configure(tagname=message_count, background=message_construction_complete_color, foreground="black")
         message_count += 1
 
+    part_id_to_child_id = get_child_id_dict(part_stock_tree)
+
     for p_id in process_state.part_stock.keys():
-        item = part_stock_tree.get_children()[p_id]
-        part_stock_tree.item(item, values=(p_id, process_state.picked_parts.count(p_id),
+
+        child_id = part_id_to_child_id[p_id]
+        part_stock_tree.item(child_id, values=(p_id, process_state.picked_parts.count(p_id),
                                            process_state.part_stock[p_id]))
     process_message_tree.yview_moveto(1)
+
+
+def get_child_id_dict(tree):
+    # retrieve part stock tree id pointers
+    part_id_to_child_id = {}
+    for child_id in tree.get_children():
+        item = tree.item(child_id)["values"]
+        part_id_to_child_id[item[0]] = child_id
+    return part_id_to_child_id
 
 
 def append_attributes_to_tree_entry(event_result:Union[AssemblyEventResult, PickEventResult], extra_message_ids:list, process_message_tree: ttk.Treeview):
