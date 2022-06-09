@@ -131,22 +131,32 @@ def get_outgoing_node_directions(building_instructions: BuildingInstructions) ->
     return direction_dict
 
 
-def adjust_pos_in_node_pairs_set(node_pairs_set: NodePairSet, pos: Pos):
-    """Remove pos from first node pair tuple in node_pairs_set that contains it. If not found,
-    then add as a node pair tuple containing only pos.
+def adjust_pos_in_node_pairs_set(node_pair_set: NodePairSet, pos: Pos):
+    """Adjusts the first tuple in "node_pair_set" containing the node position "pos" by removing it. If not found,
+    it will add a tuple containing only "pos" and an empty tuple to "node_pair_set".
+    This is to prevent the partial solver algorithm from connecting the node position of start or goal to other
+    nodes later if they are already in a layout.
+
 
     Args:
         pos(:obj:`~type_aliases.Pos`): Pos to be evaluated.
-        node_pairs_set(:obj:`~type_aliases.NodePairSet`): Set with all outgoing node pairs."""
-    for connection in node_pairs_set:
+        node_pair_set(:obj:`~type_aliases.NodePairSet`): Set with all outgoing node pairs.
+
+    Returns:
+        :obj:`~type_aliases.Pos` of the node the partial solver will use as the first node to start the search.
+        """
+    for connection in node_pair_set:
         if pos in connection:
             set_connection = set(connection)
             set_connection.discard(pos)
-            node_pairs_set.discard(connection)
-            node_pairs_set.add((set_connection.pop(), ()))
-            break
+            node_pair_set.discard(connection)
+            new_pair = (set_connection.pop(), ())
+            node_pair_set.add(new_pair)
+            return new_pair[0]
     else:
-        node_pairs_set.add((pos, ()))
+        pair = (pos, ())
+        node_pair_set.add(pair)
+        return pos
 
 
 def get_solution_on_detour_event(initial_path_problem: PathProblem, process_state: ProcessState, detour_event) -> \
@@ -184,8 +194,8 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     goal = path_problem.goal_pos
 
     # Add start/goal to the node_pairs set. If already in a connection, discard.
-    adjust_pos_in_node_pairs_set(layout_outgoing_node_pairs_set, start)
-    adjust_pos_in_node_pairs_set(layout_outgoing_node_pairs_set, goal)
+    search_start_pos = adjust_pos_in_node_pairs_set(layout_outgoing_node_pairs_set, start)
+    search_goal_pos = adjust_pos_in_node_pairs_set(layout_outgoing_node_pairs_set, goal)
 
     layout_outgoing_directions_dict[
         initial_path_problem.start_pos] = initial_path_problem.start_directions
@@ -201,7 +211,10 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
         exclusion_list=exclusion_list,
         part_stock=current_part_stock,
         state_grid=current_state_grid,
-        path_problem=path_problem)
+        path_problem=path_problem,
+        search_start_pos=search_start_pos,
+        search_goal_pos= search_goal_pos
+    )
     solution = None
 
     check_pos = list(detour_event)[0][-1]

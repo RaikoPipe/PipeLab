@@ -68,7 +68,8 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
     heapq.heappush(open_list, (total_score[start_pos], (start_pos, starting_part, None)))
 
     while open_list:
-        current_node = heapq.heappop(open_list)[1]  # pops the pos with the smallest score from open_list
+        # pop the node with the smallest score from open_list
+        current_node = heapq.heappop(open_list)[1]
         current_pos = current_node[0]
         current_part_id = current_node[1]
         current_direction = current_node[2]

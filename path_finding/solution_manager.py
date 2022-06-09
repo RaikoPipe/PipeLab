@@ -60,5 +60,6 @@ def get_solution(path_problem: PathProblem, draw_debug: bool = False) -> Optiona
         return solution
     else:
         solution = find_path(path_problem, draw_debug)
-        completed_solutions_stack.append(solution)
+        if solution:
+            completed_solutions_stack.append(solution)
         return solution
