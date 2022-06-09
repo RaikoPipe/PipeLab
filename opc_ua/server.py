@@ -104,4 +104,4 @@ async def main(process_planner: ProcessPlanner):
             process_planner
     ) as server:
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(.1)
