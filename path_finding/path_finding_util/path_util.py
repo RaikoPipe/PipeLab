@@ -33,29 +33,11 @@ def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tupl
     node_path: NodePath = []
     rendering_dict: RenderingDict = {}
     part_stock = deepcopy(path_problem.part_stock)
-    node_path.append((goal_pos, goal_part))
     rendering_dict[goal_pos] = goal_part
     part_stock[goal_part] -= 1
-    while current_node in predecessors:
-        part_id = predecessors.get(current_node).part_to_successor
 
-        if fast_mode:
-            node_path.append((current_node, part_id))
-            rendering_dict[current_node] = part_id
-        else:
-            node_path.append((current_node[0], part_id))
-            rendering_dict[current_node[0]] = part_id
-
-        part_stock[part_id] -= 1
-        predecessor_node: Predecessor = predecessors.get(current_node)
-        if fast_mode:
-            current_node = predecessor_node.pos
-        else:
-            current_node = (predecessor_node.pos, predecessor_node.part_to_predecessor, predecessor_node.direction)
-        if current_node is None:
-            break
-
-    node_path = node_path[::-1]  # reverse order
+    node_path.append((goal_pos, goal_part))
+    node_path, rendering_dict = construct_node_path_and_rendering_dict(current_node, fast_mode, node_path, part_stock, predecessors, rendering_dict)
 
     absolute_trail = {}
     ordered_trails = []
@@ -97,6 +79,29 @@ def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tupl
                     ordered_trails=tuple(ordered_trails), state_grid=state_grid, score=score, algorithm=algorithm,
                     path_problem=path_problem, part_stock=part_stock,
                     rendering_dict=rendering_dict)
+
+
+def construct_node_path_and_rendering_dict(current_node, fast_mode, node_path, part_stock, predecessors, rendering_dict):
+    while current_node in predecessors:
+        part_id = predecessors.get(current_node).part_to_successor
+
+        if fast_mode:
+            node_path.append((current_node, part_id))
+            rendering_dict[current_node] = part_id
+        else:
+            node_path.append((current_node[0], part_id))
+            rendering_dict[current_node[0]] = part_id
+
+        part_stock[part_id] -= 1
+        predecessor_node: Predecessor = predecessors.get(current_node)
+        if fast_mode:
+            current_node = predecessor_node.pos
+        else:
+            current_node = (predecessor_node.pos, predecessor_node.part_to_predecessor, predecessor_node.direction)
+        if current_node is None:
+            break
+    node_path = node_path[::-1]  # reverse order
+    return node_path, rendering_dict
 
 
 def get_corner_neighbors(direction: Pos, available_parts: set[int]) -> set[Node]:

@@ -23,14 +23,14 @@ goal_pos = (5, 24) #: Goal position that needs to be reached
 start_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)} #: Set containing directions that restrict in which direction the search algorithm can start the search.
 goal_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)} #: Set containing directions that restrict in which direction the search algorithm can append to the goal.
 
-pipe_stock = {0: 10, 2: 10, 4: 10} #: Part IDs pointing the amount of parts available for assembly.
+pipe_stock = {0: 10, 2: 10, 3: 10} #: Part IDs pointing the amount of parts available for assembly.
 
 part_cost = {0: 5.32, 1: 1.15, 2: 1.38, 3: 1.60, 4: 1.82, 5: 2.04, 6: 2.50} #: Part IDs pointing to their cost value.
 
 state_grid = grid_functions.get_empty_stategrid(x, y) #: A grid array where each position in the grid points to an integer value representing a state.
 
 algorithm="mcsa*" #: Defines how scores are calculated and therefore how nodes are evaluated in the search.
-weights = Weights(path_length=1, cost=1, distance_to_obstacles=0) #: Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
+weights = Weights(path_length=1, cost=0, distance_to_obstacles=0) #: Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
 
 new_path_problem = PathProblem(state_grid=state_grid, start_pos=start_pos, goal_pos=goal_pos,
                                start_directions=start_directions,
@@ -40,8 +40,9 @@ new_path_problem = PathProblem(state_grid=state_grid, start_pos=start_pos, goal_
 
 solution = None
 count = 0
+success_count = 0
 
-obs_frequency = 0
+obs_frequency = 0.1
 
 while True:
 
@@ -57,6 +58,8 @@ while True:
 
     solution = find_path(path_problem=new_path_problem)
 
+
+
     if solution:
         print("Solution found!")
         path_length = len(solution.node_trail)
@@ -65,17 +68,20 @@ while True:
             cost += part_cost[part_id]
         print("Len: " + str(path_length))
         print("Cost: " + str(cost))
+        success_count += 1
         break
 
     else:
         print("No solution found!")
 
     count += 1
+    print(success_count/count)
 
 process_planner = ProcessPlanner(initial_path_problem=new_path_problem)
 
 motion_events = [(0, None, 4), (0, None, 4), (0, None, 4), (0, None, 4), (2, None, 4), (4, None, 4), (3, 2, 3),
                  (3, 2, 2), (3, 0, 1), (3, 5, 1), (4, 5, 3), (4, 5, 2), (6, 5, 1)]
+
 for item in motion_events:
     x = item[0]
     y = item[1]

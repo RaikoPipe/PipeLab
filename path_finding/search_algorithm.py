@@ -1,4 +1,5 @@
 import heapq
+import time
 from copy import copy
 
 import matplotlib.pyplot as plt
@@ -12,6 +13,37 @@ from path_finding.path_finding_util.score_calculation import get_worst_move, get
 from path_finding.pf_data_class.path_problem import PathProblem
 # fixme: mca* doesn't work, mcsa* doesn't include extra score
 from type_dictionary import constants
+
+
+def plot_path(original_state_grid, node_path, start_pos, goal_pos):
+    plot_state_grid = deepcopy(original_state_grid)
+    previous_pos = None
+
+    for pos, part_id in node_path:
+        if part_id == 0:
+            color = 4
+        else:
+            color = 5
+        if previous_pos:
+            changed_pos = get_changed_nodes(current_pos=pos, predecessor_pos=previous_pos)
+            for c_pos, _ in changed_pos:
+                plot_state_grid[c_pos] = color
+
+        previous_pos = pos
+
+    plot_state_grid[start_pos] = -1
+    plot_state_grid[goal_pos] = -1
+
+    data = plot_state_grid.tolist()
+
+
+    plt.imshow(data)
+    plt.show()
+
+
+
+    pass
+
 
 def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=False) -> Optional[Solution]:
     """Searches for a solution for the given path problem.
@@ -79,7 +111,6 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
 
         current_path = list(copy(predecessors.get(key_dict.get(fast_mode)).path))
         current_path.append(current_pos)
-        current_path = tuple(current_path)
 
         if current_pos == start_pos:
             verifiable_neighbors = get_restricted_neighbor_nodes(directions=start_directions,
@@ -104,14 +135,16 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
                                                                  fast_mode=fast_mode, key=key_dict.get(fast_mode))
 
         if draw_path:
-            data = current_state_grid.tolist()
-            plt.imshow(data)
-            plt.show()
+            node_path : NodePath = []
+            node_path, _ = construct_node_path_and_rendering_dict(current_node=current_node, fast_mode=fast_mode, node_path=node_path, part_stock=path_problem.part_stock,
+                                                               predecessors=predecessors, rendering_dict={})
+
+            plot_path(original_state_grid=path_problem.state_grid, node_path=node_path, start_pos=start_pos,goal_pos=goal_pos)
+
 
         if current_pos in goal_set:
             # search is finished!
 
-            current_path = list(current_path)
             current_path.append(goal_pos)
             current_state_grid[goal_pos] = 2
 
@@ -156,12 +189,13 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
 
             p_list = [p[1] for p in open_list]
 
-            if current_score_start_distance < score_start.get(neighbor_pos, 0) or (
-                    neighbor_pos, neighbor_part_id, neighbor_direction) not in p_list:
+            if (neighbor_pos, neighbor_part_id, neighbor_direction) not in p_list: #or current_score_start_distance < score_start.get(neighbor_pos, 0):
+
+
 
                 predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_to_successor=neighbor_part_id,
                                                                     part_to_predecessor=current_part_id,
-                                                                    direction=current_direction, path=current_path,
+                                                                    direction=current_direction, path=tuple(current_path),
                                                                     state_grid=current_state_grid,
                                                                     part_stock=pipe_stock)
 

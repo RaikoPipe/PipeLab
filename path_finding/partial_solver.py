@@ -11,6 +11,7 @@ from type_dictionary.class_types import BuildingInstructions
 from type_dictionary.type_aliases import NodePairSet, FittingDirections, Pos
 from type_dictionary.type_aliases import Trail, StateGrid, PartStock
 
+draw_debug = True
 
 def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: list[set],
                           outgoing_node_directions_dict: FittingDirections, state_grid: StateGrid,
@@ -71,6 +72,7 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
 
     while open_list:
         current_pos = heapq.heappop(open_list)[1]
+        closed_list.append(current_pos)
 
         # get the current state grid
         current_state_grid = solution_dict[frozenset((predecessor[current_pos], current_pos))].state_grid
@@ -80,7 +82,7 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
                                                                search_goal_pos, outgoing_node_directions_dict,
                                                                tentative_partial_path_problem)
 
-            solution = get_solution(path_problem=partial_path_problem, draw_debug=False)
+            solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
             if solution:
                 # search finished! Get all solution.
                 solution_dict[frozenset((current_pos, search_goal_pos))] = solution
@@ -102,7 +104,7 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
                                                                outgoing_node_directions_dict,
                                                                tentative_partial_path_problem)
 
-            solution = get_solution(path_problem=partial_path_problem, draw_debug=False)
+            solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
 
             if solution:
                 solution_dict[frozenset((current_pos, neighbor))] = solution
@@ -111,7 +113,6 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
                     heapq.heappush(open_list, (solution.score, current_pos))
                 else:
                     current_node_pair = set(current_node_pair)
-                    closed_list.append(current_pos)
 
                     current_node_pair.remove(neighbor)
                     heapq.heappush(open_list, (solution.score, current_node_pair.pop()))
@@ -175,7 +176,7 @@ def adjust_partial_path_problem(current_pos, current_state_grid, neighbor, outgo
     tentative_partial_path_problem.goal_pos, \
     tentative_partial_path_problem.goal_directions, \
     tentative_partial_path_problem.state_grid = current_pos, outgoing_node_directions_dict[
-        current_pos], neighbor, current_state_grid, outgoing_node_directions_dict[neighbor]
+        current_pos], neighbor,  outgoing_node_directions_dict[neighbor], current_state_grid
     return tentative_partial_path_problem
 
 
