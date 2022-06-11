@@ -61,5 +61,5 @@ def get_solution(path_problem: PathProblem, draw_debug: bool = False) -> Optiona
     else:
         solution = find_path(path_problem, draw_debug)
         if solution:
-            completed_solutions_stack.append(solution)
+            completed_solutions_stack.append(deepcopy(solution))
         return solution

@@ -147,11 +147,11 @@ def get_pipe_neighbors(direction: Pos, available_parts: set[int], at_start: bool
                           (-direction[1], -direction[0]),
                           (direction[0], direction[1])}
             # todo: improve this, what if transition is directly after start pos?
-            for dir in directions:
-                if dir == transition[1]:
-                    neighbors.add(((dir[0] * (part_id + abs(dir[0])), (dir[1] * (part_id + abs(dir[1])))), part_id))
-                else:
-                    neighbors.add(((part_id * dir[0], part_id * dir[1]), part_id))
+            for direct in directions:
+                if direct == transition[1]:
+                    neighbors.add(((direct[0] * (part_id + abs(direct[0])), (direct[1] * (part_id + abs(direct[1])))), part_id))
+                elif direction != direct:
+                    neighbors.add(((part_id * direct[0], part_id * direct[1]), part_id))
 
         elif at_start:
             # only allow neighbors that meet start condition

@@ -11,7 +11,7 @@ from type_dictionary.class_types import BuildingInstructions
 from type_dictionary.type_aliases import NodePairSet, FittingDirections, Pos
 from type_dictionary.type_aliases import Trail, StateGrid, PartStock
 
-draw_debug = True
+draw_debug = False
 
 def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: list[set],
                           outgoing_node_directions_dict: FittingDirections, state_grid: StateGrid,
@@ -49,11 +49,13 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
     # sort all
     all_points_list = sorted(all_points_dict.keys(), key=lambda x: manhattan_distance(start, x))
     all_points_list.remove(search_goal_pos)
-    neighbors = deepcopy(all_points_list)
-    # todo: use dijkstra
-    #   special rule: only connect to goal after other nodes have been connected (or excluded)
+    all_neighbors = set(all_points_list)
     open_list = []
     closed_list = []
+    excluded_connections = {}
+
+    for s_pos in all_points_list:
+        excluded_connections[s_pos] = set()
 
     score = {search_start_pos: 0}
     heapq.heappush(open_list, (score[search_start_pos], search_start_pos))
@@ -69,27 +71,39 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
                                                  starting_part=constants.fitting_id,
                                                  state_grid=state_grid,
                                                  transition_points=path_problem.transition_points)
-
+    # todo: we need one dictionary that excludes certain neighbors from a search position
+    # todo: before trying to search for a solution, check if one exists for this connection in solution_dict
     while open_list:
         current_pos = heapq.heappop(open_list)[1]
         closed_list.append(current_pos)
+        neighbors = all_neighbors.difference(excluded_connections[current_pos])
 
         # get the current state grid
         current_state_grid = solution_dict[frozenset((predecessor[current_pos], current_pos))].state_grid
 
         if set(all_points_list) == set(closed_list):
+            # todo: determine the best performing pos of the predecessor (previous pos?)
             partial_path_problem = adjust_partial_path_problem(current_pos, current_state_grid,
                                                                search_goal_pos, outgoing_node_directions_dict,
                                                                tentative_partial_path_problem)
 
             solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
             if solution:
-                # search finished! Get all solution.
+                # search finished! Get all solutions.
                 solution_dict[frozenset((current_pos, search_goal_pos))] = solution
+                predecessor[search_goal_pos] = current_pos
                 # todo: get a list of all solutions (in order)
                 solution_list = []
+                current_pos = search_goal_pos
+                while current_pos in predecessor:
+                    solution = solution_dict[frozenset((current_pos, predecessor[current_pos]))]
+                    current_pos = predecessor[current_pos]
+                    solution_list.append(solution)
+
+
                 return solution_list
             else:
+                excluded_connections[current_pos].add(search_goal_pos)
                 continue
 
         current_node_pair = all_points_dict[current_pos]
@@ -104,18 +118,31 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
                                                                outgoing_node_directions_dict,
                                                                tentative_partial_path_problem)
 
-            solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
+            solution = solution_dict.get(frozenset((current_pos, neighbor)))
+
+            if not solution:
+                solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
+
+
 
             if solution:
                 solution_dict[frozenset((current_pos, neighbor))] = solution
-                predecessor[current_pos] = neighbor
-                if current_pos == search_start_pos:
-                    heapq.heappush(open_list, (solution.score, current_pos))
-                else:
-                    current_node_pair = set(current_node_pair)
+                predecessor[neighbor] = current_pos
+                # if current_pos == search_start_pos:
+                #     heapq.heappush(open_list, (solution.score, current_pos))
+                # else:
+                neighbor_node_pair = set(all_points_dict[neighbor])
+                neighbor_node_pair.remove(neighbor)
+                # current_node_pair = set(current_node_pair)
+                # current_node_pair.remove(neighbor)
+                other_neighbor_node = neighbor_node_pair.pop()
+                excluded_connections[other_neighbor_node].add(current_pos)
+                heapq.heappush(open_list, (solution.score, other_neighbor_node))
 
-                    current_node_pair.remove(neighbor)
-                    heapq.heappush(open_list, (solution.score, current_node_pair.pop()))
+            else:
+                excluded_connections[current_pos].add(neighbor)
+                closed_list.remove(current_pos)
+                heapq.heappush(open_list, (0, current_pos))
 
     else:
         return None
@@ -171,13 +198,14 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
 
 def adjust_partial_path_problem(current_pos, current_state_grid, neighbor, outgoing_node_directions_dict,
                                 tentative_partial_path_problem):
-    tentative_partial_path_problem.start_pos, \
-    tentative_partial_path_problem.start_directions, \
-    tentative_partial_path_problem.goal_pos, \
-    tentative_partial_path_problem.goal_directions, \
-    tentative_partial_path_problem.state_grid = current_pos, outgoing_node_directions_dict[
+    partial_path_problem = deepcopy(tentative_partial_path_problem)
+    partial_path_problem.start_pos, \
+    partial_path_problem.start_directions, \
+    partial_path_problem.goal_pos, \
+    partial_path_problem.goal_directions, \
+    partial_path_problem.state_grid = current_pos, outgoing_node_directions_dict[
         current_pos], neighbor,  outgoing_node_directions_dict[neighbor], current_state_grid
-    return tentative_partial_path_problem
+    return partial_path_problem
 
 
 # def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: list[set],

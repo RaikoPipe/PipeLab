@@ -35,7 +35,9 @@ def plot_path(original_state_grid, node_path, start_pos, goal_pos):
     plot_state_grid[goal_pos] = -1
 
     data = plot_state_grid.tolist()
-
+    if previous_pos:
+        plt.text(pos[1], pos[0], str(pos), color="red")
+        plt.text(previous_pos[1], previous_pos[0], str(previous_pos), color="red")
 
     plt.imshow(data)
     plt.show()

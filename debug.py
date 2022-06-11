@@ -42,7 +42,7 @@ solution = None
 count = 0
 success_count = 0
 
-obs_frequency = 0.1
+obs_frequency = 0
 
 while True:
 
@@ -56,7 +56,7 @@ while True:
     state_grid[goal_pos] = 0
     new_path_problem.state_grid = grid_functions.set_transition_points(state_grid, transition_points_set)
 
-    solution = find_path(path_problem=new_path_problem)
+    solution = find_path(path_problem=new_path_problem, draw_path=False)
 
 
 
