@@ -244,9 +244,11 @@ class ProcessPlanner:
 
             # check if layout that caused last detour is not completed anymore
             building_instruction = process_state.building_instructions[last_detour_trail]
+            completed_instructions = pp_util.get_completed_instructions(process_state.building_instructions)
+
             if process_state.completed_instruction(building_instruction)[1] >= constants.pipe_event_code:
                 process_state.detour_trails.pop(-1)
-                if process_state.detour_trails:
+                if process_state.detour_trails and completed_instructions:
                     # there are still complete detour layouts
                     last_detour_trail = process_state.detour_trails[-1]
 
@@ -262,7 +264,7 @@ class ProcessPlanner:
                     # return to optimal solution
                     detour_event = {None: "Returned to optimal solution"}
                     process_state.reevaluate_motion_dict_from_solution(self.optimal_solution)
-
+                    process_state.detour_trails.clear()
                     detour_message = str.format(
                         f"No complete deviating layouts left, returning to optimal solution.")
 

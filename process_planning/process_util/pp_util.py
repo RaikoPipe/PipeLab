@@ -172,6 +172,7 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     """
     completed_instructions = get_completed_instructions(process_state.building_instructions)
 
+
     path_problem = deepcopy(initial_path_problem)
 
     # get state grid of completed layouts
