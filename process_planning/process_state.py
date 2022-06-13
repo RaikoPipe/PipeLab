@@ -772,13 +772,15 @@ class ProcessState:
         return completed_layouts
 
     def completed_instruction(self, building_instruction: BuildingInstruction) -> tuple[bool, int]:
-        """Checks if the building instruction was completed.
+        """Checks if the building instruction was completed. Additionally, returns the next event code needed to advance
+        the completion of this instruction.
 
         Args:
             building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
 
         Returns:
-        :obj:`tuple` containing if building instruction was completed (:obj:`bool`) and event code (:obj:`int`) corresponding to its completion state.
+        :obj:`tuple` containing if building instruction was completed (:obj:`bool`) and event code (:obj:`int`)
+        corresponding to the next event code needed to advance the completion of this instruction.
             """
 
         # check if required pipe placed

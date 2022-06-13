@@ -42,8 +42,6 @@ def plot_path(original_state_grid, node_path, start_pos, goal_pos):
     plt.imshow(data)
     plt.show()
 
-
-
     pass
 
 
@@ -137,12 +135,14 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
                                                                  fast_mode=fast_mode, key=key_dict.get(fast_mode))
 
         if draw_path:
-            node_path : NodePath = []
-            node_path, _ = construct_node_path_and_rendering_dict(current_node=current_node, fast_mode=fast_mode, node_path=node_path, part_stock=path_problem.part_stock,
-                                                               predecessors=predecessors, rendering_dict={})
+            node_path: NodePath = []
+            node_path, _ = construct_node_path_and_rendering_dict(current_node=current_node, fast_mode=fast_mode,
+                                                                  node_path=node_path,
+                                                                  part_stock=path_problem.part_stock,
+                                                                  predecessors=predecessors, rendering_dict={})
 
-            plot_path(original_state_grid=path_problem.state_grid, node_path=node_path, start_pos=start_pos,goal_pos=goal_pos)
-
+            plot_path(original_state_grid=path_problem.state_grid, node_path=node_path, start_pos=start_pos,
+                      goal_pos=goal_pos)
 
         if current_pos in goal_set:
             # search is finished!
@@ -161,12 +161,12 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
                                                   path=tuple(current_path),
                                                   state_grid=current_state_grid, part_stock=pipe_stock)
 
-            end_score = total_score[current_pos]
+            final_score = total_score[current_pos]
             # current_pos = goal_pos
 
             return construct_solution(predecessors=predecessors, current_node=current_node,
                                       state_grid=current_state_grid,
-                                      score=end_score, goal_pos=goal_pos, goal_part=constants.fitting_id,
+                                      score=final_score, goal_pos=goal_pos, goal_part=constants.fitting_id,
                                       algorithm=algorithm, path_problem=path_problem, fast_mode=fast_mode)
 
         closed_list.add(key_dict.get(fast_mode))
@@ -176,7 +176,8 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
             neighbor_direction = get_direction(relative_neighbor_pos)
             neighbor_node = (neighbor_pos, neighbor_part_id, neighbor_direction)
 
-            current_score_start_distance = score_start[current_pos] + manhattan_distance(current_pos, neighbor_pos) / total_score[start_pos]
+            current_score_start_distance = score_start[current_pos] + manhattan_distance(current_pos, neighbor_pos) / \
+                                           total_score[start_pos]
 
             key_dict[0] = (neighbor_pos, neighbor_part_id, neighbor_direction)
             key_dict[1] = neighbor_pos
@@ -191,31 +192,33 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
 
             p_list = [p[1] for p in open_list]
 
-            if (neighbor_pos, neighbor_part_id, neighbor_direction) not in p_list: #or current_score_start_distance < score_start.get(neighbor_pos, 0):
+            current_score_goal_distance = get_m_score(algorithm=algorithm, goal_pos=goal_pos,
+                                                      neighbor_pos=neighbor_pos,
+                                                      weights=weights, upper_bound=total_score[start_pos])
 
+            current_score_extra = get_e_score(algorithm=algorithm, weights=weights, current_pos=current_pos,
+                                              neighbor_pos=neighbor_pos,
+                                              part_cost=part_cost, worst_move_cost=worst_move_cost,
+                                              state_grid=current_state_grid, part_id=neighbor_part_id)
 
+            current_f_score = get_f_score(current_score_start_distance, current_score_goal_distance,
+                                          current_score_extra, total_score[current_pos], algorithm)
 
-                predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_to_successor=neighbor_part_id,
-                                                                    part_to_predecessor=current_part_id,
-                                                                    direction=current_direction, path=tuple(current_path),
-                                                                    state_grid=current_state_grid,
-                                                                    part_stock=pipe_stock)
+            # if (neighbor_pos, neighbor_part_id,
+            #     neighbor_direction) not in p_list or current_f_score < total_score.get(neighbor_pos, 0):
+            predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_to_successor=neighbor_part_id,
+                                                                part_to_predecessor=current_part_id,
+                                                                direction=current_direction,
+                                                                path=tuple(current_path),
+                                                                state_grid=current_state_grid,
+                                                                part_stock=pipe_stock)
 
-                score_start[neighbor_pos] = current_score_start_distance
+            score_start[neighbor_pos] = current_score_start_distance
 
-                current_score_goal_distance = get_m_score(algorithm=algorithm, goal_pos=goal_pos,
-                                                          neighbor_pos=neighbor_pos,
-                                                          weights=weights, upper_bound=total_score[start_pos])
+            total_score[neighbor_pos] = get_f_score(current_score_start_distance, current_score_goal_distance,
+                                                    current_score_extra, total_score[current_pos], algorithm)
 
-                current_score_extra = get_e_score(algorithm=algorithm, weights=weights, current_pos=current_pos,
-                                                  neighbor_pos=neighbor_pos,
-                                                  part_cost=part_cost, worst_move_cost=worst_move_cost,
-                                                  state_grid=current_state_grid, part_id=neighbor_part_id)
-
-                total_score[neighbor_pos] = get_f_score(current_score_start_distance, current_score_goal_distance,
-                                                        current_score_extra, total_score[current_pos], algorithm)
-
-                heapq.heappush(open_list, (total_score[neighbor_pos], neighbor_node))
+            heapq.heappush(open_list, (total_score[neighbor_pos], neighbor_node))
     else:
         # no solution found!
         return None

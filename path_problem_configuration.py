@@ -17,7 +17,7 @@ goal_pos = (5, 24) #: Goal position that needs to be reached
 start_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)} #: Set containing directions that restrict in which direction the search algorithm can start the search.
 goal_directions = {(0, 1), (1, 0), (-1, 0), (0, -1)} #: Set containing directions that restrict in which direction the search algorithm can append to the goal.
 
-pipe_stock = {0: 10, 1:10, 2: 10, 3: 10, 4:10, 5:10,6:10} #: Part IDs pointing the amount of parts available for assembly.
+pipe_stock = {0: 100, 1:100, 2: 100, 3: 100, 4:100, 5:100,6:100} #: Part IDs pointing the amount of parts available for assembly.
 
 part_cost = {0: 5.32, 1: 1.15, 2: 1.38, 3: 1.60, 4: 1.82, 5: 2.04, 6: 2.50} #: Part IDs pointing to their cost value.
 

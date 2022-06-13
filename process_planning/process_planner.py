@@ -229,16 +229,22 @@ class ProcessPlanner:
             An optional :obj:`str` message if the currently aimed solution was changed to a previous one.
         """
 
+        #todo: change condition for removing detour trail: remove both fittings and pipe
+
         detour_message = None
         if process_state.detour_trails:
+
             # check if previous layouts that caused detour are not completed anymore
             previous_detour_trails = deepcopy(process_state.detour_trails)
             last_detour_trail = previous_detour_trails.pop(-1)
             for detour_trail in previous_detour_trails:
-                if not process_state.building_instructions[detour_trail].layout_completed:
+                building_instruction = process_state.building_instructions[detour_trail]
+                if process_state.completed_instruction(building_instruction)[1] >= constants.pipe_event_code:
                     process_state.detour_trails.remove(detour_trail)
+
             # check if layout that caused last detour is not completed anymore
-            if not process_state.building_instructions[last_detour_trail].layout_completed:
+            building_instruction = process_state.building_instructions[last_detour_trail]
+            if process_state.completed_instruction(building_instruction)[1] >= constants.pipe_event_code:
                 process_state.detour_trails.pop(-1)
                 if process_state.detour_trails:
                     # there are still complete detour layouts

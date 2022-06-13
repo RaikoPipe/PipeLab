@@ -9,6 +9,7 @@ from path_finding.pf_data_class.solution import Solution
 from type_dictionary import constants
 from type_dictionary.class_types import *
 
+
 def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tuple[Pos, int, Pos]],
                        state_grid: StateGrid, score: float,
                        algorithm: str, path_problem: PathProblem, fast_mode: bool, goal_pos: Pos,
@@ -37,7 +38,8 @@ def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tupl
     part_stock[goal_part] -= 1
 
     node_path.append((goal_pos, goal_part))
-    node_path, rendering_dict = construct_node_path_and_rendering_dict(current_node, fast_mode, node_path, part_stock, predecessors, rendering_dict)
+    node_path, rendering_dict = construct_node_path_and_rendering_dict(current_node, fast_mode, node_path, part_stock,
+                                                                       predecessors, rendering_dict)
 
     absolute_trail = {}
     ordered_trails = []
@@ -81,7 +83,8 @@ def construct_solution(predecessors: Predecessors, current_node: Union[Pos, tupl
                     rendering_dict=rendering_dict)
 
 
-def construct_node_path_and_rendering_dict(current_node, fast_mode, node_path, part_stock, predecessors, rendering_dict):
+def construct_node_path_and_rendering_dict(current_node, fast_mode, node_path, part_stock, predecessors,
+                                           rendering_dict):
     while current_node in predecessors:
         part_id = predecessors.get(current_node).part_to_successor
 
@@ -122,7 +125,8 @@ def get_corner_neighbors(direction: Pos, available_parts: set[int]) -> set[Node]
     return neighbors
 
 
-def get_pipe_neighbors(direction: Pos, available_parts: set[int], at_start: bool, transition: tuple[Pos, Pos]) -> set[Node]:
+def get_pipe_neighbors(direction: Pos, available_parts: set[int], at_start: bool, transition: tuple[Pos, Pos]) -> set[
+    Node]:
     """Returns all neighbors that are allowed as the next move by the currently available pipe parts
 
     Args:
@@ -149,7 +153,8 @@ def get_pipe_neighbors(direction: Pos, available_parts: set[int], at_start: bool
             # todo: improve this, what if transition is directly after start pos?
             for direct in directions:
                 if direct == transition[1]:
-                    neighbors.add(((direct[0] * (part_id + abs(direct[0])), (direct[1] * (part_id + abs(direct[1])))), part_id))
+                    neighbors.add(
+                        ((direct[0] * (part_id + abs(direct[0])), (direct[1] * (part_id + abs(direct[1])))), part_id))
                 elif direction != direct:
                     neighbors.add(((part_id * direct[0], part_id * direct[1]), part_id))
 
@@ -244,7 +249,7 @@ def get_available_parts(part_stock: PartStock) -> set[int]:
     return available_parts
 
 
-def get_transition(pos:Pos, direction:Pos, transition_points: set[Pos]) -> Optional[tuple[Pos, Pos]]:
+def get_transition(pos: Pos, direction: Pos, transition_points: set[Pos]) -> Optional[tuple[Pos, Pos]]:
     """Checks if transition points lie in the node in direction of the given node position.
 
     Returns:
@@ -262,3 +267,10 @@ def get_transition(pos:Pos, direction:Pos, transition_points: set[Pos]) -> Optio
                 return transition
 
     return None
+
+
+def get_other_node_of_pair(node_pair: NodePair, node_pos: Pos) -> Pos:
+    pop_set = set(node_pair)
+    pop_set.remove(node_pos)
+    other_node = pop_set.pop()
+    return other_node

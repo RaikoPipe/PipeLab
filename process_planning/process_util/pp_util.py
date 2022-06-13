@@ -213,14 +213,16 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
         state_grid=current_state_grid,
         path_problem=path_problem,
         search_start_pos=search_start_pos,
-        search_goal_pos= search_goal_pos
+        #search_goal_pos= search_goal_pos
     )
     solution = None
 
+    # get a position of the detouring layout
     check_pos = list(detour_event)[0][-1]
     if check_pos in (start, goal):
         check_pos = list(detour_event)[0][0]
 
+    # check if position of the detouring layout is in the partial solution
     for partial_solution in partial_solutions:
         for trail in partial_solution.ordered_trails:
 
@@ -228,6 +230,8 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
                 solution = partial_solver.fuse_partial_solutions(partial_solutions, completed_instructions,
                                                                  initial_path_problem)
                 break
+        if solution:
+            break
 
     return solution
 
