@@ -217,7 +217,7 @@ class ProcessState:
                                 event_result=event_result, ignore_part_check=ignore_part_check)
 
         if not event_result.error:
-            # register assembly
+
             construction_state.part_id = event_result.part_id
             construction_state.deviated = event_result.deviated
             construction_state.unnecessary = event_result.unnecessary
@@ -234,7 +234,6 @@ class ProcessState:
                 event_result.completed_layouts.update(self.set_completion_state(current_layout, event_result))
                 self.completion = get_completion_proportion(self.building_instructions)
 
-            # else:
             if event_code == 1:
                 # check for detour events
                 detour_event = self.get_detour_event(event_pos=event_pos, event_code=event_code)
@@ -354,7 +353,7 @@ class ProcessState:
             building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
             event_pos(:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_assembly.event_pos`
             event_code(:obj:`int`): See :paramref:`~evaluate_assembly.event_code`"""
-        # todo: check recommended att_pos
+
         if event_pos in self.aimed_solution.node_trail.keys():
             if event_pos not in building_instruction.required_fit_positions:
                 if event_pos in building_instruction.possible_att_pipe_positions:
@@ -508,7 +507,7 @@ class ProcessState:
                                            event_pos=pipe_pos, event_code=2)
 
     def assign_pipe_id(self, pipe_state, pipe_id):
-
+        # todo: dissolve
         if pipe_state.part_id == -2:
             # check picked parts
             if pipe_id in self.picked_parts:
@@ -540,16 +539,7 @@ class ProcessState:
             # check if conditions for a deviation event are met
             fit_diff = path_math.get_length_same_axis(pos,
                                                       event_pos)  # distance between fittings
-            pipe_id = fit_diff - 1  # length of needed part
-
-            if pipe_id == 0:
-                # fittings are directly next to each other
-                break
-
-            fittings_in_proximity = pipe_id in self.part_stock.keys()  # fittings are connectable by available parts
-
-            if not fittings_in_proximity:
-                continue
+            fit_dir = get_direction(diff_pos(pos, event_pos))
 
             # at least one fitting needs to be deviating
             fit_tup = (pos, event_pos)
@@ -562,7 +552,44 @@ class ProcessState:
             if not any(fit_deviated):  # at least one fitting needs to be deviating
                 continue
 
-            fit_dir = get_direction(diff_pos(pos, event_pos))
+            # check for transition points
+            state_grid = self.aimed_solution.path_problem.state_grid
+            iter_pos = deepcopy(pos)
+            pos_list = []
+            while iter_pos != event_pos:
+                iter_pos = path_math.sum_pos(iter_pos, fit_dir)
+                pos_list.append(iter_pos)
+
+            if len(pos_list) > 2:
+                if state_grid[pos_list[0]] == 3 or state_grid[pos_list[-2]] == 3 and len(pos_list) > 2:
+                    pipe_id = fit_diff - 2
+                else:
+                    pipe_id = fit_diff - 1  # length of needed part
+            else:
+                pipe_id = fit_diff - 1
+
+            # for transition_point in self.aimed_solution.path_problem.transition_points:
+            #     check_idx = 0
+            #     if transition_point[0] < 0:
+            #         check_idx = 1
+            #
+            #     check_pos_1 = (pos[0] + fit_dir[0], pos[1] + fit_dir[1])
+            #     check_pos_2 = (event_pos[0] - fit_dir[0], event_pos[1] - fit_dir[1])
+            #
+            #     if check_pos_1[check_idx] == transition_point[check_idx] ^ check_pos_2[check_idx] == transition_point[check_idx]:
+            #         # One of the fitting positions is directly next to a transition point
+
+            if pipe_id == 0:
+                # fittings are directly next to each other
+                break
+
+            fittings_in_proximity = pipe_id in self.part_stock.keys()  # fittings are connectable by available parts
+
+            if not fittings_in_proximity:
+                continue
+
+
+
             detour_trail = construct_trail(length=fit_diff, direction=fit_dir, pos=fit_tup[0])
 
             attachment_is_between = False
