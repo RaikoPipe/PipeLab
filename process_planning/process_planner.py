@@ -36,12 +36,7 @@ fastening_robot_command_message_dict = {
 
 # Todo:
 #   Known Issues:
-#   - Search algorithm sometimes starts with fitting after a transition
-#   - sometimes invalid detour event solutions
-#   - part id changes on transition
-#   Planned Features:
-#   - improve partial solutions
-#   - cancel all picking tasks on detour event
+#   - Incorrect calculation of detour event in transition nodes (need to account for transition nodes here)
 
 
 # noinspection PyUnboundLocalVariable
@@ -192,7 +187,7 @@ class ProcessPlanner:
             # get fastening commands
             fastening_robot_commands = self.determine_fastening_robot_commands(event_pos=event_pos,
                                                                                event_code=event_code,
-                                                                               event_info=tentative_process_state.last_assembly_event_result)
+                                                                               event_result=tentative_process_state.last_assembly_event_result)
             # get picking robot commands
             picking_robot_commands = self.determine_picking_robot_commands(event_code=event_code,
                                                                       layout=tentative_process_state.last_assembly_event_result.layout,
@@ -259,14 +254,14 @@ class ProcessPlanner:
                                                                     detour_event=detour_event)
                     process_state.reevaluate_motion_dict_from_solution(solution, detour_event)
                     detour_message = str.format(
-                        f"Deviating layout incomplete, returning to solution for last deviating layout.")
+                        f"Last deviated layout was removed. Returned to previous solution")
                 else:
                     # return to optimal solution
                     detour_event = {None: "Returned to optimal solution"}
                     process_state.reevaluate_motion_dict_from_solution(self.optimal_solution)
                     process_state.detour_trails.clear()
                     detour_message = str.format(
-                        f"No complete deviating layouts left, returning to optimal solution.")
+                        f"No deviating layouts left. Returned to optimal solution.")
 
                 process_state.last_assembly_event_result.detour_event = detour_event
         return detour_message
@@ -305,13 +300,13 @@ class ProcessPlanner:
         return detour_message, detour_process_state
 
     @staticmethod
-    def determine_fastening_robot_commands(event_pos: Pos, event_code: int, event_info) -> tuple:
+    def determine_fastening_robot_commands(event_pos: Pos, event_code: int, event_result) -> tuple:
         """Reads the current process state and determines command codes for the fastening robot.
 
         Args:
             event_pos (:obj:`~type_aliases.Pos`): See parameter :paramref:`~process_state.ProcessState.evaluate_assembly.event_pos`
             event_code (:obj:`int`): See parameter :paramref:`~process_state.ProcessState.evaluate_assembly.event_code`
-            event_info(:class:`AssemblyEventResult <assembly_event_result>`): See :class:`AssemblyEventResult <assembly_event_result>`
+            event_result(:class:`AssemblyEventResult <assembly_event_result>`): See :class:`AssemblyEventResult <assembly_event_result>`
         Returns:
             :obj:`tuple` containing robot command codes for the fastening robot (See :ref:`Fastening Robot Command Codes`).
 
@@ -321,7 +316,7 @@ class ProcessPlanner:
         # make picking robot commands
 
         # make fastening robot commands
-        if not event_info.removal:
+        if not event_result.removal:
             if event_code == 3:
                 fastening_robot_commands.append((1, event_pos))
 

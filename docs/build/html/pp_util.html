@@ -147,15 +147,20 @@ connected.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pp_util.adjust_pos_in_node_pairs_set">
-<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">adjust_pos_in_node_pairs_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_pairs_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.adjust_pos_in_node_pairs_set" title="Permalink to this definition"></a></dt>
-<dd><p>Remove pos from first node pair tuple in node_pairs_set that contains it. If not found,
-then add as a node pair tuple containing only pos.</p>
+<span class="sig-prename descclassname"><span class="pre">pp_util.</span></span><span class="sig-name descname"><span class="pre">adjust_pos_in_node_pairs_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_pair_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pp_util.adjust_pos_in_node_pairs_set" title="Permalink to this definition"></a></dt>
+<dd><p>Adjusts the first tuple in “node_pair_set” containing the node position “pos” by removing it. If not found,
+it will add a tuple containing only “pos” and an empty tuple to “node_pair_set”.
+This is to prevent the partial solver algorithm from connecting the node position of start or goal to other
+nodes later if they are already in a layout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Pos to be evaluated.</p></li>
-<li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set"></span><strong>node_pairs_set</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.node_pairs_set">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.NodePairSet" title="type_aliases.NodePairSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodePairSet</span></code></a>) – Set with all outgoing node pairs.</p></li>
+<li><p><span class="target" id="pp_util.adjust_pos_in_node_pairs_set.params.node_pair_set"></span><strong>node_pair_set</strong><a class="paramlink headerlink reference internal" href="#pp_util.adjust_pos_in_node_pairs_set.params.node_pair_set">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.NodePairSet" title="type_aliases.NodePairSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NodePairSet</span></code></a>) – Set with all outgoing node pairs.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a> of the node the partial solver will use as the first node to start the search.</p>
 </dd>
 </dl>
 </dd></dl>

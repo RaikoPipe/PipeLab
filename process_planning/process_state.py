@@ -217,7 +217,7 @@ class ProcessState:
                                 event_result=event_result, ignore_part_check=ignore_part_check)
 
         if not event_result.error:
-
+            # register assembly
             construction_state.part_id = event_result.part_id
             construction_state.deviated = event_result.deviated
             construction_state.unnecessary = event_result.unnecessary
@@ -234,6 +234,7 @@ class ProcessState:
                 event_result.completed_layouts.update(self.set_completion_state(current_layout, event_result))
                 self.completion = get_completion_proportion(self.building_instructions)
 
+            # else:
             if event_code == 1:
                 # check for detour events
                 detour_event = self.get_detour_event(event_pos=event_pos, event_code=event_code)
@@ -353,7 +354,7 @@ class ProcessState:
             building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
             event_pos(:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_assembly.event_pos`
             event_code(:obj:`int`): See :paramref:`~evaluate_assembly.event_code`"""
-
+        # todo: check recommended att_pos
         if event_pos in self.aimed_solution.node_trail.keys():
             if event_pos not in building_instruction.required_fit_positions:
                 if event_pos in building_instruction.possible_att_pipe_positions:
@@ -384,18 +385,22 @@ class ProcessState:
 
             """
         if event_pos in self.aimed_solution.node_trail.keys():
-            part_id = building_instruction.pipe_id
-            if not assume_pipe_id_from_solution:
-                pipe_id = self.pipe_placed_deviated_route(event_result, ignore_part_check)  #
-                if pipe_id != part_id:
-                    event_result.deviated = True
+            if event_pos in building_instruction.possible_att_pipe_positions:
+                part_id = building_instruction.pipe_id
+                if not assume_pipe_id_from_solution:
+                    pipe_id = self.pipe_placed_deviated_route(event_result, ignore_part_check)  #
+                    if pipe_id != part_id:
+                        event_result.deviated = True
+                else:
+                    # if pipe assembly occurred somewhere inside the trail of building instruction, then it's valid
+                    event_result.part_id = part_id
+                    # check if part was actually picked
+                    if part_id not in self.picked_parts and not ignore_part_check:
+                        event_result.deviated = True
+                        self.pipe_placed_deviated_route(event_result, ignore_part_check)
             else:
-                # if pipe assembly occurred somewhere inside the trail of building instruction, then it's valid
-                event_result.part_id = part_id
-                # check if part was actually picked
-                if part_id not in self.picked_parts and not ignore_part_check:
-                    event_result.deviated = True
-                    self.pipe_placed_deviated_route(event_result, ignore_part_check)
+                event_result.deviated = True
+                event_result.misplaced = True
         else:
             event_result.deviated = True
             self.pipe_placed_deviated_route(event_result, ignore_part_check)
@@ -507,7 +512,7 @@ class ProcessState:
                                            event_pos=pipe_pos, event_code=2)
 
     def assign_pipe_id(self, pipe_state, pipe_id):
-        # todo: dissolve
+
         if pipe_state.part_id == -2:
             # check picked parts
             if pipe_id in self.picked_parts:
@@ -523,12 +528,10 @@ class ProcessState:
         3. 1 pipe (with correct or open id) in between those fittings
 
         Args:
-
             event_pos (:obj:`~type_aliases.Pos`): See :paramref:`~evaluate_assembly.event_pos`
             event_code (:obj:`int`): See :paramref:`~evaluate_assembly.event_code`
 
         Return: :obj:`~class_types.BuildingInstructions` containing the detour event.
-
         """
 
         check_fit_set = self.get_positions_from_motion_dict(constants.fit_event_code)
@@ -588,8 +591,6 @@ class ProcessState:
             if not fittings_in_proximity:
                 continue
 
-
-
             detour_trail = construct_trail(length=fit_diff, direction=fit_dir, pos=fit_tup[0])
 
             attachment_is_between = False
@@ -615,7 +616,7 @@ class ProcessState:
 
             # get_updated_state_on_construction_event(tentative_state, fit_diff, fit_dir, event_pos, pos)
 
-            detour_instruction = construct_detour_building_instruction(length=fit_diff, fit_tup=fit_tup,
+            detour_instruction = construct_detour_building_instruction(pipe_id, fit_tup=fit_tup,
                                                                        state_grid=self.aimed_solution.path_problem.state_grid,
                                                                        possible_att_pipe_positions=tuple(
                                                                            pipe_trail))
@@ -669,7 +670,7 @@ class ProcessState:
             unnecessary = False
             # error = False
 
-            event_info = AssemblyEventResult(event_pos=construction_state.event_pos,
+            event_result = AssemblyEventResult(event_pos=construction_state.event_pos,
                                              event_code=construction_state.event_code,
                                              removal=False, layout=None,
                                              part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced,
@@ -689,28 +690,30 @@ class ProcessState:
 
             if construction_state.event_code == 3:
                 self.attachment_placed(event_pos=construction_state.event_pos, event_code=construction_state.event_code,
-                                       event_result=event_info,
+                                       event_result=event_result,
                                        building_instruction=building_instruction)
 
             elif construction_state.event_code == 2:
-                self.pipe_placed_detour_event(event_pos=construction_state.event_pos, event_info=event_info,
+                self.pipe_placed_detour_event(event_pos=construction_state.event_pos, event_result=event_result,
                                               building_instruction=building_instruction,
                                               pipe_id=construction_state.part_id)
 
             elif construction_state.event_code == 1:
                 self.fitting_placed(event_pos=construction_state.event_pos, building_instruction=building_instruction,
-                                    event_result=event_info, ignore_part_check=True)
+                                    event_result=event_result, ignore_part_check=True)
 
-            new_construction_state.part_id = event_info.part_id
-            new_construction_state.deviated = event_info.deviated
-            new_construction_state.unnecessary = event_info.unnecessary
-            new_construction_state.misplaced = event_info.misplaced
+            new_construction_state.part_id = event_result.part_id
+            new_construction_state.deviated = event_result.deviated
+            new_construction_state.unnecessary = event_result.unnecessary
+            new_construction_state.misplaced = event_result.misplaced
+
             self.register_assembly(building_instruction=building_instruction,
                                    construction_state=new_construction_state,
                                    event_code=construction_state.event_code,
                                    event_pos=construction_state.event_pos)
-            if not event_info.deviated:
-                event_info.completed_layouts.update(self.set_completion_state(current_layout, event_info))
+
+            if not event_result.deviated:
+                event_result.completed_layouts.update(self.set_completion_state(current_layout, event_result))
 
         if detour_event:
             # find detour trail in ordered trails
@@ -768,11 +771,11 @@ class ProcessState:
             return False
 
     # utilities
-    def set_completion_state(self, current_layout: Trail, event_info: AssemblyEventResult) -> set:
+    def set_completion_state(self, current_layout: Trail, event_result: AssemblyEventResult) -> set:
         """Sets completion state of current layout and neighboring layouts. Updates state grid on completed layouts.
 
         Args:
-            event_info(:class:`assembly_event_result.AssemblyEventResult`):
+            event_result(:class:`assembly_event_result.AssemblyEventResult`):
             current_layout(:obj:`Trail`):
 
         """
@@ -791,7 +794,7 @@ class ProcessState:
                         self.state_grid[pos] = 2
 
             else:
-                if event_info.removal:
+                if event_result.removal:
                     building_instruction.layout_completed = False
                     for pos in layout:
                         self.state_grid[pos] = 0
@@ -850,13 +853,13 @@ class ProcessState:
                 pos_set.add(pos)
         return pos_set
 
-    def pipe_placed_detour_event(self, event_pos: Pos, event_info: AssemblyEventResult,
+    def pipe_placed_detour_event(self, event_pos: Pos, event_result: AssemblyEventResult,
                                  building_instruction: BuildingInstruction, pipe_id: int) -> AssemblyEventResult:
         """Pipe assembly reevaluation for detour events. Similar to :meth:`pipe_placed`.
 
         Args:
             event_pos(:obj:`~type_aliases.Pos`): See parameter :paramref:`~evaluate_assembly.event_pos`
-            event_info(:class:`AssemblyEventResult <assembly_event_result>`): Event info being modified
+            event_result(:class:`AssemblyEventResult <assembly_event_result>`): Event info being modified
             building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction of the current layout.
             pipe_id(:obj:`int`): Pipe ID of the construction state being reevaluated.
         Return:
@@ -864,16 +867,19 @@ class ProcessState:
 
         """
         if event_pos in self.aimed_solution.node_trail.keys():
-            # if pipe assembly occurred somewhere inside the trail of building instruction, then it's valid
-            part_id = building_instruction.pipe_id
-            event_info.part_id = pipe_id
-            # check if part was actually picked
-            if part_id != pipe_id:
-                event_info.deviated = True
+            if event_pos in building_instruction.possible_att_pipe_positions:
+                part_id = building_instruction.pipe_id
+                event_result.part_id = pipe_id
+                # check if part was actually picked
+                if part_id != pipe_id:
+                    event_result.deviated = True
+            else:
+                event_result.deviated = True
+                event_result.misplaced = True
         else:
-            event_info.part_id = pipe_id
-            event_info.deviated = True
-        return event_info
+            event_result.part_id = pipe_id
+            event_result.deviated = True
+        return event_result
 
     def get_num_open_pipes(self) -> int:
         """

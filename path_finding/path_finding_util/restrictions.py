@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from path_finding.path_finding_util.path_math import sum_pos, get_direction
-from path_finding.path_finding_util.path_util import get_corner_neighbors, get_pipe_neighbors, pipe_stock_check, \
+from path_finding.path_finding_util.path_util import get_fitting_neighbors, get_pipe_neighbors, pipe_stock_check, \
     get_transition
+from type_dictionary import constants
 from type_dictionary.class_types import Predecessors
 from type_dictionary.constants import fitting_id
 from type_dictionary.type_aliases import DirectionDict, PosSet, Pos, StateGrid, PartStock, Node
@@ -121,11 +122,12 @@ def goal_restricted(part_id: int, pos: Pos, direction, goal_dict: DirectionDict)
 def get_restricted_neighbor_nodes(directions: PosSet, goal_dict: DirectionDict, current_pos: Pos,
                                   part_stock: PartStock, predecessors: Predecessors, fast_mode: bool, key,
                                   start_pos: Pos,
-                                  transition_points: set[Pos]) -> set[Node]:
+                                  transition_points: set[Pos], state_grid: StateGrid) -> set[Node]:
     """Determines what neighbors are reachable from the current position and with the available parts. Removes neighbors
     that violate goal restrictions.
 
     Args:
+        state_grid(:obj:`~type_aliases.StateGrid`): To the current path modified state grid.
         part_stock(:obj:`~type_aliases.PartStock`): See :obj:`~type_aliases.PartStock`
         predecessors(:obj:`~class_types.Predecessors`): See :obj:`~class_types.Predecessors`
         fast_mode(:obj:`bool`): See :paramref:`~search_algorithm.find_path.fast_mode`
@@ -147,23 +149,23 @@ def get_restricted_neighbor_nodes(directions: PosSet, goal_dict: DirectionDict, 
     available_parts = pipe_stock_check(part_stock, predecessors, fast_mode, key)
     remove = set()
 
-
     for direction in directions:
+        transition = get_transition(current_pos, direction, transition_points, start_pos)
+
         if current_pos == start_pos:
-            transition = get_transition(current_pos, direction, transition_points)
             # neighbor_pos.extend(get_corner_neighbors(direction, available_parts))
             neighbor_relative_nodes.update(get_pipe_neighbors(direction, available_parts, True, transition))
-        elif previous_part == 0:
-            transition = get_transition(current_pos, direction, transition_points)
+        elif previous_part == constants.fitting_id:
             # previous move was corner -> only pipes allowed
             neighbor_relative_nodes.update(get_pipe_neighbors(direction, available_parts, False, transition))
         else:
             # previous mode was pipe -> only corners allowed
-            neighbor_relative_nodes.update(get_corner_neighbors(direction, available_parts))
+            neighbor_relative_nodes.update(get_fitting_neighbors(direction, available_parts, transition, start_pos))
 
+        # check goal restriction
         for relative_node in neighbor_relative_nodes:
-
             neighbor_pos = sum_pos(current_pos, relative_node[0])
+
             if neighbor_pos in goal_dict.keys():
                 # restriction check necessary, neighbor reaches goal
                 if goal_restricted(part_id=relative_node[1], pos=neighbor_pos,

@@ -172,7 +172,6 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     """
     completed_instructions = get_completed_instructions(process_state.building_instructions)
 
-
     path_problem = deepcopy(initial_path_problem)
 
     # get state grid of completed layouts
@@ -214,25 +213,30 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
         state_grid=current_state_grid,
         path_problem=path_problem,
         search_start_pos=search_start_pos,
-        #search_goal_pos= search_goal_pos
+        search_goal_pos=search_goal_pos
     )
-    solution = None
 
     # get a position of the detouring layout
     check_pos = list(detour_event)[0][-1]
     if check_pos in (start, goal):
         check_pos = list(detour_event)[0][0]
 
+    detour_layout_in = False
+    goal_in = False
     # check if position of the detouring layout is in the partial solution
     for partial_solution in partial_solutions:
         for trail in partial_solution.ordered_trails:
-
             if check_pos in trail:
-                solution = partial_solver.fuse_partial_solutions(partial_solutions, completed_instructions,
-                                                                 initial_path_problem)
+                detour_layout_in = True
+            if goal in trail:
+                goal_in = True
                 break
-        if solution:
-            break
+
+    if detour_layout_in and goal_in:
+        solution = partial_solver.fuse_partial_solutions(partial_solutions, completed_instructions,
+                                                         initial_path_problem)
+    else:
+        solution = None
 
     return solution
 
@@ -255,27 +259,27 @@ def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pi
 
     if pipe_id not in (0, -1, None):
         message = str.format(
-            f"Process Planner: Registered {motion_type} for object {object_name} (ID {pipe_id}) at Position {event_pos}")
+            f"{event_pos} Registered {motion_type} for object {object_name} (ID {pipe_id})")
     elif pipe_id == -2:
         message = str.format(
-            f"Process Planner: Registered {motion_type} for object {object_name} (ID Unknown) at Position {event_pos}")
+            f"{event_pos} Registered {motion_type} for object {object_name} (ID Unknown)")
     else:
         message = str.format(
-            f"Process Planner: Registered {motion_type} for object {object_name} at Position {event_pos}")
+            f"{event_pos} Registered {motion_type} for object {object_name}")
 
     return message
 
 
 def make_special_message(note: str, event_pos: Pos) -> str:
     """Returns a special message as string, usually used in case of deviated assemblys."""
-    message = str.format(f"Process Planner: Position {event_pos}: {note} ")
+    message = str.format(f"{event_pos} Process deviation: {note} ")
     return message
 
 
 def make_error_message(event_pos: Pos, note: str) -> str:
     """Returns error messages as string containing the position where the error occurred as well as additional
     information regarding the reason for the error."""
-    message = str.format(f"Process Planner: Process error at Position {event_pos}: {note}")
+    message = str.format(f"{event_pos} Process error: {note}")
     return message
 
 

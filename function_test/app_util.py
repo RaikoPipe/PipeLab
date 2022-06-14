@@ -8,7 +8,7 @@ from ttkbootstrap.constants import *
 import numpy as np
 import ttkbootstrap as ttk
 
-from function_test.app_config import button_height
+from function_test.app_config import button_height, message_error_foreground_color, message_foreground_color
 from function_test.app_config import free_style, pipe_style, obs_style, att_style, fit_style, start_style, goal_style, \
     transition_style, fit_deviated_style, att_deviated_style, pipe_deviated_style, fit_misplaced_style, \
     att_misplaced_style, pipe_misplaced_style, start_warning_style, start_success_style, goal_success_style, \
@@ -95,19 +95,35 @@ def update_trees_on_pick_event(output: ProcessOutput, part_id:int, part_stock_tr
     # pprint.pprint(output)
     message = output.messages[0]
     special_message = output.messages[1]
+
+    picking_robot_commands = output.picking_robot_commands
+    fastening_robot_commands = output.fastening_robot_commands
     process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
                                 text=message.replace("Process Planner: ", ""))
     if event_result.error:
-        process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground="white")
+        process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground=message_error_foreground_color)
     else:
         process_message_tree.tag_configure(tagname=message_count, background=message_conformal_assembly_color,
-                                           foreground="black")
+                                           foreground=message_foreground_color)
     extra_message_ids = [message_count]
     message_count += 1
     if special_message:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=special_message)
         extra_message_ids.append(message_count)
         message_count += 1
+
+    if fastening_robot_commands:
+        process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
+                                    text="Fastening robot commands:" + str(fastening_robot_commands))
+        extra_message_ids.append(message_count)
+        message_count += 1
+
+    if picking_robot_commands:
+        process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
+                                    text="Picking robot commands:" + str(picking_robot_commands))
+        extra_message_ids.append(message_count)
+        message_count += 1
+
     append_attributes_to_tree_entry(event_result, extra_message_ids, process_message_tree)
 
     part_id_to_child_id = get_child_id_dict(part_stock_tree)
@@ -149,7 +165,7 @@ def undo_action(process_planner: ProcessPlanner, button_grid: np.ndarray, style_
 
         global message_count
         process_message_tree.insert("", index=ttk.END, tag=message_count, text="Last Action was undone!")
-        process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground="black")
+        process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground=message_foreground_color)
         message_count += 1
 
         process_message_tree.yview_moveto(1)
@@ -160,7 +176,7 @@ def undo_action(process_planner: ProcessPlanner, button_grid: np.ndarray, style_
 
     else:
         process_message_tree.insert("", index=ttk.END, tag=message_count, text="There is no previous state to restore!")
-        process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground="black")
+        process_message_tree.tag_configure(tagname=message_count, background=message_action_undone_color, foreground=message_foreground_color)
         message_count += 1
 
 
@@ -235,8 +251,9 @@ def update_style_grid(process_state, style_grid: np.ndarray) -> np.ndarray:
     for motion_pos, construction_state in process_state.motion_dict.items():
         if not isinstance(motion_pos[0], int):
             for pos in motion_pos:
-                style = get_style_from_construction_state(construction_state)
-                style_grid[pos] = style
+                if process_state.aimed_solution.path_problem.state_grid[pos] != constants.transition_state:
+                    style = get_style_from_construction_state(construction_state)
+                    style_grid[pos] = style
         else:
             style = get_style_from_construction_state(construction_state)
             style_grid[motion_pos] = style
@@ -328,6 +345,11 @@ def update_tool_tip_text_grid(process_state: ProcessState, tool_tip_text_grid: n
 
             tool_tip_text_grid[motion_pos] = text
 
+    for pos, state in np.ndenumerate(process_state.aimed_solution.path_problem.state_grid):
+        if state == constants.transition_state:
+            tool_tip_text_grid[pos] = str(pos) + "\n" + "Transition"
+
+
     return tool_tip_text_grid
 
 
@@ -363,16 +385,23 @@ def update_solution_grid(process_state: ProcessState, solution_button_grid: np.n
         process_state(:class:`~process_planning.process_state.ProcessState`): Process state with an updated solution.
         style_grid(:obj:`numpy.ndarray`): Style grid with initial configuration.
         """
+
     # reset
     for pos, style in np.ndenumerate(style_grid):
         if style != fit_style or style != pipe_style:
             solution_button_grid[pos].configure(style=style)
 
     for pos, part_id in process_state.aimed_solution.node_trail.items():
-        if part_id == 0:
+        if part_id == constants.fitting_id:
             solution_button_grid[pos].configure(style=fit_style)
         else:
             solution_button_grid[pos].configure(style=pipe_style)
+
+    state_grid = process_state.aimed_solution.path_problem.state_grid
+
+    for pos, state in np.ndenumerate(state_grid):
+        if state == constants.transition_state:
+            solution_button_grid[pos].configure(style=transition_style)
 
     start = process_state.aimed_solution.path_problem.start_pos
     goal = process_state.aimed_solution.path_problem.goal_pos
@@ -394,6 +423,8 @@ def update_trees_on_assembly_event(part_stock_tree: ttk.Treeview, process_messag
     process_state = process_output.process_state
     messages = process_output.messages
     next_recommended_action = process_output.next_recommended_action
+    picking_robot_commands = process_output.picking_robot_commands
+    fastening_robot_commands = process_output.fastening_robot_commands
     event_result = process_output.current_event_result
 
     message = messages[0]
@@ -405,12 +436,12 @@ def update_trees_on_assembly_event(part_stock_tree: ttk.Treeview, process_messag
                                     text=message.replace("Process Planner: ", ""))
         if any((event_result.deviated, event_result.unnecessary, event_result.misplaced)):
             if not event_result.removal:
-                process_message_tree.tag_configure(tagname=message_count, background=message_deviated_assembly_color, foreground="black")
+                process_message_tree.tag_configure(tagname=message_count, background=message_deviated_assembly_color, foreground=message_foreground_color)
         else:
-            process_message_tree.tag_configure(tagname=message_count, background=message_conformal_assembly_color, foreground="black")
+            process_message_tree.tag_configure(tagname=message_count, background=message_conformal_assembly_color, foreground=message_foreground_color)
 
         if event_result.error:
-            process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground="white")
+            process_message_tree.tag_configure(tagname=message_count, background=message_error_color, foreground=message_error_foreground_color)
 
         extra_message_ids = [message_count]
         message_count += 1
@@ -426,15 +457,27 @@ def update_trees_on_assembly_event(part_stock_tree: ttk.Treeview, process_messag
             extra_message_ids.append(message_count)
             message_count += 1
 
+        if fastening_robot_commands:
+            process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
+                                        text="Fastening robot commands:" + str(fastening_robot_commands))
+            extra_message_ids.append(message_count)
+            message_count += 1
+
+        if picking_robot_commands:
+            process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
+                                        text="Picking robot commands:" + str(picking_robot_commands))
+            extra_message_ids.append(message_count)
+            message_count += 1
+
         append_attributes_to_tree_entry(event_result, extra_message_ids, process_message_tree)
     if detour_message:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count, text=detour_message)
-        process_message_tree.tag_configure(tagname=message_count, background=message_detour_event_color, foreground="white")
+        process_message_tree.tag_configure(tagname=message_count, background=message_detour_event_color, foreground=message_error_foreground_color)
         message_count += 1
     if process_state.completion == 1:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,
                                     text="Construction complete!")
-        process_message_tree.tag_configure(tagname=message_count, background=message_construction_complete_color, foreground="black")
+        process_message_tree.tag_configure(tagname=message_count, background=message_construction_complete_color, foreground=message_foreground_color)
         message_count += 1
 
     part_id_to_child_id = get_child_id_dict(part_stock_tree)

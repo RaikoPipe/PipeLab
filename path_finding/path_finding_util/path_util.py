@@ -3,7 +3,8 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Optional
 
-from path_finding.path_finding_util.path_math import diff_pos, get_direction, sum_pos
+from path_finding.path_finding_util import path_math
+from path_finding.path_finding_util.path_math import diff_pos, get_direction, sum_pos, manhattan_distance
 from path_finding.pf_data_class.path_problem import PathProblem
 from path_finding.pf_data_class.solution import Solution
 from type_dictionary import constants
@@ -107,20 +108,28 @@ def construct_node_path_and_rendering_dict(current_node, fast_mode, node_path, p
     return node_path, rendering_dict
 
 
-def get_corner_neighbors(direction: Pos, available_parts: set[int]) -> set[Node]:
-    """Returns all the neighbors that are allowed as the next move by the currently available corner parts.
+def get_fitting_neighbors(direction: Pos, available_parts: set[int], transition, start_pos) -> set[Node]:
+    """Returns a set containing one neighbor, since after a pipe move a fitting move can only occur in one direction.
 
     Args:
+        transition(:obj:`tuple` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Pos`]): See :func:`get_transition`
+        start_pos(:obj:`~type_aliases.Pos`): See :obj:`~PathProblem.start_pos`
         direction(:obj:`~type_aliases.Pos`): Considered direction for fitting
         available_parts(:obj:list [:obj:`int`]): See :func:`pipe_stock_check`
     Returns:
         A :obj:`set` of neighbor :obj`Nodes<type_aliases.Node>`.
     """
 
-    # corner moves can ONLY go in one direction
+    # fitting moves can ONLY go in one direction
     neighbors = set()
+
     if 0 in available_parts:
-        neighbors.add((direction, 0))
+        if transition:
+            if not transition[2]:
+                # we move towards start and transition, transition is possible
+                neighbors.add((sum_pos(direction, direction), 0))
+        else:
+            neighbors.add((direction, 0))
 
     return neighbors
 
@@ -147,16 +156,17 @@ def get_pipe_neighbors(direction: Pos, available_parts: set[int], at_start: bool
             continue
 
         if transition:
-            directions = {(direction[1], direction[0]),
-                          (-direction[1], -direction[0]),
-                          (direction[0], direction[1])}
-            # todo: improve this, what if transition is directly after start pos?
-            for direct in directions:
-                if direct == transition[1]:
-                    neighbors.add(
-                        ((direct[0] * (part_id + abs(direct[0])), (direct[1] * (part_id + abs(direct[1])))), part_id))
-                elif direction != direct:
-                    neighbors.add(((part_id * direct[0], part_id * direct[1]), part_id))
+            if transition[2]:
+                directions = {(direction[1], direction[0]),
+                              (-direction[1], -direction[0]),
+                              (direction[0], direction[1])}
+
+                for direct in directions:
+                    if direct == transition[1]:
+                        neighbors.add(
+                            ((direct[0] * (part_id + abs(direct[0])), (direct[1] * (part_id + abs(direct[1])))), part_id))
+                    elif direction != direct:
+                        neighbors.add(((part_id * direct[0], part_id * direct[1]), part_id))
 
         elif at_start:
             # only allow neighbors that meet start condition
@@ -249,21 +259,34 @@ def get_available_parts(part_stock: PartStock) -> set[int]:
     return available_parts
 
 
-def get_transition(pos: Pos, direction: Pos, transition_points: set[Pos]) -> Optional[tuple[Pos, Pos]]:
+def get_transition(current_pos: Pos, direction: Pos, transition_points: set[Pos], start_pos) -> Optional[
+    tuple[Pos, Pos]]:
     """Checks if transition points lie in the node in direction of the given node position.
 
     Returns:
         :obj:`tuple` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Pos`] if transition point found, else None.
     """
+
     directions = {(direction[1], direction[0]),
                   (-direction[1], -direction[0]),
                   (direction[0], direction[1])}
 
     for transition_point in transition_points:
         for dir in directions:
-            check_pos = sum_pos(pos, dir)
+            check_idx = 0
+            if transition_point[0] < 0:
+                check_idx = 1
+            path_math.manhattan_distance(current_pos, start_pos)
+            dist_to_start = current_pos[check_idx] - start_pos[check_idx]
+
+            man1 = path_math.manhattan_distance(current_pos, start_pos)
+            man2 = path_math.manhattan_distance((current_pos[0] + dir[0], current_pos[1] + dir[1]), start_pos)
+            away_from_start = False
+            if man2 > man1:
+                away_from_start = True
+            check_pos = sum_pos(current_pos, dir)
             if check_pos[0] == transition_point[0] or check_pos[1] == transition_point[1]:
-                transition = (transition_point, dir)
+                transition = (transition_point, dir, away_from_start)
                 return transition
 
     return None

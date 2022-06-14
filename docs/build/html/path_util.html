@@ -115,14 +115,21 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="path_util.get_corner_neighbors">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_corner_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_parts</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_corner_neighbors" title="Permalink to this definition"></a></dt>
-<dd><p>Returns all the neighbors that are allowed as the next move by the currently available corner parts.</p>
+<dt class="sig sig-object py" id="path_util.construct_node_path_and_rendering_dict">
+<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">construct_node_path_and_rendering_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_stock</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predecessors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rendering_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.construct_node_path_and_rendering_dict" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_util.get_fitting_neighbors">
+<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_fitting_neighbors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">available_parts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_fitting_neighbors" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a set containing one neighbor, since after a pipe move a fitting move can only occur in one direction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="path_util.get_corner_neighbors.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#path_util.get_corner_neighbors.params.direction">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Considered direction for fitting</p></li>
-<li><p><span class="target" id="path_util.get_corner_neighbors.params.available_parts"></span><strong>available_parts</strong><a class="paramlink headerlink reference internal" href="#path_util.get_corner_neighbors.params.available_parts">¶</a><strong>(</strong> – obj:list [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]): See <a class="reference internal" href="#path_util.pipe_stock_check" title="path_util.pipe_stock_check"><code class="xref py py-func docutils literal notranslate"><span class="pre">pipe_stock_check()</span></code></a></p></li>
+<li><p><span class="target" id="path_util.get_fitting_neighbors.params.transition"></span><strong>transition</strong><a class="paramlink headerlink reference internal" href="#path_util.get_fitting_neighbors.params.transition">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>, <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>]) – See <a class="reference internal" href="#path_util.get_transition" title="path_util.get_transition"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_transition()</span></code></a></p></li>
+<li><p><span class="target" id="path_util.get_fitting_neighbors.params.start_pos"></span><strong>start_pos</strong><a class="paramlink headerlink reference internal" href="#path_util.get_fitting_neighbors.params.start_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – See <code class="xref py py-obj docutils literal notranslate"><span class="pre">start_pos</span></code></p></li>
+<li><p><span class="target" id="path_util.get_fitting_neighbors.params.direction"></span><strong>direction</strong><a class="paramlink headerlink reference internal" href="#path_util.get_fitting_neighbors.params.direction">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Considered direction for fitting</p></li>
+<li><p><span class="target" id="path_util.get_fitting_neighbors.params.available_parts"></span><strong>available_parts</strong><a class="paramlink headerlink reference internal" href="#path_util.get_fitting_neighbors.params.available_parts">¶</a><strong>(</strong> – obj:list [<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>]): See <a class="reference internal" href="#path_util.pipe_stock_check" title="path_util.pipe_stock_check"><code class="xref py py-func docutils literal notranslate"><span class="pre">pipe_stock_check()</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -205,7 +212,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="path_util.get_transition">
-<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_transition" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_transition" title="Permalink to this definition"></a></dt>
 <dd><p>Checks if transition points lie in the node in direction of the given node position.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -213,6 +220,11 @@
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="path_util.get_other_node_of_pair">
+<span class="sig-prename descclassname"><span class="pre">path_util.</span></span><span class="sig-name descname"><span class="pre">get_other_node_of_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_pair</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_util.get_other_node_of_pair" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
 
 </div>
 

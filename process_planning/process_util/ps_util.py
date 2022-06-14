@@ -109,7 +109,7 @@ def construct_trail(length: int, direction: Pos, pos: Pos) -> Trail:
     return tuple(trail)
 
 
-def construct_detour_building_instruction(length: int, fit_tup: NodePair, state_grid: StateGrid,
+def construct_detour_building_instruction(pipe_id: int, fit_tup: NodePair, state_grid: StateGrid,
                                           possible_att_pipe_positions: Trail) -> BuildingInstruction:
     """Constructs a building instruction from given parameters.
 
@@ -122,7 +122,7 @@ def construct_detour_building_instruction(length: int, fit_tup: NodePair, state_
     Returns:
         :class:`BuildingInstruction<building_instruction>`
     """
-    pipe_id = length - 1
+
     direction = get_direction(diff_pos(fit_tup[0], fit_tup[1]))
     first_pipe_pos = (fit_tup[0][0] * direction[0], fit_tup[0][1] * direction[1])
 

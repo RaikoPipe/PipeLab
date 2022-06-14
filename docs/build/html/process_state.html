@@ -384,12 +384,12 @@ Detour event occurs if:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="process_state.ProcessState.set_completion_state">
-<span class="sig-name descname"><span class="pre">set_completion_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.set_completion_state" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">set_completion_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current_layout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.set_completion_state" title="Permalink to this definition"></a></dt>
 <dd><p>Sets completion state of current layout and neighboring layouts. Updates state grid on completed layouts.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="process_state.ProcessState.set_completion_state.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.set_completion_state.params.event_info">¶</a> (<a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">assembly_event_result.AssemblyEventResult</span></code></a>) – </p></li>
+<li><p><span class="target" id="process_state.ProcessState.set_completion_state.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.set_completion_state.params.event_result">¶</a> (<a class="reference internal" href="assembly_event_result.html#assembly_event_result.AssemblyEventResult" title="assembly_event_result.AssemblyEventResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">assembly_event_result.AssemblyEventResult</span></code></a>) – </p></li>
 <li><p><span class="target" id="process_state.ProcessState.set_completion_state.params.current_layout"></span><strong>current_layout</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.set_completion_state.params.current_layout">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code>) – </p></li>
 </ul>
 </dd>
@@ -399,14 +399,16 @@ Detour event occurs if:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="process_state.ProcessState.completed_instruction">
 <span class="sig-name descname"><span class="pre">completed_instruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.completed_instruction" title="Permalink to this definition"></a></dt>
-<dd><p>Checks if the building instruction was completed.</p>
+<dd><p>Checks if the building instruction was completed. Additionally, returns the next event code needed to advance
+the completion of this instruction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><span class="target" id="process_state.ProcessState.completed_instruction.params.building_instruction"></span><strong>building_instruction</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.completed_instruction.params.building_instruction">¶</a> (<a class="reference internal" href="building_instruction.html#module-building_instruction" title="building_instruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>) – Building instruction of the current layout.</p>
 </dd>
 </dl>
 <p>Returns:
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing if building instruction was completed (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) and event code (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) corresponding to its completion state.</p>
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> containing if building instruction was completed (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) and event code (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>)
+corresponding to the next event code needed to advance the completion of this instruction.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -421,13 +423,13 @@ Detour event occurs if:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="process_state.ProcessState.pipe_placed_detour_event">
-<span class="sig-name descname"><span class="pre">pipe_placed_detour_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.pipe_placed_detour_event" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">pipe_placed_detour_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_result</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">building_instruction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_state.ProcessState.pipe_placed_detour_event" title="Permalink to this definition"></a></dt>
 <dd><p>Pipe assembly reevaluation for detour events. Similar to <a class="reference internal" href="#process_state.ProcessState.pipe_placed" title="process_state.ProcessState.pipe_placed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pipe_placed()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><span class="target" id="process_state.ProcessState.pipe_placed_detour_event.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pipe_placed_detour_event.params.event_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – See parameter <a class="reference internal" href="#process_state.ProcessState.evaluate_assembly.params.event_pos" title="process_state.ProcessState.evaluate_assembly"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
-<li><p><span class="target" id="process_state.ProcessState.pipe_placed_detour_event.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pipe_placed_detour_event.params.event_info">¶</a> (<a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>) – Event info being modified</p></li>
+<li><p><span class="target" id="process_state.ProcessState.pipe_placed_detour_event.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pipe_placed_detour_event.params.event_result">¶</a> (<a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>) – Event info being modified</p></li>
 <li><p><span class="target" id="process_state.ProcessState.pipe_placed_detour_event.params.building_instruction"></span><strong>building_instruction</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pipe_placed_detour_event.params.building_instruction">¶</a> (<a class="reference internal" href="building_instruction.html#module-building_instruction" title="building_instruction"><code class="xref py py-class docutils literal notranslate"><span class="pre">BuildingInstruction</span></code></a>) – Building instruction of the current layout.</p></li>
 <li><p><span class="target" id="process_state.ProcessState.pipe_placed_detour_event.params.pipe_id"></span><strong>pipe_id</strong><a class="paramlink headerlink reference internal" href="#process_state.ProcessState.pipe_placed_detour_event.params.pipe_id">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – Pipe ID of the construction state being reevaluated.</p></li>
 </ul>

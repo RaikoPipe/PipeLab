@@ -11,7 +11,6 @@ from path_finding.path_finding_util.restrictions import neighbor_position_restri
 from path_finding.path_finding_util.score_calculation import get_worst_move, get_f_score, get_m_score, \
     get_e_score
 from path_finding.pf_data_class.path_problem import PathProblem
-# fixme: mca* doesn't work, mcsa* doesn't include extra score
 from type_dictionary import constants
 
 
@@ -119,7 +118,8 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
                                                                  start_pos=start_pos,
                                                                  transition_points=transition_points,
                                                                  part_stock=pipe_stock, predecessors=predecessors,
-                                                                 fast_mode=fast_mode, key=key_dict.get(fast_mode))
+                                                                 fast_mode=fast_mode, key=key_dict.get(fast_mode),
+                                                                 state_grid=current_state_grid)
         else:
             current_state_grid = change_grid_states(
                 state_grid=copy(predecessors.get(key_dict.get(fast_mode)).state_grid),
@@ -132,7 +132,8 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
                                                                  start_pos=start_pos,
                                                                  transition_points=transition_points,
                                                                  part_stock=pipe_stock, predecessors=predecessors,
-                                                                 fast_mode=fast_mode, key=key_dict.get(fast_mode))
+                                                                 fast_mode=fast_mode, key=key_dict.get(fast_mode),
+                                                                 state_grid=current_state_grid)
 
         if draw_path:
             node_path: NodePath = []
@@ -190,7 +191,7 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
                                             state_grid=current_state_grid, part_id=neighbor_part_id):
                 continue
 
-            p_list = [p[1] for p in open_list]
+            #p_list = [p[1] for p in open_list]
 
             current_score_goal_distance = get_m_score(algorithm=algorithm, goal_pos=goal_pos,
                                                       neighbor_pos=neighbor_pos,
@@ -206,6 +207,7 @@ def find_path(path_problem: PathProblem, draw_path: bool = False, fast_mode=Fals
 
             # if (neighbor_pos, neighbor_part_id,
             #     neighbor_direction) not in p_list or current_f_score < total_score.get(neighbor_pos, 0):
+
             predecessors[key_dict.get(fast_mode)] = Predecessor(pos=current_pos, part_to_successor=neighbor_part_id,
                                                                 part_to_predecessor=current_part_id,
                                                                 direction=current_direction,

@@ -112,8 +112,6 @@ draw_debug = False
 #             solution = get_solution(path_problem=partial_path_problem, draw_debug=draw_debug)
 #
 #             if solution:
-#                 # todo: save all predecessors, then make solutions to all of them
-#                 # todo: make a list of all possible paths
 #                 # search finished! Get all solutions.
 #                 solution_dict[frozenset((current_pos, search_goal_pos))] = solution
 #                 predecessor[search_goal_pos] = current_pos
@@ -246,7 +244,7 @@ def adjust_partial_path_problem(current_pos, current_state_grid, neighbor, outgo
 
 def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: list[set],
                           outgoing_node_directions_dict: FittingDirections, state_grid: StateGrid, part_stock: PartStock,
-                          path_problem: PathProblem,search_start_pos: Pos
+                          path_problem: PathProblem, search_start_pos: Pos, search_goal_pos
                           ) -> list[Solution]:
     """
     Tries to generate partial solutions with the given node pairs. Node pairs may be excluded if
@@ -254,6 +252,8 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
 
     Args:
 
+        search_goal_pos(:obj:`~type_aliases.Pos`): Pos where the search should conclude.
+        search_start_pos(:obj:`~type_aliases.Pos`): Pos where the search should start.
         outgoing_node_pairs_set (:obj:`~type_aliases.NodePairset`): Set of node pairs that represent the end points of a layout
         exclusion_list (:obj:`list` [:obj:`set`]): List of node pairs that are excluded from connecting.
         outgoing_node_directions_dict (:obj:`~type_aliases.FittingDirections`): Dictionary containing the directions each node can be connected to.
@@ -279,7 +279,7 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
     # sort all
     all_points_list = sorted(all_points_dict.keys(), key=lambda x: manhattan_distance(start, x))
     neighbors = deepcopy(all_points_list)
-    # todo: use a* algorithm
+    all_points_list.remove(search_goal_pos)
     solution_dict = {}
     predecessor = {search_start_pos: search_start_pos}
 
@@ -290,13 +290,14 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
         point_outgoing_node_pairs_ref = all_points_dict[current_pos]
         solution = None
 
-        #todo: modify state grid and part stock
         if current_pos != search_start_pos:
             other_node = path_util.get_other_node_of_pair(current_node_pair, current_pos)
-            state_grid = solution_dict[frozenset((predecessor[other_node], other_node))].state_grid
-            part_stock = solution_dict[frozenset((predecessor[other_node], other_node))].part_stock
-        else:
-            other_node = search_start_pos
+            try:
+                state_grid = solution_dict[frozenset((predecessor[other_node], other_node))].state_grid
+                part_stock = solution_dict[frozenset((predecessor[other_node], other_node))].part_stock
+            except BaseException:
+                continue
+
 
 
 
@@ -337,7 +338,8 @@ def get_partial_solutions(outgoing_node_pairs_set: NodePairSet, exclusion_list: 
             best_point = best[1]
             best_solution = best[2]
             exclusion_list.append({current_pos, best_point})
-            all_points_list.remove(best_point)
+            if best_point in all_points_list:
+                all_points_list.remove(best_point)
             neighbors.remove(best_point)
 
             partial_solutions.append(best_solution)
@@ -422,13 +424,12 @@ def fuse_partial_solutions(partial_solutions: list[Solution], completed_layouts:
         for other_layout in unordered_layouts:
             if {add_layout[0], add_layout[-1]}.intersection({other_layout[0], other_layout[-1]}):
                 add_layout = other_layout
-                # todo: other idea: get direction and reverse next layout if negativee
                 break
 
     if unordered_layouts:
-        raise Exception("Failed to fuse partial solutions. There are still trails left after fusing.")
+        print("Failed to fuse partial solutions. There are still trails left after fusing.")
+        return None
 
-    # todo: if needed, recalculate score
     score = last_partial_solution.score
     fused_solution: Solution = Solution(part_stock=part_stock, path_problem=initial_path_problem,
                                         rendering_dict=rendering_dict,

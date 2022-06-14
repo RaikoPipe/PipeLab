@@ -1,6 +1,6 @@
 import ttkbootstrap as ttk
 
-dark_theme = False #: Option for using a dark theme for the app.
+dark_theme = False  #: Option for using a dark theme for the app.
 dark_theme_use = "darkly"
 light_theme_use = "litera"
 
@@ -24,7 +24,6 @@ pipe_style = "pipe.success.TButton"
 att_style = "att.success.TButton"
 fit_style = "fit.success.TButton"
 
-
 fit_deviated_style = "fitdev.warning.TButton"
 att_deviated_style = "attdev.warning.TButton"
 pipe_deviated_style = "pipedev.warning.TButton"
@@ -34,36 +33,47 @@ pipe_misplaced_style = "pipemis.warning.TButton"
 highlight_next_rec_action_style = "nextrecact.primary.TButton"
 treeview_style = "treestyle.Treeview"
 
-obs_color = "orange" #: obstacle color
-obs_active_color = "orange2" #: obstacle active color
+obs_color = "orange"  #: obstacle color
+obs_active_color = "orange2"  #: obstacle active color
 
-transition_color = "black" #: transition color
-transition_active_color = "grey20" #: transition active color
+transition_color = "black"  #: transition color
+transition_active_color = "grey20"  #: transition active color
 
-start_color = "green" #: start color
-start_active_color = "green2" #: start active color
-goal_color = "red2" #: goal color
-goal_active_color = "orange red" #: goal active color
+start_color = "green"  #: start color
+start_active_color = "green2"  #: start active color
+goal_color = "red2"  #: goal color
+goal_active_color = "orange red"  #: goal active color
 
-pipe_color = "blue" #: straight pipe color
-pipe_active_color = "dodger blue" #: straight pipe active color
-fit_color = "saddle brown" #: fiting color
-fit_active_color = "salmon3" #: fitting active color
-att_color = "medium violet red" #: attachment color
-att_active_color = "magenta" #: attachment active color \n
-
+pipe_color = "blue"  #: straight pipe color
+pipe_active_color = "dodger blue"  #: straight pipe active color
+fit_color = "saddle brown"  #: fiting color
+fit_active_color = "salmon3"  #: fitting active color
+att_color = "medium violet red"  #: attachment color
+att_active_color = "magenta"  #: attachment active color \n
 
 button_width = 6  #: Width of the grid buttons.
 button_height = 10  #: Height of the grid buttons.
 font = ('Tahoma', 6)  #: Tuple containing :obj:`str` of font art and :obj:`int` of font size.
 
-
-message_deviated_assembly_color = "yellow2" #: message color on deviated assembly
-message_conformal_assembly_color = "green2" #: message color on conformal assembly
-message_error_color = "red3" #: message color on error
-message_detour_event_color = "maroon1" #: message color on detour event
-message_construction_complete_color = "gold" #: message color on completion
-message_action_undone_color = "brown1" #: message color on undo action
+color_coded_process_messages = False  #: Option if message colors should be color coded
+if color_coded_process_messages:
+    message_deviated_assembly_color = "yellow2"  #: message color on deviated assembly
+    message_conformal_assembly_color = "green2"  #: message color on conformal assembly
+    message_error_color = "red3"  #: message color on error
+    message_detour_event_color = "maroon1"  #: message color on detour event
+    message_construction_complete_color = "gold"  #: message color on completion
+    message_action_undone_color = "brown1"  #: message color on undo action
+    message_error_foreground_color = "white"  #: message text color on error
+    message_foreground_color = "black"  #: message text color
+else:
+    message_deviated_assembly_color = ""
+    message_conformal_assembly_color = ""
+    message_error_color = ""
+    message_detour_event_color = ""
+    message_construction_complete_color = ""
+    message_action_undone_color = ""
+    message_error_foreground_color = ""
+    message_foreground_color = ""
 
 
 def configure_style(style: ttk.Style):
@@ -74,35 +84,37 @@ def configure_style(style: ttk.Style):
         style(:obj:`ttk.Style`): Tkinter Style object.
     """
 
-
-    style.configure(free_style,  width=button_width, height=button_height,  font=font)
+    style.configure(free_style, width=button_width, height=button_height, font=font)
     style.configure(pipe_style, background=pipe_color, width=button_width, height=button_height, font=font)
-    style.configure(obs_style, background=obs_color, width=button_width, height=button_height, font=font, foreground = "white")
+    style.configure(obs_style, background=obs_color, width=button_width, height=button_height, font=font,
+                    foreground="white")
     style.configure(fit_style, background=fit_color, width=button_width, height=button_height, font=font)
-    style.configure(start_style, background=start_color, width=button_width, height=button_height, font=font, foreground= "white")
-    style.configure(goal_style, background=goal_color, width=button_width, height=button_height, font=font, foreground= "white")
+    style.configure(start_style, background=start_color, width=button_width, height=button_height, font=font,
+                    foreground="white")
+    style.configure(goal_style, background=goal_color, width=button_width, height=button_height, font=font,
+                    foreground="white")
     style.configure(start_success_style, background=start_color, width=button_width, height=button_height, font=font)
     style.configure(goal_success_style, background=goal_color, width=button_width, height=button_height, font=font)
     style.configure(start_warning_style, background=start_color, width=button_width, height=button_height, font=font)
     style.configure(goal_warning_style, background=goal_color, width=button_width, height=button_height, font=font)
     style.configure(transition_style, background=transition_color, width=button_width, height=button_height, font=font)
     style.configure(att_style, background=att_color, width=button_width, height=button_height, font=font)
-    style.configure(fit_deviated_style, background=fit_color,  width=button_width,
+    style.configure(fit_deviated_style, background=fit_color, width=button_width,
                     height=button_height,
                     font=font)
-    style.configure(att_deviated_style, background=att_color,  width=button_width,
+    style.configure(att_deviated_style, background=att_color, width=button_width,
                     height=button_height,
                     font=font)
-    style.configure(pipe_deviated_style, background=pipe_color,  width=button_width,
+    style.configure(pipe_deviated_style, background=pipe_color, width=button_width,
                     height=button_height,
                     font=font)
-    style.configure(fit_misplaced_style, background=fit_color,  width=button_width,
+    style.configure(fit_misplaced_style, background=fit_color, width=button_width,
                     height=button_height,
                     font=font)
-    style.configure(att_misplaced_style, background=att_color,  width=button_width,
+    style.configure(att_misplaced_style, background=att_color, width=button_width,
                     height=button_height,
                     font=font)
-    style.configure(pipe_misplaced_style, background=pipe_color,  width=button_width,
+    style.configure(pipe_misplaced_style, background=pipe_color, width=button_width,
                     height=button_height,
                     font=font)
 
@@ -125,7 +137,6 @@ def configure_style(style: ttk.Style):
     style.map(att_misplaced_style, background=[("active", "")])
     style.map(pipe_misplaced_style, background=[("active", "")])
 
-
     style.configure(treeview_style)
     style.layout(treeview_style, [(treeview_style + '.treearea', {'sticky': 'nswe'})])
     style.configure("TRadiobutton", anchor="W")
@@ -137,6 +148,3 @@ def configure_style(style: ttk.Style):
         style.configure("TLabelframe", foreground="white", background="grey12")
         style.configure("TLabelframe.Label", foreground="grey51", background="grey12")
         style.configure("TRadiobutton", background="grey12", foreground="grey51")
-
-
-

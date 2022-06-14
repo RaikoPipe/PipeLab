@@ -159,14 +159,14 @@ current process state.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="process_planner.ProcessPlanner.determine_fastening_robot_commands">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">determine_fastening_robot_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_info</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_planner.ProcessPlanner.determine_fastening_robot_commands" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">determine_fastening_robot_commands</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#process_planner.ProcessPlanner.determine_fastening_robot_commands" title="Permalink to this definition"></a></dt>
 <dd><p>Reads the current process state and determines command codes for the fastening robot.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><span class="target" id="process_planner.ProcessPlanner.determine_fastening_robot_commands.params.event_pos"></span><strong>event_pos</strong><a class="paramlink headerlink reference internal" href="#process_planner.ProcessPlanner.determine_fastening_robot_commands.params.event_pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – See parameter <a class="reference internal" href="process_state.html#process_state.ProcessState.evaluate_assembly.params.event_pos" title="process_state.ProcessState.evaluate_assembly"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_pos</span></code></a></p></li>
 <li><p><span class="target" id="process_planner.ProcessPlanner.determine_fastening_robot_commands.params.event_code"></span><strong>event_code</strong><a class="paramlink headerlink reference internal" href="#process_planner.ProcessPlanner.determine_fastening_robot_commands.params.event_code">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>) – See parameter <a class="reference internal" href="process_state.html#process_state.ProcessState.evaluate_assembly.params.event_code" title="process_state.ProcessState.evaluate_assembly"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">event_code</span></code></a></p></li>
-<li><p><span class="target" id="process_planner.ProcessPlanner.determine_fastening_robot_commands.params.event_info"></span><strong>event_info</strong><a class="paramlink headerlink reference internal" href="#process_planner.ProcessPlanner.determine_fastening_robot_commands.params.event_info">¶</a> (<a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>) – See <a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a></p></li>
+<li><p><span class="target" id="process_planner.ProcessPlanner.determine_fastening_robot_commands.params.event_result"></span><strong>event_result</strong><a class="paramlink headerlink reference internal" href="#process_planner.ProcessPlanner.determine_fastening_robot_commands.params.event_result">¶</a> (<a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a>) – See <a class="reference internal" href="assembly_event_result.html#module-assembly_event_result" title="assembly_event_result"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssemblyEventResult</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -197,6 +197,11 @@ current process state.</p>
 <dt class="sig sig-object py" id="process_planner.ProcessPlanner.return_to_previous_state">
 <span class="sig-name descname"><span class="pre">return_to_previous_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#process_planner.ProcessPlanner.return_to_previous_state" title="Permalink to this definition"></a></dt>
 <dd><p>Restores the previous state as the current state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code> if restoring the previous state was successful.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
