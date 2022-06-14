@@ -43,26 +43,6 @@ def determine_next_part(process_state: ProcessState, layout: Trail) -> Optional[
     return next_part_id
 
 
-def get_completed_instructions(building_instructions: BuildingInstructions) -> \
-        BuildingInstructions:
-    """Looks for completed instructions inside building_instructions and returns them.
-
-    Args:
-        building_instructions(:obj:`~class_types.BuildingInstructions`): See :paramref:`~process_state.ProcessState.building_instructions`.
-
-    Return:
-        All completed instructions (:obj:`~class_types.BuildingInstructions`)
-
-    """
-    completed_instructions = {}
-    for layout_trail in building_instructions.keys():
-        instruction = building_instructions[layout_trail]
-        if instruction.layout_completed:
-            completed_instructions[layout_trail] = instruction
-
-    return completed_instructions
-
-
 def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> NodePairSet:
     """Returns all outgoing points in building_instructions as a connection. Interpolates them if they are
     connected.
@@ -76,35 +56,91 @@ def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> Node
     """
 
     outgoing_node_pairs_set = set()
-    for layout_state in building_instructions.values():
-        outgoing_node_pairs_set.add(layout_state.required_fit_positions)
+    # for layout_state in building_instructions.values():
+    #     outgoing_node_pairs_set.add(layout_state.required_fit_positions)
 
-    layout_state_list = [i for i in building_instructions.values()]
+    # layout_state = layout_state_list.pop(0)
+    #
+    # while layout_state_list:
+    #     for other_layout_state in layout_state_list:
+    #         fit_positions = layout_state.required_fit_positions
+    #         other_fit_positions = other_layout_state.required_fit_positions
+    #         fit_positions_set = set(fit_positions)
+    #         other_fit_positions_set = set(other_fit_positions)
+    #         intersection = fit_positions_set.intersection(other_fit_positions_set)
+    #         if intersection:
+    #             outgoing_node_pairs_set.discard(fit_positions)
+    #             outgoing_node_pairs_set.discard(other_fit_positions)
+    #
+    #             intersected_pos = intersection.pop()
+    #             fit_positions_set.discard(intersected_pos)
+    #             other_fit_positions_set.discard(intersected_pos)
+    #
+    #             fits_left = (fit_positions_set.pop(), other_fit_positions_set.pop())
+    #             new_end_points = (fits_left[0], fits_left[1])
+    #
+    #             outgoing_node_pairs_set.add(new_end_points)
+    #     layout_state = layout_state_list.pop()
 
-    layout_state = layout_state_list.pop(0)
+    instructions = [i for i in building_instructions.values()]
 
-    while layout_state_list:
-        for other_layout_state in layout_state_list:
-            fit_positions = layout_state.required_fit_positions
-            other_fit_positions = other_layout_state.required_fit_positions
-            fit_positions_set = set(fit_positions)
-            other_fit_positions_set = set(other_fit_positions)
-            intersection = fit_positions_set.intersection(other_fit_positions_set)
-            if intersection:
-                outgoing_node_pairs_set.discard(fit_positions)
-                outgoing_node_pairs_set.discard(other_fit_positions)
+    connections = []
+    for instruction in instructions:
+        connections.append(set(instruction.required_fit_positions))
 
-                intersected_pos = intersection.pop()
-                fit_positions_set.discard(intersected_pos)
-                other_fit_positions_set.discard(intersected_pos)
+    connection_list = []
+    while connections:
+        c = [connections.pop()]
+        recursion_search(c, connections)
+        connection_list.append(c)
 
-                fits_left = (fit_positions_set.pop(), other_fit_positions_set.pop())
-                new_end_points = (fits_left[0], fits_left[1])
+    final_list = []
+    for c in connection_list:
+        new_c = []
+        for connection in c:
+            counter = 0
+            intersection_list = []
+            for other_connection in c:
+                intersect = connection.intersection(other_connection)
 
-                outgoing_node_pairs_set.add(new_end_points)
-        layout_state = layout_state_list.pop()
+                if intersect:
+                    if connection == other_connection:
+                        continue
+                    intersection_list.append(intersect)
+                    counter += 1
+
+            if counter <= 1:
+                if intersection_list:
+                    intersect = intersection_list[0]
+                    cop = deepcopy(connection)
+                    cop.remove(intersect.pop())
+                    new_c.append(cop.pop())
+                else:
+                    cop = deepcopy(connection)
+                    new_c.append(cop.pop())
+                    new_c.append(cop.pop())
+
+        final_list.append(new_c)
+    outgoing_node_pairs_set = set()
+    for l in final_list:
+        outgoing_node_pairs_set.add(tuple(l))
 
     return outgoing_node_pairs_set
+
+
+def recursion_search(c, connections):
+    for connection in connections:
+        appended = False
+        for con in c:
+            if con.intersection(connection):
+                c.append(connection)
+                appended = True
+                break
+        if appended:
+            connections.remove(connection)
+            recursion_search(c, connections)
+            continue
+
 
 
 def get_outgoing_node_directions(building_instructions: BuildingInstructions) -> FittingDirections:
@@ -170,7 +206,7 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     Returns:
         :class:`Solution<solution>` if one was found, else None.
     """
-    completed_instructions = get_completed_instructions(process_state.building_instructions)
+    completed_instructions = process_state.get_completed_instructions()
 
     path_problem = deepcopy(initial_path_problem)
 

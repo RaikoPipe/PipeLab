@@ -3,6 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Optional
 
+import process_planning.process_state
 from path_finding.path_finding_util.path_math import get_direction, diff_pos
 from path_finding.pf_data_class.path_problem import PathProblem
 from path_finding.search_algorithm import find_path
@@ -224,8 +225,6 @@ class ProcessPlanner:
             An optional :obj:`str` message if the currently aimed solution was changed to a previous one.
         """
 
-        #todo: change condition for removing detour trail: remove both fittings and pipe
-
         detour_message = None
         if process_state.detour_trails:
 
@@ -239,7 +238,7 @@ class ProcessPlanner:
 
             # check if layout that caused last detour is not completed anymore
             building_instruction = process_state.building_instructions[last_detour_trail]
-            completed_instructions = pp_util.get_completed_instructions(process_state.building_instructions)
+            completed_instructions = process_state.get_completed_instructions()
 
             if process_state.completed_instruction(building_instruction)[1] >= constants.pipe_event_code:
                 process_state.detour_trails.pop(-1)
@@ -288,6 +287,7 @@ class ProcessPlanner:
         solution = pp_util.get_solution_on_detour_event(initial_path_problem=self._initial_path_problem,
                                                         process_state=detour_process_state,
                                                         detour_event=detour_event)
+
         if solution:
             detour_message = str.format(f"Detour event confirmed. Alternative solution was applied!")
             detour_trail = detour_process_state.reevaluate_motion_dict_from_solution(solution, detour_event)

@@ -426,10 +426,14 @@ def update_trees_on_assembly_event(part_stock_tree: ttk.Treeview, process_messag
     picking_robot_commands = process_output.picking_robot_commands
     fastening_robot_commands = process_output.fastening_robot_commands
     event_result = process_output.current_event_result
-
     message = messages[0]
-    special_message = messages[1]
-    detour_message = messages[2]
+    try:
+        special_message = messages[1]
+        detour_message = messages[2]
+    except:
+        special_message = None
+        detour_message = None
+        print("Getting all messages has somehow failed!")
     global message_count
     if message:
         process_message_tree.insert("", index=ttk.END, tag=message_count, iid=message_count,

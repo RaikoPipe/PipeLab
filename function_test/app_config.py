@@ -55,7 +55,7 @@ button_width = 6  #: Width of the grid buttons.
 button_height = 10  #: Height of the grid buttons.
 font = ('Tahoma', 6)  #: Tuple containing :obj:`str` of font art and :obj:`int` of font size.
 
-color_coded_process_messages = False  #: Option if message colors should be color coded
+color_coded_process_messages = True  #: Option if message colors should be color coded
 if color_coded_process_messages:
     message_deviated_assembly_color = "yellow2"  #: message color on deviated assembly
     message_conformal_assembly_color = "green2"  #: message color on conformal assembly

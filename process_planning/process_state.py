@@ -4,7 +4,9 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Optional
 
-from path_finding.path_finding_util import path_math
+import numpy as np
+
+from path_finding.path_finding_util import path_math, restrictions
 from path_finding.path_finding_util.path_math import get_direction, diff_pos
 from path_finding.pf_data_class.solution import Solution
 from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
@@ -50,7 +52,7 @@ class ProcessState:
         event that occurred."""
 
     def __init__(self, solution: Solution):
-        self.state_grid = solution.path_problem.state_grid
+        self.state_grid = deepcopy(solution.path_problem.state_grid)
         self.aimed_solution = solution
         self.last_event_trail = solution.ordered_trails[0]
 
@@ -536,14 +538,13 @@ class ProcessState:
 
         check_fit_set = self.get_positions_from_motion_dict(constants.fit_event_code)
         check_fit_set.remove(event_pos)
+        check_fit_set = self.remove_already_connected_fittings(check_fit_set)
 
         for pos in check_fit_set:
 
             # check if conditions for a deviation event are met
             fit_diff = path_math.get_length_same_axis(pos,
                                                       event_pos)  # distance between fittings
-            fit_dir = get_direction(diff_pos(pos, event_pos))
-
             # at least one fitting needs to be deviating
             fit_tup = (pos, event_pos)
             fit_deviated = []
@@ -554,6 +555,8 @@ class ProcessState:
 
             if not any(fit_deviated):  # at least one fitting needs to be deviating
                 continue
+
+            fit_dir = get_direction(diff_pos(pos, event_pos))
 
             # check for transition points
             state_grid = self.aimed_solution.path_problem.state_grid
@@ -671,16 +674,16 @@ class ProcessState:
             # error = False
 
             event_result = AssemblyEventResult(event_pos=construction_state.event_pos,
-                                             event_code=construction_state.event_code,
-                                             removal=False, layout=None,
-                                             part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced,
-                                             unnecessary=unnecessary,
-                                             obstructed_part=False, completed_layouts=completed_layouts,
-                                             part_not_picked=False,
-                                             error=False,
-                                             obstructed_obstacle=False,
-                                             time_registered=construction_state.time_registered,
-                                             )
+                                               event_code=construction_state.event_code,
+                                               removal=False, layout=None,
+                                               part_id=None, deviated=deviated, detour_event={}, misplaced=misplaced,
+                                               unnecessary=unnecessary,
+                                               obstructed_part=False, completed_layouts=completed_layouts,
+                                               part_not_picked=False,
+                                               error=False,
+                                               obstructed_obstacle=False,
+                                               time_registered=construction_state.time_registered,
+                                               )
 
             new_construction_state = ConstructionState(event_pos=construction_state.event_pos,
                                                        event_code=construction_state.event_code,
@@ -895,3 +898,47 @@ class ProcessState:
                 if construction_state.part_id == -2:
                     counter += 1
         return counter
+
+    def get_completed_instructions(self) -> BuildingInstructions:
+        """Looks for completed instructions inside building_instructions and returns them.
+
+        Args:
+            building_instructions(:obj:`~class_types.BuildingInstructions`): See :paramref:`~process_state.ProcessState.building_instructions`.
+
+        Return:
+            All completed instructions (:obj:`~class_types.BuildingInstructions`)
+
+        """
+
+        completed_instructions = {}
+        for layout_trail in self.building_instructions.keys():
+            instruction = self.building_instructions[layout_trail]
+            if instruction.layout_completed:
+                completed_instructions[layout_trail] = instruction
+
+        return completed_instructions
+
+    def remove_already_connected_fittings(self, check_fit_set) -> set[Pos]:
+        completed_instructions_dict = self.get_completed_instructions()
+        start_pos = self.aimed_solution.path_problem.start_pos
+        for trail, building_instruction in completed_instructions_dict.items():
+            fit_set = set(building_instruction.required_fit_positions)
+            fit_remove = set()
+            for fit_pos in fit_set:
+                counter = 0
+                for direction in constants.valid_directions:
+                    self.state_grid : np.ndarray
+                    check_pos = path_math.sum_pos(fit_pos,direction)
+                    if not restrictions.out_of_bounds(check_pos, self.state_grid):
+                        if self.state_grid[path_math.sum_pos(fit_pos,direction)] == 2:
+                            counter += 1
+                if counter >= 2 or (fit_pos==start_pos and counter ==1):
+                    fit_remove.add(fit_pos)
+
+            check_fit_set = check_fit_set.difference(fit_remove)
+
+
+        return check_fit_set
+
+
+

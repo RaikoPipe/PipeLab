@@ -11,8 +11,8 @@ def set_random_obstacles(probability: float, state_grid: StateGrid, transition_p
     """Randomly changes nodes on the state grid to 1 according to the frequency.
 
     Args:
-        probability(obj:`float`): probability of a node on the state grid receiving the state 1 (obstacle)
-        state_grid(obj:`~type_aliased.StateGrid`): An empty state grid.
+        probability(:obj:`float`): probability of a node on the state grid receiving the state 1 (obstacle)
+        state_grid(:obj:`~type_aliases.StateGrid`): An empty state grid.
     """
     new_state_grid = deepcopy(state_grid)
 

@@ -18,4 +18,4 @@ BuildingInstructions: TypeAlias = dict[Trail, BuildingInstruction]
 Predecessors: TypeAlias = dict[Union[Pos, tuple[Pos, int, Pos]], Predecessor]
 """Dictionary containing node positions pointing to their predecessors. 
 
-*Type*: :obj:`dict` [:obj:`Union` [:obj:`~type_aliases.Pos`, :obj:`tuple` [:obj:`~type_aliases.Pos`, :obj:`int`, :obj:`~type_aliases.Pos`]], :class`Predecessor`]"""
+*Type*: :obj:`dict` [:obj:`Union` [:obj:`~type_aliases.Pos`, :obj:`tuple` [:obj:`~type_aliases.Pos`, :obj:`int`, :obj:`~type_aliases.Pos`]], :class:`Predecessor`]"""
