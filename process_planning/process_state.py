@@ -522,6 +522,14 @@ class ProcessState:
 
                 return pipe_id
 
+    @staticmethod
+    def transition_valid(pos, other_pos, start_pos):
+        transition_direction = get_direction(diff_pos(pos, other_pos))
+        check_start_pos = (abs(start_pos[0] * transition_direction[0]), abs(start_pos[1] * transition_direction[1]))
+        check_t_pos = (abs(pos[0] * transition_direction[0]), abs(pos[1] * transition_direction[1]))
+        if transition_direction != get_direction(diff_pos(check_t_pos, check_start_pos)):
+            return True
+
     def get_detour_event(self, event_pos, event_code) -> BuildingInstructions:
         """Checks if conditions for a detour event are met.
         Detour event occurs if:\n
@@ -566,9 +574,19 @@ class ProcessState:
                 iter_pos = path_math.sum_pos(iter_pos, fit_dir)
                 pos_list.append(iter_pos)
 
+            start_pos = self.aimed_solution.path_problem.start_pos
+
             if len(pos_list) > 2:
-                if state_grid[pos_list[0]] == 3 or state_grid[pos_list[-2]] == 3 and len(pos_list) > 2:
-                    pipe_id = fit_diff - 2
+                if state_grid[pos_list[0]] == 3:
+                    if self.transition_valid(pos, pos_list[0], start_pos):
+                        pipe_id = fit_diff - 2
+                    else:
+                        continue
+                elif state_grid[pos_list[-2]] == 3:
+                    if self.transition_valid(pos_list[-1],pos_list[-2], start_pos):
+                        pipe_id = fit_diff - 2
+                    else:
+                        continue
                 else:
                     pipe_id = fit_diff - 1  # length of needed part
             else:
