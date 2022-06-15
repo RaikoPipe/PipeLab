@@ -240,8 +240,11 @@ class FunctionTestApp:
                 if isinstance(self.process_planner.last_output.current_event_result, AssemblyEventResult):
                     app_util.update_button_grid(button_grid=self.construction_button_grid, process_state=process_state,
                                                 style_grid=self.style_grid, tool_tip_text_grid=self.tool_tip_text_grid)
-                    app_util.update_trees_on_assembly_event(self.part_stock_tree, self.process_message_tree,
-                                                            self.process_planner.last_output)
+                    try:
+                        app_util.update_trees_on_assembly_event(self.part_stock_tree, self.process_message_tree,
+                                                                self.process_planner.last_output)
+                    except:
+                        print("An error occurred while updating treeviews")
                     if process_state.last_assembly_event_result.detour_event or process_state.detour_trails:
                         app_util.update_solution_grid(process_state=process_state,
                                                       solution_button_grid=self.solution_button_grid,
@@ -250,5 +253,8 @@ class FunctionTestApp:
 
                 else:
                     part_id = process_state.last_pick_event_result.part_id
-                    app_util.update_trees_on_pick_event(self.process_planner.last_output, part_id, self.part_stock_tree,
-                                                        self.process_message_tree, self.process_planner)
+                    try:
+                        app_util.update_trees_on_pick_event(self.process_planner.last_output, part_id, self.part_stock_tree,
+                                                            self.process_message_tree, self.process_planner)
+                    except:
+                        print("An error occurred while updating treeviews")

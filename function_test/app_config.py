@@ -53,7 +53,7 @@ att_active_color = "magenta"  #: attachment active color \n
 
 button_width = 6  #: Width of the grid buttons.
 button_height = 10  #: Height of the grid buttons.
-font = ('Tahoma', 6)  #: Tuple containing :obj:`str` of font art and :obj:`int` of font size.
+font = ('Arial Narrow', 6)  #: Tuple containing :obj:`str` of font art and :obj:`int` of font size.
 
 color_coded_process_messages = True  #: Option if message colors should be color coded
 if color_coded_process_messages:

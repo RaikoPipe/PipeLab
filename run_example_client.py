@@ -35,10 +35,11 @@ async def send_motion_events():
             print('\033[92m'"ProcessPlanner Output:")
             pprint(json.loads(response))
             print("\n")
-            sleep(0.1)
+            sleep(0.5)
 
 
 # motion_events = [(5, 4, 3), (1, None, 4), (5, 4, 2), (0, None, 4), (5, 3, 1), (0, None, 4), (5, 5, 1)]
+motion_event_error_test = [(3,3,2)]
 motion_events_detour_test = [(6, 7, 3), (2, None, 4), (6, 7, 2), (0, None, 4), (6, 6, 1), (0, None, 4), (6, 9, 1)]
 motion_events_completion_test = [
     (6, 7, 3), (2, None, 4), (6, 7, 2), (0, None, 4), (6, 6, 1), (0, None, 4), (6, 9, 1),

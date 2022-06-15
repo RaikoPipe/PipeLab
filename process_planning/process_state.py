@@ -570,9 +570,17 @@ class ProcessState:
             state_grid = self.aimed_solution.path_problem.state_grid
             iter_pos = deepcopy(pos)
             pos_list = []
+
+            obstructed = False
             while iter_pos != event_pos:
                 iter_pos = path_math.sum_pos(iter_pos, fit_dir)
+                if state_grid[iter_pos] == constants.obstacle_state:
+                    obstructed = True
+                    break
                 pos_list.append(iter_pos)
+
+            if obstructed:
+                continue
 
             start_pos = self.aimed_solution.path_problem.start_pos
 
@@ -629,9 +637,12 @@ class ProcessState:
                 continue
 
             for pipe_pos in pipe_trail:
-                if None not in self.get_construction_state(find_me=pipe_pos, event_codes=[2]):
-                    pipe_set.add(pipe_pos)
+                construction_state = self.get_construction_state(find_me=pipe_pos, event_codes=[2])
+                if None not in construction_state:
+                    if construction_state[1].deviated:
+                        pipe_set.add(pipe_pos)
 
+            # pipes are blocking each other
             if len(pipe_set) != 1:
                 continue
 

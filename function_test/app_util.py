@@ -55,11 +55,15 @@ def send_new_assembly_event(pos:Pos, event_code:int, process_planner: ProcessPla
     event_result: AssemblyEventResult = process_state.last_assembly_event_result
     update_button_grid(button_grid, process_planner.last_process_state, style_grid, tool_tip_text_grid)
 
+
+
     if event_result.detour_event or process_state.detour_trails:
         update_solution_grid(process_state=process_state, solution_button_grid=solution_button_grid,
                              style_grid=initial_style_grid)
     if not update_self_periodically:
         update_trees_on_assembly_event(part_stock_tree, process_message_tree, output)
+
+
 
 
 def send_new_pick_event(part_id: int, process_planner: ProcessPlanner, process_message_tree: ttk.Treeview, part_stock_tree: ttk.Treeview, update_self_periodically):
