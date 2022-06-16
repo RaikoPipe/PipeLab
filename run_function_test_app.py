@@ -9,6 +9,6 @@ def run_app(process_planner, update_self_periodically=False):
 
 
 if __name__ == "__main__":
-    path_problem = path_problem_configuration.get_solvable_path_problem_with_random_obstacles(0.1)
+    path_problem = path_problem_configuration.get_solvable_path_problem_with_random_obstacles(0)
 
     run_app(ProcessPlanner(initial_path_problem=path_problem))
