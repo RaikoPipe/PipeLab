@@ -3,11 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PipeLab ProcessPlanner Documentation!
+PipeLab2 Documentation
 =================================================
 The PipeLab Module consists of several submodules and classes. It uses type aliases for easier comprehension of complex types,
-which can be found in :ref:`type dictionary <Type Dictionary>`. The most important modules are the :ref:`OPC-UA server <OPC_UA>`
-and the :ref:`GUI for debugging and visualization <Function Test>`.
+which can be found in :ref:`type dictionary <Type Dictionary>`. The most important modules are the :ref:`OPC-UA server <OPC-UA>`
+and the :ref:`app for debugging and visualization <Function Test>`. If you want to directly run __main__ scripts refer to
+:ref:`running main scripts<Main Scripts>`.
+
 
 .. toctree::
    :maxdepth: 2
@@ -18,7 +20,7 @@ and the :ref:`GUI for debugging and visualization <Function Test>`.
    process_planning
    path_finding
    type_dictionary
-   vpython_rendering
+   main_scripts
 
 
 Indices and tables
@@ -27,3 +29,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+

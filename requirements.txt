@@ -1,7 +1,7 @@
 
-numpy~=1.21.3
+numpy~=1.22.4
 vpython~=7.6.2
-pywin32~=302
+pywin32~=304
 matplotlib~=3.5.1
 asyncua~=0.9.92
-ttkbootstrap~=1.7.6
+ttkbootstrap~=1.8.0

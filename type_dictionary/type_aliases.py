@@ -58,14 +58,9 @@ PartStock: TypeAlias = dict[int, int]
 **Type**: (:obj:`dict` [:obj:`int`,:obj:`int`])"""
 
 MotionEvent = tuple[Union[Pos, int], int]
-"""Tuple containing either a position for placement events or a part id for picking events, depending on the event code.
+"""Tuple containing either a position for assembly events or a part id for picking events, depending on the event code.
 
-*Event Codes*:\n
-1 -> fitting placed\n
-2 -> pipe placed\n
-3 -> attachment placed\n
-4 -> accepted part from picking robot\n
-5 -> picked part manually #unused
+See :ref:`Motion Event Codes`
 
 *Type*: (:obj:`tuple` [:obj:`Union` [:obj:`~type_aliases.Pos`, :obj:`int`], :obj:`int`])
 """

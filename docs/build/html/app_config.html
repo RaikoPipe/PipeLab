@@ -18,8 +18,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="App Util module" href="app_util.html" />
-    <link rel="prev" title="App module" href="app.html" /> 
+    <link rel="next" title="App Utility module" href="app_util.html" />
+    <link rel="prev" title="App Class" href="app.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,18 +39,18 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="function_test.html">Function Test</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="app.html">App module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html">App Class</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">App Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_util.html">App Util module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_info.html">FunctionTestApp Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_util.html">App Utility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_info.html">Visualization colors and text information</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -193,39 +193,57 @@ Message colors: Used for message output by the process message display.</p>
 </dd></dl>
 
 <dl class="py data">
+<dt class="sig sig-object py" id="app_config.color_coded_process_messages">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">color_coded_process_messages</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#app_config.color_coded_process_messages" title="Permalink to this definition"></a></dt>
+<dd><p>Option if message colors should be color coded</p>
+</dd></dl>
+
+<dl class="py data">
 <dt class="sig sig-object py" id="app_config.message_deviated_assembly_color">
-<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_deviated_assembly_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'yellow2'</span></em><a class="headerlink" href="#app_config.message_deviated_assembly_color" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_deviated_assembly_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app_config.message_deviated_assembly_color" title="Permalink to this definition"></a></dt>
 <dd><p>message color on deviated assembly</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.message_conformal_assembly_color">
-<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_conformal_assembly_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'green2'</span></em><a class="headerlink" href="#app_config.message_conformal_assembly_color" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_conformal_assembly_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app_config.message_conformal_assembly_color" title="Permalink to this definition"></a></dt>
 <dd><p>message color on conformal assembly</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.message_error_color">
-<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_error_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'red3'</span></em><a class="headerlink" href="#app_config.message_error_color" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_error_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app_config.message_error_color" title="Permalink to this definition"></a></dt>
 <dd><p>message color on error</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.message_detour_event_color">
-<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_detour_event_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'maroon1'</span></em><a class="headerlink" href="#app_config.message_detour_event_color" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_detour_event_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app_config.message_detour_event_color" title="Permalink to this definition"></a></dt>
 <dd><p>message color on detour event</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.message_construction_complete_color">
-<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_construction_complete_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gold'</span></em><a class="headerlink" href="#app_config.message_construction_complete_color" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_construction_complete_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app_config.message_construction_complete_color" title="Permalink to this definition"></a></dt>
 <dd><p>message color on completion</p>
 </dd></dl>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="app_config.message_action_undone_color">
-<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_action_undone_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'brown1'</span></em><a class="headerlink" href="#app_config.message_action_undone_color" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_action_undone_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app_config.message_action_undone_color" title="Permalink to this definition"></a></dt>
 <dd><p>message color on undo action</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app_config.message_error_foreground_color">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_error_foreground_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app_config.message_error_foreground_color" title="Permalink to this definition"></a></dt>
+<dd><p>message text color on error</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="app_config.message_foreground_color">
+<span class="sig-prename descclassname"><span class="pre">app_config.</span></span><span class="sig-name descname"><span class="pre">message_foreground_color</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#app_config.message_foreground_color" title="Permalink to this definition"></a></dt>
+<dd><p>message text color</p>
 </dd></dl>
 
 <dl class="py function">
@@ -246,8 +264,8 @@ the look of the buttons will depend on the type and version of operating system 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="app.html" class="btn btn-neutral float-left" title="App module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="app_util.html" class="btn btn-neutral float-right" title="App Util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="app.html" class="btn btn-neutral float-left" title="App Class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="app_util.html" class="btn btn-neutral float-right" title="App Utility module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

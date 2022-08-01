@@ -2,11 +2,13 @@ from datetime import datetime
 
 import ttkbootstrap as ttk
 
+from ttkbootstrap.tooltip import ToolTip
+
 from function_test import app_util
 from function_test.app_config import treeview_style, configure_style, dark_theme, dark_theme_use, light_theme_use
 from function_test.app_util import undo_action, send_new_pick_event, get_button_grid
 from path_finding.pf_data_class.path_problem import PathProblem
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.process_planner import ProcessPlanner
 
 button_dict = {}
@@ -15,17 +17,15 @@ previous_detour_trails = set()
 
 
 class FunctionTestApp:
-    """Provides a UI for the process planner, mainly for debugging purposes. Visualizes the process state.
-    Initializes and uses an instance of a process planner.
-
+    """Provides an interactive UI for the process planner and the current process state, mainly for debugging purposes.
     """
 
     def __init__(self, path_problem: PathProblem, process_planner: ProcessPlanner, update_self_periodically=False):
         """
 
         Args:
-            path_problem(:class:`~path_problem.PathProblem`): The initial path problem
-            process_planner(:class:`~process_planner.ProcessPlanner`): A process planner instance.
+            path_problem(:class:`PathProblem<path_problem>`): The initial path problem
+            process_planner(:class:`ProcessPlanner<process_planner>`): A process planner instance.
             update_self_periodically: Option, if event loops of the app are to be updated in intervals.
         """
 
@@ -34,6 +34,8 @@ class FunctionTestApp:
         else:
             theme = light_theme_use
         self.root = ttk.Window(themename=theme)
+        self.root.geometry("1440x900")
+        self.root.state("zoomed")
 
         # set title
         self.root.title("PipeLab2 Function Test")
@@ -50,9 +52,46 @@ class FunctionTestApp:
 
         part_select_option = ttk.IntVar(value=1)
 
+        # full screen scrollbars
+        main_frame = ttk.Frame(self.root)
+        main_frame.pack(fill=ttk.BOTH, expand=1)
+
+        # create frame for X Scrollbar
+        sec = ttk.Frame(main_frame)
+        sec.pack(fill=ttk.X, side=ttk.BOTTOM)
+
+        # create canvas
+        canvas = ttk.Canvas(main_frame)
+        canvas.pack(side=ttk.LEFT, fill=ttk.BOTH, expand=1)
+
+        # Add A Scrollbars to Canvas
+
+        x_scrollbar = ttk.Scrollbar(sec, orient=ttk.HORIZONTAL, command=canvas.xview)
+
+        x_scrollbar.pack(side=ttk.BOTTOM, fill=ttk.X)
+
+        y_scrollbar = ttk.Scrollbar(main_frame, orient=ttk.VERTICAL, command=canvas.yview)
+        y_scrollbar.pack(side=ttk.RIGHT, fill=ttk.Y)
+
+        # Configure the canvas
+
+        canvas.configure(xscrollcommand=x_scrollbar.set)
+
+        canvas.configure(yscrollcommand=y_scrollbar.set)
+
+        canvas.bind("<Configure>", lambda e: canvas.config(scrollregion=canvas.bbox(ttk.ALL)))
+
+        # Create Another Frame INSIDE the Canvas
+
+        second_frame = ttk.Frame(canvas)
+
+        # Add that New Frame a Window In The Canvas
+
+        canvas.create_window((0, 0), window=second_frame, anchor="nw")
+
         # make app widgets
 
-        layout_frame = ttk.Frame(self.root)
+        layout_frame = ttk.Frame(second_frame)
         layout_frame.grid(row=0, column=0)
 
         self.solution_button_grid_frame = ttk.LabelFrame(layout_frame, text="Solution Grid:")
@@ -71,7 +110,7 @@ class FunctionTestApp:
         self.construction_button_grid_frame = ttk.LabelFrame(layout_frame, text="Current construction grid:")
         self.construction_button_grid_frame.grid(row=1, column=0)
 
-        pp_frame = ttk.LabelFrame(self.root, text="Tool Window")
+        pp_frame = ttk.LabelFrame(second_frame, text="Tool Window")
         pp_frame.grid(row=0, column=1, padx=10)
 
         tool_frame = ttk.LabelFrame(pp_frame, text="Process tools:")
@@ -87,20 +126,22 @@ class FunctionTestApp:
         self.part_stock_tree = ttk.Treeview(part_stock_frame, columns=("part_id", "picked", "stock"), show="headings",
                                             style=treeview_style)
         self.part_stock_tree.heading("part_id", text="Part ID")
-        self.part_stock_tree.heading("picked", text="Picked")
+        self.part_stock_tree.heading("picked", text="Holding")
         self.part_stock_tree.heading("stock", text="Stock")
-        self.part_stock_tree.column("part_id", width=60)
-        self.part_stock_tree.column("picked", width=60)
-        self.part_stock_tree.column("stock", width=60)
+        self.part_stock_tree.column("part_id", width=70)
+        self.part_stock_tree.column("picked", width=70)
+        self.part_stock_tree.column("stock", width=70)
         self.part_stock_tree.grid(row=0, column=0)
 
         # set a scrollbar for the part stock view
         scrollbar = ttk.Scrollbar(part_stock_frame, orient=ttk.VERTICAL, command=self.part_stock_tree.yview)
-        self.part_stock_tree.configure(yscroll=scrollbar.set)
+        self.part_stock_tree.configure(yscrollcommand=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
-        part_put_frame = ttk.LabelFrame(tool_frame, text="Placement:")
+        part_put_frame = ttk.LabelFrame(tool_frame, text="Assembly Event:")
         part_put_frame.grid(row=0, column=0, padx=5)
+
+        ToolTip(part_put_frame, "Choose what assembly event to execute on click")
 
         att_option_radiobutton = ttk.Radiobutton(part_put_frame, text="Attachment", variable=part_select_option,
                                                  value=3)
@@ -129,7 +170,7 @@ class FunctionTestApp:
 
         # set a scrollbar for the process message view
         scrollbar = ttk.Scrollbar(process_message_frame, orient=ttk.VERTICAL, command=self.process_message_tree.yview)
-        self.process_message_tree.configure(style=treeview_style, yscroll=scrollbar.set)
+        self.process_message_tree.configure(style=treeview_style, yscrollcommand=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky='ns')
 
         part_ids = [k for k in path_problem.part_stock.keys()]
@@ -144,6 +185,7 @@ class FunctionTestApp:
                                               update_self_periodically=update_self_periodically),
                                           style="primary.Outline.TButton")
             pick_part_button.pack(anchor=ttk.W)
+            ToolTip(pick_part_button, "Executes a pick event for ID " + str(part_id))
             self.part_stock_tree.insert("", ttk.END,
                                         values=(
                                             part_id,
@@ -173,17 +215,18 @@ class FunctionTestApp:
                                                                           solution_button_grid=self.solution_button_grid,
                                                                           ))
         return_to_previous_state.grid(row=2, column=0)
+        ToolTip(return_to_previous_state, "Restores the previous process state")
 
         # set icon
         self.root.iconbitmap('function_test/resources/PipeLab2.ico')
 
         if update_self_periodically:
             self.refresh()
-            self.root.mainloop()
-        else:
-            self.root.mainloop()
+
+        self.root.mainloop()
 
     def refresh(self):
+        """Initiates an update loop for the function test app widgets."""
         self.root.update()
         self.update_app()
         self.root.after(100, self.refresh)
@@ -191,21 +234,27 @@ class FunctionTestApp:
     def update_app(self):
         """Manually calls all app widgets to update according to the latest process state."""
         process_state = self.process_planner.last_process_state
-        if process_state.last_placement_event_info or process_state.last_pick_event_info:
-            if self.process_planner.last_output.current_event_info.time_registered > self.last_event_time:
-                self.last_event_time = self.process_planner.last_output.current_event_info.time_registered
-                if isinstance(self.process_planner.last_output.current_event_info, PlacementEventInfo):
+        if process_state.last_assembly_event_result or process_state.last_pick_event_result:
+            if self.process_planner.last_output.current_event_result.time_registered > self.last_event_time:
+                self.last_event_time = self.process_planner.last_output.current_event_result.time_registered
+                if isinstance(self.process_planner.last_output.current_event_result, AssemblyEventResult):
                     app_util.update_button_grid(button_grid=self.construction_button_grid, process_state=process_state,
                                                 style_grid=self.style_grid, tool_tip_text_grid=self.tool_tip_text_grid)
-                    app_util.update_trees_on_placement_event(self.part_stock_tree, self.process_message_tree,
-                                                             self.process_planner.last_output)
-                    if process_state.last_placement_event_info.detour_event or process_state.detour_trails:
+                    try:
+                        app_util.update_trees_on_assembly_event(self.part_stock_tree, self.process_message_tree,
+                                                                self.process_planner.last_output)
+                    except:
+                        print("An error occurred while updating treeviews")
+                    if process_state.last_assembly_event_result.detour_event or process_state.detour_trails:
                         app_util.update_solution_grid(process_state=process_state,
                                                       solution_button_grid=self.solution_button_grid,
                                                       style_grid=app_util.initial_style_grid)
 
 
                 else:
-                    part_id = process_state.last_pick_event_info.part_id
-                    app_util.update_trees_on_pick_event(self.process_planner.last_output, part_id, self.part_stock_tree,
-                                                        self.process_message_tree, self.process_planner)
+                    part_id = process_state.last_pick_event_result.part_id
+                    try:
+                        app_util.update_trees_on_pick_event(self.process_planner.last_output, part_id, self.part_stock_tree,
+                                                            self.process_message_tree, self.process_planner)
+                    except:
+                        print("An error occurred while updating treeviews")

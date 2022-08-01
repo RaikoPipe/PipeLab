@@ -16,7 +16,7 @@ def get_optimal_attachment_pos(state_grid: StateGrid, pos: Pos, part_id: int, di
         pos(:obj:`~type_aliases.Pos`): Starting position of a pipe.
         state_grid(:obj:`~type_aliases.StateGrid`): See type for explanation. Only parts and obstacles are considered as obstacles.
      Returns:
-         Optimal (:obj:`~type_aliases.Pos`) for attachment placement.
+         Optimal (:obj:`~type_aliases.Pos`) for attachment assembly.
          """
     # old function that needs refactoring, but fulfills its purpose nonetheless
     countList = []
@@ -109,7 +109,7 @@ def construct_trail(length: int, direction: Pos, pos: Pos) -> Trail:
     return tuple(trail)
 
 
-def construct_detour_building_instruction(length: int, fit_tup: NodePair, state_grid: StateGrid,
+def construct_detour_building_instruction(pipe_id: int, fit_tup: NodePair, state_grid: StateGrid,
                                           possible_att_pipe_positions: Trail) -> BuildingInstruction:
     """Constructs a building instruction from given parameters.
 
@@ -120,9 +120,9 @@ def construct_detour_building_instruction(length: int, fit_tup: NodePair, state_
         possible_att_pipe_positions(:obj:`~type_aliases.Trail`): Trail containing positions the pipe of this new layout needs to occupy.
 
     Returns:
-        :class:`~building_instruction.BuildingInstruction`
+        :class:`BuildingInstruction<building_instruction>`
     """
-    pipe_id = length - 1
+
     direction = get_direction(diff_pos(fit_tup[0], fit_tup[1]))
     first_pipe_pos = (fit_tup[0][0] * direction[0], fit_tup[0][1] * direction[1])
 
@@ -142,7 +142,7 @@ def construct_building_instructions_from_solution(solution: Solution) -> Buildin
     """Constructs building instructions from the given solution.
 
     Args:
-        solution(:class:`~solution.Solution`): See :class:`~Solution`
+        solution(:class:`Solution<solution>`): See :class:`~Solution`
     Returns:
         :obj:`~class_types.BuildingInstructions`
         """

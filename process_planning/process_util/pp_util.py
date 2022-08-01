@@ -7,8 +7,8 @@ from path_finding import partial_solver
 from path_finding.path_finding_util.path_math import get_direction, diff_pos
 from path_finding.pf_data_class.path_problem import PathProblem
 from path_finding.pf_data_class.solution import Solution
-from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.pick_event_result import PickEventResult
+from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.process_state import ProcessState
 from type_dictionary import constants
 from type_dictionary.class_types import *
@@ -21,7 +21,7 @@ def determine_next_part(process_state: ProcessState, layout: Trail) -> Optional[
     """Determines which part should be picked next according to the current build progress.
 
     Args:
-        process_state(:class:`~process_state.ProcessState`): The current process state.
+        process_state(:class:`ProcessState<process_state>`): The current process state.
         layout(:obj:`~type_aliases.Trail`): The current layout.
 
     Returns:
@@ -43,26 +43,6 @@ def determine_next_part(process_state: ProcessState, layout: Trail) -> Optional[
     return next_part_id
 
 
-def get_completed_instructions(building_instructions: BuildingInstructions) -> \
-        BuildingInstructions:
-    """Looks for completed instructions inside building_instructions and returns them.
-
-    Args:
-        building_instructions(:obj:`~class_types.BuildingInstructions`): See :paramref:`~process_state.ProcessState.building_instructions`.
-
-    Return:
-        All completed instructions (:obj:`~class_types.BuildingInstructions`)
-
-    """
-    completed_instructions = {}
-    for layout_trail in building_instructions.keys():
-        instruction = building_instructions[layout_trail]
-        if instruction.layout_completed:
-            completed_instructions[layout_trail] = instruction
-
-    return completed_instructions
-
-
 def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> NodePairSet:
     """Returns all outgoing points in building_instructions as a connection. Interpolates them if they are
     connected.
@@ -76,35 +56,91 @@ def get_outgoing_node_pairs(building_instructions: BuildingInstructions) -> Node
     """
 
     outgoing_node_pairs_set = set()
-    for layout_state in building_instructions.values():
-        outgoing_node_pairs_set.add(layout_state.required_fit_positions)
+    # for layout_state in building_instructions.values():
+    #     outgoing_node_pairs_set.add(layout_state.required_fit_positions)
 
-    layout_state_list = [i for i in building_instructions.values()]
+    # layout_state = layout_state_list.pop(0)
+    #
+    # while layout_state_list:
+    #     for other_layout_state in layout_state_list:
+    #         fit_positions = layout_state.required_fit_positions
+    #         other_fit_positions = other_layout_state.required_fit_positions
+    #         fit_positions_set = set(fit_positions)
+    #         other_fit_positions_set = set(other_fit_positions)
+    #         intersection = fit_positions_set.intersection(other_fit_positions_set)
+    #         if intersection:
+    #             outgoing_node_pairs_set.discard(fit_positions)
+    #             outgoing_node_pairs_set.discard(other_fit_positions)
+    #
+    #             intersected_pos = intersection.pop()
+    #             fit_positions_set.discard(intersected_pos)
+    #             other_fit_positions_set.discard(intersected_pos)
+    #
+    #             fits_left = (fit_positions_set.pop(), other_fit_positions_set.pop())
+    #             new_end_points = (fits_left[0], fits_left[1])
+    #
+    #             outgoing_node_pairs_set.add(new_end_points)
+    #     layout_state = layout_state_list.pop()
 
-    layout_state = layout_state_list.pop(0)
+    instructions = [i for i in building_instructions.values()]
 
-    while layout_state_list:
-        for other_layout_state in layout_state_list:
-            fit_positions = layout_state.required_fit_positions
-            other_fit_positions = other_layout_state.required_fit_positions
-            fit_positions_set = set(fit_positions)
-            other_fit_positions_set = set(other_fit_positions)
-            intersection = fit_positions_set.intersection(other_fit_positions_set)
-            if intersection:
-                outgoing_node_pairs_set.discard(fit_positions)
-                outgoing_node_pairs_set.discard(other_fit_positions)
+    connections = []
+    for instruction in instructions:
+        connections.append(set(instruction.required_fit_positions))
 
-                intersected_pos = intersection.pop()
-                fit_positions_set.discard(intersected_pos)
-                other_fit_positions_set.discard(intersected_pos)
+    connection_list = []
+    while connections:
+        c = [connections.pop()]
+        recursion_search(c, connections)
+        connection_list.append(c)
 
-                fits_left = (fit_positions_set.pop(), other_fit_positions_set.pop())
-                new_end_points = (fits_left[0], fits_left[1])
+    final_list = []
+    for c in connection_list:
+        new_c = []
+        for connection in c:
+            counter = 0
+            intersection_list = []
+            for other_connection in c:
+                intersect = connection.intersection(other_connection)
 
-                outgoing_node_pairs_set.add(new_end_points)
-        layout_state = layout_state_list.pop()
+                if intersect:
+                    if connection == other_connection:
+                        continue
+                    intersection_list.append(intersect)
+                    counter += 1
+
+            if counter <= 1:
+                if intersection_list:
+                    intersect = intersection_list[0]
+                    cop = deepcopy(connection)
+                    cop.remove(intersect.pop())
+                    new_c.append(cop.pop())
+                else:
+                    cop = deepcopy(connection)
+                    new_c.append(cop.pop())
+                    new_c.append(cop.pop())
+
+        final_list.append(new_c)
+    outgoing_node_pairs_set = set()
+    for l in final_list:
+        outgoing_node_pairs_set.add(tuple(l))
 
     return outgoing_node_pairs_set
+
+
+def recursion_search(c, connections):
+    for connection in connections:
+        appended = False
+        for con in c:
+            if con.intersection(connection):
+                c.append(connection)
+                appended = True
+                break
+        if appended:
+            connections.remove(connection)
+            recursion_search(c, connections)
+            continue
+
 
 
 def get_outgoing_node_directions(building_instructions: BuildingInstructions) -> FittingDirections:
@@ -131,22 +167,32 @@ def get_outgoing_node_directions(building_instructions: BuildingInstructions) ->
     return direction_dict
 
 
-def adjust_pos_in_node_pairs_set(node_pairs_set: NodePairSet, pos: Pos):
-    """Remove pos from first node pair tuple in node_pairs_set that contains it. If not found,
-    then add as a node pair tuple containing only pos.
+def adjust_pos_in_node_pairs_set(node_pair_set: NodePairSet, pos: Pos):
+    """Adjusts the first tuple in "node_pair_set" containing the node position "pos" by removing it. If not found,
+    it will add a tuple containing only "pos" and an empty tuple to "node_pair_set".
+    This is to prevent the partial solver algorithm from connecting the node position of start or goal to other
+    nodes later if they are already in a layout.
+
 
     Args:
         pos(:obj:`~type_aliases.Pos`): Pos to be evaluated.
-        node_pairs_set(:obj:`~type_aliases.NodePairSet`): Set with all outgoing node pairs."""
-    for connection in node_pairs_set:
+        node_pair_set(:obj:`~type_aliases.NodePairSet`): Set with all outgoing node pairs.
+
+    Returns:
+        :obj:`~type_aliases.Pos` of the node the partial solver will use as the first node to start the search.
+        """
+    for connection in node_pair_set:
         if pos in connection:
             set_connection = set(connection)
             set_connection.discard(pos)
-            node_pairs_set.discard(connection)
-            node_pairs_set.add((set_connection.pop(), ()))
-            break
+            node_pair_set.discard(connection)
+            new_pair = (set_connection.pop(), ())
+            node_pair_set.add(new_pair)
+            return new_pair[0]
     else:
-        node_pairs_set.add((pos, ()))
+        pair = (pos, ())
+        node_pair_set.add(pair)
+        return pos
 
 
 def get_solution_on_detour_event(initial_path_problem: PathProblem, process_state: ProcessState, detour_event) -> \
@@ -154,13 +200,13 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     """Tries to get a new solution on a detour event.
     Args:
 
-    initial_path_problem (:class:`~path_problem.PathProblem`): The original path problem.
-    process_state (:class:`~process_state.ProcessState`): The current process state.
+    initial_path_problem (:class:`PathProblem<path_problem>`): The original path problem.
+    process_state (:class:`ProcessState<process_state>`): The current process state.
 
     Returns:
-        :class:`~solution.Solution` if one was found, else None.
+        :class:`Solution<solution>` if one was found, else None.
     """
-    completed_instructions = get_completed_instructions(process_state.building_instructions)
+    completed_instructions = process_state.get_completed_instructions()
 
     path_problem = deepcopy(initial_path_problem)
 
@@ -184,8 +230,8 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
     goal = path_problem.goal_pos
 
     # Add start/goal to the node_pairs set. If already in a connection, discard.
-    adjust_pos_in_node_pairs_set(layout_outgoing_node_pairs_set, start)
-    adjust_pos_in_node_pairs_set(layout_outgoing_node_pairs_set, goal)
+    search_start_pos = adjust_pos_in_node_pairs_set(layout_outgoing_node_pairs_set, start)
+    search_goal_pos = adjust_pos_in_node_pairs_set(layout_outgoing_node_pairs_set, goal)
 
     layout_outgoing_directions_dict[
         initial_path_problem.start_pos] = initial_path_problem.start_directions
@@ -201,63 +247,75 @@ def get_solution_on_detour_event(initial_path_problem: PathProblem, process_stat
         exclusion_list=exclusion_list,
         part_stock=current_part_stock,
         state_grid=current_state_grid,
-        path_problem=path_problem)
-    solution = None
+        path_problem=path_problem,
+        search_start_pos=search_start_pos,
+        search_goal_pos=search_goal_pos
+    )
 
+    # get a position of the detouring layout
     check_pos = list(detour_event)[0][-1]
     if check_pos in (start, goal):
         check_pos = list(detour_event)[0][0]
 
+    detour_layout_in = False
+    goal_in = False
+    # check if position of the detouring layout is in the partial solution
     for partial_solution in partial_solutions:
         for trail in partial_solution.ordered_trails:
-
             if check_pos in trail:
-                solution = partial_solver.fuse_partial_solutions(partial_solutions, completed_instructions,
-                                                                 initial_path_problem)
+                detour_layout_in = True
+            if goal in trail:
+                goal_in = True
                 break
+
+    if detour_layout_in and goal_in:
+        solution = partial_solver.fuse_partial_solutions(partial_solutions, completed_instructions,
+                                                         initial_path_problem)
+    else:
+        solution = None
 
     return solution
 
 
 def make_registration_message(event_pos: Pos, event_code: int, removal: bool, pipe_id: int) -> str:
-    """Returns a message as string confirming a placement or removal event.
+    """Returns a message as string confirming a assembly or removal event.
 
     Args:
-        event_pos (:obj:`~type_aliases.Pos`): See :paramref:`~process_planning.ProcessState.evaluate_placement.event_pos`
-        event_code (:obj:`int`): See :paramref:`~process_state.ProcessState.evaluate_placement.event_code`
+        event_pos (:obj:`~type_aliases.Pos`): See :paramref:`~process_planning.ProcessState.evaluate_assembly.event_pos`
+        event_code (:obj:`int`): See :paramref:`~process_state.ProcessState.evaluate_assembly.event_code`
 
     Returns:
         :obj:`str`
         """
 
     object_name = message_dict[event_code]
-    motion_type = "placement"
+    motion_type = "assembly"
     if removal:
         motion_type = "removal"
 
     if pipe_id not in (0, -1, None):
         message = str.format(
-            f"Process Planner: Registered {motion_type} for object {object_name} (ID {pipe_id}) at Position {event_pos}")
+            f"{event_pos} Registered {motion_type} for object {object_name} (ID {pipe_id})")
     elif pipe_id == -2:
         message = str.format(
-            f"Process Planner: Registered {motion_type} for object {object_name} (ID Unknown) at Position {event_pos}")
+            f"{event_pos} Registered {motion_type} for object {object_name} (ID Unknown)")
     else:
         message = str.format(
-            f"Process Planner: Registered {motion_type} for object {object_name} at Position {event_pos}")
+            f"{event_pos} Registered {motion_type} for object {object_name}")
 
     return message
 
 
 def make_special_message(note: str, event_pos: Pos) -> str:
-    """Returns a special message as string, usually used in case of deviated placements."""
-    message = str.format(f"Process Planner: Position {event_pos}: {note} ")
+    """Returns a special message as string, usually used in case of deviated assemblys."""
+    message = str.format(f"{event_pos} Process deviation: {note} ")
     return message
 
 
 def make_error_message(event_pos: Pos, note: str) -> str:
     """Returns error messages as string containing the position where the error occurred as well as additional
     information regarding the reason for the error."""
-    message = str.format(f"Process Planner: Process error at Position {event_pos}: {note}")
+    message = str.format(f"{event_pos} Process error: {note}")
     return message
 
 
@@ -265,8 +323,8 @@ def get_next_recommended_action(process_state, building_instruction) -> Action:
     """Calculates the completion for the building instruction and determines the next recommended action.
 
     Args:
-        building_instruction(:class:`~building_instruction.BuildingInstruction`): Building instruction currently being followed.
-        process_state(:class:`~process_state.ProcessState`): The current process state.
+        building_instruction(:class:`BuildingInstruction<building_instruction>`): Building instruction currently being followed.
+        process_state(:class:`ProcessState<process_state>`): The current process state.
     Returns:
         :obj:`~type_aliases.Action` containing the position, motion event code and part id for the next recommended action.
     """
@@ -314,11 +372,11 @@ def get_next_recommended_action(process_state, building_instruction) -> Action:
     return rec_pos, rec_event, rec_part_id
 
 
-def make_placement_messages(event_info: PlacementEventInfo) -> (str, str):
-    """Produces a message according to the given event info.
+def make_assembly_messages(event_result: AssemblyEventResult) -> (str, str):
+    """Produces a message according to the given event result.
 
     Args:
-        event_info(:class:`~placement_event_info.PlacementEventInfo`): See :class:`~placement_event_info.PlacementEventInfo`
+        event_result(:class:`AssemblyEventResult <assembly_event_result>`): See :class:`AssemblyEventResult <assembly_event_result>`
 
     Returns:
         :obj:`tuple` containing a message.
@@ -326,77 +384,77 @@ def make_placement_messages(event_info: PlacementEventInfo) -> (str, str):
 
     note = None
 
-    if event_info.obstructed_obstacle:
-        note = str.format(f"Obstructed obstacle while placing {message_dict[event_info.event_code]}")
+    if event_result.obstructed_obstacle:
+        note = str.format(f"Obstructed obstacle while placing {message_dict[event_result.event_code]}")
 
-    if event_info.obstructed_part:
+    if event_result.obstructed_part:
         note = str.format(
-            f"Obstructed {message_dict[event_info.obstructed_part]} while placing {message_dict[event_info.event_code]}")
+            f"Obstructed {message_dict[event_result.obstructed_part]} while placing {message_dict[event_result.event_code]}")
 
-    if event_info.removal:
-        if event_info.unnecessary:
-            note = str.format(f"Removed unnecessary {message_dict[event_info.event_code]}")
-        elif event_info.misplaced:
-            note = str.format(f"Removed misplaced {message_dict[event_info.event_code]}")
-        elif event_info.deviated:
-            note = str.format(f"Removed deviating {message_dict[event_info.event_code]}")
+    if event_result.removal:
+        if event_result.unnecessary:
+            note = str.format(f"Removed unnecessary {message_dict[event_result.event_code]}")
+        elif event_result.misplaced:
+            note = str.format(f"Removed misplaced {message_dict[event_result.event_code]}")
+        elif event_result.deviated:
+            note = str.format(f"Removed deviating {message_dict[event_result.event_code]}")
     else:
-        if event_info.unnecessary:
-            note = str.format(f"Unnecessary {message_dict[event_info.event_code]} detected!")
-        elif event_info.deviated:
-            note = str.format(f"Deviating {message_dict[event_info.event_code]} detected!")
-        elif event_info.misplaced:
-            note = str.format(f"Misplaced {message_dict[event_info.event_code]} detected!")
+        if event_result.unnecessary:
+            note = str.format(f"Unnecessary {message_dict[event_result.event_code]} detected!")
+        elif event_result.deviated:
+            note = str.format(f"Deviating {message_dict[event_result.event_code]} detected!")
+        elif event_result.misplaced:
+            note = str.format(f"Misplaced {message_dict[event_result.event_code]} detected!")
 
-    if event_info.part_not_picked:
-        if event_info.part_id == -99:
-            note = str.format(f"Placed {message_dict[event_info.event_code]}"
+    if event_result.part_not_picked:
+        if event_result.part_id == -99:
+            note = str.format(f"Placed {message_dict[event_result.event_code]}"
                               f", but part was not picked!")
         else:
-            note = str.format(f"Placed id {event_info.part_id} "
+            note = str.format(f"Placed id {event_result.part_id} "
                               f", but not picked!")
 
     # make messages
-    if event_info.error:
-        message = make_error_message(event_pos=event_info.event_pos,
+    if event_result.error:
+        message = make_error_message(event_pos=event_result.event_pos,
                                      note=note)
-    elif event_info.deviated:
-        message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
-                                            removal=event_info.removal, pipe_id=event_info.part_id)
+    elif event_result.deviated:
+        message = make_registration_message(event_pos=event_result.event_pos, event_code=event_result.event_code,
+                                            removal=event_result.removal, pipe_id=event_result.part_id)
 
     else:
-        message = make_registration_message(event_pos=event_info.event_pos, event_code=event_info.event_code,
-                                            removal=event_info.removal, pipe_id=event_info.part_id)
+        message = make_registration_message(event_pos=event_result.event_pos, event_code=event_result.event_code,
+                                            removal=event_result.removal, pipe_id=event_result.part_id)
 
     return message, note
 
 
-def make_pick_messages(event_info: PickEventInfo) -> (str, str):
-    """Produces a message according to the given event info.
+def make_pick_messages(event_result: PickEventResult) -> (str, str):
+    """Produces a message according to the given event result.
 
     Args:
-        event_info(:class:`~pick_event_info.PickEventInfo`): See :class:`~pick_event_info.PickEventInfo`
+        event_result(:class:`PickEventResult<pick_event_result>`): See :class:`PickEventResult<pick_event_result>`
 
     Returns:
         :obj:`tuple` containing a message.
     """
     message = None
     note = None
-    if event_info.error:
-        message = str.format(f"Error while picking part with ID {event_info.part_id}!")
-        if event_info.part_not_available:
-            note = str.format(f"Stock for part with ID {event_info.part_id} empty!")
+    if event_result.error:
+        message = str.format(f"Error while picking part with ID {event_result.part_id}!")
+        if event_result.part_not_available:
+            note = str.format(f"Stock for part with ID {event_result.part_id} empty!")
     else:
-        message = str.format(f"Process Planner: Picked part with ID {event_info.part_id}")
+        message = str.format(f"Process Planner: Picked part with ID {event_result.part_id}")
 
     return message, note
 
 
-def get_valid_placement_positions(process_state: ProcessState, part_id: int) -> set[Union[Pos, Trail]]:
-    """Returns all valid placement positions for the part that was picked.
+def get_valid_assembly_positions(process_state: ProcessState, part_id: int) -> set[Union[Pos, Trail]]:
+    """Returns all valid assembly positions for the part that was picked.
 
     Args:
-        process_state(:class:`~process_state.ProcessState`): The process state after the motion event has been evaluated
+        process_state(:class:`ProcessState<process_state>`): The process state after the motion event has been evaluated
         part_id(:obj:`int`): Part ID
     Returns:
         :obj:`set` [:obj:`Union` [:obj:`~type_aliases.Pos`, :obj:`~type_aliases.Trail`]]
@@ -408,7 +466,6 @@ def get_valid_placement_positions(process_state: ProcessState, part_id: int) -> 
             state = process_state.completed_instruction(building_instruction)
             if state[1] == constants.pipe_event_code and building_instruction.pipe_id == part_id:
                 valid_pos.add(building_instruction.possible_att_pipe_positions)
-
 
     elif part_id == constants.fitting_id:
         placed_fit_pos_set = process_state.get_positions_from_motion_dict(constants.fit_event_code)

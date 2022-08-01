@@ -9,7 +9,7 @@ from type_dictionary.type_aliases import *
 
 @dataclass(slots=True) # slots increase property access performance by ~20% compared to dictionaries.
 class PathProblem:
-    """Dataclass that contains detailed information about a path problem.
+    """Describes a path problem to be solved by the :ref:`Solution Manager Module <Solution Manager Module>`.
     """
 
     state_grid: StateGrid  #:
@@ -33,13 +33,13 @@ class PathProblem:
     """
     Set containing directions that restrict in which direction the search algorithm can start the search.
     
-    *Type*: (set[:obj:`~type_aliases.Pos`]) """
+    *Type*: (:obj:´set` [:obj:`~type_aliases.Pos`]) """
 
     goal_directions: set[Pos]
     """
     Set containing directions that restrict in which direction the search algorithm can append to the goal.
     
-    *Type*: (set[:obj:`~type_aliases.Pos`])
+    *Type*: (:obj:`set` [:obj:`~type_aliases.Pos`])
     """
     transition_points: set[Pos]
     """
@@ -60,7 +60,7 @@ class PathProblem:
     """
     Part IDs pointing the amount of parts available for assembly.
     
-    *Type*: (set[:obj:`~type_aliases.PartStock`]) 
+    *Type*: (:obj:`set` [:obj:`~type_aliases.PartStock`]) 
     """
 
     part_cost: dict[int, float]
@@ -74,12 +74,17 @@ class PathProblem:
     """
     Weights used if search algorithm is a multi-criteria search algorithm (mca*, mcsa*)
     
-    *Type*: (:obj`Optional` [:class:`weights.Weights`])
+    *Type*: (:obj:`Optional` [:class:`~weights.Weights`])
     """
 
     algorithm: str = "mcsa*"
     """
     Defines how scores are calculated and therefore how nodes are evaluated in the search.
+    Accepted algorithms:
+    mcsa*
+    mca*
+    dijkstra
+    best-first
     
-    *Type*: (:obj: `str`) 
+    *Type*: (:obj:`str`) 
     """

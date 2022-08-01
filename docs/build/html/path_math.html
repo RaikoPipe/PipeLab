@@ -39,7 +39,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
@@ -58,7 +58,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -87,9 +87,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="module-path_math">
-<span id="path-math-module"></span><h1>Path Math module<a class="headerlink" href="#module-path_math" title="Permalink to this headline"></a></h1>
-<dl class="py function">
+  <div class="section" id="path-math-module">
+<h1>Path Math module<a class="headerlink" href="#path-math-module" title="Permalink to this headline"></a></h1>
+<p>This module contains functions for elementary path operations.</p>
+<span class="target" id="module-path_math"></span><dl class="py function">
 <dt class="sig sig-object py" id="path_math.sum_pos">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">sum_pos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.sum_pos" title="Permalink to this definition"></a></dt>
 <dd><p>Sums up a and b elementwise.</p>
@@ -194,12 +195,13 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="path_math.get_direction">
 <span class="sig-prename descclassname"><span class="pre">path_math.</span></span><span class="sig-name descname"><span class="pre">get_direction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pos</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#path_math.get_direction" title="Permalink to this definition"></a></dt>
-<dd><p>Returns the direction of a relative position.
-:param _sphinx_paramlinks_path_math.get_direction.pos: Some relative position
-:type _sphinx_paramlinks_path_math.get_direction.pos: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
+<dd><p>Returns the direction of a relative position.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>(<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>)</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="path_math.get_direction.params.pos"></span><strong>pos</strong><a class="paramlink headerlink reference internal" href="#path_math.get_direction.params.pos">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>) – Some relative position (Either x or y = 0).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>

@@ -39,7 +39,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="process_planning.html">Process Planning</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="process_planner.html">ProcessPlanner class</a></li>
@@ -47,18 +47,17 @@
 <li class="toctree-l2 current"><a class="reference internal" href="pp_data_class.html">Process Planning Dataclasses</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">BuildingInstruction class</a></li>
 <li class="toctree-l3"><a class="reference internal" href="construction_state.html">ConstructionState dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="placement_event_info.html">PlacementEventInfo dataclass</a></li>
-<li class="toctree-l3"><a class="reference internal" href="pick_event_info.html">PickEventInfo dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="assembly_event_result.html">AssemblyEventResult dataclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pick_event_result.html">PickEventResult dataclass</a></li>
 <li class="toctree-l3"><a class="reference internal" href="process_output.html">ProcessOutput dataclass</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="process_planning_util.html">Process Planning Utility Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_info.html">Code Information</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -93,7 +92,7 @@
 <dt class="sig sig-object py" id="building_instruction.BuildingInstruction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">building_instruction.</span></span><span class="sig-name descname"><span class="pre">BuildingInstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipe_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">required_fit_positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">possible_att_pipe_positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recommended_attachment_pos</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layout_completed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#building_instruction.BuildingInstruction" title="Permalink to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Contains instructions for building a layout.</p>
+<p>Contains instructions and requirements for building a layout.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="building_instruction.BuildingInstruction.pipe_id">
 <span class="sig-name descname"><span class="pre">pipe_id</span></span><a class="headerlink" href="#building_instruction.BuildingInstruction.pipe_id" title="Permalink to this definition"></a></dt>
@@ -111,14 +110,14 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="building_instruction.BuildingInstruction.possible_att_pipe_positions">
 <span class="sig-name descname"><span class="pre">possible_att_pipe_positions</span></span><a class="headerlink" href="#building_instruction.BuildingInstruction.possible_att_pipe_positions" title="Permalink to this definition"></a></dt>
-<dd><p>Trail containing node positions that a pipe of this layout would occupy. Used for checking if position of a motion event is valid for attachment or pipe placement.</p>
+<dd><p>Trail containing node positions that a pipe of this layout would occupy. Used for checking if position of a motion event is valid for attachment or pipe assembly.</p>
 <p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Trail" title="type_aliases.Trail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trail</span></code></a></p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="building_instruction.BuildingInstruction.recommended_attachment_pos">
 <span class="sig-name descname"><span class="pre">recommended_attachment_pos</span></span><a class="headerlink" href="#building_instruction.BuildingInstruction.recommended_attachment_pos" title="Permalink to this definition"></a></dt>
-<dd><p>Recommended placement position of attachment, determined by an algorithm.</p>
+<dd><p>Recommended assembly position of attachment, determined by an algorithm.</p>
 <p><em>Type</em>: <a class="reference internal" href="type_aliases.html#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a></p>
 </dd></dl>
 

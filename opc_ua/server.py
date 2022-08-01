@@ -4,31 +4,12 @@ from typing import Union
 
 from asyncua import ua, uamethod, Server
 
-from process_planning.pp_data_class.pick_event_info import PickEventInfo
-from process_planning.pp_data_class.placement_event_info import PlacementEventInfo
+from process_planning.pp_data_class.pick_event_result import PickEventResult
+from process_planning.pp_data_class.assembly_event_result import AssemblyEventResult
 from process_planning.pp_data_class.process_output import ProcessOutput
 from process_planning.process_planner import ProcessPlanner
-
-
-@uamethod
-def say_hello_xml(parent, happy):
-    print("Calling say_hello_xml")
-    if happy:
-        result = "I'm happy"
-    else:
-        result = "I'm not happy"
-    print(result)
-    return result
-
-
-@uamethod
-def say_hello_array(parent, happy):
-    if happy:
-        result = "I'm happy"
-    else:
-        result = "I'm not happy"
-    print(result)
-    return [result, "Actually I am"]
+from type_dictionary import constants
+import json
 
 
 class PipeLabServer:
@@ -41,7 +22,7 @@ class PipeLabServer:
 
     async def init(self):
         await self.server.init()
-        #  This need to be imported at the start or else it will overwrite the data
+        #  This needs to be imported at the start or else it will overwrite the data
         await self.server.import_xml(self.model_filepath)
 
         objects = self.server.nodes.objects
@@ -63,17 +44,47 @@ class PipeLabServer:
 
     @uamethod
     def send_motion_event(self, parent, x, y, code):
-        if code == 4:
-            output: ProcessOutput = self.process_planner.handle_motion_event((x, code))
-        else:
-            output = self.process_planner.handle_motion_event(((x, y), code))
-        event_info: Union[PlacementEventInfo, PickEventInfo] = output.current_event_info
-        print('\033[92m' + "ProcessPlanner Output:")
-        #pprint.pprint(output)
-        if isinstance(event_info,PlacementEventInfo):
-            if event_info.detour_event:
-                return event_info.event_code, "Deviated from optimal solution!"
-        return event_info.event_code
+        """send_motion_event()
+        Receives a motion event from the client and sends it to the process planner.
+        Returns a JSON formatted string with the returned event result.
+
+        Args:
+            x(:obj:`int`): x-coordinate of the motion event position or a part id
+            y(:obj:`int`): y-coordinate of the motion event position
+            code(:obj:`int`): Motion event code (See :ref:`Motion Event Codes`)
+            """
+        try:
+            if code in {constants.pick_manual_event_code, constants.pick_robot_event_code}:
+                output: ProcessOutput = self.process_planner.handle_motion_event((x, code))
+            elif code in {constants.fit_event_code, constants.pipe_event_code, constants.att_event_code}:
+                output = self.process_planner.handle_motion_event(((x, y), code))
+            else:
+                return f"Event code {code} not recognized!"
+
+            event_result: Union[AssemblyEventResult, PickEventResult] = output.current_event_result
+            # pprint.pprint(output)
+            response = {"eventCode": event_result.event_code, "timeRegistered": str(event_result.time_registered),
+                        "error": event_result.error}
+
+            if isinstance(event_result, AssemblyEventResult):
+                event_result: AssemblyEventResult
+                response.update({"AssemblyEvent" : {"obstructedPart": event_result.obstructed_part,
+                                 "obstructedObstacle": event_result.obstructed_obstacle,
+                                 "deviated": event_result.deviated, "misplaced": event_result.misplaced,
+                                 "unnecessary": event_result.unnecessary, "message1": output.messages[0],
+                                 "message2": output.messages[1] if len(
+                                     output.messages) > 1 else None}})
+
+            elif isinstance(event_result, PickEventResult):
+                event_result: PickEventResult
+                response.update({"PickEvent": {"partNotAvailable": event_result.part_not_available,
+                                               "partID" : event_result.part_id}})
+            response = json.dumps(response)
+            return response
+
+        except BaseException as e:
+            print(e)
+            return str(e)
 
     async def __aenter__(self):
         await self.init()
@@ -93,4 +104,4 @@ async def main(process_planner: ProcessPlanner):
             process_planner
     ) as server:
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(.1)

@@ -11,7 +11,8 @@ from type_dictionary.type_aliases import Pos
 
 @dataclass
 class ConstructionState:
-    """Dataclass that contains information about the construction state of a layout."""
+    """Used to describe a motion event that occurred at a position.
+     Used in :class:`ProcessState<process_state>` to remember Motion Events in a :obj:`~class_types.MotionDict`."""
     event_pos: Pos
     """Node position where motion event was detected.
     
@@ -31,12 +32,12 @@ class ConstructionState:
     
     *Type*: :obj:`bool`"""
     misplaced: bool
-    """If part that was placed with action occupies a node where a different part was recommended.
+    """Specifier if deviated: If part that was placed with action occupies a node where a different part was recommended.
     
     *Type*: :obj:`~type_aliases.Pos`"""
     unnecessary: bool
     """
-    If part that was placed is not necessary for the layout. For example: multiple attachments in a layout.
+    Specifier if deviated: If part that was placed is not necessary for the layout. For example: multiple attachments in a layout.
     
     *Type*: :obj:`bool`"""
     time_registered: datetime

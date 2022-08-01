@@ -39,7 +39,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
@@ -56,7 +56,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -89,13 +89,13 @@
 <span id="randomizer-module"></span><h1>Randomizer module<a class="headerlink" href="#module-randomizer" title="Permalink to this headline"></a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="randomizer.set_random_obstacles">
-<span class="sig-prename descclassname"><span class="pre">randomizer.</span></span><span class="sig-name descname"><span class="pre">set_random_obstacles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probability</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#randomizer.set_random_obstacles" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">randomizer.</span></span><span class="sig-name descname"><span class="pre">set_random_obstacles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">probability</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transition_points</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#randomizer.set_random_obstacles" title="Permalink to this definition"></a></dt>
 <dd><p>Randomly changes nodes on the state grid to 1 according to the frequency.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="randomizer.set_random_obstacles.params.probability"></span><strong>probability</strong><a class="paramlink headerlink reference internal" href="#randomizer.set_random_obstacles.params.probability">¶</a><strong>(</strong><strong>obj</strong> – <cite>float</cite>): probability of a node on the state grid receiving the state 1 (obstacle)</p></li>
-<li><p><span class="target" id="randomizer.set_random_obstacles.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#randomizer.set_random_obstacles.params.state_grid">¶</a><strong>(</strong><strong>obj</strong> – <cite>~type_aliased.StateGrid</cite>): An empty state grid.</p></li>
+<li><p><span class="target" id="randomizer.set_random_obstacles.params.probability"></span><strong>probability</strong><a class="paramlink headerlink reference internal" href="#randomizer.set_random_obstacles.params.probability">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – probability of a node on the state grid receiving the state 1 (obstacle)</p></li>
+<li><p><span class="target" id="randomizer.set_random_obstacles.params.state_grid"></span><strong>state_grid</strong><a class="paramlink headerlink reference internal" href="#randomizer.set_random_obstacles.params.state_grid">¶</a> (<a class="reference internal" href="type_aliases.html#type_aliases.StateGrid" title="type_aliases.StateGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StateGrid</span></code></a>) – An empty state grid.</p></li>
 </ul>
 </dd>
 </dl>

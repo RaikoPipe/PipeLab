@@ -18,7 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="App module" href="app.html" />
+    <link rel="next" title="App Class" href="app.html" />
     <link rel="prev" title="Server class" href="server.html" /> 
 </head>
 
@@ -39,18 +39,18 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Test</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="app.html">App module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app.html">App Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="app_config.html">App Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_util.html">App Util module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_info.html">FunctionTestApp Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_util.html">App Utility module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_info.html">Visualization colors and text information</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -79,15 +79,30 @@
              
   <div class="section" id="function-test">
 <h1>Function Test<a class="headerlink" href="#function-test" title="Permalink to this headline"></a></h1>
+<p>This module contains a <a class="reference internal" href="app.html#module-app"><span class="std std-ref">graphical user interface for validating and verifying the process planner</span></a> (or app) as well
+as <a class="reference internal" href="app_util.html#app-utility-module"><span class="std std-ref">utility functions</span></a> for processing and displaying the process planner output in the app.</p>
+<p>Preferences for the look of the app and visualization can be adjusted in the <a class="reference internal" href="app_config.html#app-configuration"><span class="std std-ref">app configuration</span></a>.</p>
+<p>Features:</p>
+<ul class="simple">
+<li><p>Visualizing of the current process state and built layout</p></li>
+<li><p>Simulating assembly events</p></li>
+<li><p>Simulating pick events</p></li>
+<li><p>Undoing motion events</p></li>
+<li><p>Displaying messages from the process planner</p></li>
+</ul>
+<div class="figure align-default" id="id1">
+<a class="reference internal image-reference" href="_images/fta_example.png"><img alt="Function Test App with a small problem space." src="_images/fta_example.png" style="width: 600px;" /></a>
+<p class="caption"><span class="caption-text">Function Test App</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</div>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="app.html">App module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app.html">App Class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="app_config.html">App Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="app_util.html">App Util module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="app_info.html">FunctionTestApp Information</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="app_info.html#background-color-of-buttons">Background color of buttons:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_info.html#border-color-of-buttons">Border color of buttons:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="app_info.html#text-on-buttons">Text on buttons:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app_util.html">App Utility module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="app_info.html">Visualization colors and text information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="app_info.html#background-color-of-buttons">Background color of buttons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_info.html#border-color-of-buttons">Border color of buttons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="app_info.html#text-on-buttons">Text on buttons</a></li>
 </ul>
 </li>
 </ul>
@@ -99,7 +114,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="server.html" class="btn btn-neutral float-left" title="Server class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="app.html" class="btn btn-neutral float-right" title="App module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="app.html" class="btn btn-neutral float-right" title="App Class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

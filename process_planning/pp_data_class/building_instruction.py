@@ -7,7 +7,7 @@ from type_dictionary.type_aliases import *
 
 @dataclass(slots=True)
 class BuildingInstruction:
-    """Contains instructions for building a layout.
+    """Contains instructions and requirements for building a layout.
         """
 
     pipe_id: int
@@ -19,11 +19,11 @@ class BuildingInstruction:
     
     *Type*: :obj:`~type_aliases.DirectedConnection`"""
     possible_att_pipe_positions: Trail
-    """Trail containing node positions that a pipe of this layout would occupy. Used for checking if position of a motion event is valid for attachment or pipe placement.
+    """Trail containing node positions that a pipe of this layout would occupy. Used for checking if position of a motion event is valid for attachment or pipe assembly.
     
     *Type*: :obj:`~type_aliases.Trail`"""
     recommended_attachment_pos: Pos
-    """Recommended placement position of attachment, determined by an algorithm.
+    """Recommended assembly position of attachment, determined by an algorithm.
     
     *Type*: :obj:`~type_aliases.Pos`"""
     layout_completed: bool = False

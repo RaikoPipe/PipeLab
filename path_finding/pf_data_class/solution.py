@@ -11,7 +11,7 @@ class Solution:
     """Dataclass that contains information about the solution to a path problem."""
 
     rendering_dict: RenderingDict
-    """Dict containing necessary information for rendering objects.
+    """Dict containing useful information for rendering objects.
 
     *Type*: (:obj:`~type_aliases.RenderingDict`) """
     #:
@@ -30,23 +30,24 @@ class Solution:
 
     score: Optional[float]
     """Measure of solution quality. The lower the score the better the solution.
+    Subjective to applied algorithm.
 
     *Type*: (:obj:`Optional` [:obj:`float`])"""
 
     algorithm: str
-    """Algorithm that was used to search.
+    """Algorithm that was used to search the solution.
 
     *Type*: (:obj:`str`)"""
 
     path_problem: PathProblem
-    """Path Problem that was solved
+    """Path Problem that was solved.
 
-    *Type*: (:class:`~path_problem.PathProblem`)"""
+    *Type*: (:class:`PathProblem<path_problem>`)"""
 
     part_stock: dict[int, int]
     """The amount of parts still available after applying the solution.
 
-    *Type*: (:class:`~path_problem.PathProblem`)"""
+    *Type*: (:class:`PathProblem<path_problem>`)"""
 
     node_path: NodePath = field(default_factory=list)
     """List of Positions with part IDs used (to get to this position).

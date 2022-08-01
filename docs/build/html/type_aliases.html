@@ -39,7 +39,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1"><a class="reference internal" href="path_finding.html">Path Finding</a></li>
@@ -47,10 +47,10 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Type Aliases module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="constants.html">Constants module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="class_types.html">Class Types module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="encoding_information.html">Encoding information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_info.html">Encoding Information</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -152,13 +152,8 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="type_aliases.MotionEvent">
 <span class="sig-prename descclassname"><span class="pre">type_aliases.</span></span><span class="sig-name descname"><span class="pre">MotionEvent</span></span><a class="headerlink" href="#type_aliases.MotionEvent" title="Permalink to this definition"></a></dt>
-<dd><p>Tuple containing either a position for placement events or a part id for picking events, depending on the event code.</p>
-<p><em>Event Codes</em>:</p>
-<p>1 -&gt; fitting placed</p>
-<p>2 -&gt; pipe placed</p>
-<p>3 -&gt; attachment placed</p>
-<p>4 -&gt; accepted part from picking robot</p>
-<p>5 -&gt; picked part manually #unused</p>
+<dd><p>Tuple containing either a position for assembly events or a part id for picking events, depending on the event code.</p>
+<p>See <a class="reference internal" href="code_info.html#motion-event-codes"><span class="std std-ref">Motion Event Codes</span></a></p>
 <p><em>Type</em>: (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code> [<code class="xref py py-obj docutils literal notranslate"><span class="pre">Union</span></code> [<a class="reference internal" href="#type_aliases.Pos" title="type_aliases.Pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Pos</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>])</p>
 </dd></dl>
 

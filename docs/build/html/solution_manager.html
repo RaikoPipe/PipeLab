@@ -39,7 +39,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC_UA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="opc_ua.html">OPC-UA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="function_test.html">Function Test</a></li>
 <li class="toctree-l1"><a class="reference internal" href="process_planning.html">Process Planning</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="path_finding.html">Path Finding</a><ul class="current">
@@ -52,7 +52,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="type_dictionary.html">Type Dictionary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vpython_rendering.html">Vpython Rendering module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main_scripts.html">Main Scripts</a></li>
 </ul>
 
         </div>
@@ -94,10 +94,10 @@
 <dd><p>Checks if this path problem was already solved and returns the solution to it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><span class="target" id="solution_manager.check_solution_stack.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.check_solution_stack.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p>
+<dd class="field-odd"><p><span class="target" id="solution_manager.check_solution_stack.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.check_solution_stack.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#module-path_problem" title="path_problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if found in stack, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dd class="field-even"><p><a class="reference internal" href="solution.html#module-solution" title="solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> if found in stack, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -105,16 +105,17 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="solution_manager.get_solution">
 <span class="sig-prename descclassname"><span class="pre">solution_manager.</span></span><span class="sig-name descname"><span class="pre">get_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_problem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#solution_manager.get_solution" title="Permalink to this definition"></a></dt>
-<dd><p>Wraps functions <a class="reference internal" href="#solution_manager.check_solution_stack" title="solution_manager.check_solution_stack"><code class="xref py py-func docutils literal notranslate"><span class="pre">check_solution_stack()</span></code></a> and find_path to look for a solution to the given path problem.</p>
+<dd><p>Wraps functions <a class="reference internal" href="#solution_manager.check_solution_stack" title="solution_manager.check_solution_stack"><code class="xref py py-func docutils literal notranslate"><span class="pre">check_solution_stack()</span></code></a> and <a class="reference internal" href="search_algorithm.html#search_algorithm.find_path" title="search_algorithm.find_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_path()</span></code></a> to look for a solution to the
+given path problem.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="solution_manager.get_solution.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.get_solution.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#path_problem.PathProblem" title="path_problem.PathProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p></li>
+<li><p><span class="target" id="solution_manager.get_solution.params.path_problem"></span><strong>path_problem</strong><a class="paramlink headerlink reference internal" href="#solution_manager.get_solution.params.path_problem">¶</a> (<a class="reference internal" href="path_problem.html#module-path_problem" title="path_problem"><code class="xref py py-class docutils literal notranslate"><span class="pre">PathProblem</span></code></a>) – Path problem to solve.</p></li>
 <li><p><span class="target" id="solution_manager.get_solution.params.draw_debug"></span><strong>draw_debug</strong><a class="paramlink headerlink reference internal" href="#solution_manager.get_solution.params.draw_debug">¶</a> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – See draw_debug in <a class="reference internal" href="search_algorithm.html#module-search_algorithm" title="search_algorithm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_path</span></code></a></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><a class="reference internal" href="solution.html#solution.Solution" title="solution.Solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> when a solution was found, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dd class="field-even"><p><a class="reference internal" href="solution.html#module-solution" title="solution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Solution</span></code></a> when a solution was found, else <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
