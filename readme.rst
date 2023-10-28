@@ -1,3 +1,5 @@
+Process planner for a use case in robot collaborative airplane assembly. Part of my master's project (Graded 1.0), which build's on my bachelor thesis.
+
 PipeLab2
 ==========
 
