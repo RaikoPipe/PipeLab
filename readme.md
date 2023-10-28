@@ -1,7 +1,6 @@
-Process planner for a use case in robot collaborative airplane assembly. Part of my master's project (Graded 1.0), which build's on my bachelor thesis.
-
-PipeLab2
+#PipeLab2
 ==========
+Process planner for a use case in robot collaborative airplane assembly. Part of my master's project (Graded 1.0), which build's on my bachelor thesis.
 
 The PipeLab Module consists of several submodules and classes. The following are the most important submodules:
 
@@ -12,3 +11,5 @@ The PipeLab Module consists of several submodules and classes. The following are
 **process_planning**: Process planner for managing and guiding the worker
 
 *For documentation, refer to PipeLab/docs/build/html/index.rst.*
+
+![Bild1](https://github.com/RaikoPipe/PipeLab/assets/74252023/41d32cc6-c7ba-4792-a795-6f5e5b3ee087)
