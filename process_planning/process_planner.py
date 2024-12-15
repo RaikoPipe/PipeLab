@@ -34,12 +34,6 @@ fastening_robot_command_message_dict = {
     2: "Move to a fastening position and fasten pipe at Position: "
 }
 
-
-# Todo:
-#   Known Issues:
-#   - Incorrect calculation of detour event in transition nodes (need to account for transition nodes here)
-
-
 # noinspection PyUnboundLocalVariable
 class ProcessPlanner:
     """Acts as an interface for handling events. Keeps track of the building process with the :class:`ProcessState<process_state>`
